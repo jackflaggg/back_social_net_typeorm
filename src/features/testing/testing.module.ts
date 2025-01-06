@@ -2,6 +2,6 @@ import { Module } from '@nestjs/common';
 import { TestingController } from './testing.controller';
 
 @Module({
-  controllers: [TestingController]
+    controllers: [TestingController],
 })
 export class TestingModule {}

@@ -1,23 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 import { BlogCreateDto } from '../dto/blog.create.dto';
-import { DeletionStatus } from '../../../../core/dto/deletion.status.dto';
 import { BlogUpdateDto } from '../dto/blog.update.dto';
-
-export const nameConstraints = {
-    minLength: 1,
-    maxLength: 15,
-};
-
-export const descriptionConstraints = {
-    minLength: 1,
-    maxLength: 500,
-};
-
-export const websiteUrlConstraints = {
-    minLength: 1,
-    maxLength: 100,
-};
+import { descriptionConstraints, nameConstraints, websiteUrlConstraints } from '@libs/contracts/constants/blog/blog-property.constraints';
+import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
 
 @Schema({ timestamps: true })
 export class BlogEntity {
@@ -33,8 +19,8 @@ export class BlogEntity {
     @Prop({ type: Date })
     createdAt: Date;
 
-    @Prop({ type: String, required: true, default: DeletionStatus.NotDeleted })
-    deletionStatus: DeletionStatus;
+    @Prop({ type: String, required: true })
+    deletionStatus: string;
 
     public static buildInstance(dto: BlogCreateDto) {
         const blog = new this();
@@ -46,7 +32,7 @@ export class BlogEntity {
     }
 
     protected makeDeleted() {
-        this.deletionStatus = DeletionStatus.PermanentDeleted;
+        this.deletionStatus = DeletionStatus['permanent-deleted'];
     }
 
     protected update(dto: BlogUpdateDto) {

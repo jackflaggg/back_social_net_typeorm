@@ -1,0 +1,12 @@
+version: '3.9'
+services:
+  inctagram.mongo:
+    image: mongo
+    restart: always
+    container_name: inctagram.mongo
+    ports:
+      - 27017:27017
+
+    volumes:
+      - ./mongo-data:/data/db
+    command: --wiredTigerCacheSizeGB 1.5
