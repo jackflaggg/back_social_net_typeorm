@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { BlogCreateDto } from '../dto/blog.create.dto';
-import { BlogUpdateDto } from '../dto/blog.update.dto';
+import { BlogCreateDtoApi } from '../dto/api/blog.create.dto';
+import { BlogUpdateDtoApi } from '../dto/api/blog.update.dto';
 import { descriptionConstraints, nameConstraints, websiteUrlConstraints } from '@libs/contracts/constants/blog/blog-property.constraints';
 import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
 
@@ -22,7 +22,10 @@ export class BlogEntity {
     @Prop({ type: String, required: true })
     deletionStatus: string;
 
-    public static buildInstance(dto: BlogCreateDto) {
+    @Prop({ type: Boolean, required: false, default: false })
+    isMembership: boolean;
+
+    public static buildInstance(dto: BlogCreateDtoApi) {
         const blog = new this();
         console.log(blog);
         blog.name = dto.name;
@@ -31,11 +34,11 @@ export class BlogEntity {
         return blog as BlogDocument;
     }
 
-    protected makeDeleted() {
+    makeDeleted() {
         this.deletionStatus = DeletionStatus['permanent-deleted'];
     }
 
-    protected update(dto: BlogUpdateDto) {
+    update(dto: BlogUpdateDtoApi) {
         this.name = dto.name;
         this.description = dto.description;
         this.websiteUrl = dto.websiteUrl;

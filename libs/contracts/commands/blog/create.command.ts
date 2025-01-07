@@ -3,9 +3,9 @@ import { nameConstraints } from '../../constants/blog/blog-property.constraints'
 import { BlogModels } from '../../models/blog/blog.models';
 
 const BlogCreateRequestSchema = z.object({
-    name: z.string().min(nameConstraints.minLength).max(nameConstraints.maxLength),
-    description: z.string(),
-    websiteUrl: z.string().url('Invalid URL'),
+    name: z.string().trim().min(nameConstraints.minLength).max(nameConstraints.maxLength),
+    description: z.string().trim(),
+    websiteUrl: z.string().trim().url('Invalid URL'),
 });
 
 const BlogCreateResponseSchema = BlogModels.omit({ deletionStatus: true });
