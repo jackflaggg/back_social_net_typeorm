@@ -1,11 +1,13 @@
+import { DeletionStatus, DeletionStatusType } from '@libs/contracts/enums/deletion-status.enum';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Model } from 'mongoose';
-import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
 import {
     contentConstraints,
     shortDescriptionConstraints,
     titleConstraints,
 } from '@libs/contracts/constants/post/post-property.constraints';
+import { HydratedDocument, Model } from 'mongoose';
+import { ExtendedLikesEntity, ExtendedLikesSchema } from './extended.like.entity';
+import { defaultLike } from '@libs/contracts/constants/post/default.like.schema';
 
 @Schema({ timestamps: true })
 export class PostEntity {
@@ -18,43 +20,52 @@ export class PostEntity {
     @Prop({ type: String, required: true, ...contentConstraints })
     content: string;
 
+    @Prop({ type: String, required: true })
+    blogId: string;
+
+    @Prop({ type: String, required: true })
+    blogName: string;
+
     @Prop({ type: Date })
     createdAt: Date;
 
-    @Prop({ type: String, required: true })
-    deletionStatus: string;
+    @Prop({ type: String, required: true, default: DeletionStatus['not-deleted'] })
+    deletionStatus: DeletionStatusType;
 
-    @Prop({ type: Boolean, required: false, default: false })
-    isMembership: boolean;
+    @Prop({
+        type: ExtendedLikesSchema,
+        required: true,
+        default: defaultLike,
+    })
+    extendedLikesInfo: ExtendedLikesEntity;
 
-    public static buildInstance(dto: any) {
+    static buildInstance(dto: any, blogName: string): PostDocument {
         const post = new this();
-        console.log(post);
+
         post.title = dto.title;
         post.shortDescription = dto.shortDescription;
         post.content = dto.content;
+        post.blogId = dto.blogId;
+        post.blogName = blogName;
+
         return post as PostDocument;
     }
 
-    makeDeleted() {
-        this.deletionStatus = DeletionStatus['permanent-deleted'];
-    }
-
-    update(dto: any) {
+    update(dto: any): void {
         this.title = dto.title;
         this.shortDescription = dto.shortDescription;
         this.content = dto.content;
     }
+
+    makeDeleted(): void {
+        this.deletionStatus = DeletionStatus['permanent-deleted'];
+    }
 }
-// Создает схему для сущности блога и загружает её в базу данных
+
 export const PostSchema = SchemaFactory.createForClass(PostEntity);
 
-// Загружает методы из класса BlogEntity в схему
 PostSchema.loadClass(PostEntity);
 
-// Определяет тип для документа блога, который будет содержать
-// свойства и методы из Mongoose, а также будет типизирован
 export type PostDocument = HydratedDocument<PostEntity>;
 
-// тип модели, которая включает в себя все методы и свойства класса
 export type PostModelType = Model<PostDocument> & typeof PostEntity;
