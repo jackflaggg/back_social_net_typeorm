@@ -10,7 +10,4 @@ const BlogUpdateRequestSchema = z.object({
 export namespace BlogUpdateCommand {
     export const RequestSchema = BlogUpdateRequestSchema;
     export type Request = z.infer<typeof RequestSchema>;
-
-    export const ResponseSchema = z.void();
-    export type Response = z.infer<typeof ResponseSchema>;
 }
