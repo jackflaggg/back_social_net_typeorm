@@ -1,4 +1,4 @@
-import { BlogViewDto } from '../../features/bloggers-platform/blogs/dto/api/blog-view.dto';
+import { BlogViewDto } from '../../features/bloggers-platform/blogs/dto/repository/query/blog-view.dto';
 
 export abstract class PaginatedViewDto<T> {
     abstract items: T;

@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 
-class PaginationParams {
+export class PaginationParams {
     //для трансформации в number
     @Type(() => Number)
     pageNumber: number = 1;
@@ -8,8 +8,8 @@ class PaginationParams {
     @Type(() => Number)
     pageSize: number = 10;
 
-    calculateSkip() {
-        return (this.pageNumber - 1) * this.pageSize;
+    static calculateSkip(instance: PaginationParams): number {
+        return (instance.pageNumber - 1) * instance.pageSize;
     }
 }
 

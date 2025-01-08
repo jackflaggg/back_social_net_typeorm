@@ -9,6 +9,9 @@ export class ExtendedLikesEntity {
     @Prop({ type: Number, required: true })
     dislikesCount: number;
 
+    @Prop({ type: String, required: true, default: 'None' })
+    myStatus: string;
+
     @Prop({ type: [NewestLikesSchema], required: true })
     newestLikes: NewestLikesEntity[];
 }

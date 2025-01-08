@@ -12,7 +12,7 @@ const PostToBlogCreateRequestSchema = z.object({
     content: z.string().min(contentConstraints.minLength).max(contentConstraints.maxLength).transform(trimString),
 });
 
-export namespace PostCreateCommand {
+export namespace PostToBlogCreateCommand {
     export const RequestSchema = PostToBlogCreateRequestSchema;
     export type Request = z.infer<typeof RequestSchema>;
 

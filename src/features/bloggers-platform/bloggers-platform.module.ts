@@ -9,6 +9,9 @@ import { PostsRepository } from './posts/infrastructure/post.repository';
 import { PostEntity, PostSchema } from './posts/domain/post.entity';
 import { NewestLikesEntity, NewestLikesSchema } from './posts/domain/last.three.likes.entity';
 import { ExtendedLikesEntity, ExtendedLikesSchema } from './posts/domain/extended.like.entity';
+import { PostsQueryRepository } from './posts/infrastructure/query/posts.query-repository';
+import { PostService } from './posts/application/post.service';
+import { PostsController } from './posts/api/post.controller';
 
 @Module({
     imports: [
@@ -19,7 +22,7 @@ import { ExtendedLikesEntity, ExtendedLikesSchema } from './posts/domain/extende
             { name: ExtendedLikesEntity.name, schema: ExtendedLikesSchema },
         ]),
     ],
-    controllers: [BlogsController],
-    providers: [BlogService, BlogsQueryRepository, BlogsRepository, PostsRepository],
+    controllers: [BlogsController, PostsController],
+    providers: [BlogService, PostService, BlogsQueryRepository, BlogsRepository, PostsQueryRepository, PostsRepository],
 })
 export class BloggersPlatformModule {}
