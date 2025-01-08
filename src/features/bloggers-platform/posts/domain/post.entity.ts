@@ -8,6 +8,8 @@ import {
 import { HydratedDocument, Model } from 'mongoose';
 import { ExtendedLikesEntity, ExtendedLikesSchema } from './extended.like.entity';
 import { defaultLike } from '@libs/contracts/constants/post/default.like.schema';
+import { PostToBlogCreateDtoService } from '../../blogs/dto/service/blog.to.post.create.dto';
+import { PostUpdateDtoService } from '../dto/service/post.update.dto';
 
 @Schema({ timestamps: true })
 export class PostEntity {
@@ -29,7 +31,7 @@ export class PostEntity {
     @Prop({ type: Date })
     createdAt: Date;
 
-    @Prop({ type: String, required: true, default: DeletionStatus['not-deleted'] })
+    @Prop({ type: String, required: true, default: DeletionStatus.enum['not-deleted'] })
     deletionStatus: DeletionStatusType;
 
     @Prop({
@@ -39,7 +41,7 @@ export class PostEntity {
     })
     extendedLikesInfo: ExtendedLikesEntity;
 
-    static buildInstance(dto: any, blogName: string): PostDocument {
+    static buildInstance(dto: PostToBlogCreateDtoService, blogName: string): PostDocument {
         const post = new this();
 
         post.title = dto.title;
@@ -51,14 +53,14 @@ export class PostEntity {
         return post as PostDocument;
     }
 
-    update(dto: any): void {
+    update(dto: PostUpdateDtoService): void {
         this.title = dto.title;
         this.shortDescription = dto.shortDescription;
         this.content = dto.content;
     }
 
     makeDeleted(): void {
-        this.deletionStatus = DeletionStatus['permanent-deleted'];
+        this.deletionStatus = DeletionStatus.enum['permanent-deleted'];
     }
 }
 

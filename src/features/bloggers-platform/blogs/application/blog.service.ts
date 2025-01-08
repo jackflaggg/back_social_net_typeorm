@@ -6,12 +6,14 @@ import { BlogUpdateDtoService } from '../dto/service/blog.update.dto';
 import { BadRequestException } from '@nestjs/common';
 import { PostToBlogCreateDtoService } from '../dto/service/blog.to.post.create.dto';
 import { PostsRepository } from '../../posts/infrastructure/post.repository';
+import { PostEntity, PostModelType } from '../../posts/domain/post.entity';
 
 export class BlogService {
     constructor(
         private readonly blogsRepository: BlogsRepository,
         private readonly postsRepository: PostsRepository,
-        @InjectModel(BlogEntity.name) private blogModel: BlogModelType,
+        @InjectModel(BlogEntity.name) private readonly blogModel: BlogModelType,
+        @InjectModel(PostEntity.name) private readonly postModel: PostModelType,
     ) {}
 
     async createBlog(dto: BlogCreateDtoService) {
@@ -43,5 +45,8 @@ export class BlogService {
         if (!blog) {
             throw new BadRequestException('Not Found Blog');
         }
+        const post = this.postModel.buildInstance(dto, blog.name);
+        await this.postsRepository.save(post);
+        return post._id.toString();
     }
 }

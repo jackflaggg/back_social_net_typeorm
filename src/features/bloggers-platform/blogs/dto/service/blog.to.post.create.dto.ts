@@ -1,4 +1,5 @@
-import { createZodDto } from 'nestjs-zod';
-import { PostCreateCommand } from '@libs/contracts/commands/blog/post.to.blog.create.command';
+import { PostToBlogCreateDtoApi } from '../api/blog.to.post.create.dto';
 
-export class PostToBlogCreateDtoService extends createZodDto(PostCreateCommand.RequestSchema) {}
+export class PostToBlogCreateDtoService extends PostToBlogCreateDtoApi {
+    blogId: string;
+}

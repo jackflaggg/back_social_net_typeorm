@@ -1,14 +1,18 @@
-import { GetBlogsQueryParams } from '../../dto/api/get-blogs-query-params.input-dto';
+import { GetBlogsQueryParams } from '../../dto/repository/query/get-blogs-query-params.input-dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { BlogEntity, BlogModelType } from '../../domain/blog.entity';
 import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
-import { BlogViewDto } from '../../dto/api/blog-view.dto';
+import { BlogViewDto } from '../../dto/repository/query/blog-view.dto';
 import { PaginatedBlogViewDto } from '../../../../../core/dto/base.paginated.view-dto';
+import { Injectable } from '@nestjs/common';
+import { PaginationParams } from '../../../../../core/dto/base.query-params.input-dto';
+import { getBlogsQuery } from '../../../../../core/utils/blog/query.insert.blog';
 
+@Injectable()
 export class BlogsQueryRepository {
     constructor(@InjectModel(BlogEntity.name) private readonly blogModel: BlogModelType) {}
     async getAllBlogs(queryData: GetBlogsQueryParams) {
-        const { pageSize, pageNumber, searchNameTerm, sortBy, sortDirection } = queryData;
+        const { pageSize, pageNumber, searchNameTerm, sortBy, sortDirection } = getBlogsQuery(queryData);
 
         const filter: any = {};
 
@@ -17,8 +21,8 @@ export class BlogsQueryRepository {
         }
 
         const blogsFromDb = await this.blogModel
-            .find({ ...filter, deletionStatus: DeletionStatus['not-deleted'] })
-            .skip(queryData.calculateSkip())
+            .find({ ...filter, deletionStatus: DeletionStatus.enum['not-deleted'] })
+            .skip(PaginationParams.calculateSkip(queryData))
             .limit(pageSize)
             .sort({ [sortBy]: sortDirection });
 
@@ -34,14 +38,14 @@ export class BlogsQueryRepository {
         });
     }
     async getBlog(id: string) {
-        const blog = this.blogModel.findById({ _id: id });
+        const blog = await this.blogModel.findOne({ _id: id, deletionStatus: DeletionStatus.enum['not-deleted'] });
         if (!blog) {
             return void 0;
         }
-        return blog;
+        return BlogViewDto.mapToView(blog);
     }
     private async getBlogsCount(searchNameTerm: string | null): Promise<number> {
-        const filter: any = { deletionStatus: DeletionStatus['not-deleted'] };
+        const filter: any = { deletionStatus: DeletionStatus.enum['not-deleted'] };
 
         if (searchNameTerm) {
             filter.name = { $regex: searchNameTerm, $options: 'i' };

@@ -3,7 +3,7 @@ import { HydratedDocument, Model } from 'mongoose';
 import { BlogCreateDtoApi } from '../dto/api/blog.create.dto';
 import { BlogUpdateDtoApi } from '../dto/api/blog.update.dto';
 import { descriptionConstraints, nameConstraints, websiteUrlConstraints } from '@libs/contracts/constants/blog/blog-property.constraints';
-import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
+import { DeletionStatus, DeletionStatusType } from '@libs/contracts/enums/deletion-status.enum';
 
 @Schema({ timestamps: true })
 export class BlogEntity {
@@ -19,15 +19,14 @@ export class BlogEntity {
     @Prop({ type: Date })
     createdAt: Date;
 
-    @Prop({ type: String, required: true })
-    deletionStatus: string;
+    @Prop({ type: String, required: true, default: DeletionStatus.enum['not-deleted'] })
+    deletionStatus: DeletionStatusType;
 
-    @Prop({ type: Boolean, required: false, default: false })
+    @Prop({ type: Boolean, required: false, default: true })
     isMembership: boolean;
 
     public static buildInstance(dto: BlogCreateDtoApi) {
         const blog = new this();
-        console.log(blog);
         blog.name = dto.name;
         blog.description = dto.description;
         blog.websiteUrl = dto.websiteUrl;
@@ -35,7 +34,7 @@ export class BlogEntity {
     }
 
     makeDeleted() {
-        this.deletionStatus = DeletionStatus['permanent-deleted'];
+        this.deletionStatus = DeletionStatus.enum['permanent-deleted'];
     }
 
     update(dto: BlogUpdateDtoApi) {

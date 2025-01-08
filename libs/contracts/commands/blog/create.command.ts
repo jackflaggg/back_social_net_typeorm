@@ -1,11 +1,12 @@
 import { z } from 'zod';
 import { nameConstraints } from '../../constants/blog/blog-property.constraints';
 import { BlogModels } from '../../models/blog/blog.models';
+import { trimString } from '../../models/post/post.models';
 
 const BlogCreateRequestSchema = z.object({
-    name: z.string().trim().min(nameConstraints.minLength).max(nameConstraints.maxLength),
-    description: z.string().trim(),
-    websiteUrl: z.string().trim().url('Invalid URL'),
+    name: z.string().min(nameConstraints.minLength).max(nameConstraints.maxLength).transform(trimString),
+    description: z.string().transform(trimString),
+    websiteUrl: z.string().url('Invalid URL').transform(trimString),
 });
 
 const BlogCreateResponseSchema = BlogModels.omit({ deletionStatus: true });

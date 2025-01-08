@@ -7,7 +7,7 @@ import { TestingModule } from './features/testing/testing.module';
 import { UsersModule } from './features/user-accounts/user-accounts.module';
 
 @Module({
-    imports: [MongooseModule.forRoot('mongodb://localhost:27017/top-api'), BloggersPlatformModule, TestingModule, UsersModule],
+    imports: [MongooseModule.forRoot('mongodb://localhost:27017/top-api'), TestingModule, BloggersPlatformModule, UsersModule],
     controllers: [AppController],
     providers: [AppService],
     exports: [],
