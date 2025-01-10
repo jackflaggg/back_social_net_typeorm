@@ -1,7 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { UserEntity, UserModelType } from '../../domain/user.entity';
 import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
-import { PaginatedBlogViewDto } from '../../../../core/dto/base.paginated.view-dto';
+import { PaginatedBlogViewDto, PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { GetUsersQueryParams } from '../../dto/api/get-users-query-params.input-dto';
 import { UserViewDto } from '../../dto/api/user-view.dto';
 import { Injectable } from '@nestjs/common';
@@ -17,44 +17,32 @@ export class UserQueryRepository {
         }
         return UserViewDto.mapToView(result);
     }
-    async getAllUsers(queryData: GetUsersQueryParams) {
-        const { pageSize, pageNumber, searchLoginTerm, searchEmailTerm, sortBy, sortDirection } = getUsersQuery(queryData);
+    async getAllUsers(queryData: GetUsersQueryParams): Promise<PaginatedViewDto<UserViewDto[]>> {
+        const { sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm } = getUsersQuery(queryData);
 
-        const filter: any = {};
-
-        if (searchLoginTerm) {
-            filter.name = { $regex: searchLoginTerm, $options: 'i' };
-        }
-
-        if (searchEmailTerm) {
-            filter.name = { $regex: searchEmailTerm, $options: 'i' };
-        }
+        const filter = {
+            $or: [
+                searchLoginTerm ? { login: { $regex: searchLoginTerm, $options: 'i' } } : {},
+                searchEmailTerm ? { email: { $regex: searchEmailTerm, $options: 'i' } } : {},
+            ],
+            deletionStatus: DeletionStatus.enum['not-deleted'],
+        };
 
         const usersFromDb = await this.userModel
-            .find({ ...filter, deletionStatus: DeletionStatus.enum['not-deleted'] })
+            .find({ ...filter })
             .skip(GetUsersQueryParams.calculateSkip(queryData))
             .limit(pageSize)
             .sort({ [sortBy]: sortDirection });
 
         const usersView = usersFromDb.map(user => UserViewDto.mapToView(user));
 
-        const usersCount = await this.getUsersCount(searchLoginTerm || searchEmailTerm || null);
+        const usersCount = await this.userModel.countDocuments({ ...filter });
 
-        return PaginatedBlogViewDto.mapToView({
+        return PaginatedBlogViewDto.mapToView<UserViewDto[]>({
             items: usersView,
             page: pageNumber,
             size: pageSize,
             totalCount: usersCount,
         });
-    }
-
-    private async getUsersCount(searchTerm: string | null): Promise<number> {
-        const filter: any = { deletionStatus: DeletionStatus.enum['not-deleted'] };
-
-        if (searchTerm) {
-            filter.name = { $regex: searchTerm, $options: 'i' };
-        }
-
-        return await this.userModel.countDocuments(filter);
     }
 }

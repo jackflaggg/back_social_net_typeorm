@@ -1,7 +1,8 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { BlogDocument, BlogEntity, BlogModelType } from '../domain/blog.entity';
 import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import * as mongoose from 'mongoose';
 
 @Injectable()
 export class BlogsRepository {

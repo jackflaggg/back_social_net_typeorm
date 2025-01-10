@@ -2,7 +2,7 @@ import { UserRepository } from '../infrastructure/user.repository';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserEntity, UserModelType } from '../domain/user.entity';
 import { UserCreateDtoService } from '../dto/service/user.create.dto';
-import { BadRequestException } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export class UserService {
     constructor(
@@ -20,7 +20,7 @@ export class UserService {
         const user = await this.userRepository.findUserById(id);
 
         if (!user) {
-            throw new BadRequestException('User not found');
+            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
 
         user.makeDeleted();

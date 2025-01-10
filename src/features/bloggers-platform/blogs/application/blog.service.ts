@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { BlogEntity, BlogModelType } from '../domain/blog.entity';
 import { BlogCreateDtoService } from '../dto/service/blog.create.dto';
 import { BlogUpdateDtoService } from '../dto/service/blog.update.dto';
-import { BadRequestException } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { PostToBlogCreateDtoService } from '../dto/service/blog.to.post.create.dto';
 import { PostsRepository } from '../../posts/infrastructure/post.repository';
 import { PostEntity, PostModelType } from '../../posts/domain/post.entity';
@@ -25,7 +25,7 @@ export class BlogService {
     async updateBlog(id: string, dto: BlogUpdateDtoService) {
         const result = await this.blogsRepository.findBlogById(id);
         if (!result) {
-            throw new BadRequestException('Not Found Blog');
+            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
         result.update(dto);
         await this.blogsRepository.save(result);
@@ -34,7 +34,7 @@ export class BlogService {
     async deleteBlog(id: string) {
         const result = await this.blogsRepository.findBlogById(id);
         if (!result) {
-            throw new BadRequestException('Not Found Blog');
+            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
         result.makeDeleted();
         await this.blogsRepository.save(result);
@@ -43,7 +43,7 @@ export class BlogService {
     async createPostToBlog(blogId: string, dto: PostToBlogCreateDtoService) {
         const blog = await this.blogsRepository.findBlogById(blogId);
         if (!blog) {
-            throw new BadRequestException('Not Found Blog');
+            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
         const post = this.postModel.buildInstance(dto, blog.name);
         await this.postsRepository.save(post);

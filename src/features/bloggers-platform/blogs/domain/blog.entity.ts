@@ -22,7 +22,7 @@ export class BlogEntity {
     @Prop({ type: String, required: true, default: DeletionStatus.enum['not-deleted'] })
     deletionStatus: DeletionStatusType;
 
-    @Prop({ type: Boolean, required: false, default: true })
+    @Prop({ type: Boolean, required: false, default: false })
     isMembership: boolean;
 
     public static buildInstance(dto: BlogCreateDtoApi) {
