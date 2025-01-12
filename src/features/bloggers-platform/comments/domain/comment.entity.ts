@@ -1,10 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { DeletionStatus, DeletionStatusType } from '@libs/contracts/enums/deletion-status.enum';
 import { HydratedDocument, Model } from 'mongoose';
+import { ExtendedLikesSchema } from '../../posts/domain/extended.like.entity';
+import { defaultLike } from '@libs/contracts/constants/post/default.like.schema';
 
 export interface CommentatorInfoInterface {
     userId: string;
     userLogin: string;
+}
+
+export interface likesInfoInterface {
+    likesCount: number;
+    dislikesCount: number;
+    myStatus: string;
 }
 
 @Schema({ timestamps: true })
@@ -21,11 +29,8 @@ export class CommentEntity {
     @Prop({ type: String, required: true })
     postId: string;
 
-    @Prop({ type: Number, required: true, default: 0 })
-    likesCount: number;
-
-    @Prop({ type: Number, required: true, default: 0 })
-    dislikesCount: number;
+    @Prop({ type: ExtendedLikesSchema.omit(['newestLikes']), required: true, default: defaultLike })
+    likesInfo: likesInfoInterface;
 
     @Prop({ type: String, required: true, default: DeletionStatus.enum['not-deleted'] })
     deletionStatus: DeletionStatusType;

@@ -62,4 +62,7 @@ export class PostsController {
 
     @Post(':postId/comments')
     async createCommentToPost(@Param('postId') postId: string, @Body() dto: CommentCreateToPostApi) {}
+
+    @Get(':postId/comments')
+    async getComments(@Param('postId') postId: string, @Body() dto: CommentCreateToPostApi) {}
 }

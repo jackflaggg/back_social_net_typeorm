@@ -1,4 +1,17 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Post, Put, Query } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    HttpCode,
+    HttpException,
+    HttpStatus,
+    NotFoundException,
+    Param,
+    Post,
+    Put,
+    Query,
+} from '@nestjs/common';
 import { BlogService } from '../application/blog.service';
 import { BlogUpdateDtoApi } from '../dto/api/blog.update.dto';
 import { BlogCreateDtoApi } from '../dto/api/blog.create.dto';
@@ -37,9 +50,10 @@ export class BlogsController {
 
     @Get(':blogId')
     async getBlog(@Param('blogId') blogId: string) {
+        console.log(blogId);
         const blog = await this.blogsQueryRepository.getBlog(blogId);
         if (!blog) {
-            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+            throw new NotFoundException('Not found blog');
         }
         return blog;
     }

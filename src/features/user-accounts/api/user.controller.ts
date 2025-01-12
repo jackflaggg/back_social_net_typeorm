@@ -13,8 +13,7 @@ export class UserController {
     @Post()
     async createUser(@Body() dto: UserCreateDtoApi) {
         const userId = await this.userService.createUser(dto);
-        const user = await this.userQueryRepository.findUser(userId);
-        return user;
+        return await this.userQueryRepository.findUser(userId);
     }
 
     @HttpCode(204)

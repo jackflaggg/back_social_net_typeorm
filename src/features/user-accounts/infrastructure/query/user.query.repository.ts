@@ -28,15 +28,16 @@ export class UserQueryRepository {
             deletionStatus: DeletionStatus.enum['not-deleted'],
         };
 
-        const usersFromDb = await this.userModel
-            .find({ ...filter })
-            .skip(GetUsersQueryParams.calculateSkip(queryData))
-            .limit(pageSize)
-            .sort({ [sortBy]: sortDirection });
+        const [usersFromDb, usersCount] = await Promise.all([
+            this.userModel
+                .find({ ...filter })
+                .skip(GetUsersQueryParams.calculateSkip(queryData))
+                .limit(pageSize)
+                .sort({ [sortBy]: sortDirection }),
+            this.userModel.countDocuments({ ...filter }),
+        ]);
 
         const usersView = usersFromDb.map(user => UserViewDto.mapToView(user));
-
-        const usersCount = await this.userModel.countDocuments({ ...filter });
 
         return PaginatedBlogViewDto.mapToView<UserViewDto[]>({
             items: usersView,
