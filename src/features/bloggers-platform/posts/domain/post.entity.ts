@@ -5,7 +5,7 @@ import {
     shortDescriptionConstraints,
     titleConstraints,
 } from '@libs/contracts/constants/post/post-property.constraints';
-import { HydratedDocument, Model } from 'mongoose';
+import mongoose, { HydratedDocument, Model } from 'mongoose';
 import { ExtendedLikesEntity, ExtendedLikesSchema } from './extended.like.entity';
 import { defaultLike } from '@libs/contracts/constants/post/default.like.schema';
 import { PostToBlogCreateDtoService } from '../../blogs/dto/service/blog.to.post.create.dto';
@@ -22,7 +22,7 @@ export class PostEntity {
     @Prop({ type: String, required: true, ...contentConstraints })
     content: string;
 
-    @Prop({ type: String, required: true })
+    @Prop({ type: mongoose.Types.ObjectId, required: true })
     blogId: string;
 
     @Prop({ type: String, required: true })

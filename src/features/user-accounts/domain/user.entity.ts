@@ -3,6 +3,8 @@ import { loginConstraints, passwordConstraints } from '@libs/contracts/constants
 import { DeletionStatus, DeletionStatusType } from '@libs/contracts/enums/deletion-status.enum';
 import { HydratedDocument, Model } from 'mongoose';
 import { compare, genSalt, hash } from 'bcrypt';
+import * as crypto from 'node:crypto';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 
 @Schema({ timestamps: true })
 export class UserEntity {
@@ -30,6 +32,8 @@ export class UserEntity {
     }
 
     makeDeleted() {
+        this.login = crypto.randomUUID().slice(0, 10);
+        this.email = crypto.randomUUID().slice(0, 10);
         this.deletionStatus = DeletionStatus.enum['permanent-deleted'];
     }
 

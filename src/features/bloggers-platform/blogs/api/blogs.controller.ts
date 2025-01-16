@@ -1,4 +1,17 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    HttpCode,
+    HttpException,
+    HttpStatus,
+    NotFoundException,
+    Param,
+    Post,
+    Put,
+    Query,
+} from '@nestjs/common';
 import { BlogService } from '../application/blog.service';
 import { BlogUpdateDtoApi } from '../dto/api/blog.update.dto';
 import { BlogCreateDtoApi } from '../dto/api/blog.create.dto';
@@ -8,6 +21,7 @@ import { PostToBlogCreateDtoApi } from '../dto/api/blog.to.post.create.dto';
 import { PostToBlogCreateDtoService } from '../dto/service/blog.to.post.create.dto';
 import { PostsQueryRepository } from '../../posts/infrastructure/query/posts.query-repository';
 import { GetPostsQueryParams } from '../../posts/dto/api/get-posts-query-params.input.dto';
+import mongoose from 'mongoose';
 
 @Controller('blogs')
 export class BlogsController {
@@ -24,14 +38,22 @@ export class BlogsController {
 
     @Get(':blogId/posts')
     async getPosts(@Param('blogId') blogId: string, @Query() query: GetPostsQueryParams) {
-        return this.postsQueryRepository.getAllPosts(query, blogId);
+        if (!mongoose.Types.ObjectId.isValid(blogId)) {
+            throw new HttpException('Not a valid blogId', HttpStatus.NOT_FOUND);
+        }
+        const blog = await this.blogsQueryRepository.getBlog(blogId);
+        if (!blog) {
+            throw new HttpException('Not blog', HttpStatus.NOT_FOUND);
+        }
+        return this.postsQueryRepository.getAllPosts(query, blog.id);
     }
 
     @Get(':blogId')
     async getBlog(@Param('blogId') blogId: string) {
+        console.log(blogId);
         const blog = await this.blogsQueryRepository.getBlog(blogId);
         if (!blog) {
-            throw new BadRequestException('Blog not found');
+            throw new NotFoundException('Not found blog');
         }
         return blog;
     }

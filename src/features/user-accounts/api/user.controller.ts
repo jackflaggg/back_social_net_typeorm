@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { UserService } from '../application/user.service';
 import { UserQueryRepository } from '../infrastructure/query/user.query.repository';
 import { UserCreateDtoApi } from '../dto/api/user.create.dto';
 import { GetUsersQueryParams } from '../dto/api/get-users-query-params.input-dto';
+import { BasicAuthGuard } from '../../../core/guards/auth.guard';
 
+@UseGuards(BasicAuthGuard)
 @Controller('users')
 export class UserController {
     constructor(
@@ -13,18 +15,17 @@ export class UserController {
     @Post()
     async createUser(@Body() dto: UserCreateDtoApi) {
         const userId = await this.userService.createUser(dto);
-        const user = await this.userQueryRepository.findUser(userId);
-        return user;
+        return this.userQueryRepository.findUser(userId);
     }
 
     @HttpCode(204)
     @Delete(':id')
     async deleteUser(@Param('id') id: string) {
-        await this.userService.deleteUser(id);
+        return this.userService.deleteUser(id);
     }
 
     @Get()
     async getAllUsers(@Query() query: GetUsersQueryParams) {
-        return await this.userQueryRepository.getAllUsers(query);
+        return this.userQueryRepository.getAllUsers(query);
     }
 }

@@ -14,17 +14,30 @@ export class PostsQueryRepository {
     async getAllPosts(queryData: GetPostsQueryParams, blogId?: string) {
         const { pageSize, pageNumber, sortBy, sortDirection } = getPostsQuery(queryData);
 
-        const filter: any = blogId ? { blogId } : {};
+        const filter = this.getFilter(blogId);
 
-        const postsFromDb = await this.postModel
-            .find({ ...filter, deletionStatus: DeletionStatus.enum['not-deleted'] })
-            .skip(PaginationParams.calculateSkip(queryData))
-            .limit(pageSize)
-            .sort({ [sortBy]: sortDirection });
+        // до!
+        // const postsFromDb = await this.postModel
+        //     .find({ ...filter })
+        //     .skip(skipData)
+        //     .limit(+pageSize)
+        //     .sort({ [sortBy]: sortDirection });
+        //
+        // const postsView = postsFromDb.map(post => PostViewDto.mapToView(post));
+        //
+        // const postsCount = await this.postModel.countDocuments({ ...filter });
+
+        // измененный!
+        const [postsFromDb, postsCount] = await Promise.all([
+            this.postModel
+                .find(filter)
+                .skip(PaginationParams.calculateSkip(queryData) ?? (pageNumber - 1) * pageSize)
+                .limit(+pageSize)
+                .sort({ [sortBy]: sortDirection }),
+            this.postModel.countDocuments(filter),
+        ]);
 
         const postsView = postsFromDb.map(post => PostViewDto.mapToView(post));
-
-        const postsCount = await this.getPostsCount(filter);
 
         return PaginatedBlogViewDto.mapToView({
             items: postsView,
@@ -40,9 +53,11 @@ export class PostsQueryRepository {
         }
         return PostViewDto.mapToView(post);
     }
-    private async getPostsCount(blogId: string | void): Promise<number> {
-        const filter: any = { blogId, deletionStatus: DeletionStatus.enum['not-deleted'] };
-
-        return await this.postModel.countDocuments(filter);
+    private getFilter(blogId?: string) {
+        const filter: any = { deletionStatus: DeletionStatus.enum['not-deleted'] };
+        if (blogId) {
+            filter.blogId = blogId;
+        }
+        return filter;
     }
 }
