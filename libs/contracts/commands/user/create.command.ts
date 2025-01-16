@@ -5,7 +5,7 @@ import { loginConstraints, passwordConstraints } from '../../constants/user/user
 import { emailRegexp } from '../../constants/user/email.regexp';
 
 const UserCreateRequestSchema = z.object({
-    login: z.string().min(loginConstraints.minLength).max(loginConstraints.maxLength).transform(trimString),
+    login: z.string().trim().min(loginConstraints.minLength).max(loginConstraints.maxLength),
     password: z.string().min(passwordConstraints.minLength).max(passwordConstraints.maxLength).transform(trimString),
     email: z
         .string()

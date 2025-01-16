@@ -3,6 +3,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { UserEntity, UserModelType } from '../domain/user.entity';
 import { UserCreateDtoService } from '../dto/service/user.create.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { LoginDtoService } from '../dto/service/login.dto';
+import { PasswordRecoveryDtoService } from '../dto/service/password-recovery.dto';
+import { NewPasswordDtoService } from '../dto/service/new-password.dto';
+import { RegistrationDtoService } from '../dto/service/registration.dto';
+import { RegistrationConfirmationDtoService } from '../dto/service/registration-confirmation.dto';
+import { RegistrationEmailResendingDtoService } from '../dto/service/registration-email-resending.dto';
 
 export class UserService {
     constructor(
@@ -26,5 +32,28 @@ export class UserService {
         user.makeDeleted();
 
         await this.userRepository.save(user);
+    }
+    async login(dto: LoginDtoService) {
+        return dto;
+    }
+
+    async passwordRecovery(dto: PasswordRecoveryDtoService) {
+        return dto;
+    }
+
+    async newPassword(dto: NewPasswordDtoService) {
+        return dto;
+    }
+
+    async registration(dto: RegistrationDtoService) {
+        return dto;
+    }
+
+    async registrationConfirmation(dto: RegistrationConfirmationDtoService) {
+        return dto;
+    }
+
+    async emailResend(dto: RegistrationEmailResendingDtoService) {
+        return dto;
     }
 }
