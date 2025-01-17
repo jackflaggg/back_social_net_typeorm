@@ -5,7 +5,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { BloggersPlatformModule } from './features/bloggers-platform/bloggers-platform.module';
 import { TestingModule } from './features/testing/testing.module';
 import { UsersModule } from './features/user-accounts/user-accounts.module';
-import { LoggerMiddleware } from './core/middleware/logger.middleware';
 import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
@@ -25,8 +24,4 @@ import { ThrottlerModule } from '@nestjs/throttler';
     providers: [AppService],
     exports: [],
 })
-export class AppModule implements NestModule {
-    configure(consumer: MiddlewareConsumer) {
-        consumer.apply(LoggerMiddleware).forRoutes('*');
-    }
-}
+export class AppModule {}

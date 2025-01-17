@@ -1,6 +1,6 @@
 import { UserRepository } from '../infrastructure/user.repository';
 import { InjectModel } from '@nestjs/mongoose';
-import { UserEntity, UserModelType } from '../domain/user.entity';
+import { UserEntity, UserModelType } from '../domain/user/user.entity';
 import { UserCreateDtoService } from '../dto/service/user.create.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { LoginDtoService } from '../dto/service/login.dto';

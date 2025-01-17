@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { BlogEntity, BlogModelType } from '../../bloggers-platform/blogs/domain/blog.entity';
 import { PostEntity, PostModelType } from '../../bloggers-platform/posts/domain/post.entity';
 import { HydratedDocument } from 'mongoose';
-import { UserEntity, UserModelType } from '../../user-accounts/domain/user.entity';
+import { UserEntity, UserModelType } from '../../user-accounts/domain/user/user.entity';
 import { CommentEntity, CommentModelType } from '../../bloggers-platform/comments/domain/comment.entity';
 
 @Controller('testing')

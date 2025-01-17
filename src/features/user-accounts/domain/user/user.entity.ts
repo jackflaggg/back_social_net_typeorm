@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { loginConstraints, passwordConstraints } from '@libs/contracts/constants/user/user-property.constraints';
+import { loginConstraints } from '@libs/contracts/constants/user/user-property.constraints';
 import { DeletionStatus, DeletionStatusType } from '@libs/contracts/enums/deletion-status.enum';
 import { HydratedDocument, Model } from 'mongoose';
 import { compare, genSalt, hash } from 'bcrypt';
 import * as crypto from 'node:crypto';
-import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+import { EmailConfirmation, EmailConfirmationSchema } from './email.confirmation.shema';
 
 @Schema({ timestamps: true })
 export class UserEntity {
@@ -14,11 +14,14 @@ export class UserEntity {
     @Prop({ type: String, required: true, unique: true })
     email: string;
 
-    @Prop({ type: String, required: true /*, ...passwordConstraints */ })
+    @Prop({ type: String, required: true })
     password: string;
 
     @Prop()
     createdAt: Date;
+
+    @Prop({ type: EmailConfirmationSchema, required: true })
+    emailConfirmation: EmailConfirmation;
 
     @Prop({ type: String, required: true, default: DeletionStatus.enum['not-deleted'] })
     deletionStatus: DeletionStatusType;
