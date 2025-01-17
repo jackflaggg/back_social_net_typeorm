@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Query, Res, UseGuards } from '@nestjs/common';
 import { UserService } from '../application/user.service';
 import { UserQueryRepository } from '../infrastructure/query/user.query.repository';
 import { GetUsersQueryParams } from '../dto/api/get-users-query-params.input-dto';
@@ -9,6 +9,7 @@ import { AuthRegistrationDtoApi } from '../dto/api/auth.registration.dto';
 import { AuthRegistrationConfirmationDtoApi } from '../dto/api/auth.registration-confirmation.dto';
 import { AuthRegistrationEmailResendingDtoApi } from '../dto/api/auth.registration-email-resending.dto';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -18,8 +19,12 @@ export class AuthController {
     ) {}
     @HttpCode(200)
     @Post('login')
-    async login(@Body() dto: AuthLoginDtoApi) {
-        return this.userService.login(dto);
+    async login(@Res({ passthrough: true }) res: Response, @Body() dto: AuthLoginDtoApi) {
+        const auth = await this.userService.login(dto);
+        res.cookie('refreshToken', auth, { httpOnly: true, secure: true, maxAge: 86400 });
+        return {
+            accessToken: auth,
+        };
     }
     @HttpCode(204)
     @UseGuards(ThrottlerGuard)

@@ -1,5 +1,5 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { UserDocument, UserEntity, UserModelType } from '../domain/user.entity';
+import { UserDocument, UserEntity, UserModelType } from '../domain/user/user.entity';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

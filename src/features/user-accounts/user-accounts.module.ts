@@ -4,7 +4,7 @@ import { UserService } from './application/user.service';
 import { UserRepository } from './infrastructure/user.repository';
 import { UserQueryRepository } from './infrastructure/query/user.query.repository';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserEntity, UserSchema } from './domain/user.entity';
+import { UserEntity, UserSchema } from './domain/user/user.entity';
 import { AuthController } from './api/auth.controller';
 
 const usersProviders = [UserService, UserRepository, UserQueryRepository];
