@@ -9,6 +9,7 @@ import { NewPasswordDtoService } from '../dto/service/new-password.dto';
 import { RegistrationDtoService } from '../dto/service/registration.dto';
 import { RegistrationConfirmationDtoService } from '../dto/service/registration-confirmation.dto';
 import { RegistrationEmailResendingDtoService } from '../dto/service/registration-email-resending.dto';
+import { emailConfirmationData } from '../../../core/utils/user/email-confirmation.data';
 
 export class UserService {
     constructor(
@@ -17,7 +18,12 @@ export class UserService {
     ) {}
 
     async createUser(dto: UserCreateDtoService) {
-        let user = this.userModel.buildInstance(dto);
+        const extensionDto = {
+            ...dto,
+            ...emailConfirmationData(),
+        };
+
+        let user = this.userModel.buildInstance(extensionDto);
         user = await user.setPassword(dto.password);
         await this.userRepository.save(user);
         return user._id.toString();

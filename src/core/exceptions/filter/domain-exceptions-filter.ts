@@ -1,13 +1,40 @@
-import { Catch, HttpStatus } from '@nestjs/common';
-import { BaseExceptionFilter } from './base-exception-filter';
-import { Request, Response } from 'express';
+//Ошибки класса DomainException (instanceof DomainException)
+import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
 import { DomainExceptionCode } from '../domain-exception-codes';
-import { DomainException } from '../domain-exceptions';
+import { DomainException, ErrorExtension } from '../domain-exceptions';
+export type HttpResponseBody = {
+    timestamp: string;
+    path: string | null;
+    message: string;
+    extensions: ErrorExtension[];
+    code: DomainExceptionCode | null;
+};
+
+export abstract class BaseExceptionFilter implements ExceptionFilter {
+    abstract onCatch(exception: any, response: Response, request: Request): void;
+
+    catch(exception: any, host: ArgumentsHost): any {
+        const ctx = host.switchToHttp();
+        const response = ctx.getResponse();
+        const request = ctx.getRequest();
+
+        this.onCatch(exception, response, request);
+    }
+
+    getDefaultHttpBody(url: string, exception: unknown): HttpResponseBody {
+        return {
+            timestamp: new Date().toISOString(),
+            path: url,
+            message: (exception as any).message || 'Internal server error',
+            code: exception instanceof DomainException ? exception.code : null,
+            extensions: exception instanceof DomainException ? exception.extensions : [],
+        };
+    }
+}
 
 @Catch(DomainException)
 export class DomainExceptionsFilter extends BaseExceptionFilter {
-    // @ts-ignore
-    onCatch(exception: DomainException, response: Response, request: Request): void {
+    onCatch(exception: DomainException, response: any, request: any): void {
         response.status(this.calculateHttpCode(exception)).json(this.getDefaultHttpBody(request.url, exception));
     }
 

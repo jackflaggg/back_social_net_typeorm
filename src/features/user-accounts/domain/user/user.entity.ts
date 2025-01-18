@@ -20,17 +20,23 @@ export class UserEntity {
     @Prop()
     createdAt: Date;
 
-    @Prop({ type: EmailConfirmationSchema, required: true })
+    @Prop({ type: EmailConfirmationSchema, required: false })
     emailConfirmation: EmailConfirmation;
 
     @Prop({ type: String, required: true, default: DeletionStatus.enum['not-deleted'] })
     deletionStatus: DeletionStatusType;
 
     public static buildInstance(dto: any) {
+        console.log(dto);
         const user = new this();
         user.login = dto.login;
         user.email = dto.email;
         user.password = dto.password;
+        user.emailConfirmation = {
+            confirmationCode: dto.emailConfirmation.confirmationCode,
+            expirationDate: dto.emailConfirmation.expirationDate,
+            isConfirmed: dto.emailConfirmation.isConfirmed,
+        };
         return user as UserDocument;
     }
 

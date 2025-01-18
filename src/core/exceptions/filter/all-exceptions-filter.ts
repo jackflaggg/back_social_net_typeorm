@@ -1,11 +1,10 @@
+//сюда прилетают Все ошибки
 import { Catch, HttpException, HttpStatus } from '@nestjs/common';
-import { BaseExceptionFilter } from './base-exception-filter';
-import { Response, Request } from 'express';
+import { BaseExceptionFilter } from './domain-exceptions-filter';
 
 @Catch()
 export class AllExceptionsFilter extends BaseExceptionFilter {
-    // @ts-ignore
-    onCatch(exception: any, response: Response, request: Request): void {
+    onCatch(exception: any, response: any, request: any): void {
         const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
         //TODO: Replace with getter from configService. will be in the following lessons

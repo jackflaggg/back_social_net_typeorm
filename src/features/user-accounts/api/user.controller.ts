@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, UseGuards, UsePipes } from '@nestjs/common';
 import { UserService } from '../application/user.service';
 import { UserQueryRepository } from '../infrastructure/query/user.query.repository';
 import { UserCreateDtoApi } from '../dto/api/user.create.dto';
 import { GetUsersQueryParams } from '../dto/api/get-users-query-params.input-dto';
 import { BasicAuthGuard } from '../../../core/guards/auth.guard';
+import { BodyValidationPipe } from '../../../core/utils/common/validate-config';
+import { UserCreateCommand } from '@libs/contracts/commands/user/create.command';
 
 @UseGuards(BasicAuthGuard)
 @Controller('users')
@@ -12,8 +14,10 @@ export class UserController {
         private readonly userService: UserService,
         private readonly userQueryRepository: UserQueryRepository,
     ) {}
+
     @Post()
     async createUser(@Body() dto: UserCreateDtoApi) {
+        console.log(dto);
         const userId = await this.userService.createUser(dto);
         return this.userQueryRepository.findUser(userId);
     }

@@ -8,7 +8,7 @@ import { pipesSetup } from './setup/pipes.setup';
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     pipesSetup(app);
-    //exceptionFilterSetup(app);
+    exceptionFilterSetup(app);
     interceptorSetup(app);
     app.enableCors();
     app.use(cookieParser());
