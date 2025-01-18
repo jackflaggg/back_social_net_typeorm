@@ -17,7 +17,6 @@ export class UserController {
 
     @Post()
     async createUser(@Body() dto: UserCreateDtoApi) {
-        console.log(dto);
         const userId = await this.userService.createUser(dto);
         return this.userQueryRepository.findUser(userId);
     }

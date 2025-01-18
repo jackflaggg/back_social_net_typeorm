@@ -1,7 +1,7 @@
 import { PipeTransform } from '@nestjs/common';
 import { isValidObjectId, Types } from 'mongoose';
 import { ArgumentMetadata } from '@nestjs/common/interfaces/features/pipe-transform.interface';
-import { BadRequestDomainException } from '../exceptions/domain-exceptions';
+import { BadRequestDomainException } from '../exceptions/incubator-exceptions/domain-exceptions';
 
 export class ObjectIdValidationPipe implements PipeTransform {
     transform(value: any, metadata: ArgumentMetadata) {
