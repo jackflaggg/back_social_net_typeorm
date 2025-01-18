@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { Observable } from 'rxjs';
 import { Request } from 'express';
 import { fromUTF8ToBase64 } from '../utils/common/fromUtf8ToBase64';
-import { UnauthorizedDomainException } from '../exceptions/domain-exceptions';
+import { UnauthorizedDomainException } from '../exceptions/incubator-exceptions/domain-exceptions';
 
 @Injectable()
 export class BasicAuthGuard implements CanActivate {

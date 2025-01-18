@@ -5,7 +5,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { BloggersPlatformModule } from './features/bloggers-platform/bloggers-platform.module';
 import { TestingModule } from './features/testing/testing.module';
 import { UsersModule } from './features/user-accounts/user-accounts.module';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
     imports: [
@@ -21,7 +22,13 @@ import { ThrottlerModule } from '@nestjs/throttler';
         UsersModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        {
+            provide: APP_GUARD,
+            useClass: ThrottlerGuard,
+        },
+        AppService,
+    ],
     exports: [],
 })
 export class AppModule {}
