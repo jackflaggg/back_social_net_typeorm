@@ -3,6 +3,7 @@ import { DeletionStatus, DeletionStatusType } from '@libs/contracts/enums/deleti
 import { HydratedDocument, Model } from 'mongoose';
 import { ExtendedLikesSchema } from '../../posts/domain/extended.like.entity';
 import { defaultLike } from '@libs/contracts/constants/post/default.like.schema';
+import * as Mongoose from 'mongoose';
 
 export interface CommentatorInfoInterface {
     userId: string;
@@ -26,7 +27,7 @@ export class CommentEntity {
     @Prop({ type: Date })
     createdAt: Date;
 
-    @Prop({ type: String, required: true })
+    @Prop({ type: String, required: true, ref: 'Post' })
     postId: string;
 
     @Prop({ type: ExtendedLikesSchema.omit(['newestLikes']), required: true, default: defaultLike })

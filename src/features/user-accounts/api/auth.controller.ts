@@ -18,6 +18,7 @@ export class AuthController {
         private readonly userQueryRepository: UserQueryRepository,
     ) {}
     @HttpCode(200)
+    @UseGuards(ThrottlerGuard)
     @Post('login')
     async login(@Res({ passthrough: true }) res: Response, @Body() dto: AuthLoginDtoApi) {
         const auth = await this.userService.login(dto);
