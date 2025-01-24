@@ -22,7 +22,7 @@ export class PostEntity {
     @Prop({ type: String, required: true, ...contentConstraints })
     content: string;
 
-    @Prop({ type: mongoose.Types.ObjectId, required: true })
+    @Prop({ type: String, required: true, ref: 'Blog' })
     blogId: string;
 
     @Prop({ type: String, required: true })

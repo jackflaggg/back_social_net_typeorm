@@ -3,7 +3,7 @@ import { UserService } from '../application/user.service';
 import { UserQueryRepository } from '../infrastructure/query/user.query.repository';
 import { UserCreateDtoApi } from '../dto/api/user.create.dto';
 import { GetUsersQueryParams } from '../dto/api/get-users-query-params.input-dto';
-import { BasicAuthGuard } from '../../../core/guards/auth.guard';
+import { BasicAuthGuard } from '../../../core/guards/basic.auth.guard';
 import { BodyValidationPipe } from '../../../core/utils/common/validate-config';
 import { UserCreateCommand } from '@libs/contracts/commands/user/create.command';
 
