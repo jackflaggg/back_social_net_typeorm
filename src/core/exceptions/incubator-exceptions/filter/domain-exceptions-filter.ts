@@ -2,12 +2,16 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
 import { DomainExceptionCode } from '../domain-exception-codes';
 import { DomainException, ErrorExtension } from '../domain-exceptions';
+import { ZodValidationException } from 'nestjs-zod';
 export type HttpResponseBody = {
     timestamp: string;
     path: string | null;
     message: string;
     extensions: ErrorExtension[];
     code: DomainExceptionCode | null;
+};
+export type ValidationErrorResponse = {
+    errorsMessages: ErrorExtension[];
 };
 
 export abstract class BaseExceptionFilter implements ExceptionFilter {
@@ -17,17 +21,28 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
         const request = ctx.getRequest();
-
         this.onCatch(exception, response, request);
     }
 
-    getDefaultHttpBody(url: string, exception: unknown): HttpResponseBody {
+    getDefaultHttpBody(url: string, exception: unknown): any {
+        if (exception instanceof ZodValidationException || (exception instanceof DomainException && exception.extensions.length > 0)) {
+            // Return validation error format
+            return {
+                errorsMessages: [
+                    {
+                        message: (exception as any).response.errors[0].message,
+                        field: (exception as any).response.errors[0].path[0],
+                    },
+                ],
+            };
+        }
         return {
-            timestamp: new Date().toISOString(),
-            path: url,
-            message: (exception as any).message || 'Internal server error',
-            code: exception instanceof DomainException ? exception.code : null,
-            extensions: exception instanceof DomainException ? exception.extensions : [],
+            errorsMessages: [
+                {
+                    message: (exception as any).response.errors[0].message,
+                    field: (exception as any).response.errors[0].path[0],
+                },
+            ],
         };
     }
 }

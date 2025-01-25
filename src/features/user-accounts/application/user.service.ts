@@ -29,11 +29,7 @@ export class UserService {
         return user._id.toString();
     }
     async deleteUser(id: string) {
-        const user = await this.userRepository.findUserById(id);
-
-        if (!user) {
-            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-        }
+        const user = await this.userRepository.findUserByIdOrFail(id);
 
         user.makeDeleted();
 

@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
 import { fromUTF8ToBase64 } from '../utils/common/fromUtf8ToBase64';
@@ -17,8 +17,7 @@ export class BasicAuthGuard implements CanActivate {
             throw UnauthorizedDomainException.create();
         }
 
-        const coded = fromUTF8ToBase64(this.date);
-
+        const coded = fromUTF8ToBase64(this.date).toString();
         if (authHeader.slice(6) !== coded) {
             throw UnauthorizedDomainException.create();
         }

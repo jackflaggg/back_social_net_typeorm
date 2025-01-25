@@ -27,7 +27,6 @@ export class UserEntity {
     deletionStatus: DeletionStatusType;
 
     public static buildInstance(dto: any) {
-        console.log(dto);
         const user = new this();
         user.login = dto.login;
         user.email = dto.email;
