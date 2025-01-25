@@ -14,18 +14,18 @@ export class PostService {
     ) {}
 
     async createPost(dto: PostCreateDtoService) {
-        const blog = await this.blogsRepository.findBlogById(dto.blogId);
+        const blog = await this.blogsRepository.findBlogByIdOrFail(dto.blogId);
         if (!blog) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
-        const post = this.postModel.buildInstance(dto, blog.name);
+        const post = this.postModel.buildInstance(dto, dto.blogId, blog.name);
         await this.postsRepository.save(post);
         return post._id.toString();
     }
 
     async updatePost(id: string, dto: PostUpdateDtoService) {
         const post = await this.postsRepository.findPostById(id);
-        const blog = await this.blogsRepository.findBlogById(dto.blogId);
+        const blog = await this.blogsRepository.findBlogByIdOrFail(dto.blogId);
         if (!blog) {
             throw new HttpException('Not found blog', HttpStatus.NOT_FOUND);
         }

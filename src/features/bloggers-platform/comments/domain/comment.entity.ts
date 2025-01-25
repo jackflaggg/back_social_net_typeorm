@@ -3,7 +3,7 @@ import { DeletionStatus, DeletionStatusType } from '@libs/contracts/enums/deleti
 import { HydratedDocument, Model } from 'mongoose';
 import { ExtendedLikesSchema } from '../../posts/domain/extended.like.entity';
 import { defaultLike } from '@libs/contracts/constants/post/default.like.schema';
-import * as Mongoose from 'mongoose';
+import { CommentCreateToPostApi } from '../../posts/dto/api/comment.create.to.post';
 
 export interface CommentatorInfoInterface {
     userId: string;
@@ -36,8 +36,9 @@ export class CommentEntity {
     @Prop({ type: String, required: true, default: DeletionStatus.enum['not-deleted'] })
     deletionStatus: DeletionStatusType;
 
-    public static buildInstance(dto: any): CommentDocument {
+    public static buildInstance(dto: CommentCreateToPostApi): CommentDocument {
         const comment = new this();
+        comment.content = dto.content;
         return comment as CommentDocument;
     }
 

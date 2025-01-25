@@ -7,6 +7,7 @@ import { GetPostsQueryParams } from '../../dto/api/get-posts-query-params.input.
 import { PostViewDto } from '../../dto/repository/post-view';
 import { PaginationParams } from '../../../../../core/dto/base.query-params.input-dto';
 import { getPostsQuery } from '../../../../../core/utils/post/query.insert.get';
+import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 @Injectable()
 export class PostsQueryRepository {
@@ -49,7 +50,8 @@ export class PostsQueryRepository {
     async getPost(id: string) {
         const post = await this.postModel.findOne({ _id: id, deletionStatus: DeletionStatus.enum['not-deleted'] });
         if (!post) {
-            return void 0;
+            throw NotFoundDomainException.create('Post not found');
+            //return void 0;
         }
         return PostViewDto.mapToView(post);
     }

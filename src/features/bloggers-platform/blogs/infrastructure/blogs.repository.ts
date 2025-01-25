@@ -1,8 +1,8 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { BlogDocument, BlogEntity, BlogModelType } from '../domain/blog.entity';
 import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import * as mongoose from 'mongoose';
+import { Injectable } from '@nestjs/common';
+import { NotFoundDomainException } from '../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 @Injectable()
 export class BlogsRepository {
@@ -12,10 +12,11 @@ export class BlogsRepository {
         await blog.save();
     }
 
-    async findBlogById(id: string): Promise<BlogDocument | void> {
+    async findBlogByIdOrFail(id: string): Promise<BlogDocument> {
         const result = await this.blogModel.findOne({ _id: id, deletionStatus: DeletionStatus.enum['not-deleted'] });
         if (!result) {
-            return void 0;
+            throw NotFoundDomainException.create('Blog not found');
+            //return void 0;
         }
         return result;
     }

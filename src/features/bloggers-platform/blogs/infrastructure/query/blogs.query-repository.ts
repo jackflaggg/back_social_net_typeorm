@@ -7,6 +7,7 @@ import { PaginatedBlogViewDto } from '../../../../../core/dto/base.paginated.vie
 import { Injectable } from '@nestjs/common';
 import { PaginationParams } from '../../../../../core/dto/base.query-params.input-dto';
 import { getBlogsQuery } from '../../../../../core/utils/blog/query.insert.blog';
+import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 @Injectable()
 export class BlogsQueryRepository {
@@ -40,7 +41,8 @@ export class BlogsQueryRepository {
     async getBlog(id: string) {
         const blog = await this.blogModel.findOne({ _id: id, deletionStatus: DeletionStatus.enum['not-deleted'] });
         if (!blog) {
-            return void 0;
+            throw NotFoundDomainException.create('Blog not found');
+            //return void 0;
         }
         return BlogViewDto.mapToView(blog);
     }
