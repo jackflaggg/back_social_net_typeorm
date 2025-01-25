@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { trimString } from '../post/post.models';
 import { contentConstraints } from '../../constants/comment/comment-property.constraints';
+import { StatusLike } from '../../enums/status.like';
 
 export const CommentModels = z.object({
     id: z.string().transform(trimString),
@@ -10,7 +11,9 @@ export const CommentModels = z.object({
         userLogin: z.string().transform(trimString),
     }),
     createdAt: z.date(),
-    postId: z.string(),
-    likesCount: z.string(),
-    dislikesCount: z.string(),
+    likesInfo: z.object({
+        likesCount: z.string(),
+        dislikesCount: z.string(),
+        myStatus: StatusLike,
+    }),
 });

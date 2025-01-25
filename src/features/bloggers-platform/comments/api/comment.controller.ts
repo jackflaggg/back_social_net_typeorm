@@ -12,6 +12,7 @@ export class CommentController {
         }
         return comment;
     }
+
     @Put('/:commentId')
     async updateComment(@Param('commentId') id: string) {}
 

@@ -10,6 +10,7 @@ import { ExtendedLikesEntity, ExtendedLikesSchema } from './extended.like.entity
 import { defaultLike } from '@libs/contracts/constants/post/default.like.schema';
 import { PostToBlogCreateDtoService } from '../../blogs/dto/service/blog.to.post.create.dto';
 import { PostUpdateDtoService } from '../dto/service/post.update.dto';
+import { PostToBlogCreateDtoApi } from '../../blogs/dto/api/blog.to.post.create.dto';
 
 @Schema({ timestamps: true })
 export class PostEntity {
@@ -41,13 +42,13 @@ export class PostEntity {
     })
     extendedLikesInfo: ExtendedLikesEntity;
 
-    static buildInstance(dto: PostToBlogCreateDtoService, blogName: string): PostDocument {
+    static buildInstance(dto: PostToBlogCreateDtoApi, blogId: string, blogName: string): PostDocument {
         const post = new this();
 
         post.title = dto.title;
         post.shortDescription = dto.shortDescription;
         post.content = dto.content;
-        post.blogId = dto.blogId;
+        post.blogId = blogId;
         post.blogName = blogName;
 
         return post as PostDocument;
