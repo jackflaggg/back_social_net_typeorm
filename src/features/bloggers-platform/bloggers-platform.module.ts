@@ -9,7 +9,6 @@ import { PostEntity, PostSchema } from './posts/domain/post.entity';
 import { NewestLikesEntity, NewestLikesSchema } from './posts/domain/last.three.likes.entity';
 import { ExtendedLikesEntity, ExtendedLikesSchema } from './posts/domain/extended.like.entity';
 import { PostsQueryRepository } from './posts/infrastructure/query/posts.query-repository';
-import { PostService } from './posts/application/post.service';
 import { PostsController } from './posts/api/post.controller';
 import { CommentController } from './comments/api/comment.controller';
 import { CommentEntity, CommentSchema } from './comments/domain/comment.entity';
@@ -19,6 +18,9 @@ import { DeleteBlogUseCase } from './blogs/application/usecases/delete-blog.usec
 import { UpdateBlogUseCase } from './blogs/application/usecases/update-blog.usecase';
 import { CreatePostToBlogUseCase } from './blogs/application/usecases/create-post-to-blog.usecase';
 import { CqrsModule } from '@nestjs/cqrs';
+import { CreatePostUseCase } from './posts/application/usecases/create-post.usecase';
+import { DeletePostUseCase } from './posts/application/usecases/delete-post.usecase';
+import { UpdatePostUseCase } from './posts/application/usecases/update-post.usecase';
 
 const blogsProviders = [
     CreateBlogUseCase,
@@ -31,7 +33,7 @@ const blogsProviders = [
 
 const commentsProviders = [CommentsQueryRepository];
 
-const postsProviders = [PostService, PostsQueryRepository, PostsRepository];
+const postsProviders = [CreatePostUseCase, DeletePostUseCase, UpdatePostUseCase, PostsQueryRepository, PostsRepository];
 
 @Module({
     imports: [

@@ -29,11 +29,11 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
         @InjectModel(CommentEntity.name) private CommentModel: CommentModelType,
     ) {}
     async execute(command: CreateCommentCommand) {
-        const post = await this.postsRepository.findPostById(command.postId);
+        const post = await this.postsRepository.findPostByIdOrFail(command.postId);
         if (!post) {
             throw NotFoundDomainException.create('Post not found');
         }
-        const user = await this.usersRepository.findUserById(command.user.userId);
+        const user = await this.usersRepository.findUserByIdOrFail(command.user.userId);
         if (!user) {
             throw NotFoundDomainException.create('User not found');
         }

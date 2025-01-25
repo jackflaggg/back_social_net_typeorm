@@ -12,17 +12,20 @@ import {
     Put,
     Query,
 } from '@nestjs/common';
-import { PostService } from '../application/post.service';
 import { PostsQueryRepository } from '../infrastructure/query/posts.query-repository';
 import { GetPostsQueryParams } from '../dto/api/get-posts-query-params.input.dto';
 import { PostCreateDtoApi } from '../dto/api/post.create.dto';
 import { PostUpdateDtoApi } from '../dto/api/post.update.dto';
 import { CommentCreateToPostApi } from '../dto/api/comment.create.to.post';
+import { CommandBus } from '@nestjs/cqrs';
+import { CreatePostCommand } from '../application/usecases/create-post.usecase';
+import { UpdatePostCommand } from '../application/usecases/update-post.usecase';
+import { DeletePostCommand } from '../application/usecases/delete-post.usecase';
 
 @Controller('posts')
 export class PostsController {
     constructor(
-        private readonly postService: PostService,
+        private readonly commandBus: CommandBus,
         private readonly postsQueryRepository: PostsQueryRepository,
     ) {}
 
@@ -42,22 +45,18 @@ export class PostsController {
 
     @Post()
     async createPost(@Body() dto: PostCreateDtoApi) {
-        const postId = await this.postService.createPost(dto);
-        const post = await this.postsQueryRepository.getPost(postId);
-        if (!post) {
-            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-        }
-        return post;
+        const postId = await this.commandBus.execute(new CreatePostCommand(dto));
+        return await this.postsQueryRepository.getPost(postId);
     }
     @HttpCode(204)
     @Put(':postId')
     async updatePost(@Param('postId') postId: string, @Body() dto: PostUpdateDtoApi) {
-        return await this.postService.updatePost(postId, dto);
+        return await this.commandBus.execute(new UpdatePostCommand(postId, dto));
     }
     @HttpCode(204)
     @Delete(':postId')
     async deleteBlog(@Param('postId') postId: string) {
-        return await this.postService.deletePost(postId);
+        return await this.commandBus.execute(new DeletePostCommand(postId));
     }
 
     @Post(':postId/comments')

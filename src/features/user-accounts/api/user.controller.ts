@@ -15,6 +15,7 @@ export class UserController {
         private readonly userQueryRepository: UserQueryRepository,
     ) {}
 
+    @UseGuards(BasicAuthGuard)
     @Post()
     async createUser(@Body() dto: UserCreateDtoApi) {
         const userId = await this.userService.createUser(dto);
