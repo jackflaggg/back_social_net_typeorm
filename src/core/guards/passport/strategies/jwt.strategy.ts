@@ -1,28 +1,28 @@
-import { PassportStrategy } from '@nestjs/passport';
 import { Inject, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserRepository } from '../../../../features/user-accounts/infrastructure/user.repository';
-import { configSchema } from '../../../config/app-config/core.config.schema';
-import { getJWTConfig } from '../../../config/jwt/jwt.config';
+import { UnauthorizedDomainException } from '../../../exceptions/incubator-exceptions/domain-exceptions';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt-access') {
+export class AccessTokenStrategy extends PassportStrategy(Strategy, 'accessToken') {
     constructor(
+        private readonly configService: ConfigService,
         @Inject() private readonly usersRepository: UserRepository,
-        private readonly coreConfig: typeof configSchema,
     ) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: getJWTConfig(),
+            secretOrKey: configService.getOrThrow('ACCESS_TOKEN_JWT_SECRET'),
         });
     }
-    /**
-     * функция принимает payload из jwt токена и возвращает то, что будет записано в req.user
-     * @param payload
-     */
-    validate(payload: any) {
-        // в пэйлоуд будут лежать раскодированные данные!!!!!
-        return { id: payload.sub };
+
+    async validate(payload: any) {
+        const user = await this.usersRepository.findUserByIdOrFail(payload.userId);
+        if (!user) {
+            throw UnauthorizedDomainException.create();
+        }
+        return payload;
     }
 }
