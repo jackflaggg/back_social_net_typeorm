@@ -25,7 +25,10 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
     }
 
     getDefaultHttpBody(url: string, exception: unknown): any {
-        if (exception instanceof ZodValidationException || (exception instanceof DomainException && exception.extensions.length > 0)) {
+        if (
+            (exception as any).status === 400 &&
+            (exception instanceof ZodValidationException || (exception instanceof DomainException && exception.extensions.length > 0))
+        ) {
             // Return validation error format
             return {
                 errorsMessages: [
@@ -37,12 +40,10 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
             };
         }
         return {
-            errorsMessages: [
-                {
-                    message: (exception as any).response.errors[0].message,
-                    field: (exception as any).response.errors[0].path[0],
-                },
-            ],
+            timestamp: new Date().getTime().toString(),
+            path: url,
+            message: (exception as any).message || 'Internal server error',
+            code: exception instanceof DomainException ? exception.code.toString() : null,
         };
     }
 }
