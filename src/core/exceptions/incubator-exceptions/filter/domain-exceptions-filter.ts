@@ -30,6 +30,7 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
             (exception instanceof ZodValidationException || (exception instanceof DomainException && exception.extensions.length > 0))
         ) {
             // Return validation error format
+
             return {
                 errorsMessages: [
                     {
