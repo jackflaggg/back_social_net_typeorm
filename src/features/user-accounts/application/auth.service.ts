@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { UserDocument } from '../domain/user/user.entity';
 import { EventBus, EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { UserRepository } from '../infrastructure/user.repository';
+import { compare } from 'bcrypt';
 
 export class UserLoggedInEvent {
     constructor(public readonly userId: string) {}
@@ -15,12 +16,16 @@ export class AuthService {
         private readonly eventBus: EventBus, // Внедрение EventBus
     ) {}
 
-    async validateUser(payload: any): Promise<UserDocument> {
-        const user = await this.usersRepository.findUserByLoginOrEmail(payload);
+    async validateUser(userName: string, password: string): Promise<UserDocument> {
+        const user = await this.usersRepository.findUserByLoginOrEmail(userName);
         if (!user) {
             throw UnauthorizedDomainException.create();
         }
 
+        const comparePassword = await compare(password, user.password);
+        if (!comparePassword) {
+            throw UnauthorizedDomainException.create();
+        }
         // Генерация события при успешной аутентификации
         this.eventBus.publish(new UserLoggedInEvent(user._id.toString()));
 
