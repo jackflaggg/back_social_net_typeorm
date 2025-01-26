@@ -5,27 +5,31 @@ const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const loginRegex = /^[a-zA-Z0-9.-]+$/;
 
 const UserLoginRequestSchema = z.object({
-    //TODO#1: Сделать в зависимости от введенных данных!
-    loginOrEmail: z.string().refine((value: any) => {
-        if (typeof value !== 'string' || value.trim() === '') {
-            return false;
-        }
+    loginOrEmail: z
+        .string()
+        .refine((value: any) => {
+            if (typeof value !== 'string' || value.trim() === '') {
+                return false;
+            }
 
-        const trimmedValue = value.trim();
+            const trimmedValue = value.trim();
 
-        if (trimmedValue.length < 3) {
-            return false;
-        }
+            if (trimmedValue.length < 3) {
+                return false;
+            }
 
-        if (trimmedValue.includes('@')) {
-            return emailRegex.test(trimmedValue);
-        }
+            if (trimmedValue.includes('@')) {
+                return emailRegex.test(trimmedValue);
+            }
 
-        return loginRegex.test(trimmedValue);
-    }),
-    password: z.string().min(passwordConstraints.minLength).max(passwordConstraints.maxLength).trim(),
-    ip: z.string(),
-    userAgent: z.string(),
+            return loginRegex.test(trimmedValue);
+        })
+        .transform(value => value.trim()),
+    password: z
+        .string()
+        .min(passwordConstraints.minLength)
+        .max(passwordConstraints.maxLength)
+        .transform(value => value.trim()),
 });
 
 const UserLoginResponseSchema = z.object({

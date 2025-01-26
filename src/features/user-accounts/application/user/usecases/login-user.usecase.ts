@@ -1,19 +1,20 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserRepository } from '../../../infrastructure/user.repository';
-import { LoginDtoService } from '../../../dto/service/login.dto';
+import { randomUUID } from 'node:crypto';
 
 export class LoginUserCommand {
-    constructor(public readonly payload: LoginDtoService) {}
+    constructor(
+        public readonly loginOrEmail: string,
+        private readonly password: string,
+        private readonly ip: string,
+        private readonly userAgent: string,
+    ) {}
 }
 
 @CommandHandler(LoginUserCommand)
 export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
     constructor(private readonly userRepository: UserRepository) {}
     async execute(command: LoginUserCommand) {
-        const user = await this.userRepository.findUserByIdOrFail(command.payload.loginOrEmail);
-
-        user.makeDeleted();
-
-        await this.userRepository.save(user);
+        return randomUUID();
     }
 }
