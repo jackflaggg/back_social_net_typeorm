@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, UseGuards, UsePipes } from '@nestjs/common';
-import { UserService } from '../application/user.service';
+import { UserService } from '../application/user/user.service';
 import { UserQueryRepository } from '../infrastructure/query/user.query.repository';
 import { UserCreateDtoApi } from '../dto/api/user.create.dto';
 import { GetUsersQueryParams } from '../dto/api/get-users-query-params.input-dto';

@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, Post, Query, Res, UseGuards } from '@nestjs/common';
-import { UserService } from '../application/user.service';
+import { UserService } from '../application/user/user.service';
 import { UserQueryRepository } from '../infrastructure/query/user.query.repository';
 import { GetUsersQueryParams } from '../dto/api/get-users-query-params.input-dto';
 import { AuthLoginDtoApi } from '../dto/api/auth.login.dto';
@@ -8,8 +8,10 @@ import { AuthNewPasswordDtoApi } from '../dto/api/auth.new-password.dto';
 import { AuthRegistrationDtoApi } from '../dto/api/auth.registration.dto';
 import { AuthRegistrationConfirmationDtoApi } from '../dto/api/auth.registration-confirmation.dto';
 import { AuthRegistrationEmailResendingDtoApi } from '../dto/api/auth.registration-email-resending.dto';
-import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
-import { Request, Response } from 'express';
+import { ThrottlerGuard } from '@nestjs/throttler';
+import { Response } from 'express';
+import { LocalAuthGuard } from '../../../core/guards/passport/guards/local.auth.guard';
+import { JwtAuthGuard } from '../../../core/guards/passport/guards/jwt.auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -18,7 +20,7 @@ export class AuthController {
         private readonly userQueryRepository: UserQueryRepository,
     ) {}
     @HttpCode(200)
-    @UseGuards(ThrottlerGuard)
+    @UseGuards(ThrottlerGuard, LocalAuthGuard)
     @Post('login')
     async login(@Res({ passthrough: true }) res: Response, @Body() dto: AuthLoginDtoApi) {
         const auth = await this.userService.login(dto);
@@ -57,7 +59,7 @@ export class AuthController {
     async registrationEmailResend(@Body() dto: AuthRegistrationEmailResendingDtoApi) {
         return this.userService.emailResend(dto);
     }
-
+    @UseGuards(JwtAuthGuard)
     @Get('me')
     async me(@Query() query: GetUsersQueryParams) {
         return this.userQueryRepository.getAllUsers(query);

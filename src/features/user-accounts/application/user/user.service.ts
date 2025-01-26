@@ -1,15 +1,14 @@
-import { UserRepository } from '../infrastructure/user.repository';
+import { UserRepository } from '../../infrastructure/user.repository';
 import { InjectModel } from '@nestjs/mongoose';
-import { UserEntity, UserModelType } from '../domain/user/user.entity';
-import { UserCreateDtoService } from '../dto/service/user.create.dto';
-import { HttpException, HttpStatus } from '@nestjs/common';
-import { LoginDtoService } from '../dto/service/login.dto';
-import { PasswordRecoveryDtoService } from '../dto/service/password-recovery.dto';
-import { NewPasswordDtoService } from '../dto/service/new-password.dto';
-import { RegistrationDtoService } from '../dto/service/registration.dto';
-import { RegistrationConfirmationDtoService } from '../dto/service/registration-confirmation.dto';
-import { RegistrationEmailResendingDtoService } from '../dto/service/registration-email-resending.dto';
-import { emailConfirmationData } from '../../../core/utils/user/email-confirmation.data';
+import { UserEntity, UserModelType } from '../../domain/user/user.entity';
+import { UserCreateDtoService } from '../../dto/service/user.create.dto';
+import { LoginDtoService } from '../../dto/service/login.dto';
+import { PasswordRecoveryDtoService } from '../../dto/service/password-recovery.dto';
+import { NewPasswordDtoService } from '../../dto/service/new-password.dto';
+import { RegistrationDtoService } from '../../dto/service/registration.dto';
+import { RegistrationConfirmationDtoService } from '../../dto/service/registration-confirmation.dto';
+import { RegistrationEmailResendingDtoService } from '../../dto/service/registration-email-resending.dto';
+import { emailConfirmationData } from '../../../../core/utils/user/email-confirmation.data';
 
 export class UserService {
     constructor(
