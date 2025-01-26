@@ -6,8 +6,9 @@ import { UserQueryRepository } from './infrastructure/query/user.query.repositor
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserEntity, UserSchema } from './domain/user/user.entity';
 import { AuthController } from './api/auth.controller';
+import { BasicStrategy } from '../../core/guards/passport/strategies/basic.strategy';
 
-const usersProviders = [UserService, UserRepository, UserQueryRepository];
+const usersProviders = [UserService, UserRepository, UserQueryRepository, BasicStrategy];
 
 @Module({
     imports: [MongooseModule.forFeature([{ name: UserEntity.name, schema: UserSchema }])],
