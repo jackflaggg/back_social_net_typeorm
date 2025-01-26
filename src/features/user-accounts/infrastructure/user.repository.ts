@@ -24,7 +24,7 @@ export class UserRepository {
         const filter = {
             $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
         };
-        const findUser = await this.userModel.findOne(filter, { deletionStatus: DeletionStatus.enum['not-deleted'] }).lean();
+        const findUser = await this.userModel.findOne({ ...filter, deletionStatus: DeletionStatus.enum['not-deleted'] });
         if (!findUser) {
             return void 0;
         }
