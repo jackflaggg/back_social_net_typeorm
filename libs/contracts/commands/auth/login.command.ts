@@ -4,6 +4,8 @@ const UserLoginRequestSchema = z.object({
     //TODO#1: Сделать в зависимости от введенных данных!
     loginOrEmail: z.string(),
     password: z.string(),
+    ip: z.string(),
+    agent: z.string(),
 });
 
 const UserLoginResponseSchema = z.object({
