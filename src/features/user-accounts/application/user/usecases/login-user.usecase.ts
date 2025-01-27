@@ -26,6 +26,5 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
         const accessToken = this.jwtService.sign(payloadForJwt, { expiresIn: '10m', secret: 'local' });
         const refreshToken = this.jwtService.sign(payloadForJwt, { expiresIn: '5d', secret: 'refresh' });
         const decodedData = this.jwtService.decode(refreshToken);
-        await this.commandBus.execute();
     }
 }

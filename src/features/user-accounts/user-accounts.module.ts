@@ -14,6 +14,7 @@ import { LocalStrategy } from '../../core/guards/passport/strategies/local.strat
 import { ValidateUserUseCase } from './application/user/usecases/validate-user.usecase';
 import { LoginUserUseCase } from './application/user/usecases/login-user.usecase';
 import { AuthService, UserLoggedInEventHandler } from './application/auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 const usersProviders = [
     AuthService,
@@ -26,6 +27,7 @@ const usersProviders = [
     LocalStrategy,
     CreateUserUseCase,
     DeleteUserUseCase,
+    JwtService,
 ];
 
 @Module({
