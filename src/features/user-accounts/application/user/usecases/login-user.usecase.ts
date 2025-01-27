@@ -5,10 +5,9 @@ import { JwtService } from '@nestjs/jwt';
 
 export class LoginUserCommand {
     constructor(
-        private readonly password: string,
-        private readonly ip: string = '255.255.255.0',
-        private readonly userAgent: string = 'google',
-        private readonly user: any,
+        public readonly ip: string = '255.255.255.0',
+        public readonly userAgent: string = 'google',
+        public readonly user: any,
     ) {}
 }
 
@@ -19,7 +18,14 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
         private readonly commandBus: CommandBus,
     ) {}
     async execute(command: LoginUserCommand) {
-        console.log(command);
-        return randomUUID();
+        const deviceId = randomUUID();
+        const payloadForJwt = {
+            userId: command.user,
+            deviceId,
+        };
+        const accessToken = this.jwtService.sign(payloadForJwt, { expiresIn: '10m', secret: 'local' });
+        const refreshToken = this.jwtService.sign(payloadForJwt, { expiresIn: '5d', secret: 'refresh' });
+        const decodedData = this.jwtService.decode(refreshToken);
+        await this.commandBus.execute();
     }
 }
