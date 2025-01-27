@@ -1,5 +1,4 @@
-import { Body, Controller, Get, HttpCode, Post, Query, Req, Res, UseGuards, UsePipes } from '@nestjs/common';
-import { UserService } from '../application/user/user.service';
+import { Body, Controller, Get, HttpCode, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { UserQueryRepository } from '../infrastructure/query/user.query.repository';
 import { GetUsersQueryParams } from '../dto/api/get-users-query-params.input-dto';
 import { AuthLoginDtoApi } from '../dto/api/auth.login.dto';
@@ -14,7 +13,6 @@ import { LocalAuthGuard } from '../../../core/guards/passport/guards/local.auth.
 import { JwtAuthGuard } from '../../../core/guards/passport/guards/jwt.auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { LoginUserCommand } from '../application/user/usecases/login-user.usecase';
-import { ZodValidationPipe } from 'nestjs-zod';
 
 @Controller('auth')
 export class AuthController {
@@ -26,7 +24,8 @@ export class AuthController {
     @UseGuards(ThrottlerGuard, LocalAuthGuard)
     @Post('login')
     async login(@Req() req: Request, @Res({ passthrough: true }) res: Response, @Body() dto: AuthLoginDtoApi) {
-        console.log(dto);
+        console.log('я тут! ' + req.user);
+        const auth = await this.commandBus.execute(new LoginUserCommand(dto.loginOrEmail, dto.password, req.ip, req.headers['user-agent']));
         //res.cookie('refreshToken', auth, { httpOnly: true, secure: true, maxAge: 86400 });
         return {
             accessToken: 'auth',

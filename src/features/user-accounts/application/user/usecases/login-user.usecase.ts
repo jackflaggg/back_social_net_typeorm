@@ -6,8 +6,8 @@ export class LoginUserCommand {
     constructor(
         public readonly loginOrEmail: string,
         private readonly password: string,
-        private readonly ip: string,
-        private readonly userAgent: string,
+        private readonly ip: string = '255.255.255.0',
+        private readonly userAgent: string = 'google',
     ) {}
 }
 
