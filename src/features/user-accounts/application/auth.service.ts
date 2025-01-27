@@ -16,7 +16,7 @@ export class AuthService {
         private readonly eventBus: EventBus, // Внедрение EventBus
     ) {}
 
-    async validateUser(userName: string, password: string): Promise<string> {
+    async validateUser(userName: string, password: string) {
         const user = await this.usersRepository.findUserByLoginOrEmail(userName);
         if (!user) {
             throw UnauthorizedDomainException.create();
@@ -29,7 +29,7 @@ export class AuthService {
         // Генерация события при успешной аутентификации
         this.eventBus.publish(new UserLoggedInEvent(user._id.toString()));
 
-        return user._id.toString();
+        return user;
     }
 }
 

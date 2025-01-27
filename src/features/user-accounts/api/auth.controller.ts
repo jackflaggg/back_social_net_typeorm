@@ -24,8 +24,7 @@ export class AuthController {
     @UseGuards(ThrottlerGuard, LocalAuthGuard)
     @Post('login')
     async login(@Req() req: Request, @Res({ passthrough: true }) res: Response, @Body() dto: AuthLoginDtoApi) {
-        console.log('я тут! ' + req.user);
-        const auth = await this.commandBus.execute(new LoginUserCommand(dto.loginOrEmail, dto.password, req.ip, req.headers['user-agent']));
+        const auth = await this.commandBus.execute(new LoginUserCommand(dto.password, req.ip, req.headers['user-agent'], req.user));
         //res.cookie('refreshToken', auth, { httpOnly: true, secure: true, maxAge: 86400 });
         return {
             accessToken: 'auth',
