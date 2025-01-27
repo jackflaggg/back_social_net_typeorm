@@ -12,6 +12,7 @@ import { Response, Request } from 'express';
 import { LocalAuthGuard } from '../../../core/guards/passport/guards/local.auth.guard';
 import { JwtAuthGuard } from '../../../core/guards/passport/guards/jwt.auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
+import { LoginUserCommand } from '../application/user/usecases/login-user.usecase';
 
 @Controller('auth')
 export class AuthController {
@@ -23,6 +24,7 @@ export class AuthController {
     @UseGuards(ThrottlerGuard, LocalAuthGuard)
     @Post('login')
     async login(@Req() req: Request, @Res({ passthrough: true }) res: Response, @Body() dto: AuthLoginDtoApi) {
+        console.log('я тут! ' + req.user);
         const auth = await this.commandBus.execute(new LoginUserCommand(dto.loginOrEmail, dto.password, req.ip, req.headers['user-agent']));
         //res.cookie('refreshToken', auth, { httpOnly: true, secure: true, maxAge: 86400 });
         return {
