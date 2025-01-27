@@ -2,7 +2,7 @@ import { UnauthorizedDomainException } from '../../../core/exceptions/incubator-
 import { Inject, Injectable } from '@nestjs/common';
 import { UserDocument } from '../domain/user/user.entity';
 import { EventBus, EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { UserRepository } from '../infrastructure/user.repository';
+import { UserRepository } from '../infrastructure/user/user.repository';
 import { compare } from 'bcrypt';
 
 export class UserLoggedInEvent {

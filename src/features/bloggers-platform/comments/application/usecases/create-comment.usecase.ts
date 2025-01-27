@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostsRepository } from '../../../posts/infrastructure/post.repository';
 import { CommentRepository } from '../../infrastructure/comment.repository';
-import { UserRepository } from '../../../../user-accounts/infrastructure/user.repository';
+import { UserRepository } from '../../../../user-accounts/infrastructure/user/user.repository';
 import { InjectModel } from '@nestjs/mongoose';
 import { CommentEntity, CommentModelType } from '../../domain/comment.entity';
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';

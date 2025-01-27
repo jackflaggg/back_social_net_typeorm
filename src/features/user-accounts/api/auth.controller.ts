@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
-import { UserQueryRepository } from '../infrastructure/query/user.query.repository';
+import { UserQueryRepository } from '../infrastructure/user/query/user.query.repository';
 import { GetUsersQueryParams } from '../dto/api/get-users-query-params.input-dto';
 import { AuthLoginDtoApi } from '../dto/api/auth.login.dto';
 import { AuthPasswordRecoveryDtoApi } from '../dto/api/auth.password-recovery.dto';
@@ -24,7 +24,7 @@ export class AuthController {
     @UseGuards(ThrottlerGuard, LocalAuthGuard)
     @Post('login')
     async login(@Req() req: Request, @Res({ passthrough: true }) res: Response, @Body() dto: AuthLoginDtoApi) {
-        const auth = await this.commandBus.execute(new LoginUserCommand(dto.password, req.ip, req.headers['user-agent'], req.user));
+        const auth = await this.commandBus.execute(new LoginUserCommand(req.ip, req.headers['user-agent'], req.user));
         //res.cookie('refreshToken', auth, { httpOnly: true, secure: true, maxAge: 86400 });
         return {
             accessToken: 'auth',
