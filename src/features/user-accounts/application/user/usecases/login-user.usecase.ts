@@ -21,7 +21,7 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
     async execute(command: LoginUserCommand) {
         const deviceId = randomUUID();
         const payloadForJwt = {
-            userId: command.user,
+            userId: command.user._id.toString(),
             deviceId,
         };
         const accessToken = this.jwtService.sign(payloadForJwt, { expiresIn: '10m', secret: 'local' });
@@ -31,7 +31,7 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
 
         const dateDevices = new Date(Number(decodedData.iat) * 1000);
 
-        await this.commandBus.execute(new CreateSessionCommand(command.ip, command.userAgent, payloadForJwt, refreshToken));
+        await this.commandBus.execute(new CreateSessionCommand(command.ip, command.userAgent, payloadForJwt, refreshToken, dateDevices));
         return {
             jwt: accessToken,
             refresh: refreshToken,

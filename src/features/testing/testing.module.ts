@@ -5,6 +5,7 @@ import { BlogEntity, BlogSchema } from '../bloggers-platform/blogs/domain/blog.e
 import { PostEntity, PostSchema } from '../bloggers-platform/posts/domain/post.entity';
 import { CommentEntity, CommentSchema } from '../bloggers-platform/comments/domain/comment.entity';
 import { UserEntity, UserSchema } from '../user-accounts/domain/user/user.entity';
+import { DeviceEntity, DeviceSchema } from '../user-accounts/domain/device/device.entity';
 
 @Module({
     imports: [
@@ -13,6 +14,7 @@ import { UserEntity, UserSchema } from '../user-accounts/domain/user/user.entity
             { name: PostEntity.name, schema: PostSchema },
             { name: CommentEntity.name, schema: CommentSchema },
             { name: UserEntity.name, schema: UserSchema },
+            { name: DeviceEntity.name, schema: DeviceSchema },
         ]),
     ],
     controllers: [TestingController],
