@@ -31,18 +31,22 @@ export class AuthService {
 
         return user;
     }
-    async uniqueUser(login: string, email: string) {
-        const [one, two] = await Promise.all([
-            this.usersRepository.findUserByLoginOrEmail(login),
-            await this.usersRepository.findUserByLoginOrEmail(email),
-        ]);
+    async uniqueLoginUser(login: string) {
+        const one = await this.usersRepository.findUserByLoginOrEmail(login);
 
-        console.log(one, two);
-        if (one || two) {
-            console.log('я тут!');
+        if (one) {
             throw UnauthorizedDomainException.create('поля должны быть уникальными!');
         }
-        return !(one || two);
+        return !one;
+    }
+
+    async uniqueEmailUser(email: string) {
+        const one = await this.usersRepository.findUserByLoginOrEmail(email);
+
+        if (one) {
+            throw UnauthorizedDomainException.create('поля должны быть уникальными!');
+        }
+        return !one;
     }
 }
 

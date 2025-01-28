@@ -17,7 +17,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateSessionUseCase } from './application/device/usecases/create-session.usecase';
 import { DeviceEntity, DeviceSchema } from './domain/device/device.entity';
 import { SessionRepository } from './infrastructure/sessions/session.repository';
-import { UniqueStrategy } from '../../core/guards/passport/strategies/unique.strategy';
+import { UniqueEmailStrategy, UniqueLoginStrategy } from '../../core/guards/passport/strategies/uniqueLoginStrategy';
 
 const usersProviders = [
     CreateSessionUseCase,
@@ -33,7 +33,8 @@ const usersProviders = [
     DeleteUserUseCase,
     JwtService,
     SessionRepository,
-    UniqueStrategy,
+    UniqueLoginStrategy,
+    UniqueEmailStrategy,
 ];
 
 @Module({
