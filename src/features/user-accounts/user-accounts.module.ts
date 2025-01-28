@@ -18,6 +18,9 @@ import { CreateSessionUseCase } from './application/device/usecases/create-sessi
 import { DeviceEntity, DeviceSchema } from './domain/device/device.entity';
 import { SessionRepository } from './infrastructure/sessions/session.repository';
 import { UniqueEmailStrategy, UniqueLoginStrategy } from '../../core/guards/passport/strategies/uniqueLoginStrategy';
+import { RegistrationUserUseCase } from './application/user/usecases/registration-user.usecase';
+import { EmailService } from '../notifications/application/mail.service';
+import { CommonCreateUserUseCase } from './application/user/usecases/common-create-user.usecase';
 
 const usersProviders = [
     CreateSessionUseCase,
@@ -35,6 +38,9 @@ const usersProviders = [
     SessionRepository,
     UniqueLoginStrategy,
     UniqueEmailStrategy,
+    RegistrationUserUseCase,
+    EmailService,
+    CommonCreateUserUseCase,
 ];
 
 @Module({

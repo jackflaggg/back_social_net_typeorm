@@ -1,6 +1,7 @@
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { emailTemplates } from '../../../templates/email.templates';
 import nodemailer from 'nodemailer';
+import { SETTINGS } from '../../../core/settings';
 
 export const emailAdapter = {
     async sendEmail(emailFrom: string, messageCode: string): Promise<SMTPTransport.SentMessageInfo | null> {
@@ -8,8 +9,8 @@ export const emailAdapter = {
             const transporter = nodemailer.createTransport({
                 service: 'Mail.ru',
                 auth: {
-                    user: 'SETTINGS.EMAIL_NAME',
-                    pass: '',
+                    user: SETTINGS.EMAIL_NAME,
+                    pass: SETTINGS.PASS,
                 },
                 tls: {
                     rejectUnauthorized: false,
@@ -17,7 +18,7 @@ export const emailAdapter = {
             });
 
             return await transporter.sendMail({
-                from: `"Incubator" <>`,
+                from: `"Incubator" <${SETTINGS.EMAIL_NAME}>`,
                 to: emailFrom,
                 subject: 'hello world!',
                 html: emailTemplates.registrationEmailTemplate(messageCode),
@@ -33,8 +34,8 @@ export const emailAdapter = {
             const transporter = nodemailer.createTransport({
                 service: 'Mail.ru',
                 auth: {
-                    user: '',
-                    pass: '',
+                    user: SETTINGS.EMAIL_NAME,
+                    pass: SETTINGS.PASS,
                 },
                 tls: {
                     rejectUnauthorized: false,
@@ -42,7 +43,7 @@ export const emailAdapter = {
             });
 
             return await transporter.sendMail({
-                from: `"Incubator" <>`,
+                from: `"Incubator" <${SETTINGS.EMAIL_NAME}>`,
                 to: emailFrom,
                 subject: 'hello world!',
                 html: emailTemplates.recoveryPasswordTemplate(messageCode),

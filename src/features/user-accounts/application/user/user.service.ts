@@ -8,7 +8,7 @@ import { NewPasswordDtoService } from '../../dto/service/new-password.dto';
 import { RegistrationDtoService } from '../../dto/service/registration.dto';
 import { RegistrationConfirmationDtoService } from '../../dto/service/registration-confirmation.dto';
 import { RegistrationEmailResendingDtoService } from '../../dto/service/registration-email-resending.dto';
-import { emailConfirmationData } from '../../../../core/utils/user/email-confirmation.data';
+import { emailConfirmationDataAdmin } from '../../../../core/utils/user/email-confirmation-data.admin';
 
 export class UserService {
     constructor(
@@ -19,7 +19,7 @@ export class UserService {
     async createUser(dto: UserCreateDtoService) {
         const extensionDto = {
             ...dto,
-            ...emailConfirmationData(),
+            ...emailConfirmationDataAdmin(),
         };
 
         const user = this.userModel.buildInstance(extensionDto);

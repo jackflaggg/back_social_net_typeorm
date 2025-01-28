@@ -38,9 +38,7 @@ export class AuthController {
     @HttpCode(204)
     @UseGuards(ThrottlerGuard)
     @Post('password-recovery')
-    async passwordRecovery(@Body() dto: AuthRegistrationDtoApi) {
-        return this.commandBus.execute(new RegistrationUserCommand(dto));
-    }
+    async passwordRecovery(@Body() dto: AuthRegistrationDtoApi) {}
     @HttpCode(204)
     @UseGuards(ThrottlerGuard)
     @Post('new-password')
@@ -51,9 +49,7 @@ export class AuthController {
     @UseGuards(ThrottlerGuard, UniqueEmailAuthGuard, UniqueLoginAuthGuard)
     @Post('registration')
     async registration(@Body() dto: AuthRegistrationDtoApi) {
-        return {
-            dto,
-        };
+        return this.commandBus.execute(new RegistrationUserCommand(dto));
     }
     @HttpCode(204)
     @UseGuards(ThrottlerGuard)
