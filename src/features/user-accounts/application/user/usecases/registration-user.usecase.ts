@@ -1,6 +1,5 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from '../../../infrastructure/user/user.repository';
 
 export class RegistrationUserCommand {
