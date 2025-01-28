@@ -13,6 +13,9 @@ import { LocalAuthGuard } from '../../../core/guards/passport/guards/local.auth.
 import { JwtAuthGuard } from '../../../core/guards/passport/guards/jwt.auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { LoginUserCommand } from '../application/user/usecases/login-user.usecase';
+import { PasswordRecoveryCommand } from '@libs/contracts/commands/auth/password-recovery.command';
+import { RegistrationCommand } from '@libs/contracts/commands/auth/registration.command';
+import { RegistrationUserCommand } from '../application/user/usecases/registration-user.usecase';
 
 @Controller('auth')
 export class AuthController {
@@ -34,8 +37,8 @@ export class AuthController {
     @HttpCode(204)
     @UseGuards(ThrottlerGuard)
     @Post('password-recovery')
-    async passwordRecovery(@Body() dto: AuthPasswordRecoveryDtoApi) {
-        //return this.userService.passwordRecovery(dto);
+    async passwordRecovery(@Body() dto: AuthRegistrationDtoApi) {
+        return this.commandBus.execute(new RegistrationUserCommand(dto));
     }
     @HttpCode(204)
     @UseGuards(ThrottlerGuard)
