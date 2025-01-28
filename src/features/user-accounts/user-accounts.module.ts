@@ -14,8 +14,12 @@ import { ValidateUserUseCase } from './application/user/usecases/validate-user.u
 import { LoginUserUseCase } from './application/user/usecases/login-user.usecase';
 import { AuthService, UserLoggedInEventHandler } from './application/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { CreateSessionUseCase } from './application/device/usecases/create-session.usecase';
+import { DeviceEntity, DeviceSchema } from './domain/device/device.entity';
+import { SessionRepository } from './infrastructure/sessions/session.repository';
 
 const usersProviders = [
+    CreateSessionUseCase,
     AuthService,
     UserLoggedInEventHandler,
     UserRepository,
@@ -27,10 +31,17 @@ const usersProviders = [
     CreateUserUseCase,
     DeleteUserUseCase,
     JwtService,
+    SessionRepository,
 ];
 
 @Module({
-    imports: [MongooseModule.forFeature([{ name: UserEntity.name, schema: UserSchema }]), CqrsModule],
+    imports: [
+        MongooseModule.forFeature([
+            { name: UserEntity.name, schema: UserSchema },
+            { name: DeviceEntity.name, schema: DeviceSchema },
+        ]),
+        CqrsModule,
+    ],
     providers: [...usersProviders],
     controllers: [UserController, AuthController],
 })
