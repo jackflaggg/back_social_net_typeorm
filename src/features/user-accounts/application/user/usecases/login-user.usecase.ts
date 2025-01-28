@@ -2,6 +2,7 @@ import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { randomUUID } from 'node:crypto';
 import { Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { CreateSessionCommand } from '../../device/usecases/create-session.usecase';
 
 export class LoginUserCommand {
     constructor(
@@ -25,6 +26,13 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
         };
         const accessToken = this.jwtService.sign(payloadForJwt, { expiresIn: '10m', secret: 'local' });
         const refreshToken = this.jwtService.sign(payloadForJwt, { expiresIn: '5d', secret: 'refresh' });
+
         const decodedData = this.jwtService.decode(refreshToken);
+
+        await this.commandBus.execute(new CreateSessionCommand(command.ip, command.userAgent, decodedData, refreshToken));
+        return {
+            jwt: accessToken,
+            refresh: refreshToken,
+        };
     }
 }
