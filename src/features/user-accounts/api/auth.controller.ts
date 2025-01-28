@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Query, Req, Res, UseGuards, UsePipes } from '@nestjs/common';
 import { UserQueryRepository } from '../infrastructure/user/query/user.query.repository';
 import { GetUsersQueryParams } from '../dto/api/get-users-query-params.input-dto';
 import { AuthLoginDtoApi } from '../dto/api/auth.login.dto';
@@ -14,7 +14,7 @@ import { JwtAuthGuard } from '../../../core/guards/passport/guards/jwt.auth.guar
 import { CommandBus } from '@nestjs/cqrs';
 import { LoginUserCommand } from '../application/user/usecases/login-user.usecase';
 import { PasswordRecoveryCommand } from '@libs/contracts/commands/auth/password-recovery.command';
-import { RegistrationCommand } from '@libs/contracts/commands/auth/registration.command';
+import { RegistrationCommand, RegistrationSchema } from '@libs/contracts/commands/auth/registration.command';
 import { RegistrationUserCommand } from '../application/user/usecases/registration-user.usecase';
 
 @Controller('auth')
@@ -50,6 +50,10 @@ export class AuthController {
     @UseGuards(ThrottlerGuard)
     @Post('registration')
     async registration(@Body() dto: AuthRegistrationDtoApi) {
+        console.log(dto);
+        return {
+            dto,
+        };
         //return this.userService.registration(dto);
     }
     @HttpCode(204)

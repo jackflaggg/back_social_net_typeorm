@@ -21,7 +21,7 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
             ...emailConfirmationData(),
         };
         const user = this.userModel.buildInstance(extensionDto);
-        await user.setPassword(command.payload.password);
+        await user.setPasswordAdmin(command.payload.password);
         await this.userRepository.save(user);
         return user._id.toString();
     }
