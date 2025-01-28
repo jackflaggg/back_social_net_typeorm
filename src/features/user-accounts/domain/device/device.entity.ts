@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { randomUUID } from 'node:crypto';
 import { HydratedDocument, Model } from 'mongoose';
+import { UserDocument } from '../user/user.entity';
 
 @Schema({ timestamps: false })
 export class DeviceEntity {
@@ -11,13 +12,16 @@ export class DeviceEntity {
     })
     deviceId: string;
 
+    @Prop({ type: Date, required: true })
+    issuedAt: Date;
+
     @Prop({ type: String, required: true })
     userId: string;
 
     @Prop({ type: String, required: true })
     ip: string;
 
-    @Prop({ type: String, required: true })
+    @Prop({ type: Date, required: true })
     lastActiveDate: Date;
 
     @Prop({ type: String, required: true })
@@ -25,6 +29,18 @@ export class DeviceEntity {
 
     @Prop({ type: String, required: true })
     refreshToken: string;
+
+    public static buildInstance(dto: any) {
+        const session = new this();
+        session.deviceId = dto.deviceId;
+        session.issuedAt = dto.issuedAt;
+        session.userId = dto.userId;
+        session.ip = dto.ip;
+        session.deviceName = dto.deviceName;
+        session.lastActiveDate = dto.lastActiveDate;
+        session.refreshToken = dto.refreshToken;
+        return session as DeviceDocument;
+    }
 }
 
 export const DeviceSchema = SchemaFactory.createForClass(DeviceEntity);

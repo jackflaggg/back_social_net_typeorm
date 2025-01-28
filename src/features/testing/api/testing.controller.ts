@@ -5,6 +5,7 @@ import { PostEntity, PostModelType } from '../../bloggers-platform/posts/domain/
 import { HydratedDocument } from 'mongoose';
 import { UserEntity, UserModelType } from '../../user-accounts/domain/user/user.entity';
 import { CommentEntity, CommentModelType } from '../../bloggers-platform/comments/domain/comment.entity';
+import { DeviceEntity, DeviceModelType } from '../../user-accounts/domain/device/device.entity';
 
 @Controller('testing')
 export class TestingController {
@@ -13,12 +14,13 @@ export class TestingController {
         @InjectModel(PostEntity.name) private readonly PostModel: PostModelType,
         @InjectModel(UserEntity.name) private readonly UserModel: UserModelType,
         @InjectModel(CommentEntity.name) private readonly CommentModel: CommentModelType,
+        @InjectModel(DeviceEntity.name) private readonly DeviceModel: DeviceModelType,
     ) {}
 
     @HttpCode(204)
     @Delete('all-data')
     async deleteAll() {
-        const collectionsToDelete = [this.BlogModel, this.PostModel, this.UserModel, this.CommentModel];
+        const collectionsToDelete = [this.BlogModel, this.PostModel, this.UserModel, this.CommentModel, this.DeviceModel];
         try {
             for (const collectionsToDeleteElement of collectionsToDelete) {
                 await (collectionsToDeleteElement as HydratedDocument<any>).deleteMany({});
