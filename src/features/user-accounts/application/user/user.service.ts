@@ -23,7 +23,7 @@ export class UserService {
         };
 
         const user = this.userModel.buildInstance(extensionDto);
-        await user.setPassword(dto.password);
+        await user.setPasswordAdmin(dto.password);
         await this.userRepository.save(user);
         return user._id.toString();
     }
