@@ -29,7 +29,9 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
 
         const decodedData = this.jwtService.decode(refreshToken);
 
-        await this.commandBus.execute(new CreateSessionCommand(command.ip, command.userAgent, decodedData, refreshToken));
+        const dateDevices = new Date(Number(decodedData.iat) * 1000);
+
+        await this.commandBus.execute(new CreateSessionCommand(command.ip, command.userAgent, payloadForJwt, refreshToken));
         return {
             jwt: accessToken,
             refresh: refreshToken,

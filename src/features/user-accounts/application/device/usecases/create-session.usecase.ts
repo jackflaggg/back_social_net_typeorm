@@ -18,5 +18,16 @@ export class CreateSessionUseCase implements ICommandHandler<CreateSessionComman
         private readonly sessionRepository: SessionRepository,
         @InjectModel(DeviceEntity.name) private deviceModel: DeviceModelType,
     ) {}
-    async execute(command: CreateSessionCommand) {}
+    async execute(command: CreateSessionCommand) {
+        const data: DeviceEntity = {
+            deviceId: command.payload.deviceId,
+            userId: command.payload.userId,
+            ip: command.ip,
+            lastActiveDate: new Date(),
+            deviceName: command.userAgent,
+            refreshToken: command.refreshToken,
+        };
+        const session = await this.deviceModel.create(data);
+        await this.sessionRepository.save(session);
+    }
 }

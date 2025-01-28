@@ -24,10 +24,11 @@ export class AuthController {
     @UseGuards(ThrottlerGuard, LocalAuthGuard)
     @Post('login')
     async login(@Req() req: Request, @Res({ passthrough: true }) res: Response, @Body() dto: AuthLoginDtoApi) {
-        const auth = await this.commandBus.execute(new LoginUserCommand(req.ip, req.headers['user-agent'], req.user));
-        //res.cookie('refreshToken', auth, { httpOnly: true, secure: true, maxAge: 86400 });
+        const { jwt, refresh } = await this.commandBus.execute(new LoginUserCommand(req.ip, req.headers['user-agent'], req.user));
+        res.cookie('refreshToken', refresh, { httpOnly: true, secure: true, maxAge: 86400 });
         return {
-            accessToken: 'auth',
+            accessToken: jwt,
+            refreshToken: refresh,
         };
     }
     @HttpCode(204)
