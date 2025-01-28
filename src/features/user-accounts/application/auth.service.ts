@@ -31,6 +31,23 @@ export class AuthService {
 
         return user;
     }
+    async uniqueLoginUser(login: string) {
+        const one = await this.usersRepository.findUserByLoginOrEmail(login);
+
+        if (one) {
+            throw UnauthorizedDomainException.create('поля должны быть уникальными!');
+        }
+        return !one;
+    }
+
+    async uniqueEmailUser(email: string) {
+        const one = await this.usersRepository.findUserByLoginOrEmail(email);
+
+        if (one) {
+            throw UnauthorizedDomainException.create('поля должны быть уникальными!');
+        }
+        return !one;
+    }
 }
 
 @EventsHandler(UserLoggedInEvent)

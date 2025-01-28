@@ -16,6 +16,7 @@ import { LoginUserCommand } from '../application/user/usecases/login-user.usecas
 import { PasswordRecoveryCommand } from '@libs/contracts/commands/auth/password-recovery.command';
 import { RegistrationCommand, RegistrationSchema } from '@libs/contracts/commands/auth/registration.command';
 import { RegistrationUserCommand } from '../application/user/usecases/registration-user.usecase';
+import { UniqueEmailAuthGuard, UniqueLoginAuthGuard } from '../../../core/guards/passport/guards/uniqueLoginAuthGuard';
 
 @Controller('auth')
 export class AuthController {
@@ -46,15 +47,13 @@ export class AuthController {
     async newPassword(@Body() dto: AuthNewPasswordDtoApi) {
         //return this.userService.newPassword(dto);
     }
-    @HttpCode(204)
-    @UseGuards(ThrottlerGuard)
+    @HttpCode(200)
+    @UseGuards(ThrottlerGuard, UniqueEmailAuthGuard, UniqueLoginAuthGuard)
     @Post('registration')
     async registration(@Body() dto: AuthRegistrationDtoApi) {
-        console.log(dto);
         return {
             dto,
         };
-        //return this.userService.registration(dto);
     }
     @HttpCode(204)
     @UseGuards(ThrottlerGuard)
