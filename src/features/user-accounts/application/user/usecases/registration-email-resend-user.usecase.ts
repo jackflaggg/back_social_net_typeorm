@@ -1,7 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { UserRepository } from '../../../infrastructure/user/user.repository';
-import { PasswordRecoveryDbRepository } from '../../../infrastructure/password/password.recovery.repository';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { randomUUID } from 'node:crypto';
 import { add } from 'date-fns/add';
@@ -20,7 +19,6 @@ export class RegistrationEmailResendUserUseCase implements ICommandHandler<Regis
     async execute(command: RegistrationEmailResendUserCommand) {
         const user = await this.usersRepository.findUserByLoginOrEmail(command.email);
 
-        console.log(user);
         if (!user) {
             throw BadRequestDomainException.create('юзера не существует', 'email');
         }

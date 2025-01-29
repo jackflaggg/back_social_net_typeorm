@@ -29,6 +29,7 @@ import { AccessTokenStrategy } from '../../core/guards/passport/strategies/jwt.s
 import { RegistrationEmailResendUserUseCase } from './application/user/usecases/registration-email-resend-user.usecase';
 import { DeleteSessionUseCase } from './application/device/usecases/delete-session.usecase';
 import { NewPasswordUserUseCase } from './application/user/usecases/new-password-user.usecase';
+import { RefreshTokenUserUseCase } from './application/user/usecases/refresh-token.user.usecase';
 
 const usersProviders = [
     CreateSessionUseCase,
@@ -56,6 +57,7 @@ const usersProviders = [
     RegistrationEmailResendUserUseCase,
     DeleteSessionUseCase,
     NewPasswordUserUseCase,
+    RefreshTokenUserUseCase,
 ];
 
 @Module({

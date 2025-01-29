@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { UserRepository } from '../../../infrastructure/user/user.repository';
 import { PasswordRecoveryDbRepository } from '../../../infrastructure/password/password.recovery.repository';
-import { BadRequestDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class RegistrationConfirmationUserCommand {
     constructor(public readonly code: string) {}
