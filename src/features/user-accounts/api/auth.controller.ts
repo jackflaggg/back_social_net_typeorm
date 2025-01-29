@@ -22,6 +22,7 @@ import { RefreshAuthGuard } from '../../../core/guards/passport/guards/refresh.a
 import { ExtractAnyUserFromRequest } from '../../../core/decorators/param/validate.user.decorators';
 import { UserJwtPayloadDto } from '../../../core/guards/passport/strategies/refresh.strategy';
 import { RefreshTokenUserCommand } from '../application/user/usecases/refresh-token.user.usecase';
+import { JwtOptionalAuthGuard, Public } from '../../../core/guards/optional/guards/jwt.optional.auth.guards';
 
 @Controller('auth')
 export class AuthController {
@@ -75,10 +76,11 @@ export class AuthController {
         return this.commandBus.execute(new RegistrationEmailResendUserCommand(dto.email));
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtOptionalAuthGuard)
+    @Public()
     @Get('me')
-    async me(@Req() req: Request) {
-        return this.userQueryRepository.findUser(String(req.user));
+    async me(@ExtractAnyUserFromRequest() payload: UserJwtPayloadDto) {
+        return this.userQueryRepository.findUser(payload.userId);
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
@@ -89,7 +91,7 @@ export class AuthController {
     @UseGuards(RefreshAuthGuard)
     @Post('refreshToken')
     async refreshToken(@ExtractAnyUserFromRequest() payload: UserJwtPayloadDto, @Res({ passthrough: true }) res: Response) {
-        const { jwt, refresh } = this.commandBus.execute(new RefreshTokenUserCommand(payload));
+        const { jwt, refresh } = await this.commandBus.execute(new RefreshTokenUserCommand(payload));
         res.cookie('refreshToken', refresh, { httpOnly: true, secure: true, maxAge: 86400 });
         return {
             accessToken: jwt,

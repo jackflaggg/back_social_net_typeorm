@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { PasswordRecoveryEntity, PasswordRecoveryModelType } from '../../domain/password-recovery/password-recovery.entity';
+import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
 
 @Injectable()
 export class PasswordRecoveryDbRepository {
@@ -8,6 +9,7 @@ export class PasswordRecoveryDbRepository {
     async findRecoveryCodeUser(code: string) {
         const findUser = await this.passwordRecoveryEntity.findOne({
             recoveryCode: code,
+            deletionStatus: DeletionStatus.enum['not-deleted'],
         });
 
         if (!findUser) {
@@ -18,7 +20,10 @@ export class PasswordRecoveryDbRepository {
     }
 
     async updateStatus(id: string) {
-        const updateDate = await this.passwordRecoveryEntity.updateOne({ _id: id }, { $set: { used: true } });
+        const updateDate = await this.passwordRecoveryEntity.updateOne(
+            { _id: id, deletionStatus: DeletionStatus.enum['not-deleted'] },
+            { $set: { used: true } },
+        );
         return updateDate.modifiedCount === 1;
     }
 

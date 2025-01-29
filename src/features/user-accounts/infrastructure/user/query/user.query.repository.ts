@@ -6,14 +6,15 @@ import { GetUsersQueryParams } from '../../../dto/api/get-users-query-params.inp
 import { UserViewDto } from '../../../dto/api/user-view.dto';
 import { Injectable } from '@nestjs/common';
 import { getUsersQuery } from '../../../../../core/utils/user/query.insert.get';
+import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 @Injectable()
 export class UserQueryRepository {
     constructor(@InjectModel(UserEntity.name) private userModel: UserModelType) {}
     async findUser(userId: string): Promise<UserViewDto | void> {
-        const result = await this.userModel.findOne({ _id: userId });
+        const result = await this.userModel.findOne({ _id: userId, deletionStatus: DeletionStatus.enum['not-deleted'] });
         if (!result) {
-            return void 0;
+            throw NotFoundDomainException.create('User not found', 'user');
         }
         return UserViewDto.mapToView(result);
     }

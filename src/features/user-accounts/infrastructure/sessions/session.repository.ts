@@ -30,4 +30,19 @@ export class SessionRepository {
         }
         return device;
     }
+    async updateSession(id: string, issuedAtToken: Date, refreshToken: string) {
+        const lastActiveDate = new Date();
+        const updateDate = await this.deviceModel.findOneAndUpdate(
+            {
+                _id: id,
+                deletionStatus: DeletionStatus.enum['not-deleted'],
+            },
+            {
+                issuedAt: issuedAtToken,
+                lastActiveDate,
+                refreshToken,
+            },
+        );
+        return updateDate;
+    }
 }
