@@ -35,6 +35,7 @@ export class SessionRepository {
         const updateDate = await this.deviceModel.findOneAndUpdate(
             {
                 _id: id,
+                deletionStatus: DeletionStatus.enum['not-deleted'],
             },
             {
                 issuedAt: issuedAtToken,

@@ -1,6 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserJwtPayloadDto } from '../../../../../core/guards/passport/strategies/refresh.strategy';
-import { UserRepository } from '../../../infrastructure/user/user.repository';
 import { JwtService } from '@nestjs/jwt';
 import { SessionRepository } from '../../../infrastructure/sessions/session.repository';
 import { UnauthorizedDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';

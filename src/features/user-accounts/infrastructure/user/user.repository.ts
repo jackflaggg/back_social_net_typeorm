@@ -9,7 +9,7 @@ export class UserRepository {
     constructor(@InjectModel(UserEntity.name) private userModel: UserModelType) {}
 
     async findUserByIdOrFail(userId: string) {
-        const user = await this.userModel.findById({ _id: userId });
+        const user = await this.userModel.findById({ _id: userId, deletionStatus: DeletionStatus.enum['not-deleted'] });
         if (!user) {
             throw NotFoundDomainException.create('User not found');
             //return void 0;
@@ -32,7 +32,10 @@ export class UserRepository {
     }
 
     async findUserCode(code: string) {
-        const user = await this.userModel.findOne({ 'emailConfirmation.confirmationCode': code });
+        const user = await this.userModel.findOne({
+            'emailConfirmation.confirmationCode': code,
+            deletionStatus: DeletionStatus.enum['not-deleted'],
+        });
         if (!user) {
             return void 0;
         }
@@ -41,7 +44,7 @@ export class UserRepository {
 
     async updateUserToEmailConf(id: string) {
         const updateEmail = await this.userModel.updateOne(
-            { _id: id },
+            { _id: id, deletionStatus: DeletionStatus.enum['not-deleted'] },
             {
                 $set: {
                     'emailConfirmation.confirmationCode': '+',
@@ -55,7 +58,7 @@ export class UserRepository {
 
     async updateUserToCodeAndDate(userId: string, code: string, expirationDate: Date) {
         const updateEmail = await this.userModel.updateOne(
-            { _id: userId },
+            { _id: userId, deletionStatus: DeletionStatus.enum['not-deleted'] },
             {
                 $set: {
                     'emailConfirmation.confirmationCode': code,
