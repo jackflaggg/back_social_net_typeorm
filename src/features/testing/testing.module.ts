@@ -6,6 +6,7 @@ import { PostEntity, PostSchema } from '../bloggers-platform/posts/domain/post.e
 import { CommentEntity, CommentSchema } from '../bloggers-platform/comments/domain/comment.entity';
 import { UserEntity, UserSchema } from '../user-accounts/domain/user/user.entity';
 import { DeviceEntity, DeviceSchema } from '../user-accounts/domain/device/device.entity';
+import { PasswordRecoveryEntity, PasswordRecoverySchema } from '../user-accounts/domain/password-recovery/password-recovery.entity';
 
 @Module({
     imports: [
@@ -15,6 +16,7 @@ import { DeviceEntity, DeviceSchema } from '../user-accounts/domain/device/devic
             { name: CommentEntity.name, schema: CommentSchema },
             { name: UserEntity.name, schema: UserSchema },
             { name: DeviceEntity.name, schema: DeviceSchema },
+            { name: PasswordRecoveryEntity.name, schema: PasswordRecoverySchema },
         ]),
     ],
     controllers: [TestingController],

@@ -6,6 +6,7 @@ import { HydratedDocument } from 'mongoose';
 import { UserEntity, UserModelType } from '../../user-accounts/domain/user/user.entity';
 import { CommentEntity, CommentModelType } from '../../bloggers-platform/comments/domain/comment.entity';
 import { DeviceEntity, DeviceModelType } from '../../user-accounts/domain/device/device.entity';
+import { PasswordRecoveryEntity, PasswordRecoveryModelType } from '../../user-accounts/domain/password-recovery/password-recovery.entity';
 
 @Controller('testing')
 export class TestingController {
@@ -15,12 +16,20 @@ export class TestingController {
         @InjectModel(UserEntity.name) private readonly UserModel: UserModelType,
         @InjectModel(CommentEntity.name) private readonly CommentModel: CommentModelType,
         @InjectModel(DeviceEntity.name) private readonly DeviceModel: DeviceModelType,
+        @InjectModel(PasswordRecoveryEntity.name) private readonly PasswordRecoveryModel: PasswordRecoveryModelType,
     ) {}
 
     @HttpCode(204)
     @Delete('all-data')
     async deleteAll() {
-        const collectionsToDelete = [this.BlogModel, this.PostModel, this.UserModel, this.CommentModel, this.DeviceModel];
+        const collectionsToDelete = [
+            this.BlogModel,
+            this.PostModel,
+            this.UserModel,
+            this.CommentModel,
+            this.DeviceModel,
+            this.PasswordRecoveryModel,
+        ];
         try {
             for (const collectionsToDeleteElement of collectionsToDelete) {
                 await (collectionsToDeleteElement as HydratedDocument<any>).deleteMany({});

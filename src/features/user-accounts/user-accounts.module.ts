@@ -18,6 +18,12 @@ import { CreateSessionUseCase } from './application/device/usecases/create-sessi
 import { DeviceEntity, DeviceSchema } from './domain/device/device.entity';
 import { SessionRepository } from './infrastructure/sessions/session.repository';
 import { UniqueEmailStrategy, UniqueLoginStrategy } from '../../core/guards/passport/strategies/uniqueLoginStrategy';
+import { RegistrationUserUseCase } from './application/user/usecases/registration-user.usecase';
+import { EmailService } from '../notifications/application/mail.service';
+import { CommonCreateUserUseCase } from './application/user/usecases/common-create-user.usecase';
+import { PasswordRecoveryDbRepository } from './infrastructure/password/password.recovery.repository';
+import { RegistrationConfirmationUserUseCase } from './application/user/usecases/registration-confirmation-user.usecase';
+import { PasswordRecoveryEntity, PasswordRecoverySchema } from './domain/password-recovery/password-recovery.entity';
 
 const usersProviders = [
     CreateSessionUseCase,
@@ -35,6 +41,11 @@ const usersProviders = [
     SessionRepository,
     UniqueLoginStrategy,
     UniqueEmailStrategy,
+    RegistrationUserUseCase,
+    EmailService,
+    CommonCreateUserUseCase,
+    PasswordRecoveryDbRepository,
+    RegistrationConfirmationUserUseCase,
 ];
 
 @Module({
@@ -42,6 +53,7 @@ const usersProviders = [
         MongooseModule.forFeature([
             { name: UserEntity.name, schema: UserSchema },
             { name: DeviceEntity.name, schema: DeviceSchema },
+            { name: PasswordRecoveryEntity.name, schema: PasswordRecoverySchema },
         ]),
         CqrsModule,
     ],

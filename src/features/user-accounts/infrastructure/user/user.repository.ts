@@ -30,4 +30,26 @@ export class UserRepository {
         }
         return findUser;
     }
+
+    async findUserCode(code: string) {
+        const user = await this.userModel.findOne({ 'emailConfirmation.confirmationCode': code });
+        if (!user) {
+            return void 0;
+        }
+        return user;
+    }
+
+    async updateUserToEmailConf(id: string) {
+        const updateEmail = await this.userModel.updateOne(
+            { _id: id },
+            {
+                $set: {
+                    'emailConfirmation.confirmationCode': '+',
+                    'emailConfirmation.isConfirmed': true,
+                },
+            },
+        );
+
+        return updateEmail.matchedCount === 1;
+    }
 }

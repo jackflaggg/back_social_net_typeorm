@@ -1,24 +1,24 @@
+import { UserCreateDtoService } from '../../../dto/service/user.create.dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { UserRepository } from '../../../infrastructure/user/user.repository';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserEntity, UserModelType } from '../../../domain/user/user.entity';
-import { UserRepository } from '../../../infrastructure/user/user.repository';
-import { UserCreateDtoService } from '../../../dto/service/user.create.dto';
-import { emailConfirmationDataAdmin } from '../../../../../core/utils/user/email-confirmation-data.admin';
+import { emailConfirmationData } from '../../../../../core/utils/user/email-confirmation-data.admin';
 
-export class CreateUserCommand {
+export class CommonCreateUserCommand {
     constructor(public readonly payload: UserCreateDtoService) {}
 }
 
-@CommandHandler(CreateUserCommand)
-export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
+@CommandHandler(CommonCreateUserCommand)
+export class CommonCreateUserUseCase implements ICommandHandler<CommonCreateUserCommand> {
     constructor(
         private readonly userRepository: UserRepository,
         @InjectModel(UserEntity.name) private userModel: UserModelType,
     ) {}
-    async execute(command: CreateUserCommand) {
+    async execute(command: CommonCreateUserCommand) {
         const extensionDto = {
             ...command.payload,
-            ...emailConfirmationDataAdmin(),
+            ...emailConfirmationData(),
         };
         const user = this.userModel.buildInstance(extensionDto);
         await user.setPasswordAdmin(command.payload.password);

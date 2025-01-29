@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const RegistrationConfirmationSchema = z.object({
-    code: z.string(),
+    code: z.string().trim(),
 });
 
 export namespace RegistrationConfirmationCommand {
