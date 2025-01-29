@@ -6,18 +6,21 @@ import { RefreshAuthGuard } from '../../../core/guards/passport/guards/refresh.a
 import { DeleteSessionCommand } from '../application/device/usecases/delete-session.usecase';
 import { UserJwtPayloadDto } from '../../../core/guards/passport/strategies/refresh.strategy';
 import { ExtractUserFromRequest } from '../../../core/decorators/param/validate.user.decorators';
+import { SessionQueryRepository } from '../infrastructure/sessions/query/session.query.repository';
 
 @UseGuards(BasicAuthGuard)
 @Controller('devices')
 export class UserController {
     constructor(
         private readonly commandBus: CommandBus,
-        private readonly userQueryRepository: UserQueryRepository,
+        private readonly sessionQueryRepository: SessionQueryRepository,
     ) {}
 
     @UseGuards(RefreshAuthGuard)
     @Get()
-    async getAllSessions(@ExtractUserFromRequest() user: UserJwtPayloadDto) {}
+    async getAllSessions(@ExtractUserFromRequest() user: UserJwtPayloadDto) {
+        return this.sessionQueryRepository.getSessions(user.userId);
+    }
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(RefreshAuthGuard)
