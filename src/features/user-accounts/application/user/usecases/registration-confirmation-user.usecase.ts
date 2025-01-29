@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { UserRepository } from '../../../infrastructure/user/user.repository';
 import { PasswordRecoveryDbRepository } from '../../../infrastructure/password/password.recovery.repository';
-import { BadRequestDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class RegistrationConfirmationUserCommand {
     constructor(public readonly code: string) {}
@@ -23,7 +23,7 @@ export class RegistrationConfirmationUserUseCase implements ICommandHandler<Regi
 
         // поиск юзера
         if (!findCode || (findCode.emailConfirmation && command.code !== findCode.emailConfirmation.confirmationCode)) {
-            throw NotFoundDomainException.create('юзер не найден', 'RegistrationConfirmationUserUseCase');
+            throw BadRequestDomainException.create('юзер не найден', 'code');
         }
 
         // проверка на истекание кода

@@ -4,12 +4,20 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { UserRepository } from '../../../../features/user-accounts/infrastructure/user/user.repository';
 import { ConfigService } from '@nestjs/config';
 import { UnauthorizedDomainException } from '../../../exceptions/incubator-exceptions/domain-exceptions';
+import { SessionRepository } from '../../../../features/user-accounts/infrastructure/sessions/session.repository';
+
+export class UserJwtPayloadDto {
+    userId: string;
+    deviceId: string;
+    iat: number;
+    exp: number;
+}
 
 @Injectable()
 export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
     constructor(
         @Inject() private readonly usersRepository: UserRepository,
-        @Inject() private readonly securityDevicesRepository: any,
+        @Inject() private readonly securityDevicesRepository: SessionRepository,
         public readonly coreConfig: ConfigService,
     ) {
         super({
@@ -20,11 +28,11 @@ export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, '
                 },
             ]),
             ignoreExpiration: false,
-            secretOrKey: coreConfig.getOrThrow('refreshTokenSecret'),
+            secretOrKey: 'envelope',
         });
     }
 
-    async validate(payload: any) {
+    async validate(payload: UserJwtPayloadDto) {
         const user = await this.usersRepository.findUserByIdOrFail(payload.userId);
         if (!user) {
             throw UnauthorizedDomainException.create();

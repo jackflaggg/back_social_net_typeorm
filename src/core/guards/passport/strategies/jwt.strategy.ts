@@ -6,15 +6,12 @@ import { UserRepository } from '../../../../features/user-accounts/infrastructur
 import { UnauthorizedDomainException } from '../../../exceptions/incubator-exceptions/domain-exceptions';
 
 @Injectable()
-export class AccessTokenStrategy extends PassportStrategy(Strategy, 'accessToken') {
-    constructor(
-        private readonly configService: ConfigService,
-        @Inject() private readonly usersRepository: UserRepository,
-    ) {
+export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt-access') {
+    constructor(@Inject() private readonly usersRepository: UserRepository) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: configService.getOrThrow('ACCESS_TOKEN_JWT_SECRET'),
+            secretOrKey: 'envelope',
         });
     }
 

@@ -9,8 +9,8 @@ export class PasswordRecoveryEntity {
     @Prop({ type: String, required: true })
     recoveryCode: string;
 
-    @Prop({ type: String, required: true })
-    expirationDate: string;
+    @Prop({ type: Date, required: true })
+    expirationDate: Date;
 
     @Prop({ type: Boolean, required: true, default: false })
     used: boolean;

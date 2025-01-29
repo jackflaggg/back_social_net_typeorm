@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ZodNull } from 'zod';
 
 @Schema({ _id: false })
 export class EmailConfirmation {
@@ -9,7 +8,7 @@ export class EmailConfirmation {
     @Prop({ type: Date, required: true })
     expirationDate: Date | null;
 
-    @Prop({ type: String, required: true, default: false })
+    @Prop({ type: Boolean, required: true, default: false })
     isConfirmed: boolean;
 }
 

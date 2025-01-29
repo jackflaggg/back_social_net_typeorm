@@ -17,6 +17,11 @@ import { UniqueEmailAuthGuard, UniqueLoginAuthGuard } from '../../../core/guards
 import { RegistrationConfirmationUserCommand } from '../application/user/usecases/registration-confirmation-user.usecase';
 import { PasswordRecoveryUserCommand } from '../application/user/usecases/password-recovery-user.usecase';
 import { RegistrationEmailResendUserCommand } from '../application/user/usecases/registration-email-resend-user.usecase';
+import { NewPasswordUserCommand } from '../application/user/usecases/new-password-user.usecase';
+import { RefreshAuthGuard } from '../../../core/guards/passport/guards/refresh.auth.guard';
+import { ExtractAnyUserFromRequest } from '../../../core/decorators/param/validate.user.decorators';
+import { UserJwtPayloadDto } from '../../../core/guards/passport/strategies/refresh.strategy';
+import { RefreshTokenUserCommand } from '../application/user/usecases/refresh-token.user.usecase';
 
 @Controller('auth')
 export class AuthController {
@@ -46,7 +51,7 @@ export class AuthController {
     @UseGuards(ThrottlerGuard)
     @Post('new-password')
     async newPassword(@Body() dto: AuthNewPasswordDtoApi) {
-        //return this.userService.newPassword(dto);
+        return this.commandBus.execute(new NewPasswordUserCommand(dto.newPassword, dto.recoveryCode));
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
@@ -81,8 +86,13 @@ export class AuthController {
     async logout(@Req() req: Request) {}
 
     @HttpCode(HttpStatus.OK)
+    @UseGuards(RefreshAuthGuard)
     @Post('refreshToken')
-    async refreshToken() {
-        //return this.userQueryRepository.getAllUsers(query);
+    async refreshToken(@ExtractAnyUserFromRequest() payload: UserJwtPayloadDto, @Res({ passthrough: true }) res: Response) {
+        const { jwt, refresh } = this.commandBus.execute(new RefreshTokenUserCommand(payload));
+        res.cookie('refreshToken', refresh, { httpOnly: true, secure: true, maxAge: 86400 });
+        return {
+            accessToken: jwt,
+        };
     }
 }

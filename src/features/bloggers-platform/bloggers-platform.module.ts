@@ -21,6 +21,8 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { CreatePostUseCase } from './posts/application/usecases/create-post.usecase';
 import { DeletePostUseCase } from './posts/application/usecases/delete-post.usecase';
 import { UpdatePostUseCase } from './posts/application/usecases/update-post.usecase';
+import { JwtOptionalAuthGuard } from '../../core/guards/optional/guards/jwt.optional.auth.guards';
+import { APP_GUARD } from '@nestjs/core';
 
 const blogsProviders = [
     CreateBlogUseCase,
@@ -47,6 +49,14 @@ const postsProviders = [CreatePostUseCase, DeletePostUseCase, UpdatePostUseCase,
         CqrsModule,
     ],
     controllers: [BlogsController, PostsController, CommentController],
-    providers: [...blogsProviders, ...postsProviders, ...commentsProviders],
+    providers: [
+        ...blogsProviders,
+        ...postsProviders,
+        ...commentsProviders,
+        {
+            provide: APP_GUARD,
+            useClass: JwtOptionalAuthGuard,
+        },
+    ],
 })
 export class BloggersPlatformModule {}

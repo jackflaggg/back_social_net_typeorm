@@ -2,6 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { randomUUID } from 'node:crypto';
 import { HydratedDocument, Model } from 'mongoose';
 import { UserDocument } from '../user/user.entity';
+import { DeletionStatus, DeletionStatusType } from '@libs/contracts/enums/deletion-status.enum';
+import crypto from 'node:crypto';
 
 @Schema({ timestamps: false })
 export class DeviceEntity {
@@ -30,6 +32,9 @@ export class DeviceEntity {
     @Prop({ type: String, required: true })
     refreshToken: string;
 
+    @Prop({ type: String, required: true, default: DeletionStatus.enum['not-deleted'] })
+    deletionStatus: DeletionStatusType;
+
     public static buildInstance(dto: any) {
         const session = new this();
         session.deviceId = dto.deviceId;
@@ -40,6 +45,10 @@ export class DeviceEntity {
         session.lastActiveDate = dto.lastActiveDate;
         session.refreshToken = dto.refreshToken;
         return session as DeviceDocument;
+    }
+
+    makeDeleted() {
+        this.deletionStatus = DeletionStatus.enum['permanent-deleted'];
     }
 }
 

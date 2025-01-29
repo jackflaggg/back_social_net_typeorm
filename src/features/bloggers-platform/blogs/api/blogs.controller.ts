@@ -11,6 +11,7 @@ import {
     Post,
     Put,
     Query,
+    UseGuards,
 } from '@nestjs/common';
 import { BlogUpdateDtoApi } from '../dto/api/blog.update.dto';
 import { BlogCreateDtoApi } from '../dto/api/blog.create.dto';
@@ -24,6 +25,7 @@ import { CreateBlogCommand } from '../application/usecases/create-blog.usecase';
 import { CreatePostToBlogCommand } from '../application/usecases/create-post-to-blog.usecase';
 import { DeleteBlogCommand } from '../application/usecases/delete-blog.usecase';
 import { UpdateBlogCommand } from '../application/usecases/update-blog.usecase';
+import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
 
 @Controller('blogs')
 export class BlogsController {
@@ -56,27 +58,31 @@ export class BlogsController {
         return blog;
     }
 
-    @HttpCode(201)
+    @HttpCode(HttpStatus.CREATED)
+    @UseGuards(BasicAuthGuard)
     @Post()
     async createBlog(@Body() dto: BlogCreateDtoApi) {
         const blogId = await this.commandBus.execute(new CreateBlogCommand(dto));
         return await this.blogsQueryRepository.getBlog(blogId);
     }
 
-    @HttpCode(201)
+    @HttpCode(HttpStatus.CREATED)
+    @UseGuards(BasicAuthGuard)
     @Post(':blogId/posts')
     async createPostToBlog(@Param('blogId') blogId: string, @Body() dto: PostToBlogCreateDtoApi) {
         const postId = await this.commandBus.execute(new CreatePostToBlogCommand(blogId, dto));
         return await this.postsQueryRepository.getPost(postId);
     }
 
-    @HttpCode(204)
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @UseGuards(BasicAuthGuard)
     @Put(':blogId')
     async updateBlog(@Param('blogId') blogId: string, @Body() dto: BlogUpdateDtoApi) {
         return await this.commandBus.execute(new UpdateBlogCommand(blogId, dto));
     }
 
-    @HttpCode(204)
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @UseGuards(BasicAuthGuard)
     @Delete(':blogId')
     async deleteBlog(@Param('blogId') blogId: string) {
         return await this.commandBus.execute(new DeleteBlogCommand(blogId));
