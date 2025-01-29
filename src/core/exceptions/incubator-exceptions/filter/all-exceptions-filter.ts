@@ -19,6 +19,7 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
 
             return;
         }
-        response.status(status).json(this.getDefaultHttpBody(request.url, exception));
+
+        response.status(status).send(this.getDefaultHttpBody(request.url, exception));
     }
 }

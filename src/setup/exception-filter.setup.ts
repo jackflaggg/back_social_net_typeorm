@@ -5,5 +5,5 @@ import { ZodFilter } from '../core/exceptions/zod-exceptions/zod.exception-filte
 
 export function exceptionFilterSetup(app: INestApplication) {
     //Подключаем наши фильтры. Тут важна последовательность! (сработает справа на лево)
-    app.useGlobalFilters(new AllExceptionsFilter(), new DomainExceptionsFilter(), new ZodFilter());
+    app.useGlobalFilters(new AllExceptionsFilter(), new DomainExceptionsFilter());
 }

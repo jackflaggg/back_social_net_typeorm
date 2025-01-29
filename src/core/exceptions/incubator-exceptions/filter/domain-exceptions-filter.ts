@@ -7,8 +7,7 @@ export type HttpResponseBody = {
     timestamp: string;
     path: string | null;
     message: string;
-    extensions: ErrorExtension[];
-    code: DomainExceptionCode | null;
+    code: string | null;
 };
 export type ValidationErrorResponse = {
     errorsMessages: ErrorExtension[];
@@ -24,34 +23,21 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
         this.onCatch(exception, response, request);
     }
 
-    getDefaultHttpBody(url: string, exception: unknown): any {
-        if (
-            (exception as any).status === 400 &&
-            (exception instanceof ZodValidationException ||
-                (exception instanceof DomainException && Number((exception as any).extensions.length) > 0))
-        ) {
+    getDefaultHttpBody(url: string, exception: unknown): ValidationErrorResponse | HttpResponseBody | any {
+        if (exception instanceof DomainException && Number((exception as any).extensions.length) > 0) {
             // Return validation error format
 
+            return {
+                errorsMessages: exception.extensions,
+            };
+        }
+
+        if (exception instanceof ZodValidationException) {
             return {
                 errorsMessages: [
                     {
                         message: (exception as any).response.errors[0].message,
                         field: (exception as any).response.errors[0].path[0],
-                    },
-                ],
-            };
-        }
-
-        if (
-            (exception as any).code === 2 &&
-            (exception instanceof ZodValidationException ||
-                (exception instanceof DomainException && Number((exception as any).extensions.length) > 0))
-        ) {
-            return {
-                errorsMessages: [
-                    {
-                        message: (exception as any).extensions[0].message,
-                        field: (exception as any).extensions[0].field,
                     },
                 ],
             };
@@ -69,7 +55,7 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
 @Catch(DomainException)
 export class DomainExceptionsFilter extends BaseExceptionFilter {
     onCatch(exception: DomainException, response: any, request: any): void {
-        response.status(this.calculateHttpCode(exception)).json(this.getDefaultHttpBody(request.url, exception));
+        response.status(this.calculateHttpCode(exception)).send(this.getDefaultHttpBody(request.url, exception));
     }
 
     calculateHttpCode(exception: DomainException) {
