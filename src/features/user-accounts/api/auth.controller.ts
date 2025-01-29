@@ -89,7 +89,7 @@ export class AuthController {
     @UseGuards(RefreshAuthGuard)
     @Post('refreshToken')
     async refreshToken(@ExtractAnyUserFromRequest() payload: UserJwtPayloadDto, @Res({ passthrough: true }) res: Response) {
-        const { jwt, refresh } = this.commandBus.execute(new RefreshTokenUserCommand(payload));
+        const { jwt, refresh } = await this.commandBus.execute(new RefreshTokenUserCommand(payload));
         res.cookie('refreshToken', refresh, { httpOnly: true, secure: true, maxAge: 86400 });
         return {
             accessToken: jwt,
