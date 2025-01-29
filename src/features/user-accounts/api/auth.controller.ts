@@ -18,6 +18,7 @@ import { RegistrationCommand, RegistrationSchema } from '@libs/contracts/command
 import { RegistrationUserCommand } from '../application/user/usecases/registration-user.usecase';
 import { UniqueEmailAuthGuard, UniqueLoginAuthGuard } from '../../../core/guards/passport/guards/uniqueLoginAuthGuard';
 import { RegistrationConfirmationUserCommand } from '../application/user/usecases/registration-confirmation-user.usecase';
+import { PasswordRecoveryUserCommand } from '../application/user/usecases/password-recovery-user.usecase';
 
 @Controller('auth')
 export class AuthController {
@@ -33,13 +34,14 @@ export class AuthController {
         res.cookie('refreshToken', refresh, { httpOnly: true, secure: true, maxAge: 86400 });
         return {
             accessToken: jwt,
-            refreshToken: refresh,
         };
     }
     @HttpCode(204)
     @UseGuards(ThrottlerGuard)
     @Post('password-recovery')
-    async passwordRecovery(@Body() dto: AuthRegistrationDtoApi) {}
+    async passwordRecovery(@Body() dto: AuthPasswordRecoveryDtoApi) {
+        return this.commandBus.execute(new PasswordRecoveryUserCommand(dto.email));
+    }
     @HttpCode(204)
     @UseGuards(ThrottlerGuard)
     @Post('new-password')
@@ -67,6 +69,16 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     @Get('me')
     async me(@Query() query: GetUsersQueryParams) {
+        //return this.userQueryRepository.getAllUsers(query);
+    }
+
+    @Post('logout')
+    async logout() {
+        //return this.userQueryRepository.getAllUsers(query);
+    }
+
+    @Post('refreshToken')
+    async refreshToken() {
         //return this.userQueryRepository.getAllUsers(query);
     }
 }

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const PasswordRecoveryRequestSchema = z.object({
-    email: z.string().email(),
+    email: z.string().email().trim(),
 });
 
 export namespace PasswordRecoveryCommand {
