@@ -23,4 +23,11 @@ export class SessionRepository {
         }
         return device;
     }
+    async findDeviceById(deviceId: string) {
+        const device = await this.deviceModel.findOne({ deviceId, deletionStatus: DeletionStatus.enum['not-deleted'] });
+        if (!device) {
+            return void 0;
+        }
+        return device;
+    }
 }
