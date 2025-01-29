@@ -17,7 +17,7 @@ export class UserController {
 
     @UseGuards(RefreshAuthGuard)
     @Get()
-    async getAllSessions() {}
+    async getAllSessions(@ExtractUserFromRequest() user: UserJwtPayloadDto) {}
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(RefreshAuthGuard)
@@ -29,5 +29,5 @@ export class UserController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(RefreshAuthGuard)
     @Delete()
-    async deleteSessions() {}
+    async deleteSessions(@ExtractUserFromRequest() user: UserJwtPayloadDto) {}
 }
