@@ -23,6 +23,7 @@ import { ExtractAnyUserFromRequest } from '../../../core/decorators/param/valida
 import { UserJwtPayloadDto } from '../../../core/guards/passport/strategies/refresh.strategy';
 import { RefreshTokenUserCommand } from '../application/user/usecases/refresh-token.user.usecase';
 import { JwtOptionalAuthGuard, Public } from '../../../core/guards/optional/guards/jwt.optional.auth.guards';
+import { LogoutUserCommand } from '../application/user/usecases/logout-user.usecase';
 
 @Controller('auth')
 export class AuthController {
@@ -84,8 +85,11 @@ export class AuthController {
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
+    @UseGuards(RefreshAuthGuard)
     @Post('logout')
-    async logout(@Req() req: Request) {}
+    async logout(@ExtractAnyUserFromRequest() payload: UserJwtPayloadDto) {
+        return this.commandBus.execute(new LogoutUserCommand(payload));
+    }
 
     @HttpCode(HttpStatus.OK)
     @UseGuards(RefreshAuthGuard)

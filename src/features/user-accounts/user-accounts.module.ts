@@ -30,6 +30,7 @@ import { RegistrationEmailResendUserUseCase } from './application/user/usecases/
 import { DeleteSessionUseCase } from './application/device/usecases/delete-session.usecase';
 import { NewPasswordUserUseCase } from './application/user/usecases/new-password-user.usecase';
 import { RefreshTokenUserUseCase } from './application/user/usecases/refresh-token.user.usecase';
+import { LogoutUserUseCase } from './application/user/usecases/logout-user.usecase';
 
 const usersProviders = [
     CreateSessionUseCase,
@@ -58,6 +59,7 @@ const usersProviders = [
     DeleteSessionUseCase,
     NewPasswordUserUseCase,
     RefreshTokenUserUseCase,
+    LogoutUserUseCase,
 ];
 
 @Module({
