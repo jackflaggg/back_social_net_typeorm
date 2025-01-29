@@ -51,12 +51,12 @@ export class UserEntity {
     }
 
     public async setPasswordAdmin(password: string) {
-        // Проверяем, установлен ли уже хэш пароля
-        // if (this.password.length > 30) {
-        //     // Если хэш уже установлен, можно вернуть текущий экземпляр
-        //     console.log('Пароль уже установлен.');
-        //     return this;
-        // }
+        //Проверяем, установлен ли уже хэш пароля
+        if (this.password.length > 30) {
+            // Если хэш уже установлен, можно вернуть текущий экземпляр
+            console.log('Пароль уже установлен.');
+            return this;
+        }
         const salt = await genSalt(10);
         this.password = await hash(password, salt);
         return this;

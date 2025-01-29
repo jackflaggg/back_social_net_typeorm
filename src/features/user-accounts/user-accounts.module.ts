@@ -21,6 +21,9 @@ import { UniqueEmailStrategy, UniqueLoginStrategy } from '../../core/guards/pass
 import { RegistrationUserUseCase } from './application/user/usecases/registration-user.usecase';
 import { EmailService } from '../notifications/application/mail.service';
 import { CommonCreateUserUseCase } from './application/user/usecases/common-create-user.usecase';
+import { PasswordRecoveryDbRepository } from './infrastructure/password/password.recovery.repository';
+import { RegistrationConfirmationUserUseCase } from './application/user/usecases/registration-confirmation-user.usecase';
+import { PasswordRecoveryEntity, PasswordRecoverySchema } from './domain/password-recovery/password-recovery.entity';
 
 const usersProviders = [
     CreateSessionUseCase,
@@ -41,6 +44,8 @@ const usersProviders = [
     RegistrationUserUseCase,
     EmailService,
     CommonCreateUserUseCase,
+    PasswordRecoveryDbRepository,
+    RegistrationConfirmationUserUseCase,
 ];
 
 @Module({
@@ -48,6 +53,7 @@ const usersProviders = [
         MongooseModule.forFeature([
             { name: UserEntity.name, schema: UserSchema },
             { name: DeviceEntity.name, schema: DeviceSchema },
+            { name: PasswordRecoveryEntity.name, schema: PasswordRecoverySchema },
         ]),
         CqrsModule,
     ],

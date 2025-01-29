@@ -17,6 +17,7 @@ import { PasswordRecoveryCommand } from '@libs/contracts/commands/auth/password-
 import { RegistrationCommand, RegistrationSchema } from '@libs/contracts/commands/auth/registration.command';
 import { RegistrationUserCommand } from '../application/user/usecases/registration-user.usecase';
 import { UniqueEmailAuthGuard, UniqueLoginAuthGuard } from '../../../core/guards/passport/guards/uniqueLoginAuthGuard';
+import { RegistrationConfirmationUserCommand } from '../application/user/usecases/registration-confirmation-user.usecase';
 
 @Controller('auth')
 export class AuthController {
@@ -55,7 +56,7 @@ export class AuthController {
     @UseGuards(ThrottlerGuard)
     @Post('registration-confirmation')
     async registrationConfirmation(@Body() dto: AuthRegistrationConfirmationDtoApi) {
-        //return this.userService.registrationConfirmation(dto);
+        return this.commandBus.execute(new RegistrationConfirmationUserCommand(dto.code));
     }
     @HttpCode(204)
     @UseGuards(ThrottlerGuard)
