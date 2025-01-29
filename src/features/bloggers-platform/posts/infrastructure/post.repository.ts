@@ -14,7 +14,6 @@ export class PostsRepository {
         const post = await this.postModel.findOne({ _id: id, deletionStatus: DeletionStatus.enum['not-deleted'] });
         if (!post) {
             throw NotFoundDomainException.create('Post not found');
-            //return void 0;
         }
         return post;
     }
