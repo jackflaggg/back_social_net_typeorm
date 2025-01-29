@@ -24,6 +24,7 @@ import { CommonCreateUserUseCase } from './application/user/usecases/common-crea
 import { PasswordRecoveryDbRepository } from './infrastructure/password/password.recovery.repository';
 import { RegistrationConfirmationUserUseCase } from './application/user/usecases/registration-confirmation-user.usecase';
 import { PasswordRecoveryEntity, PasswordRecoverySchema } from './domain/password-recovery/password-recovery.entity';
+import { PasswordRecoveryUserUseCase } from './application/user/usecases/password-recovery-user.usecase';
 
 const usersProviders = [
     CreateSessionUseCase,
@@ -46,6 +47,7 @@ const usersProviders = [
     CommonCreateUserUseCase,
     PasswordRecoveryDbRepository,
     RegistrationConfirmationUserUseCase,
+    PasswordRecoveryUserUseCase,
 ];
 
 @Module({
