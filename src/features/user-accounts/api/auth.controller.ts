@@ -19,6 +19,8 @@ import { RegistrationUserCommand } from '../application/user/usecases/registrati
 import { UniqueEmailAuthGuard, UniqueLoginAuthGuard } from '../../../core/guards/passport/guards/uniqueLoginAuthGuard';
 import { RegistrationConfirmationUserCommand } from '../application/user/usecases/registration-confirmation-user.usecase';
 import { PasswordRecoveryUserCommand } from '../application/user/usecases/password-recovery-user.usecase';
+import { RegistrationEmailResendingCommand } from '@libs/contracts/commands/auth/registration-email-resending.command';
+import { RegistrationEmailResendUserCommand } from '../application/user/usecases/registration-email-resend-user.usecase';
 
 @Controller('auth')
 export class AuthController {
@@ -48,7 +50,7 @@ export class AuthController {
     async newPassword(@Body() dto: AuthNewPasswordDtoApi) {
         //return this.userService.newPassword(dto);
     }
-    @HttpCode(200)
+    @HttpCode(204)
     @UseGuards(ThrottlerGuard, UniqueEmailAuthGuard, UniqueLoginAuthGuard)
     @Post('registration')
     async registration(@Body() dto: AuthRegistrationDtoApi) {
@@ -64,7 +66,7 @@ export class AuthController {
     @UseGuards(ThrottlerGuard)
     @Post('registration-email-resending')
     async registrationEmailResend(@Body() dto: AuthRegistrationEmailResendingDtoApi) {
-        //return this.userService.emailResend(dto);
+        return this.commandBus.execute(new RegistrationEmailResendUserCommand(dto.email));
     }
     @UseGuards(JwtAuthGuard)
     @Get('me')

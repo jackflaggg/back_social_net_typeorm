@@ -27,7 +27,8 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
     getDefaultHttpBody(url: string, exception: unknown): any {
         if (
             (exception as any).status === 400 &&
-            (exception instanceof ZodValidationException || (exception instanceof DomainException && exception.extensions.length > 0))
+            (exception instanceof ZodValidationException ||
+                (exception instanceof DomainException && Number((exception as any).extensions.length) > 0))
         ) {
             // Return validation error format
 
@@ -40,6 +41,22 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
                 ],
             };
         }
+
+        if (
+            (exception as any).code === 2 &&
+            (exception instanceof ZodValidationException ||
+                (exception instanceof DomainException && Number((exception as any).extensions.length) > 0))
+        ) {
+            return {
+                errorsMessages: [
+                    {
+                        message: (exception as any).extensions[0].message,
+                        field: (exception as any).extensions[0].field,
+                    },
+                ],
+            };
+        }
+
         return {
             timestamp: new Date().getTime().toString(),
             path: url,

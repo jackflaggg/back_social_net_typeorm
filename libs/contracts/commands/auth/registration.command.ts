@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { passwordConstraints } from '../../constants/auth/auth-property.constraints';
+import { emailRegexp } from '../../constants/user/email.regexp';
 
 export const RegistrationSchema = z.object({
     login: z.string().transform(value => value.trim()),
@@ -10,7 +11,7 @@ export const RegistrationSchema = z.object({
         .transform(value => value.trim()),
     email: z
         .string()
-        .email()
+        .regex(emailRegexp)
         .transform(value => value.trim()),
 });
 
