@@ -21,4 +21,9 @@ export class PasswordRecoveryDbRepository {
         const updateDate = await this.passwordRecoveryEntity.updateOne({ _id: id }, { $set: { used: true } });
         return updateDate.modifiedCount === 1;
     }
+
+    async createCodeAndDateConfirmation(userId: string, code: string, expirationDate: Date | string | null) {
+        const pass = await this.passwordRecoveryEntity.create({ userId, recoveryCode: code, expirationDate });
+        return pass;
+    }
 }

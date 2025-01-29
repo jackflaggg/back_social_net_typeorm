@@ -52,4 +52,19 @@ export class UserRepository {
 
         return updateEmail.matchedCount === 1;
     }
+
+    async updateUserToCodeAndDate(userId: string, code: string, expirationDate: Date) {
+        const updateEmail = await this.userModel.updateOne(
+            { _id: userId },
+            {
+                $set: {
+                    'emailConfirmation.confirmationCode': code,
+                    'emailConfirmation.expirationDate': expirationDate,
+                    'emailConfirmation.isConfirmed': false,
+                },
+            },
+        );
+
+        return updateEmail.matchedCount === 1;
+    }
 }
