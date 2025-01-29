@@ -21,7 +21,7 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
         const user = await this.usersRepository.findUserByIdOrFail(userId);
 
         if (!user) {
-            throw NotFoundDomainException.create('Post not found');
+            throw NotFoundDomainException.create();
         }
         this.mailer.sendEmailRecoveryMessage(command.payload.email, user.emailConfirmation.confirmationCode).catch((err: unknown) => {
             console.log(err);

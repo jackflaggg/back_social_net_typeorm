@@ -16,17 +16,17 @@ export class RegistrationEmailResendUserUseCase implements ICommandHandler<Regis
     constructor(
         @Inject() private readonly usersRepository: UserRepository,
         private readonly mailer: EmailService,
-        @Inject() private readonly passwordRepository: PasswordRecoveryDbRepository,
     ) {}
     async execute(command: RegistrationEmailResendUserCommand) {
         const user = await this.usersRepository.findUserByLoginOrEmail(command.email);
 
+        console.log(user);
         if (!user) {
-            throw BadRequestDomainException.create('юзер не найден', 'usersRepository');
+            throw BadRequestDomainException.create('юзера не существует', 'email');
         }
 
         if (user.emailConfirmation.isConfirmed) {
-            throw BadRequestDomainException.create('аккаунт уже был активирован', 'RegistrationEmailResendUserUseCase');
+            throw BadRequestDomainException.create('аккаунт уже был активирован', 'email');
         }
         const generateCode = randomUUID();
 
@@ -34,6 +34,7 @@ export class RegistrationEmailResendUserUseCase implements ICommandHandler<Regis
             hours: 1,
             minutes: 30,
         });
+
         await this.usersRepository.updateUserToCodeAndDate(user._id.toString(), generateCode, newExpirationDate);
 
         this.mailer.sendEmailRecoveryMessage(user.email, generateCode).catch(async (err: unknown) => {
