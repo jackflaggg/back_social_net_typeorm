@@ -25,6 +25,6 @@ export class UniqueEmailStrategy extends PassportStrategy(Strategy, 'unique-emai
 
     async validate(email: string) {
         email = email.trim();
-        return await this.authService.uniqueLoginUser(email);
+        return await this.authService.uniqueEmailUser(email);
     }
 }

@@ -1,4 +1,4 @@
-import { UnauthorizedDomainException } from '../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { BadRequestDomainException, UnauthorizedDomainException } from '../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { Inject, Injectable } from '@nestjs/common';
 import { UserDocument } from '../domain/user/user.entity';
 import { EventBus, EventsHandler, IEventHandler } from '@nestjs/cqrs';
@@ -35,7 +35,7 @@ export class AuthService {
         const one = await this.usersRepository.findUserByLoginOrEmail(login);
 
         if (one) {
-            throw UnauthorizedDomainException.create('поля должны быть уникальными!');
+            throw BadRequestDomainException.create('поля должны быть уникальными!', 'login');
         }
         return !one;
     }
@@ -44,7 +44,7 @@ export class AuthService {
         const one = await this.usersRepository.findUserByLoginOrEmail(email);
 
         if (one) {
-            throw UnauthorizedDomainException.create('поля должны быть уникальными!');
+            throw BadRequestDomainException.create('поля должны быть уникальными!', 'email');
         }
         return !one;
     }
