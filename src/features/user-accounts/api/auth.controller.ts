@@ -1,6 +1,5 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, Req, Res, UseGuards, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { UserQueryRepository } from '../infrastructure/user/query/user.query.repository';
-import { GetUsersQueryParams } from '../dto/api/get-users-query-params.input-dto';
 import { AuthLoginDtoApi } from '../dto/api/auth.login.dto';
 import { AuthPasswordRecoveryDtoApi } from '../dto/api/auth.password-recovery.dto';
 import { AuthNewPasswordDtoApi } from '../dto/api/auth.new-password.dto';
@@ -13,13 +12,10 @@ import { LocalAuthGuard } from '../../../core/guards/passport/guards/local.auth.
 import { JwtAuthGuard } from '../../../core/guards/passport/guards/jwt.auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { LoginUserCommand } from '../application/user/usecases/login-user.usecase';
-import { PasswordRecoveryCommand } from '@libs/contracts/commands/auth/password-recovery.command';
-import { RegistrationCommand, RegistrationSchema } from '@libs/contracts/commands/auth/registration.command';
 import { RegistrationUserCommand } from '../application/user/usecases/registration-user.usecase';
 import { UniqueEmailAuthGuard, UniqueLoginAuthGuard } from '../../../core/guards/passport/guards/uniqueLoginAuthGuard';
 import { RegistrationConfirmationUserCommand } from '../application/user/usecases/registration-confirmation-user.usecase';
 import { PasswordRecoveryUserCommand } from '../application/user/usecases/password-recovery-user.usecase';
-import { RegistrationEmailResendingCommand } from '@libs/contracts/commands/auth/registration-email-resending.command';
 import { RegistrationEmailResendUserCommand } from '../application/user/usecases/registration-email-resend-user.usecase';
 
 @Controller('auth')
