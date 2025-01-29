@@ -11,6 +11,7 @@ import {
     Post,
     Put,
     Query,
+    UseGuards,
 } from '@nestjs/common';
 import { PostsQueryRepository } from '../infrastructure/query/posts.query-repository';
 import { GetPostsQueryParams } from '../dto/api/get-posts-query-params.input.dto';
@@ -21,6 +22,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { CreatePostCommand } from '../application/usecases/create-post.usecase';
 import { UpdatePostCommand } from '../application/usecases/update-post.usecase';
 import { DeletePostCommand } from '../application/usecases/delete-post.usecase';
+import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -42,7 +44,8 @@ export class PostsController {
         }
         return post;
     }
-
+    @HttpCode(HttpStatus.CREATED)
+    @UseGuards(BasicAuthGuard)
     @Post()
     async createPost(@Body() dto: PostCreateDtoApi) {
         const postId = await this.commandBus.execute(new CreatePostCommand(dto));
