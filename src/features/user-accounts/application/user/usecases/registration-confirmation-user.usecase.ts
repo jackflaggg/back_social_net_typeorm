@@ -23,7 +23,7 @@ export class RegistrationConfirmationUserUseCase implements ICommandHandler<Regi
 
         // поиск юзера
         if (!findCode || (findCode.emailConfirmation && command.code !== findCode.emailConfirmation.confirmationCode)) {
-            throw NotFoundDomainException.create('юзер не найден', 'RegistrationConfirmationUserUseCase');
+            throw BadRequestDomainException.create('юзер не найден', 'code');
         }
 
         // проверка на истекание кода

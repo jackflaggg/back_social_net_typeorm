@@ -25,6 +25,7 @@ import { PasswordRecoveryDbRepository } from './infrastructure/password/password
 import { RegistrationConfirmationUserUseCase } from './application/user/usecases/registration-confirmation-user.usecase';
 import { PasswordRecoveryEntity, PasswordRecoverySchema } from './domain/password-recovery/password-recovery.entity';
 import { PasswordRecoveryUserUseCase } from './application/user/usecases/password-recovery-user.usecase';
+import { AccessTokenStrategy } from '../../core/guards/passport/strategies/jwt.strategy';
 
 const usersProviders = [
     CreateSessionUseCase,
@@ -48,6 +49,7 @@ const usersProviders = [
     PasswordRecoveryDbRepository,
     RegistrationConfirmationUserUseCase,
     PasswordRecoveryUserUseCase,
+    AccessTokenStrategy,
 ];
 
 @Module({
