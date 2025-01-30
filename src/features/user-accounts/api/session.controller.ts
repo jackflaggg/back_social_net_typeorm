@@ -8,8 +8,8 @@ import { ExtractUserFromRequest } from '../../../core/decorators/param/validate.
 import { SessionQueryRepository } from '../infrastructure/sessions/query/session.query.repository';
 import { DeleteSessionsCommand } from '../application/device/usecases/delete-sessions.usecase';
 import { ValidateObjectIdPipe } from '../../../core/pipes/validation.input.data.pipe';
+import { ValidateUUIDPipe } from '../../../core/pipes/validation.input.uuid';
 
-@UseGuards(BasicAuthGuard)
 @Controller('devices')
 export class SessionController {
     constructor(
@@ -26,7 +26,7 @@ export class SessionController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(RefreshAuthGuard)
     @Delete(':id')
-    async deleteSession(@Param('id', ValidateObjectIdPipe) id: string, @ExtractUserFromRequest() dto: UserJwtPayloadDto) {
+    async deleteSession(@Param('id', ValidateUUIDPipe) id: string, @ExtractUserFromRequest() dto: UserJwtPayloadDto) {
         return this.commandBus.execute(new DeleteSessionCommand(dto.userId, id));
     }
 

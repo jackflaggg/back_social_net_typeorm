@@ -53,10 +53,9 @@ export class SessionRepository {
         return this.deviceModel.updateMany(
             {
                 userId,
-                deletionStatus: DeletionStatus.enum['not-deleted'],
                 deviceId: { $ne: deviceId },
             },
-            { deletedStatus: DeletionStatus.enum['permanent-deleted'] },
+            { deletionStatus: DeletionStatus.enum['permanent-deleted'] },
         );
     }
 }
