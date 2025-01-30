@@ -6,6 +6,7 @@ import { BasicAuthGuard } from '../../../core/guards/passport/guards/basic.auth.
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../application/user/usecases/create-user.usecase';
 import { DeleteUserCommand } from '../application/user/usecases/delete-user.usecase';
+import { ValidateObjectIdPipe } from '../../../core/pipes/validation.input.data.pipe';
 
 @UseGuards(BasicAuthGuard)
 @Controller('users')
@@ -23,7 +24,7 @@ export class UserController {
 
     @HttpCode(204)
     @Delete(':id')
-    async deleteUser(@Param('id') id: string) {
+    async deleteUser(@Param('id', ValidateObjectIdPipe) id: string) {
         return this.commandBus.execute(new DeleteUserCommand(id));
     }
 

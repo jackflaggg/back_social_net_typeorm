@@ -5,7 +5,7 @@ import { trimString } from '../../models/post/post.models';
 
 const BlogCreateRequestSchema = z.object({
     name: z.string().min(nameConstraints.minLength).max(nameConstraints.maxLength).transform(trimString),
-    description: z.string().transform(trimString),
+    description: z.string().max(500).transform(trimString),
     websiteUrl: z.string().url('Invalid URL').transform(trimString),
 });
 

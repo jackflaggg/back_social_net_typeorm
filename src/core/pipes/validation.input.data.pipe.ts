@@ -1,15 +1,12 @@
-import { PipeTransform } from '@nestjs/common';
-import { isValidObjectId, Types } from 'mongoose';
-import { ArgumentMetadata } from '@nestjs/common/interfaces/features/pipe-transform.interface';
+import { PipeTransform, Injectable } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { BadRequestDomainException } from '../exceptions/incubator-exceptions/domain-exceptions';
 
-export class ObjectIdValidationPipe implements PipeTransform {
-    transform(value: any, metadata: ArgumentMetadata) {
-        if (metadata.metatype === Types.ObjectId) {
-            if (!isValidObjectId(value)) {
-                throw BadRequestDomainException.create();
-            }
-            return new Types.ObjectId(value);
+@Injectable()
+export class ValidateObjectIdPipe implements PipeTransform<string> {
+    transform(value: string): string {
+        if (!Types.ObjectId.isValid(value)) {
+            throw BadRequestDomainException.create('неверный формат objectId', 'id');
         }
         return value;
     }

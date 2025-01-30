@@ -26,6 +26,7 @@ import { CreatePostToBlogCommand } from '../application/usecases/create-post-to-
 import { DeleteBlogCommand } from '../application/usecases/delete-blog.usecase';
 import { UpdateBlogCommand } from '../application/usecases/update-blog.usecase';
 import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
+import { ValidateObjectIdPipe } from '../../../../core/pipes/validation.input.data.pipe';
 
 @Controller('blogs')
 export class BlogsController {
@@ -41,21 +42,14 @@ export class BlogsController {
     }
 
     @Get(':blogId/posts')
-    async getPosts(@Param('blogId') blogId: string, @Query() query: GetPostsQueryParams) {
+    async getPosts(@Param('blogId', ValidateObjectIdPipe) blogId: string, @Query() query: GetPostsQueryParams) {
         const blog = await this.blogsQueryRepository.getBlog(blogId);
-        if (!blog) {
-            throw new HttpException('Not blog', HttpStatus.NOT_FOUND);
-        }
         return this.postsQueryRepository.getAllPosts(query, blog.id);
     }
 
     @Get(':blogId')
-    async getBlog(@Param('blogId') blogId: string) {
-        const blog = await this.blogsQueryRepository.getBlog(blogId);
-        if (!blog) {
-            throw new NotFoundException('Not found blog');
-        }
-        return blog;
+    async getBlog(@Param('blogId', ValidateObjectIdPipe) blogId: string) {
+        return this.blogsQueryRepository.getBlog(blogId);
     }
 
     @HttpCode(HttpStatus.CREATED)
@@ -63,28 +57,28 @@ export class BlogsController {
     @Post()
     async createBlog(@Body() dto: BlogCreateDtoApi) {
         const blogId = await this.commandBus.execute(new CreateBlogCommand(dto));
-        return await this.blogsQueryRepository.getBlog(blogId);
+        return this.blogsQueryRepository.getBlog(blogId);
     }
 
     @HttpCode(HttpStatus.CREATED)
     @UseGuards(BasicAuthGuard)
     @Post(':blogId/posts')
-    async createPostToBlog(@Param('blogId') blogId: string, @Body() dto: PostToBlogCreateDtoApi) {
+    async createPostToBlog(@Param('blogId', ValidateObjectIdPipe) blogId: string, @Body() dto: PostToBlogCreateDtoApi) {
         const postId = await this.commandBus.execute(new CreatePostToBlogCommand(blogId, dto));
-        return await this.postsQueryRepository.getPost(postId);
+        return this.postsQueryRepository.getPost(postId);
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(BasicAuthGuard)
     @Put(':blogId')
-    async updateBlog(@Param('blogId') blogId: string, @Body() dto: BlogUpdateDtoApi) {
-        return await this.commandBus.execute(new UpdateBlogCommand(blogId, dto));
+    async updateBlog(@Param('blogId', ValidateObjectIdPipe) blogId: string, @Body() dto: BlogUpdateDtoApi) {
+        return this.commandBus.execute(new UpdateBlogCommand(blogId, dto));
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(BasicAuthGuard)
     @Delete(':blogId')
-    async deleteBlog(@Param('blogId') blogId: string) {
-        return await this.commandBus.execute(new DeleteBlogCommand(blogId));
+    async deleteBlog(@Param('blogId', ValidateObjectIdPipe) blogId: string) {
+        return this.commandBus.execute(new DeleteBlogCommand(blogId));
     }
 }

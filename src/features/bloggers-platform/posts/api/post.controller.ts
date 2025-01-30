@@ -1,18 +1,4 @@
-import {
-    BadRequestException,
-    Body,
-    Controller,
-    Delete,
-    Get,
-    HttpCode,
-    HttpException,
-    HttpStatus,
-    Param,
-    Post,
-    Put,
-    Query,
-    UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { PostsQueryRepository } from '../infrastructure/query/posts.query-repository';
 import { GetPostsQueryParams } from '../dto/api/get-posts-query-params.input.dto';
 import { PostCreateDtoApi } from '../dto/api/post.create.dto';
@@ -23,6 +9,7 @@ import { CreatePostCommand } from '../application/usecases/create-post.usecase';
 import { UpdatePostCommand } from '../application/usecases/update-post.usecase';
 import { DeletePostCommand } from '../application/usecases/delete-post.usecase';
 import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
+import { ValidateObjectIdPipe } from '../../../../core/pipes/validation.input.data.pipe';
 
 @Controller('posts')
 export class PostsController {
@@ -37,7 +24,7 @@ export class PostsController {
     }
 
     @Get(':postId')
-    async getPost(@Param('postId') postId: string) {
+    async getPost(@Param('postId', ValidateObjectIdPipe) postId: string) {
         const post = await this.postsQueryRepository.getPost(postId);
         if (!post) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
@@ -53,18 +40,18 @@ export class PostsController {
     }
     @HttpCode(204)
     @Put(':postId')
-    async updatePost(@Param('postId') postId: string, @Body() dto: PostUpdateDtoApi) {
+    async updatePost(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: PostUpdateDtoApi) {
         return await this.commandBus.execute(new UpdatePostCommand(postId, dto));
     }
     @HttpCode(204)
     @Delete(':postId')
-    async deleteBlog(@Param('postId') postId: string) {
+    async deleteBlog(@Param('postId', ValidateObjectIdPipe) postId: string) {
         return await this.commandBus.execute(new DeletePostCommand(postId));
     }
 
     @Post(':postId/comments')
-    async createCommentToPost(@Param('postId') postId: string, @Body() dto: CommentCreateToPostApi) {}
+    async createCommentToPost(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: CommentCreateToPostApi) {}
 
     @Get(':postId/comments')
-    async getComments(@Param('postId') postId: string, @Body() dto: CommentCreateToPostApi) {}
+    async getComments(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: CommentCreateToPostApi) {}
 }
