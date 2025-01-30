@@ -10,6 +10,7 @@ import { UpdatePostCommand } from '../application/usecases/update-post.usecase';
 import { DeletePostCommand } from '../application/usecases/delete-post.usecase';
 import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
 import { ValidateObjectIdPipe } from '../../../../core/pipes/validation.input.data.pipe';
+import { JwtAuthGuard } from '../../../../core/guards/passport/guards/jwt.auth.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -25,32 +26,36 @@ export class PostsController {
 
     @Get(':postId')
     async getPost(@Param('postId', ValidateObjectIdPipe) postId: string) {
-        const post = await this.postsQueryRepository.getPost(postId);
-        if (!post) {
-            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-        }
-        return post;
+        return this.postsQueryRepository.getPost(postId);
     }
     @HttpCode(HttpStatus.CREATED)
     @UseGuards(BasicAuthGuard)
     @Post()
     async createPost(@Body() dto: PostCreateDtoApi) {
         const postId = await this.commandBus.execute(new CreatePostCommand(dto));
-        return await this.postsQueryRepository.getPost(postId);
+        return this.postsQueryRepository.getPost(postId);
     }
-    @HttpCode(204)
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @UseGuards(BasicAuthGuard)
     @Put(':postId')
     async updatePost(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: PostUpdateDtoApi) {
         return await this.commandBus.execute(new UpdatePostCommand(postId, dto));
     }
-    @HttpCode(204)
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @UseGuards(BasicAuthGuard)
     @Delete(':postId')
     async deleteBlog(@Param('postId', ValidateObjectIdPipe) postId: string) {
         return await this.commandBus.execute(new DeletePostCommand(postId));
     }
 
+    @UseGuards(JwtAuthGuard)
     @Post(':postId/comments')
     async createCommentToPost(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: CommentCreateToPostApi) {}
+
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @UseGuards(JwtAuthGuard)
+    @Put(':postId/like-status')
+    async likePost(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: CommentCreateToPostApi) {}
 
     @Get(':postId/comments')
     async getComments(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: CommentCreateToPostApi) {}
