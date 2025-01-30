@@ -25,8 +25,6 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
 
     getDefaultHttpBody(url: string, exception: unknown): ValidationErrorResponse | HttpResponseBody | any {
         if (exception instanceof DomainException && Number((exception as any).extensions.length) > 0) {
-            // Return validation error format
-
             return {
                 errorsMessages: exception.extensions,
             };
