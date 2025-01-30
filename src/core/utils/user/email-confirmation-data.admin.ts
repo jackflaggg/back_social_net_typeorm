@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { add } from 'date-fns/add';
 
 export function emailConfirmationDataAdmin() {
     return {
@@ -15,7 +16,7 @@ export function emailConfirmationData() {
     return {
         emailConfirmation: {
             confirmationCode: code,
-            expirationDate: new Date(),
+            expirationDate: add(new Date(), { hours: 1, minutes: 30, seconds: 10 }),
             isConfirmed: false,
         },
     };

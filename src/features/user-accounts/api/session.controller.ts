@@ -1,7 +1,6 @@
 import { Controller, Delete, Get, HttpCode, HttpStatus, Param, UseGuards } from '@nestjs/common';
 import { BasicAuthGuard } from '../../../core/guards/passport/guards/basic.auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
-import { UserQueryRepository } from '../infrastructure/user/query/user.query.repository';
 import { RefreshAuthGuard } from '../../../core/guards/passport/guards/refresh.auth.guard';
 import { DeleteSessionCommand } from '../application/device/usecases/delete-session.usecase';
 import { UserJwtPayloadDto } from '../../../core/guards/passport/strategies/refresh.strategy';

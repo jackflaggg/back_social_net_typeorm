@@ -30,6 +30,7 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
     async execute(command: CreateCommentCommand) {
         const post = await this.postsRepository.findPostByIdOrFail(command.postId);
         const user = await this.usersRepository.findUserByIdOrFail(command.userId);
+        console.log('я нашел юзера: ' + user);
         const result = this.CommentModel.buildInstance(
             command.payload.content,
             { userId: user._id.toString(), userLogin: user.login },

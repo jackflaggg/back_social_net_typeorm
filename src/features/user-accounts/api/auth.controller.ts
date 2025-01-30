@@ -22,7 +22,6 @@ import { RefreshAuthGuard } from '../../../core/guards/passport/guards/refresh.a
 import { ExtractAnyUserFromRequest } from '../../../core/decorators/param/validate.user.decorators';
 import { UserJwtPayloadDto } from '../../../core/guards/passport/strategies/refresh.strategy';
 import { RefreshTokenUserCommand } from '../application/user/usecases/refresh-token.user.usecase';
-import { JwtOptionalAuthGuard, Public } from '../../../core/guards/optional/guards/jwt.optional.auth.guards';
 import { LogoutUserCommand } from '../application/user/usecases/logout-user.usecase';
 
 @Controller('auth')
@@ -77,8 +76,6 @@ export class AuthController {
         return this.commandBus.execute(new RegistrationEmailResendUserCommand(dto.email));
     }
 
-    @UseGuards(JwtOptionalAuthGuard)
-    @Public()
     @Get('me')
     async me(@ExtractAnyUserFromRequest() payload: UserJwtPayloadDto) {
         return this.userQueryRepository.findUser(payload.userId);

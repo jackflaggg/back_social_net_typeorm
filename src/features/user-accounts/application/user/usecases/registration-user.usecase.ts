@@ -20,9 +20,6 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
         const userId = await this.commandBus.execute<CommonCreateUserCommand, string>(new CommonCreateUserCommand(command.payload));
         const user = await this.usersRepository.findUserByIdOrFail(userId);
 
-        if (!user) {
-            throw NotFoundDomainException.create();
-        }
         this.mailer.sendEmailRecoveryMessage(command.payload.email, user.emailConfirmation.confirmationCode).catch((err: unknown) => {
             console.log(err);
         });

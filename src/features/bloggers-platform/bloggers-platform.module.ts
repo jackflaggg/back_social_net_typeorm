@@ -21,13 +21,12 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { CreatePostUseCase } from './posts/application/usecases/create-post.usecase';
 import { DeletePostUseCase } from './posts/application/usecases/delete-post.usecase';
 import { UpdatePostUseCase } from './posts/application/usecases/update-post.usecase';
-import { JwtOptionalAuthGuard } from '../../core/guards/optional/guards/jwt.optional.auth.guards';
-import { APP_GUARD } from '@nestjs/core';
 import { CreateCommentUseCase } from './comments/application/usecases/create-comment.usecase';
 import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '../user-accounts/user-accounts.module';
 import { CommentRepository } from './comments/infrastructure/comment.repository';
 import { StatusEntity, StatusSchema } from './likes/domain/status,entity';
+import { JwtModule } from '@nestjs/jwt';
 
 const repositories = [
     BlogsQueryRepository,
@@ -50,6 +49,10 @@ const useCases = [
 
 @Module({
     imports: [
+        JwtModule.register({
+            secret: 'envelope',
+            signOptions: { expiresIn: '5m' },
+        }),
         PassportModule,
         MongooseModule.forFeature([
             { name: BlogEntity.name, schema: BlogSchema },
@@ -63,13 +66,6 @@ const useCases = [
         UsersModule,
     ],
     controllers: [BlogsController, PostsController, CommentController],
-    providers: [
-        ...repositories,
-        ...useCases,
-        {
-            provide: APP_GUARD,
-            useClass: JwtOptionalAuthGuard,
-        },
-    ],
+    providers: [...repositories, ...useCases],
 })
 export class BloggersPlatformModule {}

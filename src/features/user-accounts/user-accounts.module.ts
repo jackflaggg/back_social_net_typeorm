@@ -13,7 +13,7 @@ import { LocalStrategy } from '../../core/guards/passport/strategies/local.strat
 import { ValidateUserUseCase } from './application/user/usecases/validate-user.usecase';
 import { LoginUserUseCase } from './application/user/usecases/login-user.usecase';
 import { AuthService, UserLoggedInEventHandler } from './application/auth.service';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { CreateSessionUseCase } from './application/device/usecases/create-session.usecase';
 import { DeviceEntity, DeviceSchema } from './domain/device/device.entity';
 import { SessionRepository } from './infrastructure/sessions/session.repository';
@@ -58,6 +58,10 @@ const handlers = [UserLoggedInEventHandler];
 
 @Module({
     imports: [
+        JwtModule.register({
+            secret: 'envelope',
+            signOptions: { expiresIn: '5m' },
+        }),
         PassportModule,
         //если в системе несколько токенов (например, access и refresh) с разными опциями (время жизни, секрет)
         //можно переопределить опции при вызове метода jwt.service.sign
