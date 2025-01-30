@@ -4,7 +4,6 @@ import { CommentRepository } from '../../infrastructure/comment.repository';
 import { UserRepository } from '../../../../user-accounts/infrastructure/user/user.repository';
 import { InjectModel } from '@nestjs/mongoose';
 import { CommentEntity, CommentModelType } from '../../domain/comment.entity';
-import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { CommentCreateToPostApi } from '../../../posts/dto/api/comment.create.to.post';
 
 // класс для создания комментария
@@ -12,7 +11,7 @@ export class CreateCommentCommand {
     constructor(
         public readonly payload: CommentCreateToPostApi,
         public readonly postId: string,
-        public readonly user: any,
+        public readonly userId: string,
     ) {}
 }
 
@@ -30,14 +29,12 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
     ) {}
     async execute(command: CreateCommentCommand) {
         const post = await this.postsRepository.findPostByIdOrFail(command.postId);
-        if (!post) {
-            throw NotFoundDomainException.create('Post not found');
-        }
-        const user = await this.usersRepository.findUserByIdOrFail(command.user.userId);
-        if (!user) {
-            throw NotFoundDomainException.create('User not found');
-        }
-        const result = this.CommentModel.buildInstance(command.payload);
+        const user = await this.usersRepository.findUserByIdOrFail(command.userId);
+        const result = this.CommentModel.buildInstance(
+            command.payload.content,
+            { userId: user._id.toString(), userLogin: user.login },
+            command.postId,
+        );
         await this.commentsRepository.save(result);
         return result._id.toString();
     }

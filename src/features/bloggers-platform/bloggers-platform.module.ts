@@ -27,6 +27,7 @@ import { CreateCommentUseCase } from './comments/application/usecases/create-com
 import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '../user-accounts/user-accounts.module';
 import { CommentRepository } from './comments/infrastructure/comment.repository';
+import { StatusEntity, StatusSchema } from './likes/domain/status,entity';
 
 const repositories = [
     BlogsQueryRepository,
@@ -56,6 +57,7 @@ const useCases = [
             { name: CommentEntity.name, schema: CommentSchema },
             { name: NewestLikesEntity.name, schema: NewestLikesSchema },
             { name: ExtendedLikesEntity.name, schema: ExtendedLikesSchema },
+            { name: StatusEntity.name, schema: StatusSchema },
         ]),
         CqrsModule,
         UsersModule,

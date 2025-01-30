@@ -12,7 +12,6 @@ export class UserRepository {
         const user = await this.userModel.findById({ _id: userId, deletionStatus: DeletionStatus.enum['not-deleted'] });
         if (!user) {
             throw NotFoundDomainException.create('User not found');
-            //return void 0;
         }
         return user;
     }
