@@ -12,7 +12,7 @@ import { ValidateObjectIdPipe } from '../../../core/pipes/validation.input.data.
 
 @UseGuards(BasicAuthGuard)
 @Controller('devices')
-export class UserController {
+export class SessionController {
     constructor(
         private readonly commandBus: CommandBus,
         private readonly sessionQueryRepository: SessionQueryRepository,

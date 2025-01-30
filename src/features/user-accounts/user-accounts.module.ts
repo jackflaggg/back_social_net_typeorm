@@ -31,39 +31,37 @@ import { DeleteSessionUseCase } from './application/device/usecases/delete-sessi
 import { NewPasswordUserUseCase } from './application/user/usecases/new-password-user.usecase';
 import { RefreshTokenUserUseCase } from './application/user/usecases/refresh-token.user.usecase';
 import { LogoutUserUseCase } from './application/user/usecases/logout-user.usecase';
+import { SessionController } from './api/session.controller';
+import { PassportModule } from '@nestjs/passport';
+import { SessionQueryRepository } from './infrastructure/sessions/query/session.query.repository';
 
-const usersProviders = [
+const useCases = [
     CreateSessionUseCase,
-    AuthService,
-    UserLoggedInEventHandler,
-    UserRepository,
-    UserQueryRepository,
-    BasicStrategy,
     ValidateUserUseCase,
     LoginUserUseCase,
-    LocalStrategy,
     CreateUserUseCase,
     DeleteUserUseCase,
-    JwtService,
-    SessionRepository,
-    UniqueLoginStrategy,
-    UniqueEmailStrategy,
     RegistrationUserUseCase,
-    EmailService,
     CommonCreateUserUseCase,
-    PasswordRecoveryDbRepository,
     RegistrationConfirmationUserUseCase,
     PasswordRecoveryUserUseCase,
-    AccessTokenStrategy,
     RegistrationEmailResendUserUseCase,
     DeleteSessionUseCase,
     NewPasswordUserUseCase,
     RefreshTokenUserUseCase,
     LogoutUserUseCase,
 ];
+const repositories = [UserRepository, UserQueryRepository, SessionRepository, PasswordRecoveryDbRepository, SessionQueryRepository];
+const strategies = [BasicStrategy, LocalStrategy, UniqueLoginStrategy, UniqueEmailStrategy, AccessTokenStrategy];
+const services = [AuthService, JwtService, EmailService];
+const handlers = [UserLoggedInEventHandler];
 
 @Module({
     imports: [
+        PassportModule,
+        //если в системе несколько токенов (например, access и refresh) с разными опциями (время жизни, секрет)
+        //можно переопределить опции при вызове метода jwt.service.sign
+        //или написать свой tokens сервис (адаптер), где эти опции будут уже учтены
         MongooseModule.forFeature([
             { name: UserEntity.name, schema: UserSchema },
             { name: DeviceEntity.name, schema: DeviceSchema },
@@ -71,7 +69,8 @@ const usersProviders = [
         ]),
         CqrsModule,
     ],
-    providers: [...usersProviders],
-    controllers: [UserController, AuthController],
+    exports: [UserRepository],
+    providers: [...useCases, ...repositories, ...services, ...strategies, ...handlers],
+    controllers: [UserController, AuthController, SessionController],
 })
 export class UsersModule {}

@@ -1,9 +1,9 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { CommentDocument, CommentModelType } from '../domain/comment.entity';
+import { CommentDocument, CommentEntity, CommentModelType } from '../domain/comment.entity';
 import { DeletionStatus } from '../../../../../libs/contracts/enums/deletion-status.enum';
 
 export class CommentRepository {
-    constructor(@InjectModel(Comment.name) private readonly CommentModel: CommentModelType) {}
+    constructor(@InjectModel(CommentEntity.name) private readonly CommentModel: CommentModelType) {}
     async createComment(payload: any, postId: string, user: any) {
         const comment = await this.CommentModel.create();
     }

@@ -23,22 +23,33 @@ import { DeletePostUseCase } from './posts/application/usecases/delete-post.usec
 import { UpdatePostUseCase } from './posts/application/usecases/update-post.usecase';
 import { JwtOptionalAuthGuard } from '../../core/guards/optional/guards/jwt.optional.auth.guards';
 import { APP_GUARD } from '@nestjs/core';
+import { CreateCommentUseCase } from './comments/application/usecases/create-comment.usecase';
+import { PassportModule } from '@nestjs/passport';
+import { UsersModule } from '../user-accounts/user-accounts.module';
+import { CommentRepository } from './comments/infrastructure/comment.repository';
 
-const blogsProviders = [
+const repositories = [
+    BlogsQueryRepository,
+    BlogsRepository,
+    CommentsQueryRepository,
+    PostsQueryRepository,
+    PostsRepository,
+    CommentRepository,
+];
+const useCases = [
     CreateBlogUseCase,
     DeleteBlogUseCase,
     UpdateBlogUseCase,
     CreatePostToBlogUseCase,
-    BlogsQueryRepository,
-    BlogsRepository,
+    CreateCommentUseCase,
+    CreatePostUseCase,
+    DeletePostUseCase,
+    UpdatePostUseCase,
 ];
-
-const commentsProviders = [CommentsQueryRepository];
-
-const postsProviders = [CreatePostUseCase, DeletePostUseCase, UpdatePostUseCase, PostsQueryRepository, PostsRepository];
 
 @Module({
     imports: [
+        PassportModule,
         MongooseModule.forFeature([
             { name: BlogEntity.name, schema: BlogSchema },
             { name: PostEntity.name, schema: PostSchema },
@@ -47,12 +58,12 @@ const postsProviders = [CreatePostUseCase, DeletePostUseCase, UpdatePostUseCase,
             { name: ExtendedLikesEntity.name, schema: ExtendedLikesSchema },
         ]),
         CqrsModule,
+        UsersModule,
     ],
     controllers: [BlogsController, PostsController, CommentController],
     providers: [
-        ...blogsProviders,
-        ...postsProviders,
-        ...commentsProviders,
+        ...repositories,
+        ...useCases,
         {
             provide: APP_GUARD,
             useClass: JwtOptionalAuthGuard,

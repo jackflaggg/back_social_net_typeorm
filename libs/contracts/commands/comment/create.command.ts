@@ -4,7 +4,7 @@ import { trimString } from '../../models/post/post.models';
 import { CommentModels } from '../../models/comment/comment.model';
 
 const CommentCreateRequestSchema = z.object({
-    content: z.string().min(contentConstraints.minLength).max(contentConstraints.maxLength).transform(trimString),
+    content: z.string().trim().min(contentConstraints.minLength).max(contentConstraints.maxLength).transform(trimString),
 });
 
 export namespace CommentCreateCommand {

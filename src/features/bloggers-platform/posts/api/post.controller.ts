@@ -11,6 +11,9 @@ import { DeletePostCommand } from '../application/usecases/delete-post.usecase';
 import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
 import { ValidateObjectIdPipe } from '../../../../core/pipes/validation.input.data.pipe';
 import { JwtAuthGuard } from '../../../../core/guards/passport/guards/jwt.auth.guard';
+import { ExtractUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
+import { UserJwtPayloadDto } from '../../../../core/guards/passport/strategies/refresh.strategy';
+import { CreateCommentCommand } from '../../comments/application/usecases/create-comment.usecase';
 
 @Controller('posts')
 export class PostsController {
@@ -39,18 +42,24 @@ export class PostsController {
     @UseGuards(BasicAuthGuard)
     @Put(':postId')
     async updatePost(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: PostUpdateDtoApi) {
-        return await this.commandBus.execute(new UpdatePostCommand(postId, dto));
+        return this.commandBus.execute(new UpdatePostCommand(postId, dto));
     }
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(BasicAuthGuard)
     @Delete(':postId')
     async deleteBlog(@Param('postId', ValidateObjectIdPipe) postId: string) {
-        return await this.commandBus.execute(new DeletePostCommand(postId));
+        return this.commandBus.execute(new DeletePostCommand(postId));
     }
 
     @UseGuards(JwtAuthGuard)
     @Post(':postId/comments')
-    async createCommentToPost(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: CommentCreateToPostApi) {}
+    async createCommentToPost(
+        @Param('postId', ValidateObjectIdPipe) id: string,
+        @Body() dto: CommentCreateToPostApi,
+        @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
+    ) {
+        return this.commandBus.execute(new CreateCommentCommand(dto, id, dtoUser));
+    }
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(JwtAuthGuard)
