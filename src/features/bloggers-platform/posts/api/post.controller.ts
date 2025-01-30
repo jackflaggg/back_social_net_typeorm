@@ -70,5 +70,8 @@ export class PostsController {
     async likePost(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: CommentCreateToPostApi) {}
 
     @Get(':postId/comments')
-    async getComments(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: CommentCreateToPostApi) {}
+    async getComments(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: CommentCreateToPostApi) {
+        const post = await this.postsQueryRepository.getPost(postId);
+        return this.commentQueryRepository.getComment(postId);
+    }
 }

@@ -12,7 +12,7 @@ export function transformCommentToGet(valueOne: any, valueTwo?: any) {
         likesInfo: {
             likesCount: valueOne.likesCount || 0,
             dislikesCount: valueOne.dislikesCount || 0,
-            myStatus: valueTwo?.status || StatusLike.enum['permanent-deleted'],
+            myStatus: valueTwo?.status || StatusLike.enum['None'],
         },
     };
 }
