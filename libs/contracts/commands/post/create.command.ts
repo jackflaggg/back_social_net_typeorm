@@ -1,16 +1,18 @@
 import { z } from 'zod';
 import { PostModels, trimString } from '../../models/post/post.models';
-import { contentConstraints, shortDescriptionConstraints, titleConstraints } from '../../constants/post/post-property.constraints';
+import { shortDescriptionConstraints, titleConstraints } from '../../constants/post/post-property.constraints';
+import * as mongoose from 'mongoose';
 
 const PostCreateRequestSchema = z.object({
-    title: z.string().min(titleConstraints.minLength).max(titleConstraints.maxLength).transform(trimString),
+    title: z.string().trim().min(titleConstraints.minLength).max(titleConstraints.maxLength).transform(trimString),
     shortDescription: z
         .string()
+        .trim()
         .min(shortDescriptionConstraints.minLength)
         .max(shortDescriptionConstraints.maxLength)
         .transform(trimString),
-    content: z.string().min(contentConstraints.minLength).max(contentConstraints.maxLength).transform(trimString),
-    blogId: z.string().transform(trimString),
+    content: z.string().trim().max(1000).transform(trimString),
+    blogId: z.string().refine(value => mongoose.Types.ObjectId.isValid(value)),
 });
 
 export namespace PostCreateCommand {
