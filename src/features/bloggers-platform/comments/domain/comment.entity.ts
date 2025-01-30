@@ -36,9 +36,13 @@ export class CommentEntity {
     @Prop({ type: String, required: true, default: DeletionStatus.enum['not-deleted'] })
     deletionStatus: DeletionStatusType;
 
-    public static buildInstance(dto: CommentCreateToPostApi): CommentDocument {
+    public static buildInstance(content: string, commentatorInfo: CommentatorInfoInterface, postId: string): CommentDocument {
         const comment = new this();
-        comment.content = dto.content;
+        comment.content = content;
+        comment.commentatorInfo = commentatorInfo;
+        comment.postId = postId;
+        comment.likesInfo.dislikesCount = 0;
+        comment.likesInfo.likesCount = 0;
         return comment as CommentDocument;
     }
 

@@ -14,12 +14,14 @@ import { JwtAuthGuard } from '../../../../core/guards/passport/guards/jwt.auth.g
 import { ExtractUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
 import { UserJwtPayloadDto } from '../../../../core/guards/passport/strategies/refresh.strategy';
 import { CreateCommentCommand } from '../../comments/application/usecases/create-comment.usecase';
+import { CommentsQueryRepository } from '../../comments/infrastructure/query/comments.query.repository';
 
 @Controller('posts')
 export class PostsController {
     constructor(
         private readonly commandBus: CommandBus,
         private readonly postsQueryRepository: PostsQueryRepository,
+        private readonly commentQueryRepository: CommentsQueryRepository,
     ) {}
 
     @Get()
@@ -58,7 +60,8 @@ export class PostsController {
         @Body() dto: CommentCreateToPostApi,
         @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
-        return this.commandBus.execute(new CreateCommentCommand(dto, id, dtoUser));
+        const commentId = await this.commandBus.execute(new CreateCommentCommand(dto, id, dtoUser.userId));
+        return this.commentQueryRepository.getComment(commentId, dtoUser.userId);
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)

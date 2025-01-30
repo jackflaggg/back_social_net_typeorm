@@ -1,4 +1,4 @@
-import { Controller, Delete, HttpCode } from '@nestjs/common';
+import { Controller, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { BlogEntity, BlogModelType } from '../../bloggers-platform/blogs/domain/blog.entity';
 import { PostEntity, PostModelType } from '../../bloggers-platform/posts/domain/post.entity';
@@ -7,6 +7,7 @@ import { UserEntity, UserModelType } from '../../user-accounts/domain/user/user.
 import { CommentEntity, CommentModelType } from '../../bloggers-platform/comments/domain/comment.entity';
 import { DeviceEntity, DeviceModelType } from '../../user-accounts/domain/device/device.entity';
 import { PasswordRecoveryEntity, PasswordRecoveryModelType } from '../../user-accounts/domain/password-recovery/password-recovery.entity';
+import { StatusEntity, StatusModelType } from '../../bloggers-platform/likes/domain/status,entity';
 
 @Controller('testing')
 export class TestingController {
@@ -17,9 +18,10 @@ export class TestingController {
         @InjectModel(CommentEntity.name) private readonly CommentModel: CommentModelType,
         @InjectModel(DeviceEntity.name) private readonly DeviceModel: DeviceModelType,
         @InjectModel(PasswordRecoveryEntity.name) private readonly PasswordRecoveryModel: PasswordRecoveryModelType,
+        @InjectModel(StatusEntity.name) private readonly StatusModel: StatusModelType,
     ) {}
 
-    @HttpCode(204)
+    @HttpCode(HttpStatus.NO_CONTENT)
     @Delete('all-data')
     async deleteAll() {
         const collectionsToDelete = [
@@ -29,6 +31,7 @@ export class TestingController {
             this.CommentModel,
             this.DeviceModel,
             this.PasswordRecoveryModel,
+            this.StatusModel,
         ];
         try {
             for (const collectionsToDeleteElement of collectionsToDelete) {
