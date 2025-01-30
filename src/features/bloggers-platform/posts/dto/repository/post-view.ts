@@ -1,4 +1,5 @@
 import { PostDocument } from '../../domain/post.entity';
+import { StatusLike } from '@libs/contracts/enums/status.like';
 
 export class PostViewDto {
     id: string;
@@ -31,7 +32,7 @@ export class PostViewDto {
         this.extendedLikesInfo = {
             likesCount: 0,
             dislikesCount: 0,
-            myStatus: 'None',
+            myStatus: StatusLike.enum['None'],
             newestLikes: [
                 {
                     addedAt: model.createdAt,
