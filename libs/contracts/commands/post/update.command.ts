@@ -1,11 +1,10 @@
 import { z } from 'zod';
-import { nameConstraints } from '../../constants/blog/blog-property.constraints';
 import { trimString } from '../../models/post/post.models';
 
 const PostUpdateRequestSchema = z.object({
-    title: z.string().min(nameConstraints.minLength).max(nameConstraints.maxLength).transform(trimString),
-    shortDescription: z.string().transform(trimString),
-    content: z.string().url('Invalid URL').transform(trimString),
+    title: z.string().trim().max(30).transform(trimString),
+    shortDescription: z.string().trim().max(100).transform(trimString),
+    content: z.string().trim().max(1000).transform(trimString),
     blogId: z.string().transform(trimString),
 });
 
