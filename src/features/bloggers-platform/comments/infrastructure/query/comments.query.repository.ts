@@ -4,6 +4,7 @@ import { CommentEntity, CommentModelType } from '../../domain/comment.entity';
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
 import { StatusEntity, StatusModelType } from '../../../likes/domain/status,entity';
+import { transformCommentToGet } from '../../../../../core/utils/comments/mapping/transform.comment.map';
 
 @Injectable()
 export class CommentsQueryRepository {
@@ -12,10 +13,14 @@ export class CommentsQueryRepository {
         @InjectModel(StatusEntity.name) private readonly statusModel: StatusModelType,
     ) {}
     async getComment(commentId: string, userId?: string) {
-        const comment = await this.commentModel.findOne({ _id: commentId, deletionStatus: DeletionStatus.enum['not-deleted'] });
+        const commentPromise = this.commentModel.findOne({ _id: commentId, deletionStatus: DeletionStatus.enum['not-deleted'] });
+        const statusPromise = userId ? this.statusModel.findOne({ userId, parentId: commentId }) : Promise.resolve(void 0);
+
+        const [comment, status] = await Promise.all([commentPromise, statusPromise]);
+
         if (!comment) {
-            throw NotFoundDomainException.create(`Comment with id ${commentId} not found.`, 'CommentsQueryRepository');
+            throw NotFoundDomainException.create('комментарий не найден', 'commentId');
         }
-        return comment;
+        return transformCommentToGet(comment, status);
     }
 }
