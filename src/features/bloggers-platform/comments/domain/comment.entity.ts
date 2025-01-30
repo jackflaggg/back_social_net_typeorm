@@ -3,7 +3,6 @@ import { DeletionStatus, DeletionStatusType } from '@libs/contracts/enums/deleti
 import { HydratedDocument, Model } from 'mongoose';
 import { ExtendedLikesSchema } from '../../posts/domain/extended.like.entity';
 import { defaultLike } from '@libs/contracts/constants/post/default.like.schema';
-import { CommentCreateToPostApi } from '../../posts/dto/api/comment.create.to.post';
 
 export interface CommentatorInfoInterface {
     userId: string;
@@ -21,7 +20,7 @@ export class CommentEntity {
     @Prop({ type: String, required: true })
     content: string;
 
-    @Prop({ type: String, required: true })
+    @Prop({ type: { userId: String, userLogin: String }, required: true })
     commentatorInfo: CommentatorInfoInterface;
 
     @Prop({ type: Date })
@@ -39,7 +38,10 @@ export class CommentEntity {
     public static buildInstance(content: string, commentatorInfo: CommentatorInfoInterface, postId: string): CommentDocument {
         const comment = new this();
         comment.content = content;
-        comment.commentatorInfo = commentatorInfo;
+        comment.commentatorInfo = {
+            userId: commentatorInfo.userId,
+            userLogin: commentatorInfo.userLogin,
+        };
         comment.postId = postId;
         comment.likesInfo.dislikesCount = 0;
         comment.likesInfo.likesCount = 0;

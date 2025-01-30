@@ -28,9 +28,9 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
 
         const accessToken = this.jwtService.sign(
             { deviceId: command.dto.deviceId, userId: command.dto.userId },
-            { expiresIn: '10s', secret: 'local' },
+            { expiresIn: '5m', secret: 'envelope' },
         );
-        const refreshToken = this.jwtService.sign(payloadForJwt, { expiresIn: '20s', secret: 'refresh' });
+        const refreshToken = this.jwtService.sign(payloadForJwt, { expiresIn: '10m', secret: 'envelope' });
 
         const update = await this.sessionRepository.updateSession(result._id.toString(), result.issuedAt, refreshToken);
 

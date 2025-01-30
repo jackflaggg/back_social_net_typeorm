@@ -25,18 +25,18 @@ export class CommentsQueryRepository {
         }
         return transformCommentToGet(comment, status);
     }
-    async getAllComments(postId: string, queryData: GetCommentsQueryParams, userId?: string) {
+    async getAllComments(postId: string, queryData: GetCommentsQueryParams, userId?: string | null) {
+        console.log(queryData);
         const { pageNumber, pageSize, sortBy, sortDirection } = getCommentQuery(queryData);
 
-        const pageNumberNum = Number(pageNumber);
-        const pageSizeNum = Number(pageSize);
-        const skipAmount = (pageNumberNum - 1) * pageSizeNum;
+        console.log(pageNumber, pageSize, sortBy, sortDirection);
+        const skipAmount = (pageNumber - 1) * pageSize;
 
         const comments = await this.commentModel
             .find({ postId: postId })
             .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
             .skip(skipAmount)
-            .limit(pageSizeNum)
+            .limit(pageNumber)
             .lean();
 
         const totalCountComments = await this.commentModel.countDocuments({ postId }); // Можно оптимизировать, но пока оставим для ясности
@@ -46,7 +46,7 @@ export class CommentsQueryRepository {
         // const totalCountComments = result.length;
         // const comments = result.slice(skipAmount, skipAmount + pageSizeNum);
 
-        const pagesCount = Math.ceil(totalCountComments / pageSizeNum);
+        const pagesCount = Math.ceil(totalCountComments / pageNumber);
 
         const userPromises = comments.map(async comment => {
             const status = userId ? await this.statusModel.findOne({ userId: userId, parentId: comment._id }) : null;

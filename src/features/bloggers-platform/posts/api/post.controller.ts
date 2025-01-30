@@ -15,6 +15,7 @@ import { ExtractUserFromRequest } from '../../../../core/decorators/param/valida
 import { UserJwtPayloadDto } from '../../../../core/guards/passport/strategies/refresh.strategy';
 import { CreateCommentCommand } from '../../comments/application/usecases/create-comment.usecase';
 import { CommentsQueryRepository } from '../../comments/infrastructure/query/comments.query.repository';
+import { GetCommentsQueryParams } from '../../comments/dto/repository/query/query-parans-comments';
 
 @Controller('posts')
 export class PostsController {
@@ -69,9 +70,15 @@ export class PostsController {
     @Put(':postId/like-status')
     async likePost(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: CommentCreateToPostApi) {}
 
+    @UseGuards(JwtAuthGuard)
     @Get(':postId/comments')
-    async getComments(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: CommentCreateToPostApi) {
+    async getComments(
+        @Param('postId', ValidateObjectIdPipe) postId: string,
+        @Query() query: GetCommentsQueryParams,
+        @ExtractUserFromRequest() user: UserJwtPayloadDto,
+    ) {
+        console.log(user);
         const post = await this.postsQueryRepository.getPost(postId);
-        return this.commentQueryRepository.getComment(postId);
+        return this.commentQueryRepository.getAllComments(post.id, query, user.userId ?? null);
     }
 }
