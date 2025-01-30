@@ -24,8 +24,8 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
             userId: command.user._id.toString(),
             deviceId,
         };
-        const accessToken = this.jwtService.sign(payloadForJwt, { expiresIn: '10m', secret: 'local' });
-        const refreshToken = this.jwtService.sign(payloadForJwt, { expiresIn: '5d', secret: 'refresh' });
+        const accessToken = this.jwtService.sign(payloadForJwt, { expiresIn: '60s', secret: 'local' });
+        const refreshToken = this.jwtService.sign(payloadForJwt, { expiresIn: '200s', secret: 'refresh' });
 
         const decodedData = this.jwtService.decode(refreshToken);
 

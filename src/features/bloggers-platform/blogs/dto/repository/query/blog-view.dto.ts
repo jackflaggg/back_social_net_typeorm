@@ -13,8 +13,8 @@ export class BlogViewDto {
         this.name = model.name;
         this.description = model.description;
         this.websiteUrl = model.websiteUrl;
-        this.isMembership = model.isMembership;
         this.createdAt = model.createdAt;
+        this.isMembership = model.isMembership;
     }
 
     static mapToView(blog: BlogDocument): BlogViewDto {

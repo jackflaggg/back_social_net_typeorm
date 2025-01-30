@@ -41,8 +41,7 @@ export class BlogsQueryRepository {
     async getBlog(id: string) {
         const blog = await this.blogModel.findOne({ _id: id, deletionStatus: DeletionStatus.enum['not-deleted'] });
         if (!blog) {
-            throw NotFoundDomainException.create('Blog not found');
-            //return void 0;
+            throw NotFoundDomainException.create('Blog not found', 'blog');
         }
         return BlogViewDto.mapToView(blog);
     }

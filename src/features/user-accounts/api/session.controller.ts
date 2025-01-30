@@ -7,6 +7,8 @@ import { DeleteSessionCommand } from '../application/device/usecases/delete-sess
 import { UserJwtPayloadDto } from '../../../core/guards/passport/strategies/refresh.strategy';
 import { ExtractUserFromRequest } from '../../../core/decorators/param/validate.user.decorators';
 import { SessionQueryRepository } from '../infrastructure/sessions/query/session.query.repository';
+import { DeleteSessionsCommand } from '../application/device/usecases/delete-sessions.usecase';
+import { ValidateObjectIdPipe } from '../../../core/pipes/validation.input.data.pipe';
 
 @UseGuards(BasicAuthGuard)
 @Controller('devices')
@@ -18,19 +20,21 @@ export class UserController {
 
     @UseGuards(RefreshAuthGuard)
     @Get()
-    async getAllSessions(@ExtractUserFromRequest() user: UserJwtPayloadDto) {
-        return this.sessionQueryRepository.getSessions(user.userId);
+    async getAllSessions(@ExtractUserFromRequest() dto: UserJwtPayloadDto) {
+        return this.sessionQueryRepository.getSessions(dto.userId);
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(RefreshAuthGuard)
     @Delete(':id')
-    async deleteSession(@Param('id') id: string, @ExtractUserFromRequest() user: UserJwtPayloadDto) {
-        return this.commandBus.execute(new DeleteSessionCommand(user.userId, id));
+    async deleteSession(@Param('id', ValidateObjectIdPipe) id: string, @ExtractUserFromRequest() dto: UserJwtPayloadDto) {
+        return this.commandBus.execute(new DeleteSessionCommand(dto.userId, id));
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(RefreshAuthGuard)
     @Delete()
-    async deleteSessions(@ExtractUserFromRequest() user: UserJwtPayloadDto) {}
+    async deleteSessions(@ExtractUserFromRequest() dto: UserJwtPayloadDto) {
+        return this.commandBus.execute(new DeleteSessionsCommand(dto));
+    }
 }
