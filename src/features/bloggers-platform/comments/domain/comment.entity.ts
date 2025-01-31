@@ -13,7 +13,6 @@ export interface CommentatorInfoInterface {
 export interface likesInfoInterface {
     likesCount: number;
     dislikesCount: number;
-    myStatus: string;
 }
 
 @Schema({ timestamps: true })
@@ -56,11 +55,9 @@ export class CommentEntity {
     updateContent(content: string) {
         this.content = content;
     }
-    updateStatus(status: string) {
-        this.likesInfo.myStatus = status;
-        this.likesInfo.likesCount = status === StatusLike.enum['Like'] ? this.likesInfo.likesCount++ : this.likesInfo.likesCount;
-        this.likesInfo.dislikesCount =
-            status === StatusLike.enum['Dislike'] ? this.likesInfo.dislikesCount++ : this.likesInfo.dislikesCount;
+    updateStatus(likesCount: number, dislikesCount: number) {
+        this.likesInfo.likesCount = likesCount;
+        this.likesInfo.dislikesCount = dislikesCount;
     }
 }
 

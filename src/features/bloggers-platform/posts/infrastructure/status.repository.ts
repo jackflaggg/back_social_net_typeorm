@@ -19,4 +19,16 @@ export class StatusRepository {
         const updateResult = await this.statusModel.updateOne({ userId, parentId: postId }, { status });
         return updateResult.matchedCount === 1;
     }
+
+    async getStatus(commentId: string, userId: string) {
+        const filter = {
+            $and: [{ parentId: commentId }, { userId }],
+        };
+        const result = await this.statusModel.findOne(filter);
+
+        if (!result) {
+            return void 0;
+        }
+        return result.status;
+    }
 }
