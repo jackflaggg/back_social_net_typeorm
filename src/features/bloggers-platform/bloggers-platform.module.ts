@@ -31,6 +31,8 @@ import { StatusRepository } from './posts/infrastructure/status.repository';
 import { LikePostUseCase } from './posts/application/usecases/like-post.usecase';
 import { DeleteCommentUseCase } from './comments/application/usecases/delete-comment.usecase';
 import { CheckUserCommentUseCase } from './comments/application/usecases/check-user-comment.usecase';
+import { UpdateStatusCommentUseCase } from './comments/application/usecases/like-comment.usecase';
+import { UpdateContentCommentUseCase } from './comments/application/usecases/update-comment.usecase';
 
 const repositories = [
     BlogsQueryRepository,
@@ -53,6 +55,8 @@ const useCases = [
     LikePostUseCase,
     DeleteCommentUseCase,
     CheckUserCommentUseCase,
+    UpdateStatusCommentUseCase,
+    UpdateContentCommentUseCase,
 ];
 
 @Module({

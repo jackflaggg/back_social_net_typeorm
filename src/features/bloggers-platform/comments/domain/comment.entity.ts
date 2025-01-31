@@ -52,7 +52,12 @@ export class CommentEntity {
         this.deletionStatus = DeletionStatus.enum['permanent-deleted'];
     }
 
-    update(dto: any) {}
+    updateContent(content: string) {
+        this.content = content;
+    }
+    updateStatus(status: string) {
+        this.likesInfo.myStatus = status;
+    }
 }
 
 // Создает схему для сущности коммента и загружает её в базу данных
