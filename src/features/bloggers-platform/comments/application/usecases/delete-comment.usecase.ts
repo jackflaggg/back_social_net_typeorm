@@ -1,8 +1,7 @@
 // класс для создания комментария
 import { CommentRepository } from '../../infrastructure/comment.repository';
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/mongoose';
-import { CommentEntity, CommentModelType } from '../../domain/comment.entity';
+import { CheckUserCommentCommand } from './check-user-comment.usecase';
 
 export class DeleteCommentCommand {
     constructor(
@@ -20,9 +19,10 @@ export class DeleteCommentUseCase implements ICommandHandler<DeleteCommentComman
     constructor(
         private readonly commentsRepository: CommentRepository,
         private readonly commandBus: CommandBus,
-        @InjectModel(CommentEntity.name) private CommentModel: CommentModelType,
     ) {}
     async execute(command: DeleteCommentCommand) {
-        const comment = await this.commentsRepository.findPostById(command.commentId);
+        const comment = await this.commandBus.execute(new CheckUserCommentCommand(command.userId, command.commentId));
+        comment.makeDeleted();
+        await this.commentsRepository.save(comment);
     }
 }

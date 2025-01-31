@@ -1,5 +1,7 @@
 // класс для создания комментария
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommentRepository } from '../../infrastructure/comment.repository';
+import { ForbiddenDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class CheckUserCommentCommand {
     constructor(
@@ -14,6 +16,12 @@ export class CheckUserCommentCommand {
 // Это позволяет отделить команду от логики обработки
 @CommandHandler(CheckUserCommentCommand)
 export class CheckUserCommentUseCase implements ICommandHandler<CheckUserCommentCommand> {
-    constructor() {}
-    async execute(command: CheckUserCommentCommand) {}
+    constructor(private readonly commentRepository: CommentRepository) {}
+    async execute(command: CheckUserCommentCommand) {
+        const comment = await this.commentRepository.findCommentById(command.commentId);
+        if (command.userId !== comment.commentatorInfo.userId) {
+            throw ForbiddenDomainException.create('это не ваш комментарий!', 'userid');
+        }
+        return comment;
+    }
 }
