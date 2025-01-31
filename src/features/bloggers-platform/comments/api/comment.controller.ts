@@ -13,21 +13,27 @@ export class CommentController {
     @UseGuards(JwtAuthGuard)
     @Get('/:commentId')
     async getComment(@Param('commentId', ValidateObjectIdPipe) id: string) {
-        return await this.commentsQueryRepository.getComment(id);
+        return this.commentsQueryRepository.getComment(id);
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(JwtAuthGuard)
     @Put('/:commentId')
-    async updateComment(@Param('commentId', ValidateObjectIdPipe) id: string) {}
+    async updateComment(@Param('commentId', ValidateObjectIdPipe) id: string) {
+        return this.commandBus.execute;
+    }
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(JwtAuthGuard)
     @Put('/:commentId/like-status')
-    async likeComment(@Param('commentId', ValidateObjectIdPipe) id: string) {}
+    async likeComment(@Param('commentId', ValidateObjectIdPipe) id: string) {
+        return this.commandBus.execute;
+    }
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(JwtAuthGuard)
     @Delete('/:commentId')
-    async deleteComment(@Param('commentId', ValidateObjectIdPipe) id: string) {}
+    async deleteComment(@Param('commentId', ValidateObjectIdPipe) id: string) {
+        return this.commandBus.execute;
+    }
 }

@@ -20,7 +20,7 @@ export class CommentEntity {
     @Prop({ type: String, required: true })
     content: string;
 
-    @Prop({ type: { userId: String, userLogin: String }, required: true })
+    @Prop({ type: { userId: String, userLogin: String }, required: true, _id: false })
     commentatorInfo: CommentatorInfoInterface;
 
     @Prop({ type: Date })
