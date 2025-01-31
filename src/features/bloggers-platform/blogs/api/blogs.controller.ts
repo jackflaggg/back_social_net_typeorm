@@ -13,6 +13,8 @@ import { DeleteBlogCommand } from '../application/usecases/delete-blog.usecase';
 import { UpdateBlogCommand } from '../application/usecases/update-blog.usecase';
 import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
 import { ValidateObjectIdPipe } from '../../../../core/pipes/validation.input.data.pipe';
+import { ExtractUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
+import { UserJwtPayloadDto } from '../../../../core/guards/passport/strategies/refresh.strategy';
 
 @Controller('blogs')
 export class BlogsController {
@@ -28,9 +30,13 @@ export class BlogsController {
     }
 
     @Get(':blogId/posts')
-    async getPosts(@Param('blogId', ValidateObjectIdPipe) blogId: string, @Query() query: GetPostsQueryParams) {
+    async getPosts(
+        @Param('blogId', ValidateObjectIdPipe) blogId: string,
+        @Query() query: GetPostsQueryParams,
+        @ExtractUserFromRequest() dto: UserJwtPayloadDto,
+    ) {
         const blog = await this.blogsQueryRepository.getBlog(blogId);
-        return this.postsQueryRepository.getAllPosts(query, blog.id);
+        return this.postsQueryRepository.getAllPosts(query, dto.userId, blog.id);
     }
 
     @Get(':blogId')
