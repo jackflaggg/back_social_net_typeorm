@@ -49,6 +49,12 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
                               field: (exception as any).response.errors[2].path[0],
                           }
                         : null,
+                    (exception as any).response.errors[3]
+                        ? {
+                              message: (exception as any).response.errors[3].message,
+                              field: (exception as any).response.errors[3].path[0],
+                          }
+                        : null,
                 ].filter(Boolean),
             };
         }

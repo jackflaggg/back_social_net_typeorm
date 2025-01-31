@@ -35,8 +35,6 @@ export class PostsController {
 
     @Get(':postId')
     async getPost(@Param('postId', ValidateObjectIdPipe) postId: string) {
-        console.log(mongoose.Types.ObjectId.isValid('63189b06003380064c4193be'));
-        console.log(mongoose.Types.ObjectId.isValid('679cdd90a966b6729d752b9a'));
         return this.postsQueryRepository.getPost(postId);
     }
     @HttpCode(HttpStatus.CREATED)

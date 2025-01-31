@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { PostModels, trimString } from '../../models/post/post.models';
 import { shortDescriptionConstraints, titleConstraints } from '../../constants/post/post-property.constraints';
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 const PostCreateRequestSchema = z.object({
     title: z.string().trim().min(titleConstraints.minLength).max(titleConstraints.maxLength).transform(trimString),
@@ -12,12 +12,17 @@ const PostCreateRequestSchema = z.object({
         .max(shortDescriptionConstraints.maxLength)
         .transform(trimString),
     content: z.string().trim().min(1).max(1000).transform(trimString),
-    blogId: z.string().refine(value => {
-        if (value === '63189b06003380064c4193be') {
-            return !mongoose.Types.ObjectId.isValid(value);
-        }
-        return mongoose.Types.ObjectId.isValid(value);
-    }),
+    blogId: z.string().refine(
+        value => {
+            if (value === '63189b06003380064c4193be') {
+                return !mongoose.Types.ObjectId.isValid(value);
+            }
+            return mongoose.Types.ObjectId.isValid(value);
+        },
+        {
+            message: 'Blog ID not found or objectId',
+        },
+    ),
 });
 
 export namespace PostCreateCommand {
