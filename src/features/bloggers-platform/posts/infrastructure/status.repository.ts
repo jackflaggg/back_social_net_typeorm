@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { NotFoundDomainException } from '../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { StatusDocument, StatusEntity, StatusModelType } from '../../likes/domain/status,entity';
 
 @Injectable()
@@ -10,9 +9,9 @@ export class StatusRepository {
         await status.save();
     }
     async getStatusPost(postId: string, userId: string) {
-        const result = await this.statusModel.findOne({ postId, userId });
+        const result = await this.statusModel.findOne({ parentId: postId, userId });
         if (!result) {
-            throw NotFoundDomainException.create('статус не найден', 'status');
+            return void 0;
         }
         return result.status;
     }
