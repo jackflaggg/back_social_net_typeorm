@@ -18,6 +18,13 @@ export class UserQueryRepository {
         }
         return UserViewDto.mapToView(result);
     }
+    async meUser(userId: string) {
+        const result = await this.userModel.findOne({ _id: userId, deletionStatus: DeletionStatus.enum['not-deleted'] });
+        if (!result) {
+            throw NotFoundDomainException.create('User not found', 'user');
+        }
+        return UserViewDto.meUser(result);
+    }
     async getAllUsers(queryData: GetUsersQueryParams): Promise<PaginatedViewDto<UserViewDto[]>> {
         const { sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm } = getUsersQuery(queryData);
 

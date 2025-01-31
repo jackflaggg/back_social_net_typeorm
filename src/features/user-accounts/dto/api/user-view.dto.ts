@@ -16,4 +16,12 @@ export class UserViewDto {
     static mapToView(user: UserDocument): UserViewDto {
         return new UserViewDto(user);
     }
+
+    static meUser(user: UserDocument) {
+        return {
+            email: user.email,
+            login: user.login,
+            userId: user._id.toString(),
+        };
+    }
 }

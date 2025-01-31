@@ -76,9 +76,10 @@ export class AuthController {
         return this.commandBus.execute(new RegistrationEmailResendUserCommand(dto.email));
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get('me')
     async me(@ExtractAnyUserFromRequest() payload: UserJwtPayloadDto) {
-        return this.userQueryRepository.findUser(payload.userId);
+        return this.userQueryRepository.meUser(payload.userId);
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)

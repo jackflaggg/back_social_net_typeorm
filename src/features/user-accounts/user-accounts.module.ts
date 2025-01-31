@@ -34,6 +34,8 @@ import { LogoutUserUseCase } from './application/user/usecases/logout-user.useca
 import { SessionController } from './api/session.controller';
 import { PassportModule } from '@nestjs/passport';
 import { SessionQueryRepository } from './infrastructure/sessions/query/session.query.repository';
+import { JwtRefreshAuthPassportStrategy } from '../../core/guards/passport/strategies/refresh.strategy';
+import { DeleteSessionsUseCase } from './application/device/usecases/delete-sessions.usecase';
 
 const useCases = [
     CreateSessionUseCase,
@@ -50,9 +52,17 @@ const useCases = [
     NewPasswordUserUseCase,
     RefreshTokenUserUseCase,
     LogoutUserUseCase,
+    DeleteSessionsUseCase,
 ];
 const repositories = [UserRepository, UserQueryRepository, SessionRepository, PasswordRecoveryDbRepository, SessionQueryRepository];
-const strategies = [BasicStrategy, LocalStrategy, UniqueLoginStrategy, UniqueEmailStrategy, AccessTokenStrategy];
+const strategies = [
+    BasicStrategy,
+    LocalStrategy,
+    UniqueLoginStrategy,
+    UniqueEmailStrategy,
+    AccessTokenStrategy,
+    JwtRefreshAuthPassportStrategy,
+];
 const services = [AuthService, JwtService, EmailService];
 const handlers = [UserLoggedInEventHandler];
 

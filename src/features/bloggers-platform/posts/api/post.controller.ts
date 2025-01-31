@@ -16,6 +16,8 @@ import { UserJwtPayloadDto } from '../../../../core/guards/passport/strategies/r
 import { CreateCommentCommand } from '../../comments/application/usecases/create-comment.usecase';
 import { CommentsQueryRepository } from '../../comments/infrastructure/query/comments.query.repository';
 import { GetCommentsQueryParams } from '../../comments/dto/repository/query/query-parans-comments';
+import { PostLikeStatusApi } from '../dto/api/like-status.dto';
+import { LikePostCommand } from '../application/usecases/like-post.usecase';
 
 @Controller('posts')
 export class PostsController {
@@ -68,7 +70,13 @@ export class PostsController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(JwtAuthGuard)
     @Put(':postId/like-status')
-    async likePost(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: CommentCreateToPostApi) {}
+    async likePost(
+        @Param('postId', ValidateObjectIdPipe) postId: string,
+        @Body() dto: PostLikeStatusApi,
+        @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
+    ) {
+        return this.commandBus.execute(new LikePostCommand(dto.likeStatus, postId, dtoUser));
+    }
 
     @UseGuards(JwtAuthGuard)
     @Get(':postId/comments')
