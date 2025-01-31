@@ -17,7 +17,7 @@ export class PostsQueryRepository {
         @InjectModel(PostEntity.name) private readonly postModel: PostModelType,
         @InjectModel(StatusEntity.name) private readonly statusModel: StatusModelType,
     ) {}
-    async getAllPosts(queryData: GetPostsQueryParams, userId?: string, blogId?: string) {
+    async getAllPosts(queryData: GetPostsQueryParams, userId?: string | null, blogId?: string) {
         const { pageSize, pageNumber, sortBy, sortDirection } = getPostsQuery(queryData);
 
         const skip = PaginationParams.calculateSkip(queryData) ?? (pageNumber - 1) * pageSize;
@@ -133,11 +133,5 @@ export class PostsQueryRepository {
             //  ... и выброс соответствующего исключения
             throw new Error('Failed to fetch post data'); // Или более специфичное исключение
         }
-    }
-    async getLikeStatus(userId: string, postId: string) {
-        return this.statusModel.findOne({ userId, parentId: postId });
-    }
-    async getLatestThreeLikes(postId: string) {
-        return this.statusModel.find({ parentId: postId, status: StatusLike.enum['Like'] }).sort({ createdAt: -1 }).limit(3);
     }
 }

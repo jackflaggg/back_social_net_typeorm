@@ -11,13 +11,14 @@ import { DeletePostCommand } from '../application/usecases/delete-post.usecase';
 import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
 import { ValidateObjectIdPipe } from '../../../../core/pipes/validation.input.data.pipe';
 import { JwtAuthGuard } from '../../../../core/guards/passport/guards/jwt.auth.guard';
-import { ExtractUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
+import { ExtractAnyUserFromRequest, ExtractUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
 import { UserJwtPayloadDto } from '../../../../core/guards/passport/strategies/refresh.strategy';
 import { CreateCommentCommand } from '../../comments/application/usecases/create-comment.usecase';
 import { CommentsQueryRepository } from '../../comments/infrastructure/query/comments.query.repository';
 import { GetCommentsQueryParams } from '../../comments/dto/repository/query/query-parans-comments';
 import { PostLikeStatusApi } from '../dto/api/like-status.dto';
 import { LikePostCommand } from '../application/usecases/like-post.usecase';
+import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optional-auth.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -27,16 +28,18 @@ export class PostsController {
         private readonly commentQueryRepository: CommentsQueryRepository,
     ) {}
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtOptionalAuthGuard)
     @Get()
-    async getPosts(@Query() query: GetPostsQueryParams, @ExtractUserFromRequest() dto: UserJwtPayloadDto) {
-        return await this.postsQueryRepository.getAllPosts(query, dto.userId);
+    async getPosts(@Query() query: GetPostsQueryParams, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto | null) {
+        const userId = dtoUser ? dtoUser.userId : null;
+        return await this.postsQueryRepository.getAllPosts(query, userId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtOptionalAuthGuard)
     @Get(':postId')
-    async getPost(@Param('postId', ValidateObjectIdPipe) postId: string, @ExtractUserFromRequest() dto: UserJwtPayloadDto) {
-        return this.postsQueryRepository.getPost(postId, dto.userId);
+    async getPost(@Param('postId', ValidateObjectIdPipe) postId: string, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto | null) {
+        const userId = dtoUser ? dtoUser.userId : null;
+        return this.postsQueryRepository.getPost(postId, userId);
     }
     @HttpCode(HttpStatus.CREATED)
     @UseGuards(BasicAuthGuard)
