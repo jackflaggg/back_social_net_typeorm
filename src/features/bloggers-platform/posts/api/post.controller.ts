@@ -78,9 +78,10 @@ export class PostsController {
     async likePost(
         @Param('postId', ValidateObjectIdPipe) postId: string,
         @Body() dto: PostLikeStatusApi,
-        @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
+        @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
-        return this.commandBus.execute(new LikePostCommand(dto.likeStatus, postId, dtoUser));
+        const userId = dtoUser ? dtoUser.userId : null;
+        return this.commandBus.execute(new LikePostCommand(dto.likeStatus, postId, userId));
     }
 
     @UseGuards(JwtOptionalAuthGuard)
