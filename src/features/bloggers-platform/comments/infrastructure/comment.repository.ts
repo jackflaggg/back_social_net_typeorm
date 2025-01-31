@@ -2,7 +2,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CommentDocument, CommentEntity, CommentModelType } from '../domain/comment.entity';
 import { DeletionStatus } from '../../../../../libs/contracts/enums/deletion-status.enum';
 import { NotFoundDomainException } from '../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { StatusEntity, StatusModelType } from '../../likes/domain/status,entity';
 
 export class CommentRepository {
     constructor(@InjectModel(CommentEntity.name) private readonly CommentModel: CommentModelType) {}
