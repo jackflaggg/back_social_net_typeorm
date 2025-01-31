@@ -2,6 +2,7 @@
 import { CommentRepository } from '../../infrastructure/comment.repository';
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CheckUserCommentCommand } from './check-user-comment.usecase';
+import { ForbiddenDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class DeleteCommentCommand {
     constructor(
@@ -22,6 +23,9 @@ export class DeleteCommentUseCase implements ICommandHandler<DeleteCommentComman
     ) {}
     async execute(command: DeleteCommentCommand) {
         const comment = await this.commandBus.execute(new CheckUserCommentCommand(command.userId, command.commentId));
+        if (comment.commentatorInfo.userId !== command.userId) {
+            throw ForbiddenDomainException.create();
+        }
         comment.makeDeleted();
         await this.commentsRepository.save(comment);
     }
