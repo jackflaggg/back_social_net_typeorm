@@ -1,5 +1,3 @@
-import { Controller, Delete, Get, HttpCode, HttpStatus, Param, UseGuards } from '@nestjs/common';
-import { BasicAuthGuard } from '../../../core/guards/passport/guards/basic.auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { RefreshAuthGuard } from '../../../core/guards/passport/guards/refresh.auth.guard';
 import { DeleteSessionCommand } from '../application/device/usecases/delete-session.usecase';
@@ -7,8 +5,8 @@ import { UserJwtPayloadDto } from '../../../core/guards/passport/strategies/refr
 import { ExtractUserFromRequest } from '../../../core/decorators/param/validate.user.decorators';
 import { SessionQueryRepository } from '../infrastructure/sessions/query/session.query.repository';
 import { DeleteSessionsCommand } from '../application/device/usecases/delete-sessions.usecase';
-import { ValidateObjectIdPipe } from '../../../core/pipes/validation.input.data.pipe';
 import { ValidateUUIDPipe } from '../../../core/pipes/validation.input.uuid';
+import { Controller, Delete, Get, HttpCode, HttpStatus, Param, UseGuards } from '@nestjs/common';
 
 @Controller('devices')
 export class SessionController {
