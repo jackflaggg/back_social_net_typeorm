@@ -10,8 +10,8 @@ export function transformCommentToGet(valueOne: any, valueTwo?: any) {
         },
         createdAt: valueOne.createdAt || '',
         likesInfo: {
-            likesCount: valueOne.likesCount || 0,
-            dislikesCount: valueOne.dislikesCount || 0,
+            likesCount: valueOne.likesInfo.likesCount || 0,
+            dislikesCount: valueOne.likesInfo.dislikesCount || 0,
             myStatus: valueTwo?.status || StatusLike.enum['None'],
         },
     };
