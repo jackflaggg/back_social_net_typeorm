@@ -5,10 +5,9 @@ import {
     shortDescriptionConstraints,
     titleConstraints,
 } from '@libs/contracts/constants/post/post-property.constraints';
-import mongoose, { HydratedDocument, Model } from 'mongoose';
+import { HydratedDocument, Model } from 'mongoose';
 import { ExtendedLikesEntity, ExtendedLikesSchema } from './extended.like.entity';
 import { defaultLike } from '@libs/contracts/constants/post/default.like.schema';
-import { PostToBlogCreateDtoService } from '../../blogs/dto/service/blog.to.post.create.dto';
 import { PostUpdateDtoService } from '../dto/service/post.update.dto';
 import { PostToBlogCreateDtoApi } from '../../blogs/dto/api/blog.to.post.create.dto';
 

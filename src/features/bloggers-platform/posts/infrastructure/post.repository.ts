@@ -17,4 +17,11 @@ export class PostsRepository {
         }
         return post;
     }
+    async updateCountStatusesPost(postId: string, statuses: { likesCount: number; dislikesCount: number }) {
+        const updateResult = await this.postModel.updateOne(
+            { _id: postId },
+            { $set: { 'extendedLikesInfo.likesCount': statuses.likesCount, 'extendedLikesInfo.dislikesCount': statuses.dislikesCount } },
+        );
+        return updateResult.matchedCount === 1;
+    }
 }

@@ -27,6 +27,7 @@ import { UsersModule } from '../user-accounts/user-accounts.module';
 import { CommentRepository } from './comments/infrastructure/comment.repository';
 import { StatusEntity, StatusSchema } from './likes/domain/status,entity';
 import { JwtModule } from '@nestjs/jwt';
+import { StatusRepository } from './posts/infrastructure/status.repository';
 
 const repositories = [
     BlogsQueryRepository,
@@ -35,6 +36,7 @@ const repositories = [
     PostsQueryRepository,
     PostsRepository,
     CommentRepository,
+    StatusRepository,
 ];
 const useCases = [
     CreateBlogUseCase,
