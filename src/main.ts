@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
 import { exceptionFilterSetup } from './setup/exception-filter.setup';
 import { interceptorSetup } from './setup/interceptor.setup';
-import { ZodValidationPipe } from 'nestjs-zod';
+import { pipesSetup } from './setup/pipes.setup';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -16,7 +16,7 @@ async function bootstrap() {
 
     app.enableCors();
 
-    app.useGlobalPipes(new ZodValidationPipe());
+    pipesSetup(app);
     await app.listen(3000, () => {
         console.log('Server started on port 3000');
     });
