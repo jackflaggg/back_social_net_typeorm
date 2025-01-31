@@ -38,7 +38,6 @@ export class PostsQueryRepository {
         const pageCount = Math.ceil(totalCount / pageSize);
 
         const postIds = posts.map(post => post._id.toString());
-        //const myLikeStatus = await this.statusModel.find({ userId, parentId: postIds }).select('status, parentId');
 
         // Получаем все лайки для постов и обрабатываем их
         const allLikes = await this.statusModel
@@ -79,6 +78,21 @@ export class PostsQueryRepository {
                 return transformPostStatusUsers(post, statusUser, likesMap[post._id.toString()] || []);
             }),
         );
+
+        // const mappedBlogsPromises = posts.map(async post => {
+        //     const likeStatuses = userId
+        //         ? await this.getLikeStatus(userId, post._id.toString()).then(status => (status ? transformStatus(status) : null))
+        //         : null;
+        //
+        //     const latestLikes = await this.getLatestThreeLikes(post._id.toString()).then(users =>
+        //         users.map(user => statusesUsersMapper(user)),
+        //     );
+        //
+        //     return transformPostStatusUsers(post, likeStatuses, latestLikes);
+        // });
+        //
+        // const mappedBlogs = await Promise.all(mappedBlogsPromises);
+
         return {
             pagesCount: pageCount,
             page: pageNumber,
@@ -119,5 +133,11 @@ export class PostsQueryRepository {
             //  ... и выброс соответствующего исключения
             throw new Error('Failed to fetch post data'); // Или более специфичное исключение
         }
+    }
+    async getLikeStatus(userId: string, postId: string) {
+        return this.statusModel.findOne({ userId, parentId: postId });
+    }
+    async getLatestThreeLikes(postId: string) {
+        return this.statusModel.find({ parentId: postId, status: StatusLike.enum['Like'] }).sort({ createdAt: -1 }).limit(3);
     }
 }
