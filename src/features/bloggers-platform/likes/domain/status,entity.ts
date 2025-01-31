@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { StatusLike, StatusLikeType } from '@libs/contracts/enums/status.like';
+import { StatusLike } from '@libs/contracts/enums/status.like';
 import { HydratedDocument, Model } from 'mongoose';
 
 export interface likeViewModel {

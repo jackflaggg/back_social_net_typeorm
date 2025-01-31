@@ -1,4 +1,5 @@
 import { FlattenMaps, Types } from 'mongoose';
+import { StatusLike } from '@libs/contracts/enums/status.like';
 
 export interface StatusResult {
     _id: Types.ObjectId;
@@ -22,12 +23,9 @@ export interface outputStatusUsersInterface {
     login: string;
 }
 
-export const transformStatus = (value: FlattenMaps<StatusResult>): outputStatusInterface => {
+export const transformStatus = (value: FlattenMaps<StatusResult>) => {
     return {
-        createdAt: value.createdAt || '',
-        userId: value.userId || '',
-        login: value.userLogin || '',
-        status: value.status || '',
+        status: value.status || StatusLike.enum['None'],
     };
 };
 

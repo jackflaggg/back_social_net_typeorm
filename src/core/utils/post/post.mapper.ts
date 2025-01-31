@@ -14,11 +14,7 @@ export interface postOutputInterface {
     createdAt?: Date | null | undefined;
 }
 
-export const transformPostStatusUsers = (
-    valueOne: FlattenMaps<postOutputInterface>,
-    valueTwo: FlattenMaps<outputStatusInterface | null>,
-    valueThree: outputStatusUsersInterface[],
-) => {
+export const transformPostStatusUsers = (valueOne: any, valueTwo: any, valueThree: outputStatusUsersInterface[]) => {
     return {
         id: valueOne._id.toString(),
         title: valueOne.title || '',
@@ -28,8 +24,8 @@ export const transformPostStatusUsers = (
         blogName: valueOne.blogName || '',
         createdAt: valueOne.createdAt ? valueOne.createdAt.toISOString() : '',
         extendedLikesInfo: {
-            likesCount: valueOne.likesCount !== undefined && valueOne.likesCount !== null ? valueOne.likesCount : 0,
-            dislikesCount: valueOne.dislikesCount !== undefined && valueOne.dislikesCount !== null ? valueOne.dislikesCount : 0,
+            likesCount: valueOne.extendedLikesInfo.likesCount,
+            dislikesCount: valueOne.extendedLikesInfo.dislikesCount,
             myStatus: valueTwo ? valueTwo.status : StatusLike.enum['None'],
             newestLikes: valueThree
                 ? valueThree.map(item => ({

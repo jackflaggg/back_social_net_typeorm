@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
-import { PaginatedBlogViewDto } from '../../../../../core/dto/base.paginated.view-dto';
 import { PostEntity, PostModelType } from '../../domain/post.entity';
 import { GetPostsQueryParams } from '../../dto/api/get-posts-query-params.input.dto';
-import { PostViewDto } from '../../dto/repository/post-view';
 import { PaginationParams } from '../../../../../core/dto/base.query-params.input-dto';
 import { getPostsQuery } from '../../../../../core/utils/post/query.insert.get';
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
@@ -19,52 +17,84 @@ export class PostsQueryRepository {
         @InjectModel(PostEntity.name) private readonly postModel: PostModelType,
         @InjectModel(StatusEntity.name) private readonly statusModel: StatusModelType,
     ) {}
-    async getAllPosts(queryData: GetPostsQueryParams, userId?: string) {
+    async getAllPosts(queryData: GetPostsQueryParams, userId?: string, blogId?: string) {
         const { pageSize, pageNumber, sortBy, sortDirection } = getPostsQuery(queryData);
 
         const skip = PaginationParams.calculateSkip(queryData) ?? (pageNumber - 1) * pageSize;
+        const filter = blogId ? { blogId } : {};
 
-        const posts = await this.postModel
-            .find({})
-            .skip(skip)
-            .limit(+pageSize)
-            .sort({ [sortBy]: sortDirection })
-            .lean()
-            .exec();
+        const [posts, totalCount] = await Promise.all([
+            this.postModel
+                .find(filter)
+                .select('title shortDescription content blogId blogName createdAt extendedLikesInfo') // Забираем только нужные поля
+                .skip(skip)
+                .limit(Number(pageSize))
+                .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
+                .lean()
+                .exec(),
+            this.postModel.countDocuments(filter).exec(),
+        ]);
+
+        const pageCount = Math.ceil(totalCount / pageSize);
 
         const postIds = posts.map(post => post._id.toString());
+        //const myLikeStatus = await this.statusModel.find({ userId, parentId: postIds }).select('status, parentId');
 
-        // Получаем все статусы для постов одним запросом
-        const allStatuses = await this.statusModel
-            .find({ parentId: { $in: postIds } })
+        // Получаем все лайки для постов и обрабатываем их
+        const allLikes = await this.statusModel
+            .find({ parentId: { $in: postIds }, status: StatusLike.enum['Like'] })
+            .sort({ createdAt: -1 })
             .lean()
             .exec();
 
-        console.log(allStatuses);
+        // накапливаю объект с ключом айди и значением массивом юзеров
+        //     key: [
+        //     {
+        //         addedAt: Date,
+        //         userId: ObjectId,
+        //         login: string
+        //     }
+        // ],
+        const likesMap = postIds.reduce((acc, postId) => {
+            acc[postId] = allLikes
+                .filter(like => like.parentId.toString() === postId)
+                .slice(0, 3) // Берем последние три лайка
+                .map(like => ({
+                    addedAt: like.createdAt,
+                    userId: like.userId,
+                    login: like.userLogin,
+                }));
+            return acc;
+        }, {});
 
-        const postsView = posts.map(post => {
-            const postView = PostViewDto.mapToView(post);
-            const postStatuses = allStatuses.filter(status => status.parentId === post._id.toString());
-
-            const likesCount = postStatuses.filter(status => status.status === 'Like').length;
-            const dislikesCount = postStatuses.filter(status => status.status === 'Dislike').length;
-            const myStatus = userId ? postStatuses.find(status => status.userId === userId)?.status || 'None' : 'None';
-        });
-
-        const totalCount = await this.postModel.countDocuments({}).exec();
-
-        return PaginatedBlogViewDto.mapToView({
-            items: posts,
+        // прохожусь по каждому посту, подбираю статус для каждого поста
+        // маплю 3 типа данных в одну схему
+        const mapPosts = await Promise.all(
+            posts.map(async post => {
+                const statusUser = userId
+                    ? await this.statusModel
+                          .findOne({ userId, parentId: post._id.toString() })
+                          .then(status => (status ? transformStatus(status) : { status: StatusLike.enum['None'] }))
+                    : null;
+                return transformPostStatusUsers(post, statusUser, likesMap[post._id.toString()] || []);
+            }),
+        );
+        return {
+            pagesCount: pageCount,
             page: pageNumber,
-            size: pageSize,
+            pageSize: pageSize,
             totalCount,
-        });
+            items: mapPosts,
+        };
     }
     async getPost(postId: string, userId?: string | null) {
+        // нахожу искомый пост
         const postPromise = this.postModel.findOne({ _id: postId, deletionStatus: DeletionStatus.enum['not-deleted'] });
 
-        const likeStatusPromise = userId ? this.statusModel.findOne({ userId, parentId: postId }) : Promise.resolve(null);
+        // нахожу свой статус
+        const myLikeStatusPromise = userId ? this.statusModel.findOne({ userId, parentId: postId }) : Promise.resolve(null);
 
+        // забираю последние три лайка от юзеров
         const latestThreeLikesPromise = this.statusModel
             .find({ parentId: postId, status: StatusLike.enum['Like'] })
             .sort({ createdAt: -1 })
@@ -72,16 +102,17 @@ export class PostsQueryRepository {
             .exec();
 
         try {
-            const [post, likeStatus, latestThreeLikes] = await Promise.all([postPromise, likeStatusPromise, latestThreeLikesPromise]);
+            const [post, myLikeStatus, latestThreeLikes] = await Promise.all([postPromise, myLikeStatusPromise, latestThreeLikesPromise]);
 
             if (!post) {
                 throw NotFoundDomainException.create('Post not found', 'post');
             }
 
-            const transformedLikeStatus = likeStatus ? transformStatus(likeStatus) : null;
+            // трансформирую в нужный вид!
             const transformedUsers = latestThreeLikes.map(user => statusesUsersMapper(user));
 
-            return transformPostStatusUsers(post, transformedLikeStatus, transformedUsers);
+            // маплю данные!
+            return transformPostStatusUsers(post, myLikeStatus, transformedUsers);
         } catch (error) {
             // Обработка ошибок, например, проблемы с базой данных
             console.error('Error fetching post data:', error);
