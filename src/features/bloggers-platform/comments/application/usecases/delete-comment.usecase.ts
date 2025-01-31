@@ -22,7 +22,7 @@ export class DeleteCommentUseCase implements ICommandHandler<DeleteCommentComman
         private readonly commandBus: CommandBus,
     ) {}
     async execute(command: DeleteCommentCommand) {
-        const comment = await this.commandBus.execute(new CheckUserCommentCommand(command.userId, command.commentId));
+        const comment = await this.commandBus.execute(new CheckUserCommentCommand(command.commentId, command.userId));
         if (comment.commentatorInfo.userId !== command.userId) {
             throw ForbiddenDomainException.create();
         }

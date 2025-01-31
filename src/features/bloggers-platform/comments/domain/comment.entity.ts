@@ -3,6 +3,7 @@ import { DeletionStatus, DeletionStatusType } from '@libs/contracts/enums/deleti
 import { HydratedDocument, Model } from 'mongoose';
 import { ExtendedLikesSchema } from '../../posts/domain/extended.like.entity';
 import { defaultLike } from '@libs/contracts/constants/post/default.like.schema';
+import { StatusLike } from '@libs/contracts/enums/status.like';
 
 export interface CommentatorInfoInterface {
     userId: string;
@@ -57,6 +58,9 @@ export class CommentEntity {
     }
     updateStatus(status: string) {
         this.likesInfo.myStatus = status;
+        this.likesInfo.likesCount = status === StatusLike.enum['Like'] ? this.likesInfo.likesCount++ : this.likesInfo.likesCount;
+        this.likesInfo.dislikesCount =
+            status === StatusLike.enum['Dislike'] ? this.likesInfo.dislikesCount++ : this.likesInfo.dislikesCount;
     }
 }
 
