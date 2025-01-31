@@ -83,14 +83,15 @@ export class PostsController {
         return this.commandBus.execute(new LikePostCommand(dto.likeStatus, postId, dtoUser));
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtOptionalAuthGuard)
     @Get(':postId/comments')
     async getComments(
         @Param('postId', ValidateObjectIdPipe) postId: string,
         @Query() query: GetCommentsQueryParams,
-        @ExtractUserFromRequest() user: UserJwtPayloadDto,
+        @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
+        const userId = dtoUser ? dtoUser.userId : null;
         const post = await this.postsQueryRepository.getPost(postId);
-        return this.commentQueryRepository.getAllComments(post.id, query, user.userId ?? null);
+        return this.commentQueryRepository.getAllComments(post.id, query, userId);
     }
 }
