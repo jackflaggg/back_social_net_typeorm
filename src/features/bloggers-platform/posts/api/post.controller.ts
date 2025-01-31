@@ -18,7 +18,6 @@ import { CommentsQueryRepository } from '../../comments/infrastructure/query/com
 import { GetCommentsQueryParams } from '../../comments/dto/repository/query/query-parans-comments';
 import { PostLikeStatusApi } from '../dto/api/like-status.dto';
 import { LikePostCommand } from '../application/usecases/like-post.usecase';
-import mongoose from 'mongoose';
 
 @Controller('posts')
 export class PostsController {
@@ -28,14 +27,16 @@ export class PostsController {
         private readonly commentQueryRepository: CommentsQueryRepository,
     ) {}
 
+    @UseGuards(JwtAuthGuard)
     @Get()
-    async getPosts(@Query() query: GetPostsQueryParams) {
-        return await this.postsQueryRepository.getAllPosts(query);
+    async getPosts(@Query() query: GetPostsQueryParams, @ExtractUserFromRequest() dto: UserJwtPayloadDto) {
+        return await this.postsQueryRepository.getAllPosts(query, dto.userId);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get(':postId')
-    async getPost(@Param('postId', ValidateObjectIdPipe) postId: string) {
-        return this.postsQueryRepository.getPost(postId);
+    async getPost(@Param('postId', ValidateObjectIdPipe) postId: string, @ExtractUserFromRequest() dto: UserJwtPayloadDto) {
+        return this.postsQueryRepository.getPost(postId, dto.userId);
     }
     @HttpCode(HttpStatus.CREATED)
     @UseGuards(BasicAuthGuard)
