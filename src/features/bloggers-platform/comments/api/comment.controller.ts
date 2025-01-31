@@ -10,6 +10,7 @@ import { UpdateCommentApiDto } from '../dto/api/update.content.comment.dto';
 import { UpdateCommentCommandApiDto } from '../dto/api/update.statuses.comment.dto';
 import { UpdateContentCommentCommand } from '../application/usecases/update-comment.usecase';
 import { UpdateStatusCommentCommand } from '../application/usecases/like-comment.usecase';
+import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optional-auth.guard';
 
 @Controller('/comments')
 export class CommentController {
@@ -17,24 +18,32 @@ export class CommentController {
         private readonly commentsQueryRepository: CommentsQueryRepository,
         private readonly commandBus: CommandBus,
     ) {}
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtOptionalAuthGuard)
     @Get('/:commentId')
-    async getComment(@Param('commentId', ValidateObjectIdPipe) id: string) {
-        return this.commentsQueryRepository.getComment(id);
+    async getComment(@Param('commentId', ValidateObjectIdPipe) id: string, @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto) {
+        return this.commentsQueryRepository.getComment(id, dtoUser.userId);
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(JwtAuthGuard)
     @Put('/:commentId')
-    async updateComment(@Param('commentId', ValidateObjectIdPipe) id: string, @Body() dto: UpdateCommentApiDto) {
-        return this.commandBus.execute(new UpdateContentCommentCommand(id, dto.content));
+    async updateComment(
+        @Param('commentId', ValidateObjectIdPipe) id: string,
+        @Body() dto: UpdateCommentApiDto,
+        @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
+    ) {
+        return this.commandBus.execute(new UpdateContentCommentCommand(id, dto.content, dtoUser.userId));
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(JwtAuthGuard)
     @Put('/:commentId/like-status')
-    async likeComment(@Param('commentId', ValidateObjectIdPipe) id: string, @Body() dto: UpdateCommentCommandApiDto) {
-        return this.commandBus.execute(new UpdateStatusCommentCommand(id, dto.likeStatus));
+    async likeComment(
+        @Param('commentId', ValidateObjectIdPipe) id: string,
+        @Body() dto: UpdateCommentCommandApiDto,
+        @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
+    ) {
+        return this.commandBus.execute(new UpdateStatusCommentCommand(id, dto.likeStatus, dtoUser.userId));
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
