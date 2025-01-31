@@ -26,7 +26,7 @@ export class CommentsQueryRepository {
         return transformCommentToGet(comment, status);
     }
     async getAllComments(postId: string, queryData: GetCommentsQueryParams, userId?: string | null) {
-        const { pageNumber, pageSize, sortBy, sortDirection } = getCommentQuery(queryData);
+        const { pageSize, pageNumber, sortBy, sortDirection } = getCommentQuery(queryData);
 
         const skipAmount = (pageNumber - 1) * pageSize;
 
@@ -44,7 +44,7 @@ export class CommentsQueryRepository {
         // const totalCountComments = result.length;
         // const comments = result.slice(skipAmount, skipAmount + pageSizeNum);
 
-        const pagesCount = Math.ceil(totalCountComments / pageNumber);
+        const pagesCount = Math.ceil(totalCountComments / pageSize);
 
         const userPromises = comments.map(async comment => {
             const status = userId ? await this.statusModel.findOne({ userId: userId, parentId: comment._id }) : null;
@@ -60,12 +60,5 @@ export class CommentsQueryRepository {
             totalCount: totalCountComments,
             items: mapCommented,
         };
-    }
-    private getFilter(userId?: string) {
-        const filter: any = { deletionStatus: DeletionStatus.enum['not-deleted'] };
-        if (userId) {
-            filter.userId = userId;
-        }
-        return filter;
     }
 }
