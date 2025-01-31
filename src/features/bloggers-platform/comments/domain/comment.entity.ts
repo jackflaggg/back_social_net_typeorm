@@ -29,7 +29,7 @@ export class CommentEntity {
     @Prop({ type: String, required: true, ref: 'Post' })
     postId: string;
 
-    @Prop({ type: ExtendedLikesSchema.omit(['newestLikes']), required: true, default: defaultLike })
+    @Prop({ type: ExtendedLikesSchema.omit(['newestLikes', 'myStatus']), required: true, default: defaultLike })
     likesInfo: likesInfoInterface;
 
     @Prop({ type: String, required: true, default: DeletionStatus.enum['not-deleted'] })
