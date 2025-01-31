@@ -29,7 +29,7 @@ export const transformPostStatusUsers = (valueOne: any, valueTwo: any, valueThre
             myStatus: valueTwo ? valueTwo.status : StatusLike.enum['None'],
             newestLikes: valueThree
                 ? valueThree.map(item => ({
-                      addedAt: item.addedAt || '',
+                      addedAt: item.addedAt.toString() || '',
                       userId: item.userId || '',
                       login: item.login || '',
                   }))
