@@ -18,6 +18,7 @@ import { CommentsQueryRepository } from '../../comments/infrastructure/query/com
 import { GetCommentsQueryParams } from '../../comments/dto/repository/query/query-parans-comments';
 import { PostLikeStatusApi } from '../dto/api/like-status.dto';
 import { LikePostCommand } from '../application/usecases/like-post.usecase';
+import mongoose from 'mongoose';
 
 @Controller('posts')
 export class PostsController {
@@ -34,6 +35,8 @@ export class PostsController {
 
     @Get(':postId')
     async getPost(@Param('postId', ValidateObjectIdPipe) postId: string) {
+        console.log(mongoose.Types.ObjectId.isValid('63189b06003380064c4193be'));
+        console.log(mongoose.Types.ObjectId.isValid('679cdd90a966b6729d752b9a'));
         return this.postsQueryRepository.getPost(postId);
     }
     @HttpCode(HttpStatus.CREATED)
@@ -85,7 +88,6 @@ export class PostsController {
         @Query() query: GetCommentsQueryParams,
         @ExtractUserFromRequest() user: UserJwtPayloadDto,
     ) {
-        console.log(user);
         const post = await this.postsQueryRepository.getPost(postId);
         return this.commentQueryRepository.getAllComments(post.id, query, user.userId ?? null);
     }
