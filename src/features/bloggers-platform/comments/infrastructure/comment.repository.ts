@@ -8,14 +8,6 @@ export class CommentRepository {
     async save(comment: CommentDocument) {
         await comment.save();
     }
-    // TODO: Исправить этот момент!
-    async findPostById(id: string) {
-        const comment = await this.CommentModel.findOne({ _id: id, deletionStatus: DeletionStatus.enum['not-deleted'] });
-        if (!comment) {
-            return void 0;
-        }
-        return comment;
-    }
     async findCommentById(commentId: string) {
         const comment = await this.CommentModel.findOne({ _id: commentId, deletionStatus: DeletionStatus.enum['not-deleted'] });
         if (!comment) {
