@@ -14,7 +14,7 @@ export class CommentsQueryRepository {
         @InjectModel(CommentEntity.name) private readonly commentModel: CommentModelType,
         @InjectModel(StatusEntity.name) private readonly statusModel: StatusModelType,
     ) {}
-    async getComment(commentId: string, userId?: string) {
+    async getComment(commentId: string, userId?: string | null) {
         const commentPromise = this.commentModel.findOne({ _id: commentId, deletionStatus: DeletionStatus.enum['not-deleted'] });
         const statusPromise = userId ? this.statusModel.findOne({ userId, parentId: commentId }) : Promise.resolve(void 0);
 

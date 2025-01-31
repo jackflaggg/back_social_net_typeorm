@@ -79,20 +79,6 @@ export class PostsQueryRepository {
             }),
         );
 
-        // const mappedBlogsPromises = posts.map(async post => {
-        //     const likeStatuses = userId
-        //         ? await this.getLikeStatus(userId, post._id.toString()).then(status => (status ? transformStatus(status) : null))
-        //         : null;
-        //
-        //     const latestLikes = await this.getLatestThreeLikes(post._id.toString()).then(users =>
-        //         users.map(user => statusesUsersMapper(user)),
-        //     );
-        //
-        //     return transformPostStatusUsers(post, likeStatuses, latestLikes);
-        // });
-        //
-        // const mappedBlogs = await Promise.all(mappedBlogsPromises);
-
         return {
             pagesCount: pageCount,
             page: pageNumber,
@@ -115,23 +101,16 @@ export class PostsQueryRepository {
             .limit(3)
             .exec();
 
-        try {
-            const [post, myLikeStatus, latestThreeLikes] = await Promise.all([postPromise, myLikeStatusPromise, latestThreeLikesPromise]);
+        const [post, myLikeStatus, latestThreeLikes] = await Promise.all([postPromise, myLikeStatusPromise, latestThreeLikesPromise]);
 
-            if (!post) {
-                throw NotFoundDomainException.create('Post not found', 'post');
-            }
-
-            // трансформирую в нужный вид!
-            const transformedUsers = latestThreeLikes.map(user => statusesUsersMapper(user));
-
-            // маплю данные!
-            return transformPostStatusUsers(post, myLikeStatus, transformedUsers);
-        } catch (error) {
-            // Обработка ошибок, например, проблемы с базой данных
-            console.error('Error fetching post data:', error);
-            //  ... и выброс соответствующего исключения
-            throw new Error('Failed to fetch post data'); // Или более специфичное исключение
+        if (!post) {
+            throw NotFoundDomainException.create('Post not found', 'post');
         }
+
+        // трансформирую в нужный вид!
+        const transformedUsers = latestThreeLikes.map(user => statusesUsersMapper(user));
+
+        // маплю данные!
+        return transformPostStatusUsers(post, myLikeStatus, transformedUsers);
     }
 }

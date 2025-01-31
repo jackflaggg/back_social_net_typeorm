@@ -4,7 +4,7 @@ import { JwtAuthGuard } from '../../../../core/guards/passport/guards/jwt.auth.g
 import { CommandBus } from '@nestjs/cqrs';
 import { ValidateObjectIdPipe } from '../../../../core/pipes/validation.input.data.pipe';
 import { DeleteCommentCommand } from '../application/usecases/delete-comment.usecase';
-import { ExtractUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
+import { ExtractAnyUserFromRequest, ExtractUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
 import { UserJwtPayloadDto } from '../../../../core/guards/passport/strategies/refresh.strategy';
 import { UpdateCommentApiDto } from '../dto/api/update.content.comment.dto';
 import { UpdateCommentCommandApiDto } from '../dto/api/update.statuses.comment.dto';
@@ -20,8 +20,9 @@ export class CommentController {
     ) {}
     @UseGuards(JwtOptionalAuthGuard)
     @Get('/:commentId')
-    async getComment(@Param('commentId', ValidateObjectIdPipe) id: string, @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto) {
-        return this.commentsQueryRepository.getComment(id, dtoUser.userId);
+    async getComment(@Param('commentId', ValidateObjectIdPipe) id: string, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto) {
+        const userId = dtoUser ? dtoUser.userId : null;
+        return this.commentsQueryRepository.getComment(id, userId);
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
