@@ -12,7 +12,7 @@ export class LikePostCommand {
     constructor(
         public status: string,
         public postId: string,
-        public user: UserJwtPayloadDto,
+        public userId: string | null,
     ) {}
 }
 
@@ -27,19 +27,19 @@ export class LikePostUseCase implements ICommandHandler<LikePostCommand> {
 
     async execute(command: LikePostCommand) {
         const post = await this.postsRepository.findPostByIdOrFail(command.postId);
-        const currentStatuses = await this.statusRepository.getStatusPost(post._id.toString(), command.user.userId);
+        const currentStatuses = await this.statusRepository.getStatusPost(post._id.toString(), command.userId!);
 
         let dislike: number = 0;
         let like: number = 0;
 
         if (currentStatuses) {
-            await this.statusRepository.updateLikeStatus(post._id.toString(), command.user.userId, command.status);
+            await this.statusRepository.updateLikeStatus(post._id.toString(), command.userId!, command.status);
 
             const { dislikesCount, likesCount } = calculateStatus(currentStatuses, command.status);
             dislike = dislikesCount;
             like = likesCount;
         } else {
-            const user = await this.usersRepository.findUserByIdOrFail(command.user.userId);
+            const user = await this.usersRepository.findUserByIdOrFail(command.userId!);
             const dtoStatus: likeViewModel = {
                 userId: user._id.toString(),
                 userLogin: user.login,
