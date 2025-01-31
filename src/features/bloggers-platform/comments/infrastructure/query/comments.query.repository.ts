@@ -26,10 +26,8 @@ export class CommentsQueryRepository {
         return transformCommentToGet(comment, status);
     }
     async getAllComments(postId: string, queryData: GetCommentsQueryParams, userId?: string | null) {
-        console.log(queryData);
         const { pageNumber, pageSize, sortBy, sortDirection } = getCommentQuery(queryData);
 
-        console.log(pageNumber, pageSize, sortBy, sortDirection);
         const skipAmount = (pageNumber - 1) * pageSize;
 
         const comments = await this.commentModel
