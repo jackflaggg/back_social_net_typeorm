@@ -45,10 +45,6 @@ export class SessionRepository {
         );
         return updateDate;
     }
-    async deleteSessionByRefreshToken(deviceId: string) {
-        const res = await this.deviceModel.updateOne({ deviceId, deletionStatus: DeletionStatus.enum['permanent-deleted'] });
-        return res.upsertedCount === 1;
-    }
     async deleteAllSession(userId: string, deviceId: string) {
         return this.deviceModel.updateMany(
             {

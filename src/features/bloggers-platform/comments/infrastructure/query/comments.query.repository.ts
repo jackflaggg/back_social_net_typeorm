@@ -34,7 +34,7 @@ export class CommentsQueryRepository {
             .find({ postId: postId })
             .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
             .skip(skipAmount)
-            .limit(pageNumber)
+            .limit(Number(pageSize))
             .lean();
 
         const totalCountComments = await this.commentModel.countDocuments({ postId }); // Можно оптимизировать, но пока оставим для ясности

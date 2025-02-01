@@ -6,6 +6,7 @@ import { StatusLike } from '@libs/contracts/enums/status.like';
 import { likeViewModel, StatusEntity, StatusModelType } from '../../../likes/domain/status,entity';
 import { UserRepository } from '../../../../user-accounts/infrastructure/user/user.repository';
 import { InjectModel } from '@nestjs/mongoose';
+import { CommentEntity, CommentModelType } from '../../domain/comment.entity';
 
 export class UpdateStatusCommentCommand {
     constructor(
@@ -26,6 +27,7 @@ export class UpdateStatusCommentUseCase implements ICommandHandler<UpdateStatusC
         private readonly statusRepository: StatusRepository,
         private readonly usersRepository: UserRepository,
         @InjectModel(StatusEntity.name) private readonly statusModel: StatusModelType,
+        @InjectModel(CommentEntity.name) private readonly commentModel: CommentModelType,
     ) {}
     async execute(command: UpdateStatusCommentCommand) {
         const comment = await this.commentsRepository.findCommentById(command.commentId);
@@ -37,9 +39,11 @@ export class UpdateStatusCommentUseCase implements ICommandHandler<UpdateStatusC
         if (currentStatuses) {
             await this.statusRepository.updateLikeStatus(comment._id.toString(), command.userId, command.status);
 
+            console.log(currentStatuses);
             const { dislikesCount, likesCount } = calculateStatus(currentStatuses, command.status);
             dislike = dislikesCount;
             like = likesCount;
+            console.log(dislike, like);
         } else {
             const user = await this.usersRepository.findUserByIdOrFail(command.userId!);
             const dtoStatus: likeViewModel = {
@@ -65,7 +69,7 @@ export class UpdateStatusCommentUseCase implements ICommandHandler<UpdateStatusC
             likesCount: likesCount >= 0 ? likesCount : 0,
             dislikesCount: dislikesCount >= 0 ? dislikesCount : 0,
         };
-
-        await this.commentsRepository.updateComment(comment._id.toString(), updatedComment);
+        comment.updateStatus(updatedComment.likesCount, updatedComment.dislikesCount);
+        await this.commentsRepository.save(comment);
     }
 }
