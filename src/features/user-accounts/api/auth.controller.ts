@@ -85,8 +85,10 @@ export class AuthController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(RefreshAuthGuard)
     @Post('logout')
-    async logout(@ExtractAnyUserFromRequest() payload: UserJwtPayloadDto) {
-        return this.commandBus.execute(new LogoutUserCommand(payload));
+    async logout(@Req() req: Request, @ExtractAnyUserFromRequest() payload: UserJwtPayloadDto) {
+        const { refreshToken } = req.cookies;
+        const dtoRefresh = refreshToken ? refreshToken : null;
+        return this.commandBus.execute(new LogoutUserCommand(dtoRefresh));
     }
 
     @HttpCode(HttpStatus.OK)

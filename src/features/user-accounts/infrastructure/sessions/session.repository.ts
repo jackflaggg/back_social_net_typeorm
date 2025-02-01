@@ -30,6 +30,13 @@ export class SessionRepository {
         }
         return device;
     }
+    async findDeviceByRefreshToken(refreshToken: string) {
+        const device = await this.deviceModel.findOne({ refreshToken, deletionStatus: DeletionStatus.enum['not-deleted'] });
+        if (!device) {
+            return void 0;
+        }
+        return device;
+    }
     async getSessionByDeviceIdAndIat(issuedAt: Date, deviceId: string) {
         const filter = {
             $and: [{ issuedAt }, { deviceId }],
