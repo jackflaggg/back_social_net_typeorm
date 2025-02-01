@@ -13,6 +13,22 @@ export class SessionRepository {
 
     async findDeviceById(deviceId: string) {
         const device = await this.deviceModel.findOne({ deviceId, deletionStatus: DeletionStatus.enum['not-deleted'] });
+
+        if (!device) {
+            return void 0;
+        }
+
+        return device;
+    }
+
+    async findDeviceByToken(payload: UserJwtPayloadDto) {
+        const lastActiveDate = new Date(payload.iat * 1000).toISOString();
+
+        const device = await this.deviceModel.findOne({
+            deviceId: payload.deviceId,
+            lastActiveDate,
+            deletionStatus: DeletionStatus.enum['not-deleted'],
+        });
         if (!device) {
             return void 0;
         }
@@ -23,7 +39,7 @@ export class SessionRepository {
         const updateDate = await this.deviceModel.findOneAndUpdate(
             {
                 deviceId: dto.deviceId,
-                deletionStatus: DeletionStatus.enum['not-deleted'],
+                //deletionStatus: DeletionStatus.enum['not-deleted'],
             },
             {
                 refreshToken,

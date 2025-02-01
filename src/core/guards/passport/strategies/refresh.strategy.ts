@@ -26,7 +26,7 @@ export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, '
                 },
             ]),
             ignoreExpiration: false,
-            secretOrKey: 'envelope',
+            secretOrKey: 'refresh',
         });
     }
 
