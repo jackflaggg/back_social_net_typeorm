@@ -2,9 +2,10 @@ import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
 import { UpdateSessionCommand } from '../../device/usecases/update-session.usecase';
 import { SessionRepository } from '../../../infrastructure/sessions/session.repository';
+import { UnauthorizedDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class RefreshTokenUserCommand {
-    constructor(public readonly dto: { userId: string; deviceId: string; ip: string; agent: string }) {}
+    constructor(public readonly dto: { iat: number; userId: string; deviceId: string; ip: string; agent: string }) {}
 }
 
 @CommandHandler(RefreshTokenUserCommand)
@@ -19,7 +20,13 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
             userId: command.dto.userId,
             deviceId: command.dto.deviceId,
         };
-        const result = await this.sessionRepository;
+        const result = await this.sessionRepository.getSessionByDeviceIdAndIat(
+            new Date(Number(command.dto.iat) * 1000),
+            command.dto.deviceId,
+        );
+        if (!result) {
+            throw UnauthorizedDomainException.create();
+        }
 
         const accessToken = this.jwtService.sign(
             { deviceId: command.dto.deviceId, userId: command.dto.userId },
@@ -27,7 +34,7 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
         );
         const refreshToken = this.jwtService.sign(payloadForJwt, { expiresIn: '20s', secret: 'envelope' });
 
-        await this.commandBus.execute(new UpdateSessionCommand(payloadFromJwt, command.dto.ip, refreshToken));
+        await this.commandBus.execute(new UpdateSessionCommand(result._id.toString(), result.issuedAt, refreshToken));
         return {
             jwt: accessToken,
             refresh: refreshToken,

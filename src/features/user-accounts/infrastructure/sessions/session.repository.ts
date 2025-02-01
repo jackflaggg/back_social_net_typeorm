@@ -49,9 +49,9 @@ export class SessionRepository {
                 deletionStatus: DeletionStatus.enum['not-deleted'],
             },
             {
-                ip,
                 lastActiveDate,
-                deviceName: agent,
+                issuedAt: issuedAtToken,
+                refreshToken,
             },
         );
         return updateDate;
