@@ -11,12 +11,10 @@ export class SessionRepository {
         await device.save();
     }
     async findDeviceByToken(dto: UserJwtPayloadDto) {
-        const issuedAt = new Date(dto.iat * 1000);
         const device = await this.deviceModel.findOne({
             deviceId: dto.deviceId,
             userId: dto.userId,
             deletionStatus: DeletionStatus.enum['not-deleted'],
-            issuedAt,
         });
         if (!device) {
             return void 0;
@@ -30,9 +28,16 @@ export class SessionRepository {
         }
         return device;
     }
-    async getSessionByDeviceIdAndIat(issuedAt: Date, deviceId: string) {
+    async findDeviceByRefreshToken(refreshToken: string) {
+        const device = await this.deviceModel.findOne({ refreshToken, deletionStatus: DeletionStatus.enum['not-deleted'] });
+        if (!device) {
+            return void 0;
+        }
+        return device;
+    }
+    async getSessionByDeviceIdAndIat(deviceId: string) {
         const filter = {
-            $and: [{ issuedAt }, { deviceId }],
+            $and: [{ deviceId }, { deletionStatus: DeletionStatus.enum['not-deleted'] }],
         };
 
         const session = await this.deviceModel.findOne(filter);
@@ -41,17 +46,18 @@ export class SessionRepository {
         }
         return session;
     }
-    async updateSession(id: string, issuedAtToken: Date, refreshToken: string) {
+    async updateSession(dto: UserJwtPayloadDto, refreshToken: string) {
         const lastActiveDate = new Date();
         const updateDate = await this.deviceModel.findOneAndUpdate(
             {
-                _id: id,
+                deviceId: dto.deviceId,
                 deletionStatus: DeletionStatus.enum['not-deleted'],
             },
             {
-                lastActiveDate,
-                issuedAt: issuedAtToken,
                 refreshToken,
+                lastActiveDate,
+                issuedAt: new Date(1000 * dto.iat),
+                userId: dto.userId,
             },
         );
         return updateDate;

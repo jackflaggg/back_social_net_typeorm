@@ -1,4 +1,4 @@
-import { DeviceDocument, DeviceEntity } from '../../domain/device/device.entity';
+import { DeviceDocument } from '../../domain/device/device.entity';
 
 export class DeviceViewDto {
     ip: string;
@@ -18,11 +18,11 @@ export class DeviceViewDto {
     }
 }
 
-export function MappingDevice(ip: string, userAgent: string, payload: any, refreshToken: string, dateDevice: Date) {
+export function MappingDevice(ip: string, userAgent: string, deviceId: string, userId: string, refreshToken: string, dateDevice: Date) {
     return {
         issuedAt: dateDevice,
-        deviceId: payload.deviceId,
-        userId: payload.userId,
+        deviceId: deviceId,
+        userId: userId,
         ip,
         lastActiveDate: new Date(),
         deviceName: userAgent,

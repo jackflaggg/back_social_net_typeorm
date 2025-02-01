@@ -20,18 +20,22 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
     ) {}
     async execute(command: LoginUserCommand) {
         const deviceId = randomUUID();
-        const payloadForJwt = {
-            userId: command.user._id.toString(),
-            deviceId,
-        };
-        const accessToken = this.jwtService.sign(payloadForJwt, { expiresIn: '10s', secret: 'envelope' });
-        const refreshToken = this.jwtService.sign(payloadForJwt, { expiresIn: '20s', secret: 'envelope' });
+        const accessToken = this.jwtService.sign(
+            { userId: command.user._id.toString(), deviceId },
+            { expiresIn: '10s', secret: 'envelope' },
+        );
+        const refreshToken = this.jwtService.sign(
+            { userId: command.user._id.toString(), deviceId },
+            { expiresIn: '20s', secret: 'envelope' },
+        );
 
         const decodedData = this.jwtService.decode(refreshToken);
 
         const dateDevices = new Date(Number(decodedData.iat) * 1000);
 
-        await this.commandBus.execute(new CreateSessionCommand(command.ip, command.userAgent, payloadForJwt, refreshToken, dateDevices));
+        const sessionId = await this.commandBus.execute(
+            new CreateSessionCommand(command.ip, command.userAgent, deviceId, command.user._id.toString(), refreshToken, dateDevices),
+        );
         return {
             jwt: accessToken,
             refresh: refreshToken,
