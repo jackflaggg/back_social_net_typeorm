@@ -31,7 +31,7 @@ export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, '
     }
 
     async validate(payload: UserJwtPayloadDto) {
-        const user = await this.usersRepository.findUserByIdOrFail(payload.userId);
+        const user = await this.usersRepository.findUserByRefreshToken(payload.userId);
         if (!user) {
             throw UnauthorizedDomainException.create();
         }

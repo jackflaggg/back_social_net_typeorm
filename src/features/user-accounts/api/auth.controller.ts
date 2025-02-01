@@ -35,7 +35,7 @@ export class AuthController {
     @Post('login')
     async login(@Req() req: Request, @Res({ passthrough: true }) res: Response, @Body() dto: AuthLoginDtoApi) {
         const { jwt, refresh } = await this.commandBus.execute(new LoginUserCommand(req.ip, req.headers['user-agent'], req.user));
-        res.cookie('refreshToken', refresh, { httpOnly: true, secure: true, maxAge: 86400 });
+        res.cookie('refreshToken', refresh, { httpOnly: true, secure: true, maxAge: 20 });
         return {
             accessToken: jwt,
         };
@@ -91,10 +91,10 @@ export class AuthController {
 
     @HttpCode(HttpStatus.OK)
     @UseGuards(RefreshAuthGuard)
-    @Post('refreshToken')
+    @Post('refresh-token')
     async refreshToken(@ExtractAnyUserFromRequest() payload: UserJwtPayloadDto, @Res({ passthrough: true }) res: Response) {
         const { jwt, refresh } = await this.commandBus.execute(new RefreshTokenUserCommand(payload));
-        res.cookie('refreshToken', refresh, { httpOnly: true, secure: true, maxAge: 86400 });
+        res.cookie('refreshToken', refresh, { httpOnly: true, secure: true, maxAge: 20 });
         return {
             accessToken: jwt,
         };

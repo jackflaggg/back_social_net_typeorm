@@ -15,6 +15,13 @@ export class UserRepository {
         }
         return user;
     }
+    async findUserByRefreshToken(userId: string) {
+        const user = await this.userModel.findById({ _id: userId, deletionStatus: DeletionStatus.enum['not-deleted'] });
+        if (!user) {
+            return void 0;
+        }
+        return user;
+    }
     async save(user: UserDocument): Promise<void> {
         await user.save();
     }

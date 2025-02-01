@@ -61,6 +61,7 @@ const useCases = [
 
 @Module({
     imports: [
+        // Вы можете игнорировать expiresIn: '5m' в JwtModule.register(), так как в вашей логике этот параметр переопределяется.
         JwtModule.register({
             secret: 'envelope',
             signOptions: { expiresIn: '5m' },

@@ -14,7 +14,7 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
 
     async execute(command: LogoutUserCommand) {
         if (!command.dto.deviceId) {
-            throw NotFoundDomainException.create('Device not found');
+            throw NotFoundDomainException.create('Device not found in dto', 'dto');
         }
         const currentDevice = await this.sessionRepository.findDeviceById(command.dto.deviceId);
 
@@ -28,6 +28,7 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
             throw ForbiddenDomainException.create('Access forbidden');
         }
 
-        await this.sessionRepository.deleteSessionByRefreshToken(command.dto.deviceId);
+        currentDevice.makeDeleted();
+        await this.sessionRepository.save(currentDevice);
     }
 }

@@ -50,6 +50,11 @@ export class DeviceEntity {
     makeDeleted() {
         this.deletionStatus = DeletionStatus.enum['permanent-deleted'];
     }
+    updateSession(issuedAt: Date, refreshToken: string) {
+        this.lastActiveDate = new Date();
+        this.issuedAt = issuedAt;
+        this.refreshToken = refreshToken;
+    }
 }
 
 export const DeviceSchema = SchemaFactory.createForClass(DeviceEntity);

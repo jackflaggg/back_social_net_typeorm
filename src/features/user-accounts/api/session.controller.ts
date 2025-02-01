@@ -8,7 +8,7 @@ import { DeleteSessionsCommand } from '../application/device/usecases/delete-ses
 import { ValidateUUIDPipe } from '../../../core/pipes/validation.input.uuid';
 import { Controller, Delete, Get, HttpCode, HttpStatus, Param, UseGuards } from '@nestjs/common';
 
-@Controller('devices')
+@Controller('security/devices')
 export class SessionController {
     constructor(
         private readonly commandBus: CommandBus,
@@ -23,9 +23,9 @@ export class SessionController {
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(RefreshAuthGuard)
-    @Delete(':id')
-    async deleteSession(@Param('id', ValidateUUIDPipe) id: string, @ExtractUserFromRequest() dto: UserJwtPayloadDto) {
-        return this.commandBus.execute(new DeleteSessionCommand(dto.userId, id));
+    @Delete(':deviceId')
+    async deleteSession(@Param('deviceId', ValidateUUIDPipe) deviceId: string, @ExtractUserFromRequest() dto: UserJwtPayloadDto) {
+        return this.commandBus.execute(new DeleteSessionCommand(dto.userId, deviceId));
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
