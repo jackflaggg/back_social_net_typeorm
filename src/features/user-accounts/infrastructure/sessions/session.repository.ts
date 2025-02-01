@@ -10,41 +10,13 @@ export class SessionRepository {
     async save(device: DeviceDocument) {
         await device.save();
     }
-    async findDeviceByToken(dto: UserJwtPayloadDto) {
-        const device = await this.deviceModel.findOne({
-            deviceId: dto.deviceId,
-            userId: dto.userId,
-            deletionStatus: DeletionStatus.enum['not-deleted'],
-        });
-        if (!device) {
-            return void 0;
-        }
-        return device;
-    }
+
     async findDeviceById(deviceId: string) {
         const device = await this.deviceModel.findOne({ deviceId, deletionStatus: DeletionStatus.enum['not-deleted'] });
         if (!device) {
             return void 0;
         }
         return device;
-    }
-    async findDeviceByRefreshToken(refreshToken: string) {
-        const device = await this.deviceModel.findOne({ refreshToken, deletionStatus: DeletionStatus.enum['not-deleted'] });
-        if (!device) {
-            return void 0;
-        }
-        return device;
-    }
-    async getSessionByDeviceIdAndIat(deviceId: string) {
-        const filter = {
-            $and: [{ deviceId }, { deletionStatus: DeletionStatus.enum['not-deleted'] }],
-        };
-
-        const session = await this.deviceModel.findOne(filter);
-        if (!session) {
-            return void 0;
-        }
-        return session;
     }
     async updateSession(dto: UserJwtPayloadDto, refreshToken: string) {
         const lastActiveDate = new Date();
