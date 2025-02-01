@@ -30,6 +30,17 @@ export class SessionRepository {
         }
         return device;
     }
+    async getSessionByDeviceIdAndIat(issuedAt: Date, deviceId: string) {
+        const filter = {
+            $and: [{ issuedAt }, { deviceId }],
+        };
+
+        const session = await this.deviceModel.findOne(filter);
+        if (!session) {
+            return void 0;
+        }
+        return session;
+    }
     async updateSession(id: string, issuedAtToken: Date, refreshToken: string) {
         const lastActiveDate = new Date();
         const updateDate = await this.deviceModel.findOneAndUpdate(
@@ -38,9 +49,9 @@ export class SessionRepository {
                 deletionStatus: DeletionStatus.enum['not-deleted'],
             },
             {
-                issuedAt: issuedAtToken,
+                ip,
                 lastActiveDate,
-                refreshToken,
+                deviceName: agent,
             },
         );
         return updateDate;
