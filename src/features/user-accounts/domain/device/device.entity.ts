@@ -1,9 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { randomUUID } from 'node:crypto';
 import { HydratedDocument, Model } from 'mongoose';
-import { UserDocument } from '../user/user.entity';
 import { DeletionStatus, DeletionStatusType } from '@libs/contracts/enums/deletion-status.enum';
-import crypto from 'node:crypto';
 
 @Schema({ timestamps: false })
 export class DeviceEntity {
