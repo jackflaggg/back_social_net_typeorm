@@ -31,12 +31,13 @@ export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, '
     }
 
     async validate(payload: UserJwtPayloadDto) {
-        const user = await this.usersRepository.findUserByRefreshToken(payload.userId);
+        const user = await this.usersRepository.findUserByRefreshToken(payload.userId, payload.deviceId);
+
         if (!user) {
             throw UnauthorizedDomainException.create();
         }
 
-        const device = await this.securityDevicesRepository.findDeviceByToken(payload);
+        const device = await this.securityDevicesRepository.findDeviceById(payload.deviceId);
 
         if (!device) {
             throw UnauthorizedDomainException.create();

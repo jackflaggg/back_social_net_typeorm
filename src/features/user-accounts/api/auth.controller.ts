@@ -19,7 +19,7 @@ import { PasswordRecoveryUserCommand } from '../application/user/usecases/passwo
 import { RegistrationEmailResendUserCommand } from '../application/user/usecases/registration-email-resend-user.usecase';
 import { NewPasswordUserCommand } from '../application/user/usecases/new-password-user.usecase';
 import { RefreshAuthGuard } from '../../../core/guards/passport/guards/refresh.auth.guard';
-import { ExtractAnyUserFromRequest } from '../../../core/decorators/param/validate.user.decorators';
+import { ExtractAnyUserFromRequest, ExtractUserFromRequest } from '../../../core/decorators/param/validate.user.decorators';
 import { UserJwtPayloadDto } from '../../../core/guards/passport/strategies/refresh.strategy';
 import { RefreshTokenUserCommand } from '../application/user/usecases/refresh-token.user.usecase';
 import { LogoutUserCommand } from '../application/user/usecases/logout-user.usecase';
@@ -85,22 +85,15 @@ export class AuthController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(RefreshAuthGuard)
     @Post('logout')
-    async logout(@Req() req: Request, @ExtractAnyUserFromRequest() payload: UserJwtPayloadDto) {
-        const { refreshToken } = req.cookies;
-        const dtoRefresh = refreshToken ? refreshToken : null;
-        return this.commandBus.execute(new LogoutUserCommand(dtoRefresh));
+    async logout(@Req() req: Request, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto) {
+        return this.commandBus.execute(new LogoutUserCommand(dtoUser));
     }
 
     @HttpCode(HttpStatus.OK)
     @UseGuards(RefreshAuthGuard)
     @Post('refresh-token')
-    async refreshToken(
-        @ExtractAnyUserFromRequest() payload: UserJwtPayloadDto,
-        @Req() req: Request,
-        @Res({ passthrough: true }) res: Response,
-    ) {
-        const dtoRefreshToken = req.cookies.refreshToken ? req.cookies.refreshToken : null;
-        const { jwt, refresh } = await this.commandBus.execute(new RefreshTokenUserCommand(dtoRefreshToken));
+    async refreshToken(@ExtractUserFromRequest() user: UserJwtPayloadDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
+        const { jwt, refresh } = await this.commandBus.execute(new RefreshTokenUserCommand(user.userId, user.deviceId));
         res.cookie('refreshToken', refresh, { httpOnly: true, secure: true });
         return {
             accessToken: jwt,

@@ -32,5 +32,6 @@ export class CreateSessionUseCase implements ICommandHandler<CreateSessionComman
         );
         const session = this.deviceModel.buildInstance(data);
         await this.sessionRepository.save(session);
+        return session._id.toString();
     }
 }

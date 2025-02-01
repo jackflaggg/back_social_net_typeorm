@@ -1,11 +1,13 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
 import { UpdateSessionCommand } from '../../device/usecases/update-session.usecase';
-import { SessionRepository } from '../../../infrastructure/sessions/session.repository';
 import { UnauthorizedDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class RefreshTokenUserCommand {
-    constructor(public readonly dto: string | null) {}
+    constructor(
+        public readonly userId: string,
+        public readonly deviceId: string,
+    ) {}
 }
 
 @CommandHandler(RefreshTokenUserCommand)
@@ -13,25 +15,21 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
     constructor(
         private readonly jwtService: JwtService,
         private readonly commandBus: CommandBus,
-        private readonly sessionRepository: SessionRepository,
     ) {}
     async execute(command: RefreshTokenUserCommand) {
-        if (!command.dto) {
+        if (!command.userId) {
             throw UnauthorizedDomainException.create();
         }
-        const decodedRefreshToken = this.jwtService.decode(command.dto);
+        const userId = command.userId;
+        const deviceId = command.deviceId;
 
-        const { userId, deviceId, iat } = decodedRefreshToken;
-
-        const result = await this.sessionRepository.getSessionByDeviceIdAndIat(new Date(Number(iat) * 1000), deviceId);
-
-        if (!result) {
-            throw UnauthorizedDomainException.create();
-        }
-        const accessToken = this.jwtService.sign({ userId, deviceId }, { expiresIn: '10s', secret: 'envelope' });
+        // мне нужно еще найти старый токен и пометить его на удаление!
         const refreshToken = this.jwtService.sign({ userId, deviceId }, { expiresIn: '20s', secret: 'envelope' });
+        const accessToken = this.jwtService.sign({ userId, deviceId }, { expiresIn: '10s', secret: 'envelope' });
 
-        await this.commandBus.execute(new UpdateSessionCommand(result._id.toString(), result.issuedAt, refreshToken));
+        const decodedNewRefreshToken = this.jwtService.decode(refreshToken);
+
+        await this.commandBus.execute(new UpdateSessionCommand(decodedNewRefreshToken, refreshToken));
         return {
             jwt: accessToken,
             refresh: refreshToken,
