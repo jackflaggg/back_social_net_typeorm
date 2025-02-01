@@ -99,15 +99,8 @@ export class AuthController {
         @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ) {
-        const { jwt, refresh } = await this.commandBus.execute(
-            new RefreshTokenUserCommand({
-                iat: payload.iat,
-                userId: payload.userId,
-                deviceId: payload.deviceId,
-                ip: req.ip || '',
-                agent: req.headers['user-agent'] || '',
-            }),
-        );
+        const dtoRefreshToken = req.cookies.refreshToken ? req.cookies.refreshToken : null;
+        const { jwt, refresh } = await this.commandBus.execute(new RefreshTokenUserCommand(dtoRefreshToken));
         res.cookie('refreshToken', refresh, { httpOnly: true, secure: true });
         return {
             accessToken: jwt,

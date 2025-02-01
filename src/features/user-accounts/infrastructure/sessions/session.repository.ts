@@ -39,7 +39,7 @@ export class SessionRepository {
     }
     async getSessionByDeviceIdAndIat(issuedAt: Date, deviceId: string) {
         const filter = {
-            $and: [{ issuedAt }, { deviceId }],
+            $and: [{ issuedAt }, { deviceId }, { deletionStatus: DeletionStatus.enum['not-deleted'] }],
         };
 
         const session = await this.deviceModel.findOne(filter);

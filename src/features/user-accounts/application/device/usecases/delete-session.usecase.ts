@@ -1,6 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SessionRepository } from '../../../infrastructure/sessions/session.repository';
-import { ForbiddenDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import {
+    ForbiddenDomainException,
+    NotFoundDomainException,
+    UnauthorizedDomainException,
+} from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class DeleteSessionCommand {
     constructor(
@@ -14,7 +18,7 @@ export class DeleteSessionUseCase implements ICommandHandler<DeleteSessionComman
     constructor(private readonly sessionRepository: SessionRepository) {}
     async execute(command: DeleteSessionCommand) {
         if (!command.deviceId) {
-            throw NotFoundDomainException.create('Device not found');
+            throw UnauthorizedDomainException.create();
         }
         const device = await this.sessionRepository.findDeviceById(command.deviceId);
 

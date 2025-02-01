@@ -9,7 +9,7 @@ export class SessionQueryRepository {
     constructor(@InjectModel(DeviceEntity.name) private deviceModel: DeviceModelType) {}
 
     async getSessions(userId: string): Promise<DeviceViewDto[] | void> {
-        const session = await this.deviceModel.find({ userId, deletionStatus: DeletionStatus.enum['not-deleted'] });
+        const session = await this.deviceModel.find({ userId, deletionStatus: DeletionStatus.enum['not-deleted'] }).lean();
         return session ? session.map(elem => DeviceViewDto.mapToView(elem)) : [];
     }
 }
