@@ -4,10 +4,7 @@ import { UserJwtPayloadDto } from '../../../../../core/guards/passport/strategie
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class UpdateSessionCommand {
-    constructor(
-        public readonly dto: UserJwtPayloadDto,
-        public readonly refreshToken: string,
-    ) {}
+    constructor(public readonly dto: UserJwtPayloadDto) {}
 }
 
 @CommandHandler(UpdateSessionCommand)
@@ -18,7 +15,7 @@ export class UpdateSessionUseCase implements ICommandHandler<UpdateSessionComman
         if (!session) {
             throw NotFoundDomainException.create();
         }
-        session.updateSession(command.dto.iat, command.refreshToken, command.dto.deviceId);
+        session.updateSession(command.dto.iat, command.dto.deviceId);
         await this.sessionRepository.save(session);
     }
 }

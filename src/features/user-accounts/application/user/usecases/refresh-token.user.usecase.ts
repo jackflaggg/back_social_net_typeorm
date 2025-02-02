@@ -9,7 +9,6 @@ export class RefreshTokenUserCommand {
     constructor(
         public readonly userId: string,
         public readonly deviceId: string,
-        public readonly refreshToken: string | null,
         public readonly ip: string = '255.255.255.0',
         public readonly userAgent: string = 'google',
     ) {}
@@ -23,11 +22,11 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
         private readonly sessionRepository: SessionRepository,
     ) {}
     async execute(command: RefreshTokenUserCommand) {
-        if (!command.userId || !command.refreshToken) {
+        if (!command.userId) {
             throw UnauthorizedDomainException.create();
         }
         // таким образом я удаляю старую сессию при обновлении!
-        const session = await this.sessionRepository.findDeviceByRefreshToken(command.refreshToken);
+        const session = await this.sessionRepository.findDeviceById(command.deviceId);
         if (!session) {
             throw UnauthorizedDomainException.create('возможно это удаленная сессия!', 'sessionRepository');
         }
@@ -44,7 +43,7 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
         const decodedData = this.jwtService.decode(refreshToken);
         const dateDevices = new Date(Number(decodedData.iat) * 1000);
 
-        await this.commandBus.execute(new CreateSessionCommand(command.ip, command.userAgent, deviceId, userId, refreshToken, dateDevices));
+        await this.commandBus.execute(new CreateSessionCommand(command.ip, command.userAgent, deviceId, userId, dateDevices));
         return {
             jwt: accessToken,
             refresh: refreshToken,

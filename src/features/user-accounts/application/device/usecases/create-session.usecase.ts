@@ -10,7 +10,6 @@ export class CreateSessionCommand {
         public readonly userAgent: string,
         public readonly deviceId: string,
         public readonly userId: string,
-        public readonly refreshToken: string,
         public readonly dateDevice: Date,
     ) {}
 }
@@ -22,14 +21,7 @@ export class CreateSessionUseCase implements ICommandHandler<CreateSessionComman
         @InjectModel(DeviceEntity.name) private deviceModel: DeviceModelType,
     ) {}
     async execute(command: CreateSessionCommand) {
-        const data = MappingDevice(
-            command.ip,
-            command.userAgent,
-            command.deviceId,
-            command.userId,
-            command.refreshToken,
-            command.dateDevice,
-        );
+        const data = MappingDevice(command.ip, command.userAgent, command.deviceId, command.userId, command.dateDevice);
         const session = this.deviceModel.buildInstance(data);
         await this.sessionRepository.save(session);
         return session._id.toString();

@@ -20,14 +20,8 @@ export class DeviceEntity {
     @Prop({ type: String, required: true })
     ip: string;
 
-    @Prop({ type: Date, required: true })
-    lastActiveDate: Date;
-
     @Prop({ type: String, required: true })
     deviceName: string;
-
-    @Prop({ type: String, required: true })
-    refreshToken: string;
 
     @Prop({ type: String, required: true, default: DeletionStatus.enum['not-deleted'] })
     deletionStatus: DeletionStatusType;
@@ -39,18 +33,14 @@ export class DeviceEntity {
         session.userId = dto.userId;
         session.ip = dto.ip;
         session.deviceName = dto.deviceName;
-        session.lastActiveDate = dto.lastActiveDate;
-        session.refreshToken = dto.refreshToken;
         return session as DeviceDocument;
     }
 
     makeDeleted() {
         this.deletionStatus = DeletionStatus.enum['permanent-deleted'];
     }
-    updateSession(issuedAt: number, refreshToken: string, deviceId: string) {
-        this.lastActiveDate = new Date();
+    updateSession(issuedAt: number, deviceId: string) {
         this.issuedAt = new Date(1000 * issuedAt);
-        this.refreshToken = refreshToken;
         this.deviceId = deviceId;
     }
 }

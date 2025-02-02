@@ -36,7 +36,7 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
         const dateDevices = new Date(Number(decodedData.iat) * 1000);
 
         await this.commandBus.execute(
-            new CreateSessionCommand(command.ip, command.userAgent, deviceId, command.user._id.toString(), refreshToken, dateDevices),
+            new CreateSessionCommand(command.ip, command.userAgent, deviceId, command.user._id.toString(), dateDevices),
         );
         return {
             jwt: accessToken,
