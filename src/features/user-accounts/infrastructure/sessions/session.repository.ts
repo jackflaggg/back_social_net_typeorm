@@ -11,6 +11,15 @@ export class SessionRepository {
         await device.save();
     }
 
+    async findDeviceByRefreshToken(refreshToken: string) {
+        const device = await this.deviceModel.findOne({ refreshToken, deletionStatus: DeletionStatus.enum['not-deleted'] });
+
+        if (!device) {
+            return void 0;
+        }
+
+        return device;
+    }
     async findDeviceById(deviceId: string) {
         const device = await this.deviceModel.findOne({ deviceId, deletionStatus: DeletionStatus.enum['not-deleted'] });
 
@@ -21,19 +30,6 @@ export class SessionRepository {
         return device;
     }
 
-    async findDeviceByToken(payload: UserJwtPayloadDto) {
-        const lastActiveDate = new Date(payload.iat * 1000).toISOString();
-
-        const device = await this.deviceModel.findOne({
-            deviceId: payload.deviceId,
-            lastActiveDate,
-            deletionStatus: DeletionStatus.enum['not-deleted'],
-        });
-        if (!device) {
-            return void 0;
-        }
-        return device;
-    }
     async updateSession(dto: UserJwtPayloadDto, refreshToken: string) {
         const lastActiveDate = new Date();
         const updateDate = await this.deviceModel.findOneAndUpdate(
