@@ -20,6 +20,7 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
         if (!command.dtoUser) {
             throw UnauthorizedDomainException.create();
         }
+
         if (!command.dtoUser.deviceId) {
             throw NotFoundDomainException.create('нет девайса', 'deviceId');
         }

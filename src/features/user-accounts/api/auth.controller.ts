@@ -93,7 +93,10 @@ export class AuthController {
     @UseGuards(RefreshAuthGuard)
     @Post('refresh-token')
     async refreshToken(@ExtractUserFromRequest() user: UserJwtPayloadDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
-        const { jwt, refresh } = await this.commandBus.execute(new RefreshTokenUserCommand(user.userId, user.deviceId));
+        const dtoRefresh = req.cookies.refreshToken ? req.cookies.refreshToken : null;
+        const { jwt, refresh } = await this.commandBus.execute(
+            new RefreshTokenUserCommand(user.userId, user.deviceId, dtoRefresh, req.ip, req.headers['user-agent']),
+        );
         res.cookie('refreshToken', refresh, { httpOnly: true, secure: true });
         return {
             accessToken: jwt,

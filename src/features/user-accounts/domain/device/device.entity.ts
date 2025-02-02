@@ -48,10 +48,11 @@ export class DeviceEntity {
     makeDeleted() {
         this.deletionStatus = DeletionStatus.enum['permanent-deleted'];
     }
-    updateSession(issuedAt: Date, refreshToken: string) {
+    updateSession(issuedAt: number, refreshToken: string, deviceId: string) {
         this.lastActiveDate = new Date();
-        this.issuedAt = issuedAt;
+        this.issuedAt = new Date(1000 * issuedAt);
         this.refreshToken = refreshToken;
+        this.deviceId = deviceId;
     }
 }
 
