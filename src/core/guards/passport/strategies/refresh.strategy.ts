@@ -4,6 +4,7 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { UserRepository } from '../../../../features/user-accounts/infrastructure/user/user.repository';
 import { UnauthorizedDomainException } from '../../../exceptions/incubator-exceptions/domain-exceptions';
 import { SessionRepository } from '../../../../features/user-accounts/infrastructure/sessions/session.repository';
+import { SETTINGS } from '../../../settings';
 
 export class UserJwtPayloadDto {
     userId: string;
@@ -26,12 +27,12 @@ export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, '
                 },
             ]),
             ignoreExpiration: false,
-            secretOrKey: 'refresh',
+            secretOrKey: SETTINGS.SECRET_KEY,
         });
     }
 
     async validate(payload: UserJwtPayloadDto) {
-        const user = await this.usersRepository.findUserByRefreshToken(payload.userId, payload.deviceId);
+        const user = await this.usersRepository.findUserByRefreshToken(payload.userId);
 
         if (!user) {
             throw UnauthorizedDomainException.create();
@@ -43,6 +44,12 @@ export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, '
             throw UnauthorizedDomainException.create();
         }
 
+        console.log('device: ' + device);
+        console.log('payload: ' + JSON.stringify(payload));
+        console.log(typeof device.issuedAt, ' ', typeof new Date(+payload.iat * 1000));
+        if (device.issuedAt.toISOString() !== new Date(+payload.iat * 1000).toISOString()) {
+            throw UnauthorizedDomainException.create();
+        }
         return payload;
     }
 }

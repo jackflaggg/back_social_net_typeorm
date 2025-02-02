@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { SessionRepository } from '../../../infrastructure/sessions/session.repository';
 import { CreateSessionCommand } from '../../device/usecases/create-session.usecase';
+import { SETTINGS } from '../../../../../core/settings';
 
 export class RefreshTokenUserCommand {
     constructor(
@@ -37,8 +38,8 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
         const userId = command.userId;
         const deviceId = command.deviceId;
 
-        const refreshToken = this.jwtService.sign({ userId, deviceId }, { expiresIn: '20s', secret: 'refresh' });
-        const accessToken = this.jwtService.sign({ userId, deviceId }, { expiresIn: '10s', secret: 'envelope' });
+        const refreshToken = this.jwtService.sign({ userId, deviceId }, { expiresIn: '20s', secret: SETTINGS.SECRET_KEY });
+        const accessToken = this.jwtService.sign({ userId, deviceId }, { expiresIn: '10s', secret: SETTINGS.SECRET_KEY });
 
         const decodedData = this.jwtService.decode(refreshToken);
         const dateDevices = new Date(Number(decodedData.iat) * 1000);

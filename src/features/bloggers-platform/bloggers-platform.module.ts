@@ -33,6 +33,7 @@ import { DeleteCommentUseCase } from './comments/application/usecases/delete-com
 import { CheckUserCommentUseCase } from './comments/application/usecases/check-user-comment.usecase';
 import { UpdateStatusCommentUseCase } from './comments/application/usecases/like-comment.usecase';
 import { UpdateContentCommentUseCase } from './comments/application/usecases/update-comment.usecase';
+import { SETTINGS } from '../../core/settings';
 
 const repositories = [
     BlogsQueryRepository,
@@ -63,7 +64,7 @@ const useCases = [
     imports: [
         // Вы можете игнорировать expiresIn: '5m' в JwtModule.register(), так как в вашей логике этот параметр переопределяется.
         JwtModule.register({
-            secret: 'envelope',
+            secret: SETTINGS.SECRET_KEY,
             signOptions: { expiresIn: '5m' },
         }),
         PassportModule,
