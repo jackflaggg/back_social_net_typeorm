@@ -5,6 +5,7 @@ import { BadRequestDomainException } from '../exceptions/incubator-exceptions/do
 @Injectable()
 export class ValidateUUIDPipe implements PipeTransform<string> {
     transform(value: string): string {
+        console.log(validate(value));
         if (!validate(value)) {
             throw BadRequestDomainException.create('неверный формат uuid', 'id');
         }

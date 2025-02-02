@@ -44,9 +44,6 @@ export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, '
             throw UnauthorizedDomainException.create();
         }
 
-        console.log('device: ' + device);
-        console.log('payload: ' + JSON.stringify(payload));
-        console.log(typeof device.issuedAt, ' ', typeof new Date(+payload.iat * 1000));
         if (device.issuedAt.toISOString() !== new Date(+payload.iat * 1000).toISOString()) {
             throw UnauthorizedDomainException.create();
         }

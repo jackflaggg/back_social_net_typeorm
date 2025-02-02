@@ -1,14 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { randomUUID } from 'node:crypto';
 import { HydratedDocument, Model } from 'mongoose';
 import { DeletionStatus, DeletionStatusType } from '@libs/contracts/enums/deletion-status.enum';
 
 @Schema({ timestamps: false })
 export class DeviceEntity {
     @Prop({
-        type: 'UUID',
+        type: String,
         required: true,
-        default: () => randomUUID(),
+        //default: () => randomUUID(),
     })
     deviceId: string;
 

@@ -23,11 +23,11 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
         const deviceId = randomUUID();
         const accessToken = this.jwtService.sign(
             { userId: command.user._id.toString(), deviceId },
-            { expiresIn: '10s', secret: SETTINGS.SECRET_KEY },
+            { expiresIn: '5m', secret: SETTINGS.SECRET_KEY },
         );
         const refreshToken = this.jwtService.sign(
             { userId: command.user._id.toString(), deviceId },
-            { expiresIn: '20s', secret: SETTINGS.SECRET_KEY },
+            { expiresIn: '10m', secret: SETTINGS.SECRET_KEY },
         );
 
         const decodedData = this.jwtService.decode(refreshToken);

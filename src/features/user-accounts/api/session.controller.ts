@@ -5,7 +5,6 @@ import { UserJwtPayloadDto } from '../../../core/guards/passport/strategies/refr
 import { ExtractAnyUserFromRequest } from '../../../core/decorators/param/validate.user.decorators';
 import { SessionQueryRepository } from '../infrastructure/sessions/query/session.query.repository';
 import { DeleteSessionsCommand } from '../application/device/usecases/delete-sessions.usecase';
-import { ValidateUUIDPipe } from '../../../core/pipes/validation.input.uuid';
 import { Controller, Delete, Get, HttpCode, HttpStatus, Param, UseGuards } from '@nestjs/common';
 
 @Controller('security')
@@ -24,7 +23,7 @@ export class SessionController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(RefreshAuthGuard)
     @Delete('devices/:deviceId')
-    async deleteSession(@Param('deviceId', ValidateUUIDPipe) deviceId: string, @ExtractAnyUserFromRequest() dto: UserJwtPayloadDto) {
+    async deleteSession(@Param('deviceId') deviceId: string, @ExtractAnyUserFromRequest() dto: UserJwtPayloadDto) {
         return this.commandBus.execute(new DeleteSessionCommand(dto.userId, deviceId));
     }
 
