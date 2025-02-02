@@ -37,6 +37,7 @@ import { SessionQueryRepository } from './infrastructure/sessions/query/session.
 import { JwtRefreshAuthPassportStrategy } from '../../core/guards/passport/strategies/refresh.strategy';
 import { DeleteSessionsUseCase } from './application/device/usecases/delete-sessions.usecase';
 import { UpdateSessionUseCase } from './application/device/usecases/update-session.usecase';
+import { SETTINGS } from '../../core/settings';
 
 const useCases = [
     CreateSessionUseCase,
@@ -72,7 +73,7 @@ const handlers = [UserLoggedInEventHandler];
     imports: [
         // Вы можете игнорировать expiresIn: '5m' в JwtModule.register(), так как в вашей логике этот параметр переопределяется.
         JwtModule.register({
-            secret: 'envelope',
+            secret: SETTINGS.SECRET_KEY,
             signOptions: { expiresIn: '5m' },
         }),
         PassportModule,

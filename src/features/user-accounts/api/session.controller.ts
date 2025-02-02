@@ -2,13 +2,13 @@ import { CommandBus } from '@nestjs/cqrs';
 import { RefreshAuthGuard } from '../../../core/guards/passport/guards/refresh.auth.guard';
 import { DeleteSessionCommand } from '../application/device/usecases/delete-session.usecase';
 import { UserJwtPayloadDto } from '../../../core/guards/passport/strategies/refresh.strategy';
-import { ExtractUserFromRequest } from '../../../core/decorators/param/validate.user.decorators';
+import { ExtractAnyUserFromRequest } from '../../../core/decorators/param/validate.user.decorators';
 import { SessionQueryRepository } from '../infrastructure/sessions/query/session.query.repository';
 import { DeleteSessionsCommand } from '../application/device/usecases/delete-sessions.usecase';
 import { ValidateUUIDPipe } from '../../../core/pipes/validation.input.uuid';
 import { Controller, Delete, Get, HttpCode, HttpStatus, Param, UseGuards } from '@nestjs/common';
 
-@Controller('security/devices')
+@Controller('security')
 export class SessionController {
     constructor(
         private readonly commandBus: CommandBus,
@@ -16,22 +16,22 @@ export class SessionController {
     ) {}
 
     @UseGuards(RefreshAuthGuard)
-    @Get()
-    async getAllSessions(@ExtractUserFromRequest() dto: UserJwtPayloadDto) {
+    @Get('devices')
+    async getAllSessions(@ExtractAnyUserFromRequest() dto: UserJwtPayloadDto) {
         return this.sessionQueryRepository.getSessions(dto.userId);
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(RefreshAuthGuard)
-    @Delete(':deviceId')
-    async deleteSession(@Param('deviceId', ValidateUUIDPipe) deviceId: string, @ExtractUserFromRequest() dto: UserJwtPayloadDto) {
+    @Delete('devices/:deviceId')
+    async deleteSession(@Param('deviceId', ValidateUUIDPipe) deviceId: string, @ExtractAnyUserFromRequest() dto: UserJwtPayloadDto) {
         return this.commandBus.execute(new DeleteSessionCommand(dto.userId, deviceId));
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(RefreshAuthGuard)
-    @Delete()
-    async deleteSessions(@ExtractUserFromRequest() dto: UserJwtPayloadDto) {
+    @Delete('devices')
+    async deleteSessions(@ExtractAnyUserFromRequest() dto: UserJwtPayloadDto) {
         return this.commandBus.execute(new DeleteSessionsCommand(dto));
     }
 }
