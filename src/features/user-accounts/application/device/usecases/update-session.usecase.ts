@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SessionRepository } from '../../../infrastructure/sessions/session.repository';
-import { UserJwtPayloadDto } from '../../../../../core/guards/passport/strategies/refresh.strategy';
+import { UserJwtPayloadDto } from '../../../strategies/refresh.strategy';
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class UpdateSessionCommand {

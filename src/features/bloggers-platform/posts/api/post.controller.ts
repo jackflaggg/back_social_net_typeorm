@@ -12,7 +12,7 @@ import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.au
 import { ValidateObjectIdPipe } from '../../../../core/pipes/validation.input.data.pipe';
 import { JwtAuthGuard } from '../../../../core/guards/passport/guards/jwt.auth.guard';
 import { ExtractAnyUserFromRequest, ExtractUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
-import { UserJwtPayloadDto } from '../../../../core/guards/passport/strategies/refresh.strategy';
+import { UserJwtPayloadDto } from '../../../user-accounts/strategies/refresh.strategy';
 import { CreateCommentCommand } from '../../comments/application/usecases/create-comment.usecase';
 import { CommentsQueryRepository } from '../../comments/infrastructure/query/comments.query.repository';
 import { GetCommentsQueryParams } from '../../comments/dto/repository/query/query-parans-comments';

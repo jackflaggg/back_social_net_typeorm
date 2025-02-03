@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { DeviceDocument, DeviceEntity, DeviceModelType } from '../../domain/device/device.entity';
-import { UserJwtPayloadDto } from '../../../../core/guards/passport/strategies/refresh.strategy';
+import { UserJwtPayloadDto } from '../../strategies/refresh.strategy';
 import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
 
 @Injectable()

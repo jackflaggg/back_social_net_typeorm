@@ -1,7 +1,7 @@
 import { CommandBus } from '@nestjs/cqrs';
 import { RefreshAuthGuard } from '../../../core/guards/passport/guards/refresh.auth.guard';
 import { DeleteSessionCommand } from '../application/device/usecases/delete-session.usecase';
-import { UserJwtPayloadDto } from '../../../core/guards/passport/strategies/refresh.strategy';
+import { UserJwtPayloadDto } from '../strategies/refresh.strategy';
 import { ExtractAnyUserFromRequest } from '../../../core/decorators/param/validate.user.decorators';
 import { SessionQueryRepository } from '../infrastructure/sessions/query/session.query.repository';
 import { DeleteSessionsCommand } from '../application/device/usecases/delete-sessions.usecase';

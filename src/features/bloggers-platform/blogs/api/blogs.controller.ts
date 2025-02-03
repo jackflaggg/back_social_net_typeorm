@@ -14,7 +14,7 @@ import { UpdateBlogCommand } from '../application/usecases/update-blog.usecase';
 import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
 import { ValidateObjectIdPipe } from '../../../../core/pipes/validation.input.data.pipe';
 import { ExtractAnyUserFromRequest, ExtractUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
-import { UserJwtPayloadDto } from '../../../../core/guards/passport/strategies/refresh.strategy';
+import { UserJwtPayloadDto } from '../../../user-accounts/strategies/refresh.strategy';
 import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optional-auth.guard';
 
 @Controller('blogs')

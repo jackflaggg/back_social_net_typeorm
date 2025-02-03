@@ -5,7 +5,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { ValidateObjectIdPipe } from '../../../../core/pipes/validation.input.data.pipe';
 import { DeleteCommentCommand } from '../application/usecases/delete-comment.usecase';
 import { ExtractAnyUserFromRequest, ExtractUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
-import { UserJwtPayloadDto } from '../../../../core/guards/passport/strategies/refresh.strategy';
+import { UserJwtPayloadDto } from '../../../user-accounts/strategies/refresh.strategy';
 import { UpdateCommentApiDto } from '../dto/api/update.content.comment.dto';
 import { UpdateCommentCommandApiDto } from '../dto/api/update.statuses.comment.dto';
 import { UpdateContentCommentCommand } from '../application/usecases/update-comment.usecase';

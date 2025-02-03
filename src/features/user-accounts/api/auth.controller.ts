@@ -20,7 +20,7 @@ import { RegistrationEmailResendUserCommand } from '../application/user/usecases
 import { NewPasswordUserCommand } from '../application/user/usecases/new-password-user.usecase';
 import { RefreshAuthGuard } from '../../../core/guards/passport/guards/refresh.auth.guard';
 import { ExtractAnyUserFromRequest, ExtractUserFromRequest } from '../../../core/decorators/param/validate.user.decorators';
-import { UserJwtPayloadDto } from '../../../core/guards/passport/strategies/refresh.strategy';
+import { UserJwtPayloadDto } from '../strategies/refresh.strategy';
 import { RefreshTokenUserCommand } from '../application/user/usecases/refresh-token.user.usecase';
 import { LogoutUserCommand } from '../application/user/usecases/logout-user.usecase';
 

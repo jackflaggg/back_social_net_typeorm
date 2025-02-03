@@ -6,7 +6,7 @@ import {
     NotFoundDomainException,
     UnauthorizedDomainException,
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { UserJwtPayloadDto } from '../../../../../core/guards/passport/strategies/refresh.strategy';
+import { UserJwtPayloadDto } from '../../../strategies/refresh.strategy';
 
 export class LogoutUserCommand {
     constructor(public readonly dtoUser: UserJwtPayloadDto) {}

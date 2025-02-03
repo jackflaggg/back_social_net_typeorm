@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostsRepository } from '../../infrastructure/post.repository';
 import { InjectModel } from '@nestjs/mongoose';
-import { UserJwtPayloadDto } from '../../../../../core/guards/passport/strategies/refresh.strategy';
+import { UserJwtPayloadDto } from '../../../../user-accounts/strategies/refresh.strategy';
 import { calculateStatus } from '../../../../../core/utils/like/features/calculate.status';
 import { StatusRepository } from '../../infrastructure/status.repository';
 import { likeViewModel, StatusEntity, StatusModelType } from '../../../likes/domain/status,entity';

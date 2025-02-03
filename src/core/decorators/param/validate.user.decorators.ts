@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { UserJwtPayloadDto } from '../../guards/passport/strategies/refresh.strategy';
+import { UserJwtPayloadDto } from '../../../features/user-accounts/strategies/refresh.strategy';
 
 export const ExtractUserFromRequest = createParamDecorator((data: unknown, context: ExecutionContext): UserJwtPayloadDto => {
     const request = context.switchToHttp().getRequest();
