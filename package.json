@@ -17,7 +17,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "cross-env PORT=3000 MONGO_URI=mongodb://localhost:27017/top-api jest --config ./test/jest-e2e.json"
+    "test:e2e": "cross-env PORT=8000 MONGO_URI=mongodb://localhost:27017/test-inctagram jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",
