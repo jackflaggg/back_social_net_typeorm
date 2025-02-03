@@ -37,8 +37,8 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
         const userId = command.userId;
         const deviceId = command.deviceId;
 
-        const refreshToken = this.jwtService.sign({ userId, deviceId }, { expiresIn: '10m', secret: SETTINGS.SECRET_KEY });
-        const accessToken = this.jwtService.sign({ userId, deviceId }, { expiresIn: '5m', secret: SETTINGS.SECRET_KEY });
+        const refreshToken = this.jwtService.sign({ userId, deviceId }, { expiresIn: '20s', secret: SETTINGS.SECRET_KEY });
+        const accessToken = this.jwtService.sign({ userId, deviceId }, { expiresIn: '10s', secret: SETTINGS.SECRET_KEY });
 
         const decodedData = this.jwtService.decode(refreshToken);
         const dateDevices = new Date(Number(decodedData.iat) * 1000);

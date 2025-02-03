@@ -4,10 +4,12 @@ export class DeviceViewDto {
     ip: string;
     title: string;
     deviceId: string;
+    lastActiveDate: Date;
 
     constructor(model: DeviceDocument) {
         this.ip = model.ip;
         this.title = model.deviceName;
+        this.lastActiveDate = model.issuedAt;
         this.deviceId = model.deviceId;
     }
 

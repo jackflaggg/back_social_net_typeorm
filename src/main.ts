@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import { exceptionFilterSetup } from './setup/exception-filter.setup';
 import { interceptorSetup } from './setup/interceptor.setup';
 import { pipesSetup } from './setup/pipes.setup';
+import { swaggerSetup } from './setup/swagger.setup';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -16,6 +17,7 @@ async function bootstrap() {
 
     app.enableCors();
 
+    swaggerSetup(app);
     pipesSetup(app);
     await app.listen(3000, () => {
         console.log('Server started on port 3000');
