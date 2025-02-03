@@ -3,7 +3,6 @@ import { DeletionStatus, DeletionStatusType } from '@libs/contracts/enums/deleti
 import { HydratedDocument, Model } from 'mongoose';
 import { ExtendedLikesSchema } from '../../posts/domain/extended.like.entity';
 import { defaultLike } from '@libs/contracts/constants/post/default.like.schema';
-import { StatusLike } from '@libs/contracts/enums/status.like';
 
 export interface CommentatorInfoInterface {
     userId: string;

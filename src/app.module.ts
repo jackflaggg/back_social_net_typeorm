@@ -6,13 +6,14 @@ import { UsersModule } from './features/user-accounts/user-accounts.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { JwtModule } from '@nestjs/jwt';
 import { SETTINGS } from './core/settings';
+import process from 'node:process';
 @Module({
     imports: [
         JwtModule.register({
             secret: SETTINGS.SECRET_KEY,
             signOptions: { expiresIn: '5m' },
         }),
-        MongooseModule.forRoot('mongodb://localhost:27017/top-api'),
+        MongooseModule.forRoot(process.env.MONGO_URI!),
         ThrottlerModule.forRoot([
             {
                 ttl: 10000,
