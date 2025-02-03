@@ -42,7 +42,6 @@ describe('users', () => {
                 id: expect.any(String),
                 login: 'name1',
                 email: 'email@email.em',
-                // createdAt может быть проверен так:
                 createdAt: expect.any(String),
             }),
         );

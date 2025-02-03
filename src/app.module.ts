@@ -1,3 +1,4 @@
+import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BloggersPlatformModule } from './features/bloggers-platform/bloggers-platform.module';
@@ -7,8 +8,13 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { JwtModule } from '@nestjs/jwt';
 import { SETTINGS } from './core/settings';
 import process from 'node:process';
+
 @Module({
     imports: [
+        // всегда нужно задавать выше всех модулей, иначе другие модули не увидят енв!
+        ConfigModule.forRoot({
+            envFilePath: ['.env.development'],
+        }),
         JwtModule.register({
             secret: SETTINGS.SECRET_KEY,
             signOptions: { expiresIn: '5m' },
