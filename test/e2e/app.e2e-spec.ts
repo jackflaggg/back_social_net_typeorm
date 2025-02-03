@@ -1,8 +1,9 @@
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { UsersTestManager } from '../helpers/users-test-helper';
 import { initSettings } from '../helpers/init-settings-test';
 import { JwtService } from '@nestjs/jwt';
 import { deleteAllData } from '../helpers/delete-all-data-test';
+import supertest from 'supertest';
 
 describe('users', () => {
     let app: INestApplication;
@@ -29,7 +30,7 @@ describe('users', () => {
         await deleteAllData(app);
     });
 
-    it('should create a user', async () => {
+    it('должен успешно создать юзера и вернуть 201 статус', async () => {
         const createResponse = await userTestManger.createUser({
             login: 'name1',
             password: 'qwerty',
@@ -45,5 +46,7 @@ describe('users', () => {
                 createdAt: expect.any(String),
             }),
         );
+        const response = await supertest(app.getHttpServer()).get('/users').auth('admin', 'qwerty').expect(HttpStatus.OK);
+        expect(response.body.items).toHaveLength(1);
     });
 });
