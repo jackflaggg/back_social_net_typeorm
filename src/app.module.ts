@@ -7,7 +7,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { JwtModule } from '@nestjs/jwt';
 import { SETTINGS } from './core/settings';
 import process from 'node:process';
-import { configModule } from './config';
+import { configModule } from './core/config/core.config';
 
 @Module({
     imports: [
