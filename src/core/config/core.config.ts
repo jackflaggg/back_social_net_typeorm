@@ -1,19 +1,8 @@
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import process from 'node:process';
+import { ConfigService } from '@nestjs/config';
 import { configValidationUtility } from '../utils/config-validation.utility';
 import { z } from 'zod';
 import { ZodEnvironments } from '@libs/contracts/enums/enviroments';
-
-export const configModule = ConfigModule.forRoot({
-    envFilePath: [
-        // у первого файлика приоритет выше!
-        `.env.${process.env.NODE_ENV}.local`,
-        `.env.${process.env.NODE_ENV}`,
-        '.env.production',
-        '.env.development',
-    ],
-    isGlobal: true,
-});
+import { Injectable } from '@nestjs/common';
 
 const configSchema = z.object({
     port: z.string().transform(val => {
@@ -64,11 +53,12 @@ const configSchema = z.object({
         .nonempty('Установите переменную окружения JWT_REFRESH_EXPIRATION_TIME, это опасно для безопасности!'),
 });
 
+@Injectable()
 export class CoreConfig {
     constructor(private configService: ConfigService<any, true>) {
         const config = {
             port: this.configService.get('PORT'),
-            mongoUrl: this.configService.get('MONGO_URL'),
+            mongoUrl: this.configService.get('MONGO_URI'),
             dbName: this.configService.get('DB_NAME'),
             dbHost: this.configService.get('DB_HOST'),
             dbPort: this.configService.get('DB_PORT'),

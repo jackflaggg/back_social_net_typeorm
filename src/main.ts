@@ -6,22 +6,23 @@ import { interceptorSetup } from './setup/interceptor.setup';
 import { pipesSetup } from './setup/pipes.setup';
 import { swaggerSetup } from './setup/swagger.setup';
 import * as process from 'node:process';
+import { CoreConfig } from './core/config/core.config';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
+    const coreConfig = app.get<CoreConfig>(CoreConfig);
+
     app.use(cookieParser());
 
-    exceptionFilterSetup(app);
+    exceptionFilterSetup(app, coreConfig);
 
     interceptorSetup(app);
 
-    app.enableCors();
-
     swaggerSetup(app);
     pipesSetup(app);
-    await app.listen(process.env.PORT! ?? 3000, () => {
-        console.log('Server started on port ' + process.env.PORT!);
+    await app.listen(coreConfig.port, () => {
+        console.log('Server started on port ' + coreConfig.port);
     });
 }
 bootstrap();

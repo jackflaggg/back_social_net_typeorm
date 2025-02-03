@@ -6,8 +6,8 @@ import { UsersModule } from './features/user-accounts/user-accounts.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { JwtModule } from '@nestjs/jwt';
 import { SETTINGS } from './core/settings';
-import process from 'node:process';
-import { configModule } from './core/config/core.config';
+import { configModule } from './config';
+import { CoreConfig } from './core/config/core.config';
 
 @Module({
     imports: [
@@ -17,7 +17,15 @@ import { configModule } from './core/config/core.config';
             secret: SETTINGS.SECRET_KEY,
             signOptions: { expiresIn: '5m' },
         }),
-        MongooseModule.forRoot(process.env.MONGO_URI!),
+        MongooseModule.forRootAsync({
+            useFactory: (coreConfig: CoreConfig) => ({
+                uri: coreConfig.mongoUrl,
+                autoLoadEntities: true, // Не загружать сущности автоматически - можно true для разработки
+                synchronize: true, // Для разработки, включите, чтобы синхронизировать с базой данных - можно true для разработки
+                logging: true,
+            }),
+            inject: [CoreConfig],
+        }),
         ThrottlerModule.forRoot([
             {
                 ttl: 10000,
