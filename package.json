@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "cross-env PORT=8888 nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -45,6 +45,7 @@
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.7",
     "cqrs": "^3.1.0",
+    "cross-env": "^7.0.3",
     "crypto": "^1.0.1",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
@@ -105,5 +106,9 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "resolutions": {
+    "string-width": "^4.2.0",
+    "wrap-ansi": "^7.0.0"
   }
 }
