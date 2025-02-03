@@ -9,4 +9,5 @@ export const configModule = ConfigModule.forRoot({
         '.env.production',
         '.env.development',
     ],
+    isGlobal: true,
 });
