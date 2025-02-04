@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
-import { emailAdapter } from '../adapter/email.adapter';
+import { EmailAdapter } from '../adapter/email.adapter';
 
 @Injectable()
 export class EmailService {
+    constructor(private readonly emailAdapter: EmailAdapter) {}
     async sendEmailRecoveryMessage(email: string, confirmationCode: string): Promise<SMTPTransport.SentMessageInfo | null> {
-        return await emailAdapter.sendEmail(email, confirmationCode);
+        return await this.emailAdapter.sendEmail(email, confirmationCode);
     }
     async sendPasswordRecoveryMessage(email: string, confirmationCode: string): Promise<SMTPTransport.SentMessageInfo | null> {
-        return await emailAdapter.sendPassword(email, confirmationCode);
+        return await this.emailAdapter.sendPassword(email, confirmationCode);
     }
 }

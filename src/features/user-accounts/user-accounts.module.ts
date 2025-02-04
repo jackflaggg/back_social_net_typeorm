@@ -37,7 +37,9 @@ import { SessionQueryRepository } from './infrastructure/sessions/query/session.
 import { JwtRefreshAuthPassportStrategy } from './strategies/refresh.strategy';
 import { DeleteSessionsUseCase } from './application/device/usecases/delete-sessions.usecase';
 import { UpdateSessionUseCase } from './application/device/usecases/update-session.usecase';
-import { SETTINGS } from '../../core/settings';
+import { CoreConfig } from '../../core/config/core.config';
+import { ConfigModule } from '@nestjs/config';
+import { EmailAdapter } from '../notifications/adapter/email.adapter';
 
 const useCases = [
     CreateSessionUseCase,
@@ -66,15 +68,19 @@ const strategies = [
     AccessTokenStrategy,
     JwtRefreshAuthPassportStrategy,
 ];
-const services = [AuthService, JwtService, EmailService];
+const services = [AuthService, JwtService, EmailService, EmailAdapter];
 const handlers = [UserLoggedInEventHandler];
 
 @Module({
     imports: [
         // Вы можете игнорировать expiresIn: '5m' в JwtModule.register(), так как в вашей логике этот параметр переопределяется.
-        JwtModule.register({
-            secret: SETTINGS.SECRET_KEY,
-            signOptions: { expiresIn: '5m' },
+        JwtModule.registerAsync({
+            imports: [ConfigModule],
+            inject: [CoreConfig],
+            useFactory: async (coreConfig: CoreConfig) => ({
+                secret: coreConfig.accessTokenSecret,
+                signOptions: { expiresIn: coreConfig.accessTokenExpirationTime },
+            }),
         }),
         PassportModule,
         //если в системе несколько токенов (например, access и refresh) с разными опциями (время жизни, секрет)

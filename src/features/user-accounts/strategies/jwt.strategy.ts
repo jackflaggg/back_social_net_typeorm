@@ -3,15 +3,18 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserRepository } from '../infrastructure/user/user.repository';
 import { UnauthorizedDomainException } from '../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { SETTINGS } from '../../../core/settings';
+import { CoreConfig } from '../../../core/config/core.config';
 
 @Injectable()
 export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt-access') {
-    constructor(@Inject() private readonly usersRepository: UserRepository) {
+    constructor(
+        @Inject() private readonly usersRepository: UserRepository,
+        private readonly coreConfig: CoreConfig,
+    ) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: SETTINGS.SECRET_KEY,
+            secretOrKey: coreConfig.accessTokenSecret,
         });
     }
 

@@ -4,7 +4,7 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { UserRepository } from '../infrastructure/user/user.repository';
 import { UnauthorizedDomainException } from '../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { SessionRepository } from '../infrastructure/sessions/session.repository';
-import { SETTINGS } from '../../../core/settings';
+import { CoreConfig } from '../../../core/config/core.config';
 
 export class UserJwtPayloadDto {
     userId: string;
@@ -18,6 +18,7 @@ export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, '
     constructor(
         @Inject() private readonly usersRepository: UserRepository,
         @Inject() private readonly securityDevicesRepository: SessionRepository,
+        private readonly coreConfig: CoreConfig,
     ) {
         super({
             jwtFromRequest: ExtractJwt.fromExtractors([
@@ -27,7 +28,7 @@ export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, '
                 },
             ]),
             ignoreExpiration: false,
-            secretOrKey: SETTINGS.SECRET_KEY,
+            secretOrKey: coreConfig.refreshTokenSecret,
         });
     }
 

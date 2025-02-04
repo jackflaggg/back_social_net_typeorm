@@ -13,11 +13,12 @@ import { DeleteBlogCommand } from '../application/usecases/delete-blog.usecase';
 import { UpdateBlogCommand } from '../application/usecases/update-blog.usecase';
 import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
 import { ValidateObjectIdPipe } from '../../../../core/pipes/validation.input.data.pipe';
-import { ExtractAnyUserFromRequest, ExtractUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
+import { ExtractAnyUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
 import { UserJwtPayloadDto } from '../../../user-accounts/strategies/refresh.strategy';
 import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optional-auth.guard';
+import { SETTINGS } from '../../../../core/settings';
 
-@Controller('blogs')
+@Controller(SETTINGS.PATH.BLOGS)
 export class BlogsController {
     constructor(
         private readonly commandBus: CommandBus,

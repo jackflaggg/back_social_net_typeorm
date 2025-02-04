@@ -1,16 +1,19 @@
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { emailTemplates } from '../../../templates/email.templates';
 import nodemailer from 'nodemailer';
-import { SETTINGS } from '../../../core/settings';
+import { CoreConfig } from '../../../core/config/core.config';
+import { Injectable } from '@nestjs/common';
 
-export const emailAdapter = {
+@Injectable()
+export class EmailAdapter {
+    constructor(private readonly coreConfig: CoreConfig) {}
     async sendEmail(emailFrom: string, messageCode: string): Promise<SMTPTransport.SentMessageInfo | null> {
         try {
             const transporter = nodemailer.createTransport({
                 service: 'Mail.ru',
                 auth: {
-                    user: SETTINGS.EMAIL_NAME,
-                    pass: SETTINGS.PASS,
+                    user: this.coreConfig.adminEmail,
+                    pass: this.coreConfig.adminEmailPassword,
                 },
                 tls: {
                     rejectUnauthorized: false,
@@ -18,7 +21,7 @@ export const emailAdapter = {
             });
 
             return await transporter.sendMail({
-                from: `"Incubator" <${SETTINGS.EMAIL_NAME}>`,
+                from: `"Incubator" <${this.coreConfig.adminEmail}>`,
                 to: emailFrom,
                 subject: 'hello world!',
                 html: emailTemplates.registrationEmailTemplate(messageCode),
@@ -27,15 +30,15 @@ export const emailAdapter = {
             console.log('ошибка при отправке сообщения: ' + String(err));
             return null;
         }
-    },
+    }
 
     async sendPassword(emailFrom: string, messageCode: string): Promise<SMTPTransport.SentMessageInfo | null> {
         try {
             const transporter = nodemailer.createTransport({
                 service: 'Mail.ru',
                 auth: {
-                    user: SETTINGS.EMAIL_NAME,
-                    pass: SETTINGS.PASS,
+                    user: this.coreConfig.adminEmail,
+                    pass: this.coreConfig.adminEmailPassword,
                 },
                 tls: {
                     rejectUnauthorized: false,
@@ -43,7 +46,7 @@ export const emailAdapter = {
             });
 
             return await transporter.sendMail({
-                from: `"Incubator" <${SETTINGS.EMAIL_NAME}>`,
+                from: `"Incubator" <${this.coreConfig.adminEmail}>`,
                 to: emailFrom,
                 subject: 'hello world!',
                 html: emailTemplates.recoveryPasswordTemplate(messageCode),
@@ -52,5 +55,5 @@ export const emailAdapter = {
             console.log('ошибка при отправке сообщения: ' + String(err));
             return null;
         }
-    },
-};
+    }
+}

@@ -52,6 +52,6 @@ export class BlogsQueryRepository {
             filter.name = { $regex: searchNameTerm, $options: 'i' };
         }
 
-        return await this.blogModel.countDocuments(filter);
+        return this.blogModel.countDocuments(filter);
     }
 }

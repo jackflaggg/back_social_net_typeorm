@@ -34,6 +34,8 @@ import { CheckUserCommentUseCase } from './comments/application/usecases/check-u
 import { UpdateStatusCommentUseCase } from './comments/application/usecases/like-comment.usecase';
 import { UpdateContentCommentUseCase } from './comments/application/usecases/update-comment.usecase';
 import { SETTINGS } from '../../core/settings';
+import { ConfigModule } from '@nestjs/config';
+import { CoreConfig } from '../../core/config/core.config';
 
 const repositories = [
     BlogsQueryRepository,
@@ -63,9 +65,13 @@ const useCases = [
 @Module({
     imports: [
         // Вы можете игнорировать expiresIn: '5m' в JwtModule.register(), так как в вашей логике этот параметр переопределяется.
-        JwtModule.register({
-            secret: SETTINGS.SECRET_KEY,
-            signOptions: { expiresIn: '5m' },
+        JwtModule.registerAsync({
+            imports: [ConfigModule],
+            inject: [CoreConfig],
+            useFactory: async (coreConfig: CoreConfig) => ({
+                secret: coreConfig.accessTokenSecret,
+                signOptions: { expiresIn: coreConfig.accessTokenExpirationTime },
+            }),
         }),
         PassportModule,
         MongooseModule.forFeature([

@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateSessionCommand } from '../../device/usecases/create-session.usecase';
-import { SETTINGS } from '../../../../../core/settings';
+import { CoreConfig } from '../../../../../core/config/core.config';
 
 export class LoginUserCommand {
     constructor(
@@ -18,25 +18,25 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
     constructor(
         @Inject() private readonly jwtService: JwtService,
         private readonly commandBus: CommandBus,
+        private readonly coreConfig: CoreConfig,
     ) {}
     async execute(command: LoginUserCommand) {
         const deviceId = randomUUID();
         const accessToken = this.jwtService.sign(
             { userId: command.user._id.toString(), deviceId },
-            { expiresIn: '10s', secret: SETTINGS.SECRET_KEY },
+            { expiresIn: this.coreConfig.accessTokenExpirationTime, secret: this.coreConfig.accessTokenSecret },
         );
         const refreshToken = this.jwtService.sign(
             { userId: command.user._id.toString(), deviceId },
-            { expiresIn: '20s', secret: SETTINGS.SECRET_KEY },
+            { expiresIn: this.coreConfig.refreshTokenExpirationTime, secret: this.coreConfig.refreshTokenSecret },
         );
 
         const decodedData = this.jwtService.decode(refreshToken);
 
-        // TODO: ПЕРЕМЕНОВАТЬ
-        const dateDevices = new Date(Number(decodedData.iat) * 1000);
+        const issuedAtRefreshToken = new Date(Number(decodedData.iat) * 1000);
 
         await this.commandBus.execute(
-            new CreateSessionCommand(command.ip, command.userAgent, deviceId, command.user._id.toString(), dateDevices),
+            new CreateSessionCommand(command.ip, command.userAgent, deviceId, command.user._id.toString(), issuedAtRefreshToken),
         );
         return {
             jwt: accessToken,

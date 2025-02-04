@@ -4,6 +4,7 @@ import { UnauthorizedDomainException } from '../../../../../core/exceptions/incu
 import { SessionRepository } from '../../../infrastructure/sessions/session.repository';
 import { CreateSessionCommand } from '../../device/usecases/create-session.usecase';
 import { SETTINGS } from '../../../../../core/settings';
+import { CoreConfig } from '../../../../../core/config/core.config';
 
 export class RefreshTokenUserCommand {
     constructor(
@@ -20,6 +21,7 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
         private readonly jwtService: JwtService,
         private readonly commandBus: CommandBus,
         private readonly sessionRepository: SessionRepository,
+        private readonly coreConfig: CoreConfig,
     ) {}
     async execute(command: RefreshTokenUserCommand) {
         if (!command.userId) {
@@ -37,13 +39,19 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
         const userId = command.userId;
         const deviceId = command.deviceId;
 
-        const refreshToken = this.jwtService.sign({ userId, deviceId }, { expiresIn: '20s', secret: SETTINGS.SECRET_KEY });
-        const accessToken = this.jwtService.sign({ userId, deviceId }, { expiresIn: '10s', secret: SETTINGS.SECRET_KEY });
+        const refreshToken = this.jwtService.sign(
+            { userId, deviceId },
+            { expiresIn: this.coreConfig.refreshTokenExpirationTime, secret: this.coreConfig.refreshTokenSecret },
+        );
+        const accessToken = this.jwtService.sign(
+            { userId, deviceId },
+            { expiresIn: this.coreConfig.accessTokenExpirationTime, secret: this.coreConfig.accessTokenSecret },
+        );
 
         const decodedData = this.jwtService.decode(refreshToken);
-        const dateDevices = new Date(Number(decodedData.iat) * 1000);
+        const issuedAtRefreshToken = new Date(Number(decodedData.iat) * 1000);
 
-        await this.commandBus.execute(new CreateSessionCommand(command.ip, command.userAgent, deviceId, userId, dateDevices));
+        await this.commandBus.execute(new CreateSessionCommand(command.ip, command.userAgent, deviceId, userId, issuedAtRefreshToken));
         return {
             jwt: accessToken,
             refresh: refreshToken,

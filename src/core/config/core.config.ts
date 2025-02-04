@@ -40,6 +40,10 @@ const configSchema = z.object({
     refreshTokenExpirationTime: z
         .string()
         .nonempty('Установите переменную окружения JWT_REFRESH_EXPIRATION_TIME, это опасно для безопасности!'),
+    adminUsername: z.string().nonempty('Установите переменную окружения ADMIN_USERNAME, это опасно для безопасности!'),
+    adminPassword: z.string().nonempty('Установите переменную окружения ADMIN_PASS, это опасно для безопасности!'),
+    adminEmail: z.string().nonempty('Установите переменную окружения ADMIN_EMAIL, это опасно для безопасности!'),
+    adminEmailPassword: z.string().nonempty('Установите переменную окружения ADMIN_EMAIL_PASSWORD, это опасно для безопасности!'),
 });
 
 @Injectable()
@@ -53,6 +57,10 @@ export class CoreConfig {
     public accessTokenSecret: string;
     public accessTokenExpirationTime: string;
     public refreshTokenExpirationTime: string;
+    public adminUsername: string;
+    public adminPassword: string;
+    public adminEmail: string;
+    public adminEmailPassword: string;
     constructor(private configService: ConfigService<any, true>) {
         const config = {
             port: this.configService.get('PORT'),
@@ -64,6 +72,10 @@ export class CoreConfig {
             accessTokenSecret: this.configService.get('JWT_ACCESS_SECRET'),
             accessTokenExpirationTime: this.configService.get('JWT_ACCESS_EXPIRATION_TIME'),
             refreshTokenExpirationTime: this.configService.get('JWT_REFRESH_EXPIRATION_TIME'),
+            adminUsername: this.configService.get('ADMIN_USERNAME'),
+            adminPassword: this.configService.get('ADMIN_PASS'),
+            adminEmail: this.configService.get('ADMIN_EMAIL'),
+            adminEmailPassword: this.configService.get('ADMIN_EMAIL_PASSWORD'),
         };
 
         try {
