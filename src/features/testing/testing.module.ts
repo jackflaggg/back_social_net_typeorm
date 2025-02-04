@@ -7,7 +7,7 @@ import { CommentEntity, CommentSchema } from '../bloggers-platform/comments/doma
 import { UserEntity, UserSchema } from '../user-accounts/domain/user/user.entity';
 import { DeviceEntity, DeviceSchema } from '../user-accounts/domain/device/device.entity';
 import { PasswordRecoveryEntity, PasswordRecoverySchema } from '../user-accounts/domain/password-recovery/password-recovery.entity';
-import { StatusEntity, StatusSchema } from '../bloggers-platform/likes/domain/status,entity';
+import { StatusEntity, StatusSchema } from '../bloggers-platform/likes/domain/status.entity';
 
 @Module({
     imports: [

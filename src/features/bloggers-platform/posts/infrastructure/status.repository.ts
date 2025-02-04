@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { StatusDocument, StatusEntity, StatusModelType } from '../../likes/domain/status,entity';
+import { StatusDocument, StatusEntity, StatusModelType } from '../../likes/domain/status.entity';
 
 @Injectable()
 export class StatusRepository {

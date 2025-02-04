@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { SessionRepository } from '../../../infrastructure/sessions/session.repository';
 import { CreateSessionCommand } from '../../device/usecases/create-session.usecase';
-import { SETTINGS } from '../../../../../core/settings';
 import { CoreConfig } from '../../../../../core/config/core.config';
 
 export class RefreshTokenUserCommand {

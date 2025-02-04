@@ -2,7 +2,6 @@ import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { UserRepository } from '../../../infrastructure/user/user.repository';
 import { EmailService } from '../../../../notifications/application/mail.service';
-import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { CommonCreateUserCommand } from './common-create-user.usecase';
 
 export class RegistrationUserCommand {

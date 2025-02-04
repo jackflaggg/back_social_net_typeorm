@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { PostsQueryRepository } from '../infrastructure/query/posts.query-repository';
 import { GetPostsQueryParams } from '../dto/api/get-posts-query-params.input.dto';
 import { PostCreateDtoApi } from '../dto/api/post.create.dto';

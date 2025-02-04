@@ -1,12 +1,5 @@
 import { ArgumentsHost, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 
-//TODO 2: Пример простого для понимания Exeption Filter
-// чтобы работало нужно в pipes.setup.ts сделать простой пайп:
-// new ValidationPipe({
-//   transform: true,
-// }),
-// и зарегистрировать в exception-filter.setup.ts
-
 export class SimpleExceptionFilter implements ExceptionFilter {
     catch(exception: HttpException, host: ArgumentsHost): any {
         const ctx = host.switchToHttp();

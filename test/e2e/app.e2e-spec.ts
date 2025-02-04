@@ -4,8 +4,9 @@ import { initSettings } from '../helpers/init-settings-test';
 import { JwtService } from '@nestjs/jwt';
 import { deleteAllData } from '../helpers/delete-all-data-test';
 import supertest from 'supertest';
+import { SETTINGS } from '../../src/core/settings';
 
-describe('users', () => {
+describe(SETTINGS.PATH.USERS, () => {
     let app: INestApplication;
     let userTestManger: UsersTestManager;
 

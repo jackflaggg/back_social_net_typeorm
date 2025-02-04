@@ -3,14 +3,23 @@ import { AppModule } from '../../src/app.module';
 import { Test, TestingModuleBuilder } from '@nestjs/testing';
 import { UsersTestManager } from './users-test-helper';
 import { deleteAllData } from './delete-all-data-test';
-import process from 'node:process';
+import { CoreConfig } from '../../src/core/config/core.config';
+import { configApp } from '../../src/setup/config.setup';
 
 export const initSettings = async (
     //передаем callback, который получает ModuleBuilder, если хотим изменить настройку тестового модуля
     addSettingsToModuleBuilder?: (moduleBuilder: TestingModuleBuilder) => void,
 ) => {
     const testingModuleBuilder: TestingModuleBuilder = Test.createTestingModule({
-        imports: [AppModule, MongooseModule],
+        imports: [
+            AppModule,
+            MongooseModule.forRootAsync({
+                useFactory: (coreConfig: CoreConfig) => ({
+                    uri: coreConfig.testUrl,
+                }),
+                inject: [CoreConfig],
+            }),
+        ],
     });
 
     if (addSettingsToModuleBuilder) {
@@ -20,7 +29,9 @@ export const initSettings = async (
     const testingAppModule = await testingModuleBuilder.compile();
 
     const app = testingAppModule.createNestApplication();
+    const coreConfig = app.get<CoreConfig>(CoreConfig);
 
+    configApp(app, coreConfig);
     await app.init();
 
     // const databaseConnection = app.get<Connection>(getConnectionToken());

@@ -25,7 +25,7 @@ import { CreateCommentUseCase } from './comments/application/usecases/create-com
 import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '../user-accounts/user-accounts.module';
 import { CommentRepository } from './comments/infrastructure/comment.repository';
-import { StatusEntity, StatusSchema } from './likes/domain/status,entity';
+import { StatusEntity, StatusSchema } from './likes/domain/status.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { StatusRepository } from './posts/infrastructure/status.repository';
 import { LikePostUseCase } from './posts/application/usecases/like-post.usecase';
@@ -33,7 +33,6 @@ import { DeleteCommentUseCase } from './comments/application/usecases/delete-com
 import { CheckUserCommentUseCase } from './comments/application/usecases/check-user-comment.usecase';
 import { UpdateStatusCommentUseCase } from './comments/application/usecases/like-comment.usecase';
 import { UpdateContentCommentUseCase } from './comments/application/usecases/update-comment.usecase';
-import { SETTINGS } from '../../core/settings';
 import { ConfigModule } from '@nestjs/config';
 import { CoreConfig } from '../../core/config/core.config';
 
@@ -66,8 +65,11 @@ const useCases = [
     imports: [
         // Вы можете игнорировать expiresIn: '5m' в JwtModule.register(), так как в вашей логике этот параметр переопределяется.
         JwtModule.registerAsync({
+            // прежде чем JwtModule будет инициализирован, ConfigModule должен быть загружен.
             imports: [ConfigModule],
+            // Указывает, какие зависимости нужно "внедрить" в фабричную функцию useFactory.
             inject: [CoreConfig],
+            // фабричная функция, которая будет возвращать объект конфигурации
             useFactory: async (coreConfig: CoreConfig) => ({
                 secret: coreConfig.accessTokenSecret,
                 signOptions: { expiresIn: coreConfig.accessTokenExpirationTime },

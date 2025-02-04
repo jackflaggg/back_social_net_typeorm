@@ -7,7 +7,7 @@ import { UserEntity, UserModelType } from '../../user-accounts/domain/user/user.
 import { CommentEntity, CommentModelType } from '../../bloggers-platform/comments/domain/comment.entity';
 import { DeviceEntity, DeviceModelType } from '../../user-accounts/domain/device/device.entity';
 import { PasswordRecoveryEntity, PasswordRecoveryModelType } from '../../user-accounts/domain/password-recovery/password-recovery.entity';
-import { StatusEntity, StatusModelType } from '../../bloggers-platform/likes/domain/status,entity';
+import { StatusEntity, StatusModelType } from '../../bloggers-platform/likes/domain/status.entity';
 
 @Controller('testing')
 export class TestingController {

@@ -6,7 +6,7 @@ import { GetPostsQueryParams } from '../../dto/api/get-posts-query-params.input.
 import { PaginationParams } from '../../../../../core/dto/base.query-params.input-dto';
 import { getPostsQuery } from '../../../../../core/utils/post/query.insert.get';
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { StatusEntity, StatusModelType } from '../../../likes/domain/status,entity';
+import { StatusEntity, StatusModelType } from '../../../likes/domain/status.entity';
 import { StatusLike } from '@libs/contracts/enums/status.like';
 import { statusesUsersMapper, transformStatus } from '../../../../../core/utils/like/features/mapper.status';
 import { transformPostStatusUsers } from '../../../../../core/utils/post/post.mapper';

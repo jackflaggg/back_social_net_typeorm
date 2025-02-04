@@ -10,6 +10,7 @@ export const configSchema = z.object({
         }
         return numVal;
     }),
+    testUrl: z.string().nonempty('Установите переменную окружения DB_URI_TEST, например: mongodb://localhost:27017/my-app-local-db'),
     mongoUrl: z.string().nonempty('Установите переменную окружения MONGO_URI, например: mongodb://localhost:27017/my-app-local-db'),
     env: ZodEnvironments,
     isSwaggerEnabled: z.string().transform(val => {
