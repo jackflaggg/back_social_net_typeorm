@@ -11,22 +11,6 @@ on:
 
 # Важно указать очередность джоб! Чтоб тесты были первее деплоя!
 jobs:
-  /*tests:
-    name: Tests # название работы в нашем pipeline
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3 # клонируем репозиторий
-
-      - name: Install dependencies
-        run: yarn # устанавливаем зависимости
-
-      - name: Run e2e tests
-        run: yarn test:e2e # запускаем скрипт e2e тестов
-        env:
-          ENV: ${{ vars.ENV_GH }} # указываем необходимые переменные для тестов
-*/
   deploy: # Убедитесь, что отступы здесь такие же, как и в 'tests'
     name: Deploy # название работы в нашем pipeline
     needs: tests # Указывает, что это задание зависит от завершения задания tests.
