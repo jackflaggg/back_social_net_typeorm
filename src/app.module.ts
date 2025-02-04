@@ -8,10 +8,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { SETTINGS } from './core/settings';
 import { configModule } from './config';
 import { CoreConfig } from './core/config/core.config';
+import { CoreModule } from './core/config/config.module';
 
 @Module({
     imports: [
         // всегда нужно задавать выше всех модулей, иначе другие модули не увидят енв!
+        CoreModule,
         configModule,
         JwtModule.register({
             secret: SETTINGS.SECRET_KEY,

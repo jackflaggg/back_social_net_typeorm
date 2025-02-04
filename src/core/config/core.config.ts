@@ -13,17 +13,6 @@ const configSchema = z.object({
         return numVal;
     }),
     mongoUrl: z.string().nonempty('Установите переменную окружения MONGO_URI, например: mongodb://localhost:27017/my-app-local-db'),
-    dbName: z.string().nonempty('Установите переменную окружения DB_NAME, например: my-app-local-db'),
-    dbHost: z.string().nonempty('Установите переменную окружения DB_HOST, например: localhost'),
-    dbPort: z.string().transform(val => {
-        const numVal = Number(val);
-        if (isNaN(numVal)) {
-            throw new Error('Установите переменную окружения DB_PORT, например: 5432');
-        }
-        return numVal;
-    }),
-    dbUsername: z.string().nonempty('Установите переменную окружения DB_USERNAME, например: admin'),
-    dbPassword: z.string().nonempty('Установите переменную окружения DB_PASSWORD, например: admin'),
     env: ZodEnvironments,
     isSwaggerEnabled: z.string().transform(val => {
         const booleanValue = configValidationUtility.convertToBoolean(val);
@@ -55,15 +44,19 @@ const configSchema = z.object({
 
 @Injectable()
 export class CoreConfig {
+    public port: number;
+    public mongoUrl: string;
+    public env: string;
+    public isSwaggerEnabled: boolean;
+    public includeTestingModule: boolean;
+    public refreshTokenSecret: string;
+    public accessTokenSecret: string;
+    public accessTokenExpirationTime: string;
+    public refreshTokenExpirationTime: string;
     constructor(private configService: ConfigService<any, true>) {
         const config = {
             port: this.configService.get('PORT'),
             mongoUrl: this.configService.get('MONGO_URI'),
-            dbName: this.configService.get('DB_NAME'),
-            dbHost: this.configService.get('DB_HOST'),
-            dbPort: this.configService.get('DB_PORT'),
-            dbUsername: this.configService.get('DB_USERNAME'),
-            dbPassword: this.configService.get('DB_PASSWORD'),
             env: this.configService.get('NODE_ENV'),
             isSwaggerEnabled: this.configService.get('IS_SWAGGER_ENABLED'),
             includeTestingModule: this.configService.get('INCLUDE_TESTING_MODULE'),
