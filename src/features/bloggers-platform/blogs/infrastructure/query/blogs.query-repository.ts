@@ -1,13 +1,13 @@
 import { GetBlogsQueryParams } from '../../dto/repository/query/get-blogs-query-params.input-dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { BlogEntity, BlogModelType } from '../../domain/blog.entity';
-import { DeletionStatus } from 'libs/contracts/enums/deletion-status.enum';
 import { BlogViewDto } from '../../dto/repository/query/blog-view.dto';
 import { PaginatedBlogViewDto } from '../../../../../core/dto/base.paginated.view-dto';
 import { Injectable } from '@nestjs/common';
 import { PaginationParams } from '../../../../../core/dto/base.query-params.input-dto';
 import { getBlogsQuery } from '../../../../../core/utils/blog/query.insert.blog';
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { DeletionStatus } from '../../../../../libs/contracts/enums/deletion-status.enum';
 
 @Injectable()
 export class BlogsQueryRepository {

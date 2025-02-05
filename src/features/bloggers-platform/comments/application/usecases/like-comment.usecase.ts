@@ -2,11 +2,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CommentRepository } from '../../infrastructure/comment.repository';
 import { calculateStatus } from '../../../../../core/utils/like/features/calculate.status';
 import { StatusRepository } from '../../../posts/infrastructure/status.repository';
-import { StatusLike } from 'libs/contracts/enums/status.like';
 import { likeViewModel, StatusEntity, StatusModelType } from '../../../likes/domain/status.entity';
 import { UserRepository } from '../../../../user-accounts/infrastructure/user/user.repository';
 import { InjectModel } from '@nestjs/mongoose';
 import { CommentEntity, CommentModelType } from '../../domain/comment.entity';
+import { StatusLike } from '../../../../../libs/contracts/enums/status.like';
 
 export class UpdateStatusCommentCommand {
     constructor(
@@ -39,11 +39,9 @@ export class UpdateStatusCommentUseCase implements ICommandHandler<UpdateStatusC
         if (currentStatuses) {
             await this.statusRepository.updateLikeStatus(comment._id.toString(), command.userId, command.status);
 
-            console.log(currentStatuses);
             const { dislikesCount, likesCount } = calculateStatus(currentStatuses, command.status);
             dislike = dislikesCount;
             like = likesCount;
-            console.log(dislike, like);
         } else {
             const user = await this.usersRepository.findUserByIdOrFail(command.userId!);
             const dtoStatus: likeViewModel = {

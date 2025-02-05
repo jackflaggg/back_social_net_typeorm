@@ -1,5 +1,5 @@
 import { PostDocument } from '../../domain/post.entity';
-import { StatusLike } from 'libs/contracts/enums/status.like';
+import { StatusLike } from '../../../../../libs/contracts/enums/status.like';
 
 export class PostViewDto {
     id: string;

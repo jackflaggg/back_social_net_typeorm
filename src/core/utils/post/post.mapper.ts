@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 import { outputStatusUsersInterface } from '../like/features/mapper.status';
-import { StatusLike } from 'libs/contracts/enums/status.like';
+import { StatusLike } from '../../../libs/contracts/enums/status.like';
 
 export interface postOutputInterface {
     _id: Types.ObjectId;

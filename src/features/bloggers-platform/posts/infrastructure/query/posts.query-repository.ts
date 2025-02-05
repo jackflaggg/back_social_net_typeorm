@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { DeletionStatus } from 'libs/contracts/enums/deletion-status.enum';
 import { PostEntity, PostModelType } from '../../domain/post.entity';
 import { GetPostsQueryParams } from '../../dto/api/get-posts-query-params.input.dto';
 import { PaginationParams } from '../../../../../core/dto/base.query-params.input-dto';
 import { getPostsQuery } from '../../../../../core/utils/post/query.insert.get';
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { StatusEntity, StatusModelType } from '../../../likes/domain/status.entity';
-import { StatusLike } from 'libs/contracts/enums/status.like';
 import { statusesUsersMapper, transformStatus } from '../../../../../core/utils/like/features/mapper.status';
 import { transformPostStatusUsers } from '../../../../../core/utils/post/post.mapper';
+import { StatusLike } from '../../../../../libs/contracts/enums/status.like';
+import { DeletionStatus } from '../../../../../libs/contracts/enums/deletion-status.enum';
 
 @Injectable()
 export class PostsQueryRepository {

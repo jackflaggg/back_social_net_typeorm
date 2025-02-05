@@ -1,5 +1,5 @@
 import { FlattenMaps, Types } from 'mongoose';
-import { StatusLike } from 'libs/contracts/enums/status.like';
+import { StatusLike } from '../../../../libs/contracts/enums/status.like';
 
 export interface StatusResult {
     _id: Types.ObjectId;

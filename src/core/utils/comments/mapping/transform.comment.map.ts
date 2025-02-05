@@ -1,4 +1,4 @@
-import { StatusLike } from 'libs/contracts/enums/status.like';
+import { StatusLike } from '../../../../libs/contracts/enums/status.like';
 
 export function transformCommentToGet(valueOne: any, valueTwo?: any) {
     return {

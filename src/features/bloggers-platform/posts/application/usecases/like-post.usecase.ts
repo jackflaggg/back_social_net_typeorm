@@ -5,7 +5,7 @@ import { calculateStatus } from '../../../../../core/utils/like/features/calcula
 import { StatusRepository } from '../../infrastructure/status.repository';
 import { likeViewModel, StatusEntity, StatusModelType } from '../../../likes/domain/status.entity';
 import { UserRepository } from '../../../../user-accounts/infrastructure/user/user.repository';
-import { StatusLike } from 'libs/contracts/enums/status.like';
+import { StatusLike } from '../../../../../libs/contracts/enums/status.like';
 
 export class LikePostCommand {
     constructor(

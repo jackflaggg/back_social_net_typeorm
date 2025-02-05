@@ -1,12 +1,12 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { UserEntity, UserModelType } from '../../../domain/user/user.entity';
-import { DeletionStatus } from 'libs/contracts/enums/deletion-status.enum';
 import { PaginatedBlogViewDto, PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
 import { GetUsersQueryParams } from '../../../dto/api/get-users-query-params.input-dto';
 import { UserViewDto } from '../../../dto/api/user-view.dto';
 import { Injectable } from '@nestjs/common';
 import { getUsersQuery } from '../../../../../core/utils/user/query.insert.get';
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { DeletionStatus } from '../../../../../libs/contracts/enums/deletion-status.enum';
 
 @Injectable()
 export class UserQueryRepository {
