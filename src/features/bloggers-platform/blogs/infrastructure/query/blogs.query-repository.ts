@@ -1,7 +1,7 @@
 import { GetBlogsQueryParams } from '../../dto/repository/query/get-blogs-query-params.input-dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { BlogEntity, BlogModelType } from '../../domain/blog.entity';
-import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
+import { DeletionStatus } from 'libs/contracts/enums/deletion-status.enum';
 import { BlogViewDto } from '../../dto/repository/query/blog-view.dto';
 import { PaginatedBlogViewDto } from '../../../../../core/dto/base.paginated.view-dto';
 import { Injectable } from '@nestjs/common';

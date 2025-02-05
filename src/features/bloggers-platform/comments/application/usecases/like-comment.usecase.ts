@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CommentRepository } from '../../infrastructure/comment.repository';
 import { calculateStatus } from '../../../../../core/utils/like/features/calculate.status';
 import { StatusRepository } from '../../../posts/infrastructure/status.repository';
-import { StatusLike } from '@libs/contracts/enums/status.like';
+import { StatusLike } from 'libs/contracts/enums/status.like';
 import { likeViewModel, StatusEntity, StatusModelType } from '../../../likes/domain/status.entity';
 import { UserRepository } from '../../../../user-accounts/infrastructure/user/user.repository';
 import { InjectModel } from '@nestjs/mongoose';

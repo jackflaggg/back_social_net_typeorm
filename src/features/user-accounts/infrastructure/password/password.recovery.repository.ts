@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { PasswordRecoveryEntity, PasswordRecoveryModelType } from '../../domain/password-recovery/password-recovery.entity';
-import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
+import { DeletionStatus } from 'libs/contracts/enums/deletion-status.enum';
 
 @Injectable()
 export class PasswordRecoveryDbRepository {
@@ -28,7 +28,6 @@ export class PasswordRecoveryDbRepository {
     }
 
     async createCodeAndDateConfirmation(userId: string, code: string, expirationDate: Date | string | null) {
-        const pass = await this.passwordRecoveryEntity.create({ userId, recoveryCode: code, expirationDate });
-        return pass;
+        return await this.passwordRecoveryEntity.create({ userId, recoveryCode: code, expirationDate });
     }
 }

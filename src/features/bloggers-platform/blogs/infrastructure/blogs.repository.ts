@@ -1,6 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { BlogDocument, BlogEntity, BlogModelType } from '../domain/blog.entity';
-import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
+import { DeletionStatus } from 'libs/contracts/enums/deletion-status.enum';
 import { Injectable } from '@nestjs/common';
 import { NotFoundDomainException } from '../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 

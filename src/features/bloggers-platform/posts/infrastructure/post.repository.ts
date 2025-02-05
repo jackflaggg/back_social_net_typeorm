@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PostDocument, PostEntity, PostModelType } from '../domain/post.entity';
 import { InjectModel } from '@nestjs/mongoose';
-import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
+import { DeletionStatus } from 'libs/contracts/enums/deletion-status.enum';
 import { NotFoundDomainException } from '../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 @Injectable()

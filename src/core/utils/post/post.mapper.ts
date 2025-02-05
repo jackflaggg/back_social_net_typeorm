@@ -1,6 +1,6 @@
-import { FlattenMaps, Types } from 'mongoose';
-import { outputStatusInterface, outputStatusUsersInterface } from '../like/features/mapper.status';
-import { StatusLike } from '@libs/contracts/enums/status.like';
+import { Types } from 'mongoose';
+import { outputStatusUsersInterface } from '../like/features/mapper.status';
+import { StatusLike } from 'libs/contracts/enums/status.like';
 
 export interface postOutputInterface {
     _id: Types.ObjectId;

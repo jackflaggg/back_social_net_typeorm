@@ -1,4 +1,4 @@
-import { StatusLike } from '@libs/contracts/enums/status.like';
+import { StatusLike } from 'libs/contracts/enums/status.like';
 
 export function calculateStatus(currentStatus: string, changedStatus: string) {
     let likesCount = 0;

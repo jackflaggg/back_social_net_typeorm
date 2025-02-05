@@ -1,13 +1,9 @@
-import { DeletionStatus, DeletionStatusType } from '@libs/contracts/enums/deletion-status.enum';
+import { DeletionStatus, DeletionStatusType } from 'libs/contracts/enums/deletion-status.enum';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import {
-    contentConstraints,
-    shortDescriptionConstraints,
-    titleConstraints,
-} from '@libs/contracts/constants/post/post-property.constraints';
+import { contentConstraints, shortDescriptionConstraints, titleConstraints } from 'libs/contracts/constants/post/post-property.constraints';
 import { HydratedDocument, Model } from 'mongoose';
 import { ExtendedLikesEntity, ExtendedLikesSchema } from './extended.like.entity';
-import { defaultLike } from '@libs/contracts/constants/post/default.like.schema';
+import { defaultLike } from 'libs/contracts/constants/post/default.like.schema';
 import { PostUpdateDtoService } from '../dto/service/post.update.dto';
 import { PostToBlogCreateDtoApi } from '../../blogs/dto/api/blog.to.post.create.dto';
 

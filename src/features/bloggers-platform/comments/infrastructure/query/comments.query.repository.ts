@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CommentEntity, CommentModelType } from '../../domain/comment.entity';
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { DeletionStatus } from '@libs/contracts/enums/deletion-status.enum';
+import { DeletionStatus } from 'libs/contracts/enums/deletion-status.enum';
 import { StatusEntity, StatusModelType } from '../../../likes/domain/status.entity';
 import { transformCommentToGet } from '../../../../../core/utils/comments/mapping/transform.comment.map';
 import { GetCommentsQueryParams } from '../../dto/repository/query/query-parans-comments';
