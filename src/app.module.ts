@@ -35,7 +35,7 @@ import { ConfigModule } from '@nestjs/config';
                 limit: 5,
             },
         ]),
-        TestingModule,
+        TestingModule.register(),
         BloggersPlatformModule,
         UsersModule,
     ],
