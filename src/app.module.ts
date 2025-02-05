@@ -9,12 +9,14 @@ import { configModule } from './config';
 import { CoreConfig } from './core/config/core.config';
 import { CoreModule } from './core/config/config.module';
 import { ConfigModule } from '@nestjs/config';
+import { CustomLoggerModule } from './features/logger/logger.module';
 
 @Module({
     imports: [
         // всегда нужно задавать выше всех модулей, иначе другие модули не увидят енв!
         CoreModule,
         configModule,
+        CustomLoggerModule,
         JwtModule.registerAsync({
             imports: [ConfigModule],
             inject: [CoreConfig],

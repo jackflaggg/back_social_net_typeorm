@@ -10,7 +10,7 @@ export function configApp(app: INestApplication, coreConfig: CoreConfig) {
 
     interceptorSetup(app);
 
-    exceptionFilterSetup(app, coreConfig);
+    exceptionFilterSetup(app);
 
     swaggerSetup(app);
 
