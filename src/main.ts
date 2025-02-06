@@ -10,7 +10,7 @@ async function bootstrap() {
     const coreConfig = app.get<CoreConfig>(CoreConfig);
 
     app.use(cookieParser());
-    configApp(app, coreConfig);
+    configApp(app);
     await app.listen(coreConfig.port, () => {
         console.log('Server started on port ' + coreConfig.port);
     });
