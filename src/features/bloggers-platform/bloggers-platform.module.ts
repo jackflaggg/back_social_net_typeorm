@@ -65,7 +65,6 @@ const useCases = [
     imports: [
         // Вы можете игнорировать expiresIn: '5m' в JwtModule.register(), так как в вашей логике этот параметр переопределяется.
         JwtModule.registerAsync({
-            // прежде чем JwtModule будет инициализирован, ConfigModule должен быть загружен.
             imports: [ConfigModule],
             // Указывает, какие зависимости нужно "внедрить" в фабричную функцию useFactory.
             inject: [CoreConfig],

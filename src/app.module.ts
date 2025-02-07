@@ -18,6 +18,7 @@ import { CustomLoggerModule } from './features/logger/logger.module';
         configModule,
         CustomLoggerModule,
         JwtModule.registerAsync({
+            // прежде чем JwtModule будет инициализирован, ConfigModule должен быть загружен.
             imports: [ConfigModule],
             inject: [CoreConfig],
             useFactory: async (coreConfig: CoreConfig) => ({
