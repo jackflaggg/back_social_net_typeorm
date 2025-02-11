@@ -1,16 +1,16 @@
 import { ConfigModule } from '@nestjs/config';
 import process from 'node:process';
-
+import { join } from 'path';
 export const configModule = ConfigModule.forRoot({
     envFilePath: [
         // high priority
         ...(process.env.ENV_FILE_PATH ? [process.env.ENV_FILE_PATH.trim()] : []),
         // lower priority
-        `.env.${process.env.NODE_ENV}.local`,
+        join(__dirname, `.env.${process.env.NODE_ENV}.local`),
         // lower priority
-        `.env.${process.env.NODE_ENV}`,
+        join(__dirname, `.env.${process.env.NODE_ENV}`),
         // lower priority
-        '.env.production',
+        join(__dirname, '.env.production'),
     ],
     isGlobal: true,
 });
