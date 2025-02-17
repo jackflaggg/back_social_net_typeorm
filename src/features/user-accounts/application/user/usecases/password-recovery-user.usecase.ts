@@ -1,13 +1,13 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { UserRepository } from '../../../infrastructure/user/user.repository';
-import { PasswordRecoveryDbRepository } from '../../../infrastructure/password/password.recovery.repository';
 import { EmailService } from '../../../../notifications/application/mail.service';
 import { randomUUID } from 'node:crypto';
 import { UserEntity, UserModelType } from '../../../domain/user/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { add } from 'date-fns/add';
 import { emailConfirmationData } from '../../../../../core/utils/user/email-confirmation-data.admin';
+import { PasswordRecoveryDbRepository } from '../../../infrastructure/mongoose/password/password.recovery.repository';
+import { UserRepository } from '../../../infrastructure/mongoose/user/user.repository';
 
 export class PasswordRecoveryUserCommand {
     constructor(public readonly email: string) {}

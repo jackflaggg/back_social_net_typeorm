@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { UserRepository } from '../../../infrastructure/user/user.repository';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { randomUUID } from 'node:crypto';
 import { add } from 'date-fns/add';
 import { EmailService } from '../../../../notifications/application/mail.service';
+import { UserRepository } from '../../../infrastructure/mongoose/user/user.repository';
 
 export class RegistrationEmailResendUserCommand {
     constructor(public readonly email: string) {}

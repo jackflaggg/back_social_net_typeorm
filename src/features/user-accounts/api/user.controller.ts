@@ -1,5 +1,4 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
-import { UserQueryRepository } from '../infrastructure/user/query/user.query.repository';
 import { UserCreateDtoApi } from '../dto/api/user.create.dto';
 import { GetUsersQueryParams } from '../dto/api/get-users-query-params.input-dto';
 import { BasicAuthGuard } from '../../../core/guards/passport/guards/basic.auth.guard';
@@ -7,9 +6,10 @@ import { CommandBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../application/user/usecases/create-user.usecase';
 import { DeleteUserCommand } from '../application/user/usecases/delete-user.usecase';
 import { ValidateObjectIdPipe } from '../../../core/pipes/validation.input.data.pipe';
+import { UserQueryRepository } from '../infrastructure/mongoose/user/query/user.query.repository';
 
 @UseGuards(BasicAuthGuard)
-@Controller('users')
+@Controller('/sa/users')
 export class UserController {
     constructor(
         private readonly commandBus: CommandBus,

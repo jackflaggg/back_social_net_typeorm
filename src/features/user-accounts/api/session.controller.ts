@@ -3,9 +3,9 @@ import { RefreshAuthGuard } from '../../../core/guards/passport/guards/refresh.a
 import { DeleteSessionCommand } from '../application/device/usecases/delete-session.usecase';
 import { UserJwtPayloadDto } from '../strategies/refresh.strategy';
 import { ExtractAnyUserFromRequest } from '../../../core/decorators/param/validate.user.decorators';
-import { SessionQueryRepository } from '../infrastructure/sessions/query/session.query.repository';
 import { DeleteSessionsCommand } from '../application/device/usecases/delete-sessions.usecase';
 import { Controller, Delete, Get, HttpCode, HttpStatus, Param, UseGuards } from '@nestjs/common';
+import { SessionQueryRepository } from '../infrastructure/mongoose/sessions/query/session.query.repository';
 
 @Controller('security')
 export class SessionController {

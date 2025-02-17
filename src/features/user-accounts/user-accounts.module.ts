@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { UserController } from './api/user.controller';
-import { UserRepository } from './infrastructure/user/user.repository';
-import { UserQueryRepository } from './infrastructure/user/query/user.query.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserEntity, UserSchema } from './domain/user/user.entity';
 import { AuthController } from './api/auth.controller';
@@ -16,12 +14,10 @@ import { AuthService, UserLoggedInEventHandler } from './application/auth.servic
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { CreateSessionUseCase } from './application/device/usecases/create-session.usecase';
 import { DeviceEntity, DeviceSchema } from './domain/device/device.entity';
-import { SessionRepository } from './infrastructure/sessions/session.repository';
 import { UniqueEmailStrategy, UniqueLoginStrategy } from './strategies/uniqueLoginStrategy';
 import { RegistrationUserUseCase } from './application/user/usecases/registration-user.usecase';
 import { EmailService } from '../notifications/application/mail.service';
 import { CommonCreateUserUseCase } from './application/user/usecases/common-create-user.usecase';
-import { PasswordRecoveryDbRepository } from './infrastructure/password/password.recovery.repository';
 import { RegistrationConfirmationUserUseCase } from './application/user/usecases/registration-confirmation-user.usecase';
 import { PasswordRecoveryEntity, PasswordRecoverySchema } from './domain/password-recovery/password-recovery.entity';
 import { PasswordRecoveryUserUseCase } from './application/user/usecases/password-recovery-user.usecase';
@@ -33,13 +29,17 @@ import { RefreshTokenUserUseCase } from './application/user/usecases/refresh-tok
 import { LogoutUserUseCase } from './application/user/usecases/logout-user.usecase';
 import { SessionController } from './api/session.controller';
 import { PassportModule } from '@nestjs/passport';
-import { SessionQueryRepository } from './infrastructure/sessions/query/session.query.repository';
 import { JwtRefreshAuthPassportStrategy } from './strategies/refresh.strategy';
 import { DeleteSessionsUseCase } from './application/device/usecases/delete-sessions.usecase';
 import { UpdateSessionUseCase } from './application/device/usecases/update-session.usecase';
 import { CoreConfig } from '../../core/config/core.config';
 import { ConfigModule } from '@nestjs/config';
 import { EmailAdapter } from '../notifications/adapter/email.adapter';
+import { PasswordRecoveryDbRepository } from './infrastructure/mongoose/password/password.recovery.repository';
+import { SessionQueryRepository } from './infrastructure/mongoose/sessions/query/session.query.repository';
+import { UserQueryRepository } from './infrastructure/mongoose/user/query/user.query.repository';
+import { UserRepository } from './infrastructure/mongoose/user/user.repository';
+import { SessionRepository } from './infrastructure/mongoose/sessions/session.repository';
 
 const useCases = [
     CreateSessionUseCase,

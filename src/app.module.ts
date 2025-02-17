@@ -38,6 +38,7 @@ import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
                     // можете потерять рабочие данные
                     autoLoadEntities: true,
                     // Чтобы автоматически загружать сущности
+                    logging: false,
             }) as TypeOrmModuleAsyncOptions,
         }),
         ThrottlerModule.forRoot([

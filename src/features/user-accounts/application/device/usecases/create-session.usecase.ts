@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
 import { DeviceEntity, DeviceModelType } from '../../../domain/device/device.entity';
-import { SessionRepository } from '../../../infrastructure/sessions/session.repository';
 import { MappingDevice } from '../../../dto/repository/device-view.dto';
+import { SessionRepository } from '../../../infrastructure/mongoose/sessions/session.repository';
 
 export class CreateSessionCommand {
     constructor(

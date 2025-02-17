@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { SessionRepository } from '../../../infrastructure/sessions/session.repository';
 import { UserJwtPayloadDto } from '../../../strategies/refresh.strategy';
+import { SessionRepository } from '../../../infrastructure/mongoose/sessions/session.repository';
 
 export class DeleteSessionsCommand {
     constructor(public readonly dto: UserJwtPayloadDto) {}

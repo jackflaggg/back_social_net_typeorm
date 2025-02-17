@@ -1,9 +1,9 @@
 import { UserCreateDtoService } from '../../../dto/service/user.create.dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UserRepository } from '../../../infrastructure/user/user.repository';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserEntity, UserModelType } from '../../../domain/user/user.entity';
 import { emailConfirmationData } from '../../../../../core/utils/user/email-confirmation-data.admin';
+import { UserRepository } from '../../../infrastructure/mongoose/user/user.repository';
 
 export class CommonCreateUserCommand {
     constructor(public readonly payload: UserCreateDtoService) {}

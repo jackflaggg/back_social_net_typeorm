@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostsRepository } from '../../../posts/infrastructure/post.repository';
 import { CommentRepository } from '../../infrastructure/comment.repository';
-import { UserRepository } from '../../../../user-accounts/infrastructure/user/user.repository';
 import { InjectModel } from '@nestjs/mongoose';
 import { CommentEntity, CommentModelType } from '../../domain/comment.entity';
 import { CommentCreateToPostApi } from '../../../posts/dto/api/comment.create.to.post';
+import { UserRepository } from '../../../../user-accounts/infrastructure/mongoose/user/user.repository';
 
 // класс для создания комментария
 export class CreateCommentCommand {

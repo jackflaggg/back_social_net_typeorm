@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { UserRepository } from '../infrastructure/user/user.repository';
 import { UnauthorizedDomainException } from '../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { SessionRepository } from '../infrastructure/sessions/session.repository';
 import { CoreConfig } from '../../../core/config/core.config';
+import { UserRepository } from '../infrastructure/mongoose/user/user.repository';
+import { SessionRepository } from '../infrastructure/mongoose/sessions/session.repository';
 
 export class UserJwtPayloadDto {
     userId: string;

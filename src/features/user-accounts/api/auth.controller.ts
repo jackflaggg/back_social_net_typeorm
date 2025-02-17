@@ -1,5 +1,4 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { UserQueryRepository } from '../infrastructure/user/query/user.query.repository';
 import { AuthLoginDtoApi } from '../dto/api/auth.login.dto';
 import { AuthPasswordRecoveryDtoApi } from '../dto/api/auth.password-recovery.dto';
 import { AuthNewPasswordDtoApi } from '../dto/api/auth.new-password.dto';
@@ -23,6 +22,7 @@ import { ExtractAnyUserFromRequest, ExtractUserFromRequest } from '../../../core
 import { UserJwtPayloadDto } from '../strategies/refresh.strategy';
 import { RefreshTokenUserCommand } from '../application/user/usecases/refresh-token.user.usecase';
 import { LogoutUserCommand } from '../application/user/usecases/logout-user.usecase';
+import { UserQueryRepository } from '../infrastructure/mongoose/user/query/user.query.repository';
 
 @Controller('auth')
 export class AuthController {

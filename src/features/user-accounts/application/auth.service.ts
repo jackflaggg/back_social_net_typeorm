@@ -1,8 +1,8 @@
 import { BadRequestDomainException, UnauthorizedDomainException } from '../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { Inject, Injectable } from '@nestjs/common';
 import { EventBus, EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { UserRepository } from '../infrastructure/user/user.repository';
 import { compare } from 'bcrypt';
+import { UserRepository } from '../infrastructure/mongoose/user/user.repository';
 
 export class UserLoggedInEvent {
     constructor(public readonly userId: string) {}

@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { SessionRepository } from '../../../infrastructure/sessions/session.repository';
 import {
     ForbiddenDomainException,
     NotFoundDomainException,
     UnauthorizedDomainException,
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { SessionRepository } from '../../../infrastructure/mongoose/sessions/session.repository';
 
 export class DeleteSessionCommand {
     constructor(

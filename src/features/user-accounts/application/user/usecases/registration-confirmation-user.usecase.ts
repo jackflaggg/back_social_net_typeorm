@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { UserRepository } from '../../../infrastructure/user/user.repository';
-import { PasswordRecoveryDbRepository } from '../../../infrastructure/password/password.recovery.repository';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { PasswordRecoveryDbRepository } from '../../../infrastructure/mongoose/password/password.recovery.repository';
+import { UserRepository } from '../../../infrastructure/mongoose/user/user.repository';
 
 export class RegistrationConfirmationUserCommand {
     constructor(public readonly code: string) {}

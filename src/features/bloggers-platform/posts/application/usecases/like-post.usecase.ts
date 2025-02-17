@@ -4,8 +4,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { calculateStatus } from '../../../../../core/utils/like/features/calculate.status';
 import { StatusRepository } from '../../infrastructure/status.repository';
 import { likeViewModel, StatusEntity, StatusModelType } from '../../../likes/domain/status.entity';
-import { UserRepository } from '../../../../user-accounts/infrastructure/user/user.repository';
 import { StatusLike } from '../../../../../libs/contracts/enums/status.like';
+import { UserRepository } from '../../../../user-accounts/infrastructure/mongoose/user/user.repository';
 
 export class LikePostCommand {
     constructor(

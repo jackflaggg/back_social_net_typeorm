@@ -1,12 +1,12 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { SessionRepository } from '../../../infrastructure/sessions/session.repository';
 import {
     ForbiddenDomainException,
     NotFoundDomainException,
     UnauthorizedDomainException,
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { UserJwtPayloadDto } from '../../../strategies/refresh.strategy';
+import { SessionRepository } from '../../../infrastructure/mongoose/sessions/session.repository';
 
 export class LogoutUserCommand {
     constructor(public readonly dtoUser: UserJwtPayloadDto) {}

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { DeviceEntity, DeviceModelType } from '../../../domain/device/device.entity';
-import { DeviceViewDto } from '../../../dto/repository/device-view.dto';
-import { DeletionStatus } from '../../../../../libs/contracts/enums/deletion-status.enum';
+import { DeviceEntity, DeviceModelType } from '../../../../domain/device/device.entity';
+import { DeviceViewDto } from '../../../../dto/repository/device-view.dto';
+import { DeletionStatus } from '../../../../../../libs/contracts/enums/deletion-status.enum';
 
 @Injectable()
 export class SessionQueryRepository {
