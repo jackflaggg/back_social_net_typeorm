@@ -1,12 +1,17 @@
-version: '3.9'
+version: '3.7'
 services:
-  inctagram.mongo:
-    image: mongo
-    restart: always
-    container_name: inctagram.mongo
+  postgres:
+    image: postgres:13
+    container_name: postgres_db
     ports:
-      - 27017:27017
-
+      - '5432:5432'
+      # 1) куда будет развернуто внутри докера! в постгресе тоже!
+      # 2) порт, по которому будет отзываться!
+    environment:
+      POSTGRES_DB: social_network_develope
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 230900
     volumes:
-      - ./mongo-data:/data/db
-    command: --wiredTigerCacheSizeGB 1.5
+      - postgres_data:/var/lib/postgresql/data
+volumes:
+  postgres_data:

@@ -21,17 +21,17 @@ export class TestingModule {
                 module: TestingModule,
                 controllers: [TestingController],
                 imports: [
-                    MongooseModule.forFeature([
-                        { name: UserEntity.name, schema: UserSchema },
-                        { name: DeviceEntity.name, schema: DeviceSchema },
-                        { name: PasswordRecoveryEntity.name, schema: PasswordRecoverySchema },
-                        { name: BlogEntity.name, schema: BlogSchema },
-                        { name: PostEntity.name, schema: PostSchema },
-                        { name: CommentEntity.name, schema: CommentSchema },
-                        { name: NewestLikesEntity.name, schema: NewestLikesSchema },
-                        { name: ExtendedLikesEntity.name, schema: ExtendedLikesSchema },
-                        { name: StatusEntity.name, schema: StatusSchema },
-                    ]),
+                    // MongooseModule.forFeature([
+                    //     { name: UserEntity.name, schema: UserSchema },
+                    //     { name: DeviceEntity.name, schema: DeviceSchema },
+                    //     { name: PasswordRecoveryEntity.name, schema: PasswordRecoverySchema },
+                    //     { name: BlogEntity.name, schema: BlogSchema },
+                    //     { name: PostEntity.name, schema: PostSchema },
+                    //     { name: CommentEntity.name, schema: CommentSchema },
+                    //     { name: NewestLikesEntity.name, schema: NewestLikesSchema },
+                    //     { name: ExtendedLikesEntity.name, schema: ExtendedLikesSchema },
+                    //     { name: StatusEntity.name, schema: StatusSchema },
+                    // ]),
                 ],
                 providers: [],
             };

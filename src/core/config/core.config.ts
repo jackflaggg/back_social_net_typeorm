@@ -18,6 +18,14 @@ export class CoreConfig {
     public adminEmail: string;
     public adminEmailPassword: string;
     public testUrl: string;
+
+    public typeSql: string;
+    public hostSql: string;
+    public portSql: number;
+    public usernameSql: string;
+    public passwordSql: string;
+    public databaseNameSql: string;
+
     constructor(private configService: ConfigService<any, true>) {
         const config = {
             port: this.configService.get('PORT'),
@@ -34,6 +42,13 @@ export class CoreConfig {
             adminPassword: this.configService.get('ADMIN_PASS'),
             adminEmail: this.configService.get('ADMIN_EMAIL'),
             adminEmailPassword: this.configService.get('ADMIN_EMAIL_PASSWORD'),
+
+            typeSql: this.configService.get('TYPE_SQL'),
+            hostSql: this.configService.get('HOST_SQL'),
+            portSql: this.configService.get('PORT_SQL'),
+            usernameSql: this.configService.get('USERNAME_SQL'),
+            passwordSql: this.configService.get('PASSWORD_SQL'),
+            databaseNameSql: this.configService.get('DATABASE_NAME_SQL'),
         };
 
         try {

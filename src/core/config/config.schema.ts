@@ -43,4 +43,16 @@ export const configSchema = z.object({
     adminPassword: z.string().nonempty('Установите переменную окружения ADMIN_PASS, это опасно для безопасности!'),
     adminEmail: z.string().nonempty('Установите переменную окружения ADMIN_EMAIL, это опасно для безопасности!'),
     adminEmailPassword: z.string().nonempty('Установите переменную окружения ADMIN_EMAIL_PASSWORD, это опасно для безопасности!'),
+    typeSql: z.string().nonempty('Установите переменную окружения ADMIN_USERNAME, это опасно для безопасности!'),
+    hostSql: z.string().nonempty('Установите переменную окружения ADMIN_PASS, это опасно для безопасности!'),
+    portSql: z.string().transform(val => {
+    const numVal = Number(val);
+    if (isNaN(numVal)) {
+        throw new Error('Установите переменную окружения PORT, например: 9000');
+    }
+    return numVal;
+}),
+    usernameSql: z.string().nonempty('Установите переменную окружения ADMIN_EMAIL_PASSWORD, это опасно для безопасности!'),
+    passwordSql: z.string().nonempty('Установите переменную окружения ADMIN_EMAIL, это опасно для безопасности!'),
+    databaseNameSql: z.string().nonempty('Установите переменную окружения ADMIN_EMAIL_PASSWORD, это опасно для безопасности!'),
 });

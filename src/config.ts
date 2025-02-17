@@ -1,6 +1,7 @@
 import { ConfigModule } from '@nestjs/config';
 import process from 'node:process';
 import { join } from 'path';
+
 export const configModule = ConfigModule.forRoot({
     envFilePath: [
         // high priority

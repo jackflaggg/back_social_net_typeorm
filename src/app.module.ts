@@ -1,8 +1,4 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { BloggersPlatformModule } from './features/bloggers-platform/bloggers-platform.module';
-import { TestingModule } from './features/testing/testing.module';
-import { UsersModule } from './features/user-accounts/user-accounts.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { JwtModule } from '@nestjs/jwt';
 import { configModule } from './config';
@@ -10,6 +6,7 @@ import { CoreConfig } from './core/config/core.config';
 import { CoreModule } from './core/config/config.module';
 import { ConfigModule } from '@nestjs/config';
 import { CustomLoggerModule } from './features/logger/logger.module';
+import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 
 @Module({
     imports: [
@@ -26,11 +23,22 @@ import { CustomLoggerModule } from './features/logger/logger.module';
                 signOptions: { expiresIn: coreConfig.accessTokenExpirationTime },
             }),
         }),
-        MongooseModule.forRootAsync({
-            useFactory: (coreConfig: CoreConfig) => ({
-                uri: coreConfig.mongoUrl,
-            }),
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
             inject: [CoreConfig],
+            useFactory: async (coreConfig: CoreConfig) => ({
+                    type: coreConfig.typeSql,
+                    host: coreConfig.hostSql,
+                    port: coreConfig.portSql,
+                    username: coreConfig.usernameSql,
+                    password: coreConfig.passwordSql,
+                    database: coreConfig.databaseNameSql,
+                    entities: [],
+                    synchronize: true,
+                    // можете потерять рабочие данные
+                    autoLoadEntities: true,
+                    // Чтобы автоматически загружать сущности
+            }) as TypeOrmModuleAsyncOptions,
         }),
         ThrottlerModule.forRoot([
             {
@@ -38,9 +46,6 @@ import { CustomLoggerModule } from './features/logger/logger.module';
                 limit: 5,
             },
         ]),
-        TestingModule.register(),
-        BloggersPlatformModule,
-        UsersModule,
     ],
     controllers: [],
     providers: [],
