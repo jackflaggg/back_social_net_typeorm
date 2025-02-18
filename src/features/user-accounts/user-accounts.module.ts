@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { UserController } from './api/user.controller';
-import { MongooseModule } from '@nestjs/mongoose';
-import { UserEntity, UserSchema } from './domain/user/user.entity';
 import { AuthController } from './api/auth.controller';
 import { BasicStrategy } from './strategies/basic.strategy';
 import { CreateUserUseCase } from './application/user/usecases/create-user.usecase';
@@ -41,36 +39,43 @@ import { UserQueryRepository } from './infrastructure/mongoose/user/query/user.q
 import { UserRepository } from './infrastructure/mongoose/user/user.repository';
 import { SessionRepository } from './infrastructure/mongoose/sessions/session.repository';
 import { UserPgRepository } from './infrastructure/postgres/user/user.pg.repository';
+import { BcryptService } from './application/bcrypt.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './domain/typeorm/user/user.entity';
+import { EmailConfirmation } from './domain/typeorm/user/email.confirmation.entity';
+import { RecoveryPassword } from './domain/typeorm/password-recovery/pass-rec.entity';
+import { SecurityDevice } from './domain/typeorm/device/device.entity';
+import { UserPgQueryRepository } from './infrastructure/postgres/user/query/user.pg.query.repository';
 
 const useCases = [
-    CreateSessionUseCase,
-    ValidateUserUseCase,
-    LoginUserUseCase,
+    // CreateSessionUseCase,
+    // ValidateUserUseCase,
+    // LoginUserUseCase,
     CreateUserUseCase,
     DeleteUserUseCase,
-    RegistrationUserUseCase,
-    CommonCreateUserUseCase,
-    RegistrationConfirmationUserUseCase,
-    PasswordRecoveryUserUseCase,
-    RegistrationEmailResendUserUseCase,
-    DeleteSessionUseCase,
-    NewPasswordUserUseCase,
-    RefreshTokenUserUseCase,
-    LogoutUserUseCase,
-    DeleteSessionsUseCase,
-    UpdateSessionUseCase,
+    // RegistrationUserUseCase,
+    // CommonCreateUserUseCase,
+    // RegistrationConfirmationUserUseCase,
+    // PasswordRecoveryUserUseCase,
+    // RegistrationEmailResendUserUseCase,
+    // DeleteSessionUseCase,
+    // NewPasswordUserUseCase,
+    // RefreshTokenUserUseCase,
+    // LogoutUserUseCase,
+    // DeleteSessionsUseCase,
+    // UpdateSessionUseCase,
 ];
-const repositoriesMongoose = [UserRepository, UserQueryRepository, SessionRepository, PasswordRecoveryDbRepository, SessionQueryRepository];
-const repositoriesPostgres = [UserPgRepository];
+// const repositoriesMongoose = [UserRepository, UserQueryRepository, SessionRepository, PasswordRecoveryDbRepository, SessionQueryRepository];
+const repositoriesPostgres = [UserPgRepository, UserPgQueryRepository];
 const strategies = [
     BasicStrategy,
-    LocalStrategy,
-    UniqueLoginStrategy,
-    UniqueEmailStrategy,
-    AccessTokenStrategy,
-    JwtRefreshAuthPassportStrategy,
+    // LocalStrategy,
+    // UniqueLoginStrategy,
+    // UniqueEmailStrategy,
+    // AccessTokenStrategy,
+    // JwtRefreshAuthPassportStrategy,
 ];
-const services = [AuthService, JwtService, EmailService, EmailAdapter];
+const services = [/*AuthService, */ JwtService, EmailService, EmailAdapter, BcryptService];
 const handlers = [UserLoggedInEventHandler];
 
 @Module({
@@ -89,15 +94,10 @@ const handlers = [UserLoggedInEventHandler];
         //если в системе несколько токенов (например, access и refresh) с разными опциями (время жизни, секрет)
         //можно переопределить опции при вызове метода jwt.service.sign
         //или написать свой tokens сервис (адаптер), где эти опции будут уже учтены
-        MongooseModule.forFeature([
-            { name: UserEntity.name, schema: UserSchema },
-            { name: DeviceEntity.name, schema: DeviceSchema },
-            { name: PasswordRecoveryEntity.name, schema: PasswordRecoverySchema },
-        ]),
         CqrsModule,
     ],
-    exports: [UserRepository],
-    providers: [...useCases, ...repositoriesMongoose, ...services, ...strategies, ...handlers, ...repositoriesPostgres],
-    controllers: [UserController, AuthController, SessionController],
+    exports: [UserPgRepository],
+    providers: [...useCases, ...services, ...strategies, ...handlers, ...repositoriesPostgres],
+    controllers: [UserController /*, AuthController, SessionController*/],
 })
 export class UsersModule {}

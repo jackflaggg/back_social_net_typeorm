@@ -1,9 +1,8 @@
 import { UserCreateDtoService } from '../../../dto/service/user.create.dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/mongoose';
-import { UserEntity, UserModelType } from '../../../domain/user/user.entity';
 import { emailConfirmationData } from '../../../../../core/utils/user/email-confirmation-data.admin';
-import { UserRepository } from '../../../infrastructure/mongoose/user/user.repository';
+import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
+import { BcryptService } from '../../bcrypt.service';
 
 export class CommonCreateUserCommand {
     constructor(public readonly payload: UserCreateDtoService) {}
@@ -12,8 +11,8 @@ export class CommonCreateUserCommand {
 @CommandHandler(CommonCreateUserCommand)
 export class CommonCreateUserUseCase implements ICommandHandler<CommonCreateUserCommand> {
     constructor(
-        private readonly userRepository: UserRepository,
-        @InjectModel(UserEntity.name) private userModel: UserModelType,
+        private readonly userRepository: UserPgRepository,
+        private readonly bcryptService: BcryptService,
     ) {}
     async execute(command: CommonCreateUserCommand) {
         const extensionDto = {

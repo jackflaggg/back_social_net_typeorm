@@ -24,16 +24,4 @@ export class SecurityDevice {
     @ManyToOne(() => User, user => user.securityDevices)
     @JoinColumn({ name: 'userId' })
     user: User;
-
-    makeDeleted() {
-        if (this.deletedAt) {
-            throw new Error('Entity already deleted');
-        }
-        this.deletedAt = new Date();
-    }
-
-    updateSession(issuedAt: number, deviceId: string) {
-        this.issuedAt = new Date(1000 * issuedAt);
-        this.deviceId = deviceId;
-    }
 }

@@ -6,14 +6,14 @@ export class UserViewDto {
     email: string;
     createdAt: Date;
 
-    constructor(model: UserDocument) {
-        this.id = model._id.toString();
+    constructor(model: any) {
+        this.id = model.id.toString();
         this.login = model.login;
         this.email = model.email;
-        this.createdAt = model.createdAt;
+        this.createdAt = model.createdat;
     }
 
-    static mapToView(user: UserDocument): UserViewDto {
+    static mapToView(user: any): UserViewDto {
         return new UserViewDto(user);
     }
 

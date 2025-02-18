@@ -1,9 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/mongoose';
-import { UserEntity, UserModelType } from '../../../domain/user/user.entity';
 import { UserCreateDtoService } from '../../../dto/service/user.create.dto';
 import { emailConfirmationDataAdmin } from '../../../../../core/utils/user/email-confirmation-data.admin';
-import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
+import { UserCreateDtoRepo, UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
+import { BcryptService } from '../../bcrypt.service';
+import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class CreateUserCommand {
     constructor(public readonly payload: UserCreateDtoService) {}
@@ -13,16 +13,21 @@ export class CreateUserCommand {
 export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
     constructor(
         private readonly userRepository: UserPgRepository,
-        @InjectModel(UserEntity.name) private userModel: UserModelType,
+        private readonly bcryptService: BcryptService,
     ) {}
     async execute(command: CreateUserCommand) {
-        const extensionDto = {
+        const existingUser = await this.userRepository.findUserByLoginOrEmail(command.payload.login, command.payload.email);
+        if (existingUser) {
+            throw BadRequestDomainException.create('такой юзер уже существует!', 'login');
+        }
+        const hashPassword = await this.bcryptService.hashPassword(command.payload.password);
+
+        const userData: UserCreateDtoRepo = {
             ...command.payload,
-            ...emailConfirmationDataAdmin(),
+            password: hashPassword,
+            createdAt: new Date(),
         };
-        const user = this.userModel.buildInstance(extensionDto);
-        await user.setPasswordAdmin(command.payload.password);
-        await this.userRepository.save(user);
-        return user._id.toString();
+        const emailConfirmData = emailConfirmationDataAdmin();
+        return await this.userRepository.createUser(userData, emailConfirmData);
     }
 }

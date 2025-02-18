@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UserRepository } from '../../../infrastructure/mongoose/user/user.repository';
+import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
+import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class DeleteUserCommand {
     constructor(public readonly userId: string) {}
@@ -7,12 +8,14 @@ export class DeleteUserCommand {
 
 @CommandHandler(DeleteUserCommand)
 export class DeleteUserUseCase implements ICommandHandler<DeleteUserCommand> {
-    constructor(private readonly userRepository: UserRepository) {}
+    constructor(private readonly userRepository: UserPgRepository) {}
     async execute(command: DeleteUserCommand) {
-        const user = await this.userRepository.findUserByIdOrFail(command.userId);
+        const userId = await this.userRepository.findUserById(command.userId);
 
-        user.makeDeleted();
+        if (!userId) {
+            throw NotFoundDomainException.create('Юзер не найден', 'userId');
+        }
 
-        await this.userRepository.save(user);
+        await this.userRepository.updateDeletedAt(userId);
     }
 }
