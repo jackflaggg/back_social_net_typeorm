@@ -40,6 +40,7 @@ import { SessionQueryRepository } from './infrastructure/mongoose/sessions/query
 import { UserQueryRepository } from './infrastructure/mongoose/user/query/user.query.repository';
 import { UserRepository } from './infrastructure/mongoose/user/user.repository';
 import { SessionRepository } from './infrastructure/mongoose/sessions/session.repository';
+import { UserPgRepository } from './infrastructure/postgres/user/user.pg.repository';
 
 const useCases = [
     CreateSessionUseCase,
@@ -59,7 +60,8 @@ const useCases = [
     DeleteSessionsUseCase,
     UpdateSessionUseCase,
 ];
-const repositories = [UserRepository, UserQueryRepository, SessionRepository, PasswordRecoveryDbRepository, SessionQueryRepository];
+const repositoriesMongoose = [UserRepository, UserQueryRepository, SessionRepository, PasswordRecoveryDbRepository, SessionQueryRepository];
+const repositoriesPostgres = [UserPgRepository];
 const strategies = [
     BasicStrategy,
     LocalStrategy,
@@ -95,7 +97,7 @@ const handlers = [UserLoggedInEventHandler];
         CqrsModule,
     ],
     exports: [UserRepository],
-    providers: [...useCases, ...repositories, ...services, ...strategies, ...handlers],
+    providers: [...useCases, ...repositoriesMongoose, ...services, ...strategies, ...handlers, ...repositoriesPostgres],
     controllers: [UserController, AuthController, SessionController],
 })
 export class UsersModule {}

@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { UserEntity, UserModelType } from '../../../domain/user/user.entity';
 import { UserCreateDtoService } from '../../../dto/service/user.create.dto';
 import { emailConfirmationDataAdmin } from '../../../../../core/utils/user/email-confirmation-data.admin';
-import { UserRepository } from '../../../infrastructure/mongoose/user/user.repository';
+import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
 
 export class CreateUserCommand {
     constructor(public readonly payload: UserCreateDtoService) {}
@@ -12,7 +12,7 @@ export class CreateUserCommand {
 @CommandHandler(CreateUserCommand)
 export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
     constructor(
-        private readonly userRepository: UserRepository,
+        private readonly userRepository: UserPgRepository,
         @InjectModel(UserEntity.name) private userModel: UserModelType,
     ) {}
     async execute(command: CreateUserCommand) {

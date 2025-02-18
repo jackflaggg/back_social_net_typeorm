@@ -26,7 +26,8 @@ import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
             inject: [CoreConfig],
-            useFactory: async (coreConfig: CoreConfig) => ({
+            useFactory: async (coreConfig: CoreConfig) =>
+                ({
                     type: coreConfig.typeSql,
                     host: coreConfig.hostSql,
                     port: coreConfig.portSql,
@@ -39,7 +40,7 @@ import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
                     autoLoadEntities: true,
                     // Чтобы автоматически загружать сущности
                     logging: false,
-            }) as TypeOrmModuleAsyncOptions,
+                }) as TypeOrmModuleAsyncOptions,
         }),
         ThrottlerModule.forRoot([
             {
