@@ -19,9 +19,5 @@ export class CommonCreateUserUseCase implements ICommandHandler<CommonCreateUser
             ...command.payload,
             ...emailConfirmationData(),
         };
-        const user = this.userModel.buildInstance(extensionDto);
-        await user.setPasswordAdmin(command.payload.password);
-        await this.userRepository.save(user);
-        return user._id.toString();
     }
 }
