@@ -5,10 +5,10 @@ import { configSchema } from './config.schema';
 @Injectable()
 export class CoreConfig {
     public port: number;
-    public mongoUrl: string;
+    // public mongoUrl: string;
     public env: string;
-    public isSwaggerEnabled: boolean;
-    public includeTestingModule: boolean;
+    // public isSwaggerEnabled: boolean;
+    // public includeTestingModule: boolean;
     public refreshTokenSecret: string;
     public accessTokenSecret: string;
     public accessTokenExpirationTime: string;
@@ -17,7 +17,7 @@ export class CoreConfig {
     public adminPassword: string;
     public adminEmail: string;
     public adminEmailPassword: string;
-    public testUrl: string;
+    // public testUrl: string;
 
     public typeSql: string;
     public hostSql: string;
@@ -29,11 +29,11 @@ export class CoreConfig {
     constructor(private configService: ConfigService<any, true>) {
         const config = {
             port: this.configService.get('PORT'),
-            mongoUrl: this.configService.get('MONGO_URI'),
-            testUrl: this.configService.get('DB_URI_TEST'),
+            // mongoUrl: this.configService.get('MONGO_URI'),
+            // testUrl: this.configService.get('DB_URI_TEST'),
             env: this.configService.get('NODE_ENV'),
-            isSwaggerEnabled: this.configService.get('IS_SWAGGER_ENABLED'),
-            includeTestingModule: this.configService.get('INCLUDE_TESTING_MODULE'),
+            // isSwaggerEnabled: this.configService.get('IS_SWAGGER_ENABLED'),
+            // includeTestingModule: this.configService.get('INCLUDE_TESTING_MODULE'),
             refreshTokenSecret: this.configService.get('JWT_REFRESH_SECRET'),
             accessTokenSecret: this.configService.get('JWT_ACCESS_SECRET'),
             accessTokenExpirationTime: this.configService.get('JWT_ACCESS_EXPIRATION_TIME'),
