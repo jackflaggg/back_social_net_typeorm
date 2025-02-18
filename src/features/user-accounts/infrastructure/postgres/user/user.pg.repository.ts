@@ -78,6 +78,7 @@ export class UserPgRepository {
     }
     deleteAll() {
         const tables = ['email_confirmation', 'recovery_password', 'users'];
+        tables.map(table => this.dataSource.query(`ALTER SEQUENCE ${table}_id_seq RESTART WITH 1`));
         tables.map(table => this.dataSource.query(`DELETE FROM ${table}`));
     }
 }

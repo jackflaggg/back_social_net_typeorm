@@ -9,7 +9,7 @@ export class TestingController {
     @Delete('all-data')
     async deleteAll() {
         try {
-            await this.userRepository.deleteAll();
+            this.userRepository.deleteAll();
             return;
         } catch (err: unknown) {
             return err;
