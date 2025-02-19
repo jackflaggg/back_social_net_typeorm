@@ -1,13 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { GetUsersQueryParams } from '../../../../dto/api/get-users-query-params.input-dto';
 import { PaginatedBlogViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
 import { UserViewDto } from '../../../../dto/api/user-view.dto';
 import { getUsersQuery } from '../../../../../../core/utils/user/query.insert.get';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserPgQueryRepository {
-    constructor(private readonly dataSource: DataSource) {}
+    constructor(@InjectDataSource() protected dataSource: DataSource) {}
 
     async getAllUsers(queryData: GetUsersQueryParams) {
         const { sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm } = getUsersQuery(queryData);

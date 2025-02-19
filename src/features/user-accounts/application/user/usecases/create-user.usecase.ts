@@ -16,7 +16,7 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
         private readonly bcryptService: BcryptService,
     ) {}
     async execute(command: CreateUserCommand) {
-        const existingUser = await this.userRepository.findUserByLoginOrEmail(command.payload.login, command.payload.email);
+        const existingUser = await this.userRepository.findUserByLoginAndEmail(command.payload.login, command.payload.email);
         if (existingUser) {
             throw BadRequestDomainException.create('такой юзер уже существует!', 'login');
         }

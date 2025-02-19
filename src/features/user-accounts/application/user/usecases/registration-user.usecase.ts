@@ -2,26 +2,37 @@ import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { EmailService } from '../../../../notifications/application/mail.service';
 import { CommonCreateUserCommand } from './common-create-user.usecase';
-import { UserRepository } from '../../../infrastructure/mongoose/user/user.repository';
 import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
+import { AuthRegistrationDtoApi } from '../../../dto/api/auth.registration.dto';
+import { BadRequestDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class RegistrationUserCommand {
-    constructor(public readonly payload: any) {}
+    constructor(public readonly payload: AuthRegistrationDtoApi) {}
 }
 
 @CommandHandler(RegistrationUserCommand)
 export class RegistrationUserUseCase implements ICommandHandler<RegistrationUserCommand> {
     constructor(
-        @Inject() private readonly usersRepository: UserPgRepository,
+        @Inject() private readonly userRepository: UserPgRepository,
         private readonly commandBus: CommandBus,
         private readonly mailer: EmailService,
     ) {}
     async execute(command: RegistrationUserCommand) {
-        const userId = await this.commandBus.execute<CommonCreateUserCommand, string>(new CommonCreateUserCommand(command.payload));
-        const user = await this.usersRepository.findUserById(userId);
+        const existingUser = await this.userRepository.findUserByLoginAndEmail(command.payload.login, command.payload.email);
 
-        // this.mailer.sendEmailRecoveryMessage(command.payload.email, user.emailConfirmation.confirmationCode).catch((err: unknown) => {
-        //     console.log(err);
-        // });
+        if (existingUser) {
+            throw BadRequestDomainException.create('такой юзер уже существует!', 'login');
+        }
+        const userId = await this.commandBus.execute<CommonCreateUserCommand, string>(new CommonCreateUserCommand(command.payload));
+
+        const user = await this.userRepository.findUserById(userId);
+
+        if (!user) {
+            throw NotFoundDomainException.create('произошла непредвиденная ошибка, созданный юзер не найден', 'userId');
+        }
+
+        this.mailer.sendEmailRecoveryMessage(command.payload.email, user.confirmationCode).catch((err: unknown) => {
+            console.log(err);
+        });
     }
 }

@@ -21,22 +21,27 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
         private readonly coreConfig: CoreConfig,
     ) {}
     async execute(command: LoginUserCommand) {
+        // 1. генерирую девайсАйди
         const deviceId = randomUUID();
+
+        // 2. генерирую два токена
         const accessToken = this.jwtService.sign(
-            { userId: command.user._id.toString(), deviceId },
+            { userId: command.user.id, deviceId },
             { expiresIn: this.coreConfig.accessTokenExpirationTime, secret: this.coreConfig.accessTokenSecret },
         );
         const refreshToken = this.jwtService.sign(
-            { userId: command.user._id.toString(), deviceId },
+            { userId: command.user.id, deviceId },
             { expiresIn: this.coreConfig.refreshTokenExpirationTime, secret: this.coreConfig.refreshTokenSecret },
         );
 
+        // 3. декодирую данные, чтобы получить дату протухания токена
         const decodedData = this.jwtService.decode(refreshToken);
 
         const issuedAtRefreshToken = new Date(Number(decodedData.iat) * 1000);
 
+        // 4. создаю сессию
         await this.commandBus.execute(
-            new CreateSessionCommand(command.ip, command.userAgent, deviceId, command.user._id.toString(), issuedAtRefreshToken),
+            new CreateSessionCommand(command.ip, command.userAgent, deviceId, command.user.id, issuedAtRefreshToken),
         );
         return {
             jwt: accessToken,

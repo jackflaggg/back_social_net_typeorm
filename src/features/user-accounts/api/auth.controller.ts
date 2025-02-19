@@ -22,13 +22,13 @@ import { ExtractAnyUserFromRequest, ExtractUserFromRequest } from '../../../core
 import { UserJwtPayloadDto } from '../strategies/refresh.strategy';
 import { RefreshTokenUserCommand } from '../application/user/usecases/refresh-token.user.usecase';
 import { LogoutUserCommand } from '../application/user/usecases/logout-user.usecase';
-import { UserQueryRepository } from '../infrastructure/mongoose/user/query/user.query.repository';
+import { UserPgQueryRepository } from '../infrastructure/postgres/user/query/user.pg.query.repository';
 
 @Controller('auth')
 export class AuthController {
     constructor(
         private readonly commandBus: CommandBus,
-        private readonly userQueryRepository: UserQueryRepository,
+        private readonly userQueryRepository: UserPgQueryRepository,
     ) {}
     @HttpCode(HttpStatus.OK)
     @UseGuards(ThrottlerGuard, LocalAuthGuard)
@@ -79,7 +79,7 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     @Get('me')
     async me(@ExtractAnyUserFromRequest() payload: UserJwtPayloadDto) {
-        return this.userQueryRepository.meUser(payload.userId);
+        // return this.userQueryRepository.meUser(payload.userId);
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)

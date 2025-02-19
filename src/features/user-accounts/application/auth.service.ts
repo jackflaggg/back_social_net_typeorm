@@ -2,7 +2,7 @@ import { BadRequestDomainException, UnauthorizedDomainException } from '../../..
 import { Inject, Injectable } from '@nestjs/common';
 import { EventBus, EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { compare } from 'bcrypt';
-import { UserRepository } from '../infrastructure/mongoose/user/user.repository';
+import { UserPgRepository } from '../infrastructure/postgres/user/user.pg.repository';
 
 export class UserLoggedInEvent {
     constructor(public readonly userId: string) {}
@@ -11,7 +11,7 @@ export class UserLoggedInEvent {
 @Injectable()
 export class AuthService {
     constructor(
-        @Inject() private readonly usersRepository: UserRepository,
+        @Inject() private readonly usersRepository: UserPgRepository,
         private readonly eventBus: EventBus, // Внедрение EventBus
     ) {}
 
@@ -26,26 +26,26 @@ export class AuthService {
             throw UnauthorizedDomainException.create();
         }
         // Генерация события при успешной аутентификации
-        this.eventBus.publish(new UserLoggedInEvent(user._id.toString()));
+        this.eventBus.publish(new UserLoggedInEvent(user.id));
 
         return user;
     }
     async uniqueLoginUser(login: string) {
-        const one = await this.usersRepository.findUserByLoginOrEmail(login);
+        const result = await this.usersRepository.findUserByLoginOrEmail(login);
 
-        if (one) {
+        if (result) {
             throw BadRequestDomainException.create('поля должны быть уникальными!', 'login');
         }
-        return !one;
+        return !result;
     }
 
     async uniqueEmailUser(email: string) {
-        const one = await this.usersRepository.findUserByLoginOrEmail(email);
+        const result = await this.usersRepository.findUserByLoginOrEmail(email);
 
-        if (one) {
+        if (result) {
             throw BadRequestDomainException.create('поля должны быть уникальными!', 'email');
         }
-        return !one;
+        return !result;
     }
 }
 

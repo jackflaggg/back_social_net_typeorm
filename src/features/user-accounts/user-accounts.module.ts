@@ -46,15 +46,17 @@ import { EmailConfirmation } from './domain/typeorm/user/email.confirmation.enti
 import { RecoveryPassword } from './domain/typeorm/password-recovery/pass-rec.entity';
 import { SecurityDevice } from './domain/typeorm/device/device.entity';
 import { UserPgQueryRepository } from './infrastructure/postgres/user/query/user.pg.query.repository';
+import { SessionsPgRepository } from './infrastructure/postgres/sessions/sessions.pg.repository';
+import { SessionQueryPgRepository } from './infrastructure/postgres/sessions/query/sessions.pg.query.repository';
 
 const useCases = [
-    // CreateSessionUseCase,
+    CreateSessionUseCase,
     // ValidateUserUseCase,
-    // LoginUserUseCase,
+    LoginUserUseCase,
     CreateUserUseCase,
     DeleteUserUseCase,
-    // RegistrationUserUseCase,
-    // CommonCreateUserUseCase,
+    RegistrationUserUseCase,
+    CommonCreateUserUseCase,
     // RegistrationConfirmationUserUseCase,
     // PasswordRecoveryUserUseCase,
     // RegistrationEmailResendUserUseCase,
@@ -66,16 +68,16 @@ const useCases = [
     // UpdateSessionUseCase,
 ];
 // const repositoriesMongoose = [UserRepository, UserQueryRepository, SessionRepository, PasswordRecoveryDbRepository, SessionQueryRepository];
-const repositoriesPostgres = [UserPgRepository, UserPgQueryRepository];
+const repositoriesPostgres = [UserPgRepository, UserPgQueryRepository, SessionsPgRepository, SessionQueryPgRepository];
 const strategies = [
     BasicStrategy,
-    // LocalStrategy,
-    // UniqueLoginStrategy,
-    // UniqueEmailStrategy,
-    // AccessTokenStrategy,
-    // JwtRefreshAuthPassportStrategy,
+    LocalStrategy,
+    UniqueLoginStrategy,
+    UniqueEmailStrategy,
+    AccessTokenStrategy,
+    JwtRefreshAuthPassportStrategy,
 ];
-const services = [/*AuthService, */ JwtService, EmailService, EmailAdapter, BcryptService];
+const services = [AuthService, JwtService, EmailService, EmailAdapter, BcryptService];
 const handlers = [UserLoggedInEventHandler];
 
 @Module({
@@ -98,6 +100,6 @@ const handlers = [UserLoggedInEventHandler];
     ],
     exports: [UserPgRepository],
     providers: [...useCases, ...services, ...strategies, ...handlers, ...repositoriesPostgres],
-    controllers: [UserController /*, AuthController, SessionController*/],
+    controllers: [UserController, AuthController, SessionController],
 })
 export class UsersModule {}

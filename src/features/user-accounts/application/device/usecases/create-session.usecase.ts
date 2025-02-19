@@ -1,8 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/mongoose';
-import { DeviceEntity, DeviceModelType } from '../../../domain/device/device.entity';
-import { MappingDevice } from '../../../dto/repository/device-view.dto';
-import { SessionRepository } from '../../../infrastructure/mongoose/sessions/session.repository';
+import { SessionsPgRepository } from '../../../infrastructure/postgres/sessions/sessions.pg.repository';
 
 export class CreateSessionCommand {
     constructor(
@@ -16,14 +13,14 @@ export class CreateSessionCommand {
 
 @CommandHandler(CreateSessionCommand)
 export class CreateSessionUseCase implements ICommandHandler<CreateSessionCommand> {
-    constructor(
-        private readonly sessionRepository: SessionRepository,
-        @InjectModel(DeviceEntity.name) private deviceModel: DeviceModelType,
-    ) {}
+    constructor(private readonly sessionRepository: SessionsPgRepository) {}
     async execute(command: CreateSessionCommand) {
-        const data = MappingDevice(command.ip, command.userAgent, command.deviceId, command.userId, command.dateDevice);
-        const session = this.deviceModel.buildInstance(data);
-        await this.sessionRepository.save(session);
-        return session._id.toString();
+        return await this.sessionRepository.createSession(
+            command.ip,
+            command.userAgent,
+            command.deviceId,
+            command.userId,
+            command.dateDevice,
+        );
     }
 }

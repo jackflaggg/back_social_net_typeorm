@@ -3,8 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { UnauthorizedDomainException } from '../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { CoreConfig } from '../../../core/config/core.config';
-import { UserRepository } from '../infrastructure/mongoose/user/user.repository';
 import { SessionRepository } from '../infrastructure/mongoose/sessions/session.repository';
+import { UserPgRepository } from '../infrastructure/postgres/user/user.pg.repository';
 
 export class UserJwtPayloadDto {
     userId: string;
@@ -16,8 +16,8 @@ export class UserJwtPayloadDto {
 @Injectable()
 export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
     constructor(
-        @Inject() private readonly usersRepository: UserRepository,
-        @Inject() private readonly securityDevicesRepository: SessionRepository,
+        @Inject() private readonly usersRepository: UserPgRepository,
+        // @Inject() private readonly securityDevicesRepository: SessionRepository,
         private readonly coreConfig: CoreConfig,
     ) {
         super({
@@ -33,21 +33,21 @@ export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, '
     }
 
     async validate(payload: UserJwtPayloadDto) {
-        const user = await this.usersRepository.findUserByRefreshToken(payload.userId);
+        const user = await this.usersRepository.findUserById(payload.userId);
 
         if (!user) {
             throw UnauthorizedDomainException.create();
         }
 
-        const device = await this.securityDevicesRepository.findDeviceById(payload.deviceId);
-
-        if (!device) {
-            throw UnauthorizedDomainException.create();
-        }
-
-        if (device.issuedAt.toISOString() !== new Date(+payload.iat * 1000).toISOString()) {
-            throw UnauthorizedDomainException.create();
-        }
+        // const device = await this.securityDevicesRepository.findDeviceById(payload.deviceId);
+        //
+        // if (!device) {
+        //     throw UnauthorizedDomainException.create();
+        // }
+        //
+        // if (device.issuedAt.toISOString() !== new Date(+payload.iat * 1000).toISOString()) {
+        //     throw UnauthorizedDomainException.create();
+        // }
         return payload;
     }
 }

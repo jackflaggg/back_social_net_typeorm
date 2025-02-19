@@ -21,8 +21,8 @@ export class DeviceViewDto {
 export function MappingDevice(ip: string, userAgent: string, deviceId: string, userId: string, dateDevice: Date) {
     return {
         issuedAt: dateDevice,
-        deviceId: deviceId,
-        userId: userId,
+        deviceId,
+        userId,
         ip,
         deviceName: userAgent,
     };
