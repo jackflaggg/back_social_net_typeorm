@@ -18,7 +18,7 @@ export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCo
         @Inject() private readonly passwordRepository: PasswordRecoveryPgRepository,
     ) {}
     async execute(command: NewPasswordUserCommand) {
-        const findCode = await this.passwordRepository.findRecoveryCodeUser(command.recoveryCode);
+        const findCode = await this.passwordRepository.findCode(command.recoveryCode);
 
         if (!findCode) {
             throw NotFoundDomainException.create('произошла непредвиденная ошибка, код не найден', 'code');
@@ -31,7 +31,6 @@ export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCo
         const user = await this.usersRepository.findUserById(findCode.userId);
         user.setPasswordAdmin(command.newPassword);
         user.updateEmailConfirmation();
-        await this.usersRepository.save(user);
 
         await this.passwordRepository.updateStatus(findCode._id.toString());
     }

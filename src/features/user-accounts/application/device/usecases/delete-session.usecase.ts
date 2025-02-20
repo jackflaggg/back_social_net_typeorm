@@ -5,6 +5,7 @@ import {
     UnauthorizedDomainException,
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { SessionRepository } from '../../../infrastructure/mongoose/sessions/session.repository';
+import { SessionsPgRepository } from '../../../infrastructure/postgres/sessions/sessions.pg.repository';
 
 export class DeleteSessionCommand {
     constructor(
@@ -15,12 +16,12 @@ export class DeleteSessionCommand {
 
 @CommandHandler(DeleteSessionCommand)
 export class DeleteSessionUseCase implements ICommandHandler<DeleteSessionCommand> {
-    constructor(private readonly sessionRepository: SessionRepository) {}
+    constructor(private readonly sessionRepository: SessionsPgRepository) {}
     async execute(command: DeleteSessionCommand) {
         if (!command.deviceId) {
             throw UnauthorizedDomainException.create();
         }
-        const device = await this.sessionRepository.findDeviceById(command.deviceId);
+        const device = await this.sessionRepository.findSessionByDeviceId(command.deviceId);
 
         if (!device) {
             throw NotFoundDomainException.create('не найден девайс', 'sessionRepository');
@@ -31,6 +32,6 @@ export class DeleteSessionUseCase implements ICommandHandler<DeleteSessionComman
             throw ForbiddenDomainException.create('Access forbidden');
         }
         device.makeDeleted();
-        await this.sessionRepository.save(device);
+        // await this.sessionRepository.save(device);
     }
 }

@@ -25,19 +25,20 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
             // если пользователя не существует, то мы его по тихому регаем!
             const login = command.email.substring(0, command.email.indexOf('@'));
 
-            const user = this.userModel.buildInstance({
-                login,
-                email: command.email,
-                password: '',
-                ...emailConfirmationData(),
-            });
+            const user = await this.usersRepository.createUser(
+                {
+                    login,
+                    email: command.email,
+                    password: '',
+                    createdAt: new Date(),
+                },
+                emailConfirmationData(),
+            );
 
             await user.setPasswordAdmin('');
 
-            await this.usersRepository.save(user);
-
-            await this.passwordRepository.createCodeAndDateConfirmation(
-                user._id.toString(),
+            await this.passwordRepository.createPasswordRecovery(
+                user.id.toString(),
                 String(user.emailConfirmation!.confirmationCode),
                 user.emailConfirmation!.expirationDate,
             );
@@ -54,9 +55,9 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
                 minutes: 30,
             });
 
-            await this.usersRepository.updateUserToCodeAndDate(findUser.id, generateCode, newExpirationDate);
+            await this.usersRepository.updateUserToCodeAndDate(findUser.id, generateCode, newExpirationDate.toISOString());
 
-            await this.passwordRepository.createCodeAndDateConfirmation(findUser.id, generateCode, newExpirationDate);
+            await this.passwordRepository.createPasswordRecovery(findUser.id, generateCode, newExpirationDate);
 
             this.mailer.sendPasswordRecoveryMessage(command.email, findUser.emailConfirmation.confirmationCode).catch((err: unknown) => {
                 console.log(String(err));
