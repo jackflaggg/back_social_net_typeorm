@@ -2,12 +2,10 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { EmailService } from '../../../../notifications/application/mail.service';
 import { randomUUID } from 'node:crypto';
-import { UserEntity, UserModelType } from '../../../domain/user/user.entity';
-import { InjectModel } from '@nestjs/mongoose';
 import { add } from 'date-fns/add';
 import { emailConfirmationData } from '../../../../../core/utils/user/email-confirmation-data.admin';
-import { PasswordRecoveryDbRepository } from '../../../infrastructure/mongoose/password/password.recovery.repository';
-import { UserRepository } from '../../../infrastructure/mongoose/user/user.repository';
+import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
+import { PasswordRecoveryPgRepository } from '../../../infrastructure/postgres/password/password.pg.recovery.repository';
 
 export class PasswordRecoveryUserCommand {
     constructor(public readonly email: string) {}
@@ -16,9 +14,8 @@ export class PasswordRecoveryUserCommand {
 @CommandHandler(PasswordRecoveryUserCommand)
 export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordRecoveryUserCommand> {
     constructor(
-        @Inject() private readonly usersRepository: UserRepository,
-        @Inject() private readonly passwordRepository: PasswordRecoveryDbRepository,
-        @InjectModel(UserEntity.name) private readonly userModel: UserModelType,
+        @Inject() private readonly usersRepository: UserPgRepository,
+        @Inject() private readonly passwordRepository: PasswordRecoveryPgRepository,
         private readonly mailer: EmailService,
     ) {}
     async execute(command: PasswordRecoveryUserCommand) {

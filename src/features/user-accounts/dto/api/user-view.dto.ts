@@ -1,7 +1,7 @@
 import { UserDocument } from '../../domain/user/user.entity';
 
 export class UserViewDto {
-    id: string;
+    id: number | string;
     login: string;
     email: string;
     createdAt: Date;
@@ -10,7 +10,7 @@ export class UserViewDto {
         this.id = model.id.toString();
         this.login = model.login;
         this.email = model.email;
-        this.createdAt = model.createdat;
+        this.createdAt = model.createdAt;
     }
 
     static mapToView(user: any): UserViewDto {
@@ -21,7 +21,7 @@ export class UserViewDto {
         return {
             email: user.email,
             login: user.login,
-            userId: user._id.toString(),
+            userId: user.id.toString(),
         };
     }
 }

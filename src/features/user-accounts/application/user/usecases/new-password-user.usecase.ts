@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { BadRequestDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { PasswordRecoveryDbRepository } from '../../../infrastructure/mongoose/password/password.recovery.repository';
-import { UserRepository } from '../../../infrastructure/mongoose/user/user.repository';
+import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
+import { PasswordRecoveryPgRepository } from '../../../infrastructure/postgres/password/password.pg.recovery.repository';
 
 export class NewPasswordUserCommand {
     constructor(
@@ -14,8 +14,8 @@ export class NewPasswordUserCommand {
 @CommandHandler(NewPasswordUserCommand)
 export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCommand> {
     constructor(
-        @Inject() private readonly usersRepository: UserRepository,
-        @Inject() private readonly passwordRepository: PasswordRecoveryDbRepository,
+        @Inject() private readonly usersRepository: UserPgRepository,
+        @Inject() private readonly passwordRepository: PasswordRecoveryPgRepository,
     ) {}
     async execute(command: NewPasswordUserCommand) {
         const findCode = await this.passwordRepository.findRecoveryCodeUser(command.recoveryCode);
@@ -28,7 +28,7 @@ export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCo
             throw BadRequestDomainException.create('данный код был уже использован!', 'code');
         }
 
-        const user = await this.usersRepository.findUserByIdOrFail(findCode.userId);
+        const user = await this.usersRepository.findUserById(findCode.userId);
         user.setPasswordAdmin(command.newPassword);
         user.updateEmailConfirmation();
         await this.usersRepository.save(user);

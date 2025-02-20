@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { CreateSessionCommand } from '../../device/usecases/create-session.usecase';
 import { CoreConfig } from '../../../../../core/config/core.config';
-import { SessionRepository } from '../../../infrastructure/mongoose/sessions/session.repository';
+import { SessionsPgRepository } from '../../../infrastructure/postgres/sessions/sessions.pg.repository';
 
 export class RefreshTokenUserCommand {
     constructor(
@@ -19,7 +19,7 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
     constructor(
         private readonly jwtService: JwtService,
         private readonly commandBus: CommandBus,
-        private readonly sessionRepository: SessionRepository,
+        private readonly sessionRepository: SessionsPgRepository,
         private readonly coreConfig: CoreConfig,
     ) {}
     async execute(command: RefreshTokenUserCommand) {
@@ -27,12 +27,14 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
             throw UnauthorizedDomainException.create();
         }
         // таким образом я удаляю старую сессию при обновлении!
-        const session = await this.sessionRepository.findDeviceById(command.deviceId);
+
+        const session = await this.sessionRepository.findSessionByDeviceId(command.deviceId);
+
         if (!session) {
             throw UnauthorizedDomainException.create('возможно это удаленная сессия!', 'sessionRepository');
         }
-        session.makeDeleted();
-        await this.sessionRepository.save(session);
+
+        await this.sessionRepository.deleteSession(session.id);
 
         // генерация новых токенов
         const userId = command.userId;

@@ -11,13 +11,11 @@ import { LoginUserUseCase } from './application/user/usecases/login-user.usecase
 import { AuthService, UserLoggedInEventHandler } from './application/auth.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { CreateSessionUseCase } from './application/device/usecases/create-session.usecase';
-import { DeviceEntity, DeviceSchema } from './domain/device/device.entity';
 import { UniqueEmailStrategy, UniqueLoginStrategy } from './strategies/uniqueLoginStrategy';
 import { RegistrationUserUseCase } from './application/user/usecases/registration-user.usecase';
 import { EmailService } from '../notifications/application/mail.service';
 import { CommonCreateUserUseCase } from './application/user/usecases/common-create-user.usecase';
 import { RegistrationConfirmationUserUseCase } from './application/user/usecases/registration-confirmation-user.usecase';
-import { PasswordRecoveryEntity, PasswordRecoverySchema } from './domain/password-recovery/password-recovery.entity';
 import { PasswordRecoveryUserUseCase } from './application/user/usecases/password-recovery-user.usecase';
 import { AccessTokenStrategy } from './strategies/jwt.strategy';
 import { RegistrationEmailResendUserUseCase } from './application/user/usecases/registration-email-resend-user.usecase';
@@ -33,42 +31,39 @@ import { UpdateSessionUseCase } from './application/device/usecases/update-sessi
 import { CoreConfig } from '../../core/config/core.config';
 import { ConfigModule } from '@nestjs/config';
 import { EmailAdapter } from '../notifications/adapter/email.adapter';
-import { PasswordRecoveryDbRepository } from './infrastructure/mongoose/password/password.recovery.repository';
-import { SessionQueryRepository } from './infrastructure/mongoose/sessions/query/session.query.repository';
-import { UserQueryRepository } from './infrastructure/mongoose/user/query/user.query.repository';
-import { UserRepository } from './infrastructure/mongoose/user/user.repository';
-import { SessionRepository } from './infrastructure/mongoose/sessions/session.repository';
 import { UserPgRepository } from './infrastructure/postgres/user/user.pg.repository';
 import { BcryptService } from './application/bcrypt.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './domain/typeorm/user/user.entity';
-import { EmailConfirmation } from './domain/typeorm/user/email.confirmation.entity';
-import { RecoveryPassword } from './domain/typeorm/password-recovery/pass-rec.entity';
-import { SecurityDevice } from './domain/typeorm/device/device.entity';
 import { UserPgQueryRepository } from './infrastructure/postgres/user/query/user.pg.query.repository';
 import { SessionsPgRepository } from './infrastructure/postgres/sessions/sessions.pg.repository';
 import { SessionQueryPgRepository } from './infrastructure/postgres/sessions/query/sessions.pg.query.repository';
+import { PasswordRecoveryPgRepository } from './infrastructure/postgres/password/password.pg.recovery.repository';
 
 const useCases = [
     CreateSessionUseCase,
-    // ValidateUserUseCase,
+    ValidateUserUseCase,
     LoginUserUseCase,
     CreateUserUseCase,
     DeleteUserUseCase,
     RegistrationUserUseCase,
     CommonCreateUserUseCase,
-    // RegistrationConfirmationUserUseCase,
-    // PasswordRecoveryUserUseCase,
-    // RegistrationEmailResendUserUseCase,
-    // DeleteSessionUseCase,
-    // NewPasswordUserUseCase,
-    // RefreshTokenUserUseCase,
-    // LogoutUserUseCase,
-    // DeleteSessionsUseCase,
-    // UpdateSessionUseCase,
+    RegistrationConfirmationUserUseCase,
+    PasswordRecoveryUserUseCase,
+    RegistrationEmailResendUserUseCase,
+    DeleteSessionUseCase,
+    NewPasswordUserUseCase,
+    RefreshTokenUserUseCase,
+    LogoutUserUseCase,
+    DeleteSessionsUseCase,
+    UpdateSessionUseCase,
 ];
-// const repositoriesMongoose = [UserRepository, UserQueryRepository, SessionRepository, PasswordRecoveryDbRepository, SessionQueryRepository];
-const repositoriesPostgres = [UserPgRepository, UserPgQueryRepository, SessionsPgRepository, SessionQueryPgRepository];
+
+const repositoriesPostgres = [
+    UserPgRepository,
+    UserPgQueryRepository,
+    SessionsPgRepository,
+    SessionQueryPgRepository,
+    PasswordRecoveryPgRepository,
+];
 const strategies = [
     BasicStrategy,
     LocalStrategy,

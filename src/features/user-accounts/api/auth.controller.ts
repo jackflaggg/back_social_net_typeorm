@@ -79,7 +79,7 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     @Get('me')
     async me(@ExtractAnyUserFromRequest() payload: UserJwtPayloadDto) {
-        // return this.userQueryRepository.meUser(payload.userId);
+        return this.userQueryRepository.getMe(payload.userId);
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)

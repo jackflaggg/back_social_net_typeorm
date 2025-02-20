@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { GetUsersQueryParams } from '../../../../dto/api/get-users-query-params.input-dto';
 import { PaginatedBlogViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
@@ -12,18 +12,22 @@ export class UserPgQueryRepository {
 
     async getAllUsers(queryData: GetUsersQueryParams) {
         const { sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm } = getUsersQuery(queryData);
+
+        const updatedSortBy = sortBy === 'createdAt' ? 'createdat' : sortBy.toLowerCase();
+
         const offset = (pageNumber - 1) * pageSize;
+
         const queryUsers = `
-            SELECT "id", "login", "email", "createdat" FROM "users" WHERE "deletedat" IS NULL AND ("login" ilike '%' || $1 || '%' OR "email" ilike '%' || $2 || '%')
-            ORDER BY "${sortBy}" ${sortDirection.toUpperCase()}
+            SELECT "id", "login", "email", "createdat" AS "createdAt" FROM "users" WHERE "deletedat" IS NULL AND ("login" ILIKE '%' || $1 || '%' OR "email" ILIKE '%' || $2 || '%')
+            ORDER BY ("${updatedSortBy}") ${sortDirection.toUpperCase()}
             LIMIT $3
             OFFSET $4
             `;
 
-        const resultUsers = await this.dataSource.query(queryUsers, [searchLoginTerm, searchEmailTerm, pageSize, offset]);
+        const resultUsers = await this.dataSource.query(queryUsers, [searchLoginTerm, searchEmailTerm, Number(pageSize), Number(offset)]);
 
         const queryCount = `
-            SELECT COUNT(*) as "totalCount" FROM "users" WHERE "deletedat" IS NULL AND ("login" ilike '%' || $1 || '%' OR "email" ilike '%' || $2 || '%')
+            SELECT COUNT(*) AS "totalCount" FROM "users" WHERE "deletedat" IS NULL AND ("login" ILIKE '%' || $1 || '%' OR "email" ILIKE '%' || $2 || '%')
         `;
         const resultTotal = await this.dataSource.query(queryCount, [searchLoginTerm, searchEmailTerm]);
 
@@ -39,12 +43,23 @@ export class UserPgQueryRepository {
 
     async getUser(userId: string) {
         const queryUser = `
-        SELECT "id", "login", "email", "createdat" FROM "users" WHERE "deletedat" IS NULL AND "id" = $1
+        SELECT "id", "login", "email", "createdat" as "createdAt" FROM "users" WHERE "deletedat" IS NULL AND "id" = $1
         `;
         const result = await this.dataSource.query(queryUser, [userId]);
         if (!result || result.length === 0) {
             return void 0;
         }
-        return result[0];
+        return UserViewDto.mapToView(result[0]);
+    }
+
+    async getMe(userId: string) {
+        const queryUser = `
+        SELECT "id" as "userId", "login", "email" FROM "users" WHERE "deletedat" IS NULL AND "id" = $1
+        `;
+        const result = await this.dataSource.query(queryUser, [userId]);
+        if (!result || result.length === 0) {
+            return void 0;
+        }
+        return UserViewDto.meUser(result[0]);
     }
 }

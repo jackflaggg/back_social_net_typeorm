@@ -4,7 +4,7 @@ import { BadRequestDomainException } from '../../../../../core/exceptions/incuba
 import { randomUUID } from 'node:crypto';
 import { add } from 'date-fns/add';
 import { EmailService } from '../../../../notifications/application/mail.service';
-import { UserRepository } from '../../../infrastructure/mongoose/user/user.repository';
+import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
 
 export class RegistrationEmailResendUserCommand {
     constructor(public readonly email: string) {}
@@ -13,7 +13,7 @@ export class RegistrationEmailResendUserCommand {
 @CommandHandler(RegistrationEmailResendUserCommand)
 export class RegistrationEmailResendUserUseCase implements ICommandHandler<RegistrationEmailResendUserCommand> {
     constructor(
-        @Inject() private readonly usersRepository: UserRepository,
+        @Inject() private readonly usersRepository: UserPgRepository,
         private readonly mailer: EmailService,
     ) {}
     async execute(command: RegistrationEmailResendUserCommand) {
@@ -23,7 +23,7 @@ export class RegistrationEmailResendUserUseCase implements ICommandHandler<Regis
             throw BadRequestDomainException.create('юзера не существует', 'email');
         }
 
-        if (user.emailConfirmation.isConfirmed) {
+        if (user.isConfirmed) {
             throw BadRequestDomainException.create('аккаунт уже был активирован', 'email');
         }
         const generateCode = randomUUID();
@@ -31,9 +31,9 @@ export class RegistrationEmailResendUserUseCase implements ICommandHandler<Regis
         const newExpirationDate = add(new Date(), {
             hours: 1,
             minutes: 30,
-        });
+        }).toISOString();
 
-        await this.usersRepository.updateUserToCodeAndDate(user._id.toString(), generateCode, newExpirationDate);
+        await this.usersRepository.updateUserToCodeAndDate(user.id, generateCode, newExpirationDate);
 
         this.mailer.sendEmailRecoveryMessage(user.email, generateCode).catch(async (err: unknown) => {
             console.log(String(err));

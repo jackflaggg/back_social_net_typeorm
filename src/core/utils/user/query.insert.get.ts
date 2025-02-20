@@ -23,6 +23,6 @@ export const getUsersQuery = (queryUser: QueryUsers): QueryUsersOutputInterface 
     sortDirection: queryUser.sortDirection ?? SortDirection.Desc,
     pageNumber: queryUser.pageNumber ?? 1,
     pageSize: queryUser.pageSize ?? 10,
-    searchLoginTerm: queryUser.searchLoginTerm ?? null,
-    searchEmailTerm: queryUser.searchEmailTerm ?? null,
+    searchLoginTerm: queryUser.searchLoginTerm ?? '',
+    searchEmailTerm: queryUser.searchEmailTerm ?? '',
 });

@@ -9,8 +9,6 @@ import { CustomLoggerModule } from './features/logger/logger.module';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { UsersModule } from './features/user-accounts/user-accounts.module';
 import { TestingModule } from './features/testing/testing.module';
-import { UserPgRepository } from './features/user-accounts/infrastructure/postgres/user/user.pg.repository';
-import { DataSource } from 'typeorm';
 
 @Module({
     imports: [

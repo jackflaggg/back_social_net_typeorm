@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserJwtPayloadDto } from '../../../strategies/refresh.strategy';
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { SessionRepository } from '../../../infrastructure/mongoose/sessions/session.repository';
+import { SessionsPgRepository } from '../../../infrastructure/postgres/sessions/sessions.pg.repository';
 
 export class UpdateSessionCommand {
     constructor(public readonly dto: UserJwtPayloadDto) {}
@@ -9,13 +9,12 @@ export class UpdateSessionCommand {
 
 @CommandHandler(UpdateSessionCommand)
 export class UpdateSessionUseCase implements ICommandHandler<UpdateSessionCommand> {
-    constructor(private readonly sessionRepository: SessionRepository) {}
+    constructor(private readonly sessionRepository: SessionsPgRepository) {}
     async execute(command: UpdateSessionCommand) {
-        const session = await this.sessionRepository.findDeviceById(command.dto.deviceId);
+        const session = await this.sessionRepository.findSessionByDeviceId(command.dto.deviceId);
         if (!session) {
             throw NotFoundDomainException.create();
         }
-        session.updateSession(command.dto.iat, command.dto.deviceId);
-        await this.sessionRepository.save(session);
+        await this.sessionRepository.updateSession(new Date(command.dto.iat * 1000).toISOString(), command.dto.deviceId);
     }
 }

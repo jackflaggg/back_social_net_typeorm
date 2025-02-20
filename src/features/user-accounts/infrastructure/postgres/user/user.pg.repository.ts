@@ -27,7 +27,7 @@ export class UserPgRepository {
     }
     async findUserByLoginOrEmail(loginOrEmail: string) {
         const query = `
-            SELECT "id", "passwordhash" AS "password" FROM "users" WHERE "deletedat" IS NULL AND ("login" = $1 OR "email" = $1);
+            SELECT u."id", u."email", u."passwordhash" AS "password", em."isconfirmed" AS "isConfirmed" FROM "users" AS "u" JOIN "email_confirmation" AS "em" ON u.id = em.userid WHERE u."deletedat" IS NULL AND (u."login" = $1 OR u."email" = $1);
         `;
         const result = await this.dataSource.query(query, [loginOrEmail]);
         if (!result || result.length === 0) {
@@ -92,7 +92,38 @@ export class UserPgRepository {
     }
     deleteAll() {
         const tables = ['email_confirmation', 'recovery_password', 'security_device', 'users'];
-        tables.map(table => this.dataSource.query(`ALTER SEQUENCE ${table}_id_seq RESTART WITH 1`));
-        tables.map(table => this.dataSource.query(`DELETE FROM ${table}`));
+        //tables.map(table => this.dataSource.query(`ALTER SEQUENCE ${table}_id_seq RESTART WITH 1`));
+        this.dataSource.query(`TRUNCATE TABLE users RESTART IDENTITY cascade`);
+    }
+    async updateUserToCodeAndDate(userId: string, generateCode: string, newExpirationDate: string) {
+        const query = `
+            UPDATE "email_confirmation"
+            SET "confirmationcode" = $1,
+                "expirationdate" = $2,
+                "isconfirmed" = FALSE
+            WHERE "userid" = $3`;
+        return await this.dataSource.query(query, [generateCode, newExpirationDate, userId]);
+    }
+    async findUserCode(code: string) {
+        const query = `
+        SELECT u."id" AS "userId", em."isconfirmed" AS "isConfirmed", em.expirationdate AS "expirationDate", em.confirmationcode AS "confirmationCode" 
+        FROM "users" AS "u" 
+            JOIN "email_confirmation" AS "em" 
+                ON u.id = em.userid 
+            WHERE confirmationcode = $1
+        `;
+        const result = await this.dataSource.query(query, [code]);
+        if (!result || result.length === 0) {
+            return void 0;
+        }
+        return result[0];
+    }
+    async updateUserToEmailConf(userId: string) {
+        const query = `
+            UPDATE "email_confirmation"
+            SET "confirmationcode" = $1,
+                "isconfirmed" = TRUE
+            WHERE "userid" = $2`;
+        return await this.dataSource.query(query, ['+', userId]);
     }
 }

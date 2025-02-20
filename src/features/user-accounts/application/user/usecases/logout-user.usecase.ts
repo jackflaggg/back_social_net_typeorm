@@ -6,7 +6,7 @@ import {
     UnauthorizedDomainException,
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { UserJwtPayloadDto } from '../../../strategies/refresh.strategy';
-import { SessionRepository } from '../../../infrastructure/mongoose/sessions/session.repository';
+import { SessionsPgRepository } from '../../../infrastructure/postgres/sessions/sessions.pg.repository';
 
 export class LogoutUserCommand {
     constructor(public readonly dtoUser: UserJwtPayloadDto) {}
@@ -14,7 +14,7 @@ export class LogoutUserCommand {
 
 @CommandHandler(LogoutUserCommand)
 export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
-    constructor(@Inject() private readonly sessionRepository: SessionRepository) {}
+    constructor(@Inject() private readonly sessionRepository: SessionsPgRepository) {}
 
     async execute(command: LogoutUserCommand) {
         if (!command.dtoUser) {
@@ -24,7 +24,7 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
         if (!command.dtoUser.deviceId) {
             throw NotFoundDomainException.create('нет девайса', 'deviceId');
         }
-        const currentDevice = await this.sessionRepository.findDeviceById(command.dtoUser.deviceId);
+        const currentDevice = await this.sessionRepository.findSessionByDeviceId(command.dtoUser.deviceId);
 
         if (!currentDevice) {
             throw NotFoundDomainException.create('Device not found');
@@ -34,7 +34,7 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
         if (!isOwner) {
             throw ForbiddenDomainException.create('Access forbidden');
         }
-        currentDevice.makeDeleted();
-        await this.sessionRepository.save(currentDevice);
+
+        await this.sessionRepository.deleteSession(currentDevice.deviceId);
     }
 }
