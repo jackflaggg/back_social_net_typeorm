@@ -17,11 +17,11 @@ export class UserViewDto {
         return new UserViewDto(user);
     }
 
-    static meUser(user: UserDocument) {
+    static meUser(user: { email: string; login: string; userId: string }) {
         return {
             email: user.email,
             login: user.login,
-            userId: user.id.toString(),
+            userId: String(user.userId),
         };
     }
 }

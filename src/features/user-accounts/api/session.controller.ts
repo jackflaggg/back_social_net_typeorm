@@ -6,6 +6,7 @@ import { ExtractAnyUserFromRequest } from '../../../core/decorators/param/valida
 import { DeleteSessionsCommand } from '../application/device/usecases/delete-sessions.usecase';
 import { Controller, Delete, Get, HttpCode, HttpStatus, Param, UseGuards } from '@nestjs/common';
 import { SessionQueryPgRepository } from '../infrastructure/postgres/sessions/query/sessions.pg.query.repository';
+import { ValidateUUIDPipe } from '../../../core/pipes/validation.input.uuid';
 
 @Controller('security')
 export class SessionController {
@@ -23,7 +24,7 @@ export class SessionController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(RefreshAuthGuard)
     @Delete('devices/:deviceId')
-    async deleteSession(@Param('deviceId') deviceId: string, @ExtractAnyUserFromRequest() dto: UserJwtPayloadDto) {
+    async deleteSession(@Param('deviceId', ValidateUUIDPipe) deviceId: string, @ExtractAnyUserFromRequest() dto: UserJwtPayloadDto) {
         return this.commandBus.execute(new DeleteSessionCommand(dto.userId, deviceId));
     }
 

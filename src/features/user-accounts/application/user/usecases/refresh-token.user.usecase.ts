@@ -27,14 +27,14 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
             throw UnauthorizedDomainException.create();
         }
         // таким образом я удаляю старую сессию при обновлении!
-
         const session = await this.sessionRepository.findSessionByDeviceId(command.deviceId);
 
         if (!session) {
             throw UnauthorizedDomainException.create('возможно это удаленная сессия!', 'sessionRepository');
         }
 
-        await this.sessionRepository.deleteSession(session.id);
+        // TODO: Верно ли удалять по идентификатору записи или нужно по девайсАйди
+        await this.sessionRepository.removeOldSession(session.id);
 
         // генерация новых токенов
         const userId = command.userId;
@@ -49,8 +49,8 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
             { expiresIn: this.coreConfig.accessTokenExpirationTime, secret: this.coreConfig.accessTokenSecret },
         );
 
-        const decodedData = this.jwtService.decode(refreshToken);
-        const issuedAtRefreshToken = new Date(Number(decodedData.iat) * 1000);
+        const decodedRefreshToken = this.jwtService.decode(refreshToken);
+        const issuedAtRefreshToken = new Date(Number(decodedRefreshToken.iat) * 1000);
 
         await this.commandBus.execute(new CreateSessionCommand(command.ip, command.userAgent, deviceId, userId, issuedAtRefreshToken));
         return {

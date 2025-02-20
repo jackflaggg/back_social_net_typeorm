@@ -17,24 +17,21 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
     constructor(@Inject() private readonly sessionRepository: SessionsPgRepository) {}
 
     async execute(command: LogoutUserCommand) {
-        if (!command.dtoUser) {
+        if (!command.dtoUser || !command.dtoUser.deviceId) {
             throw UnauthorizedDomainException.create();
         }
 
-        if (!command.dtoUser.deviceId) {
-            throw NotFoundDomainException.create('нет девайса', 'deviceId');
-        }
         const currentDevice = await this.sessionRepository.findSessionByDeviceId(command.dtoUser.deviceId);
 
         if (!currentDevice) {
-            throw NotFoundDomainException.create('Device not found');
+            throw NotFoundDomainException.create('девайс не найден!');
         }
         const isOwner = currentDevice.userId === command.dtoUser.userId;
 
         if (!isOwner) {
-            throw ForbiddenDomainException.create('Access forbidden');
+            throw ForbiddenDomainException.create('этот девайс не ваш!');
         }
 
-        await this.sessionRepository.deleteSession(currentDevice.deviceId);
+        await this.sessionRepository.removeOldSession(currentDevice.id);
     }
 }

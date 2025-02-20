@@ -4,7 +4,6 @@ import {
     NotFoundDomainException,
     UnauthorizedDomainException,
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { SessionRepository } from '../../../infrastructure/mongoose/sessions/session.repository';
 import { SessionsPgRepository } from '../../../infrastructure/postgres/sessions/sessions.pg.repository';
 
 export class DeleteSessionCommand {
@@ -31,7 +30,6 @@ export class DeleteSessionUseCase implements ICommandHandler<DeleteSessionComman
         if (!isOwner) {
             throw ForbiddenDomainException.create('Access forbidden');
         }
-        device.makeDeleted();
-        // await this.sessionRepository.save(device);
+        await this.sessionRepository.removeOldSession(String(device.id));
     }
 }

@@ -16,7 +16,7 @@ export class SessionsPgRepository {
 
     async findSessionByDeviceId(deviceId: string) {
         const query = `
-            SELECT "id", "deviceid" as "deviceId" FROM "security_device"  
+            SELECT "id", "deviceid" as "deviceId", "issuedat" as "issuedAt", "userid" AS "userId" FROM "security_device"  
             WHERE "deviceid" = $1 AND "deletedat" IS NULL
         `;
         const result = await this.dataSource.query(query, [deviceId]);
@@ -26,12 +26,13 @@ export class SessionsPgRepository {
         return result[0];
     }
 
-    async deleteSession(deviceId: string) {
+    async removeOldSession(idOnSession: string) {
+        const deletedAt = new Date().toISOString();
         const query = `
-        SELECT * FROM "security_device"
-        WHERE id = $1
-        `;
-        return await this.dataSource.query(query, [deviceId]);
+            UPDATE "security_device"
+            SET "deletedat" = $1
+            WHERE "id" = $2`;
+        return await this.dataSource.query(query, [deletedAt, idOnSession]);
     }
 
     async deleteAllSessions(userId: string, deviceId: string) {

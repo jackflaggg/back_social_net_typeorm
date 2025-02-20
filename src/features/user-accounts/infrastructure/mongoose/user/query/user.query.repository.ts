@@ -23,7 +23,7 @@ export class UserQueryRepository {
         if (!result) {
             throw NotFoundDomainException.create('User not found', 'user');
         }
-        return UserViewDto.meUser(result);
+        return result;
     }
     async getAllUsers(queryData: GetUsersQueryParams): Promise<PaginatedViewDto<UserViewDto[]>> {
         const { sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm } = getUsersQuery(queryData);

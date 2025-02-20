@@ -3,8 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { UnauthorizedDomainException } from '../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { CoreConfig } from '../../../core/config/core.config';
-import { SessionRepository } from '../infrastructure/mongoose/sessions/session.repository';
 import { UserPgRepository } from '../infrastructure/postgres/user/user.pg.repository';
+import { SessionsPgRepository } from '../infrastructure/postgres/sessions/sessions.pg.repository';
 
 export class UserJwtPayloadDto {
     userId: string;
@@ -17,7 +17,7 @@ export class UserJwtPayloadDto {
 export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
     constructor(
         @Inject() private readonly usersRepository: UserPgRepository,
-        // @Inject() private readonly securityDevicesRepository: SessionRepository,
+        @Inject() private readonly securityDevicesRepository: SessionsPgRepository,
         private readonly coreConfig: CoreConfig,
     ) {
         super({
@@ -39,15 +39,19 @@ export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, '
             throw UnauthorizedDomainException.create();
         }
 
-        // const device = await this.securityDevicesRepository.findDeviceById(payload.deviceId);
-        //
-        // if (!device) {
-        //     throw UnauthorizedDomainException.create();
-        // }
-        //
-        // if (device.issuedAt.toISOString() !== new Date(+payload.iat * 1000).toISOString()) {
-        //     throw UnauthorizedDomainException.create();
-        // }
+        const device = await this.securityDevicesRepository.findSessionByDeviceId(payload.deviceId);
+
+        if (!device) {
+            throw UnauthorizedDomainException.create();
+        }
+
+        const unixTimestamp = Math.floor(device.issuedAt.getTime() / 1000);
+
+        console.log(device.issuedAt.getTime());
+
+        if (unixTimestamp !== payload.iat) {
+            throw UnauthorizedDomainException.create();
+        }
         return payload;
     }
 }
