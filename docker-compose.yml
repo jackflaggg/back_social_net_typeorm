@@ -4,7 +4,7 @@ services:
     image: postgres:13
     container_name: postgres_db
     ports:
-      - '5432:5432'
+      - '5433:5432'
       # 1) куда будет развернуто внутри докера! в постгресе тоже!
       # 2) порт, по которому будет отзываться!
     environment:

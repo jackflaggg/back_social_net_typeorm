@@ -6,7 +6,7 @@ import { DataSource } from 'typeorm';
 export class SessionsPgRepository {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
     async createSession(ip: string, userAgent: string, deviceId: string, userId: string, issuedAtRefreshToken: Date) {
-        const query = `INSERT INTO "security_device" ("ip", "devicename", "userid", "deviceid", "issuedat") VALUES ($1, $2, $3, $4, $5) RETURNING *`;
+        const query = `INSERT INTO "security_device" ("ip", "device_name", "user_id", "device_id", "issued_at") VALUES ($1, $2, $3, $4, $5) RETURNING *`;
         const result = await this.dataSource.query(query, [ip, userAgent, +userId, deviceId, issuedAtRefreshToken.toISOString()]);
         if (!result || result.length === 0) {
             return void 0;
@@ -16,8 +16,8 @@ export class SessionsPgRepository {
 
     async findSessionByDeviceId(deviceId: string) {
         const query = `
-            SELECT "id", "deviceid" as "deviceId", "issuedat" as "issuedAt", "userid" AS "userId" FROM "security_device"  
-            WHERE "deviceid" = $1 AND "deletedat" IS NULL
+            SELECT "id", "device_id" as "deviceId", "issued_at" as "issuedAt", "user_id" AS "userId" FROM "security_device"  
+            WHERE "device_id" = $1 AND "deleted_at" IS NULL
         `;
         const result = await this.dataSource.query(query, [deviceId]);
         if (!result || result.length === 0) {
@@ -30,7 +30,7 @@ export class SessionsPgRepository {
         const deletedAt = new Date().toISOString();
         const query = `
             UPDATE "security_device"
-            SET "deletedat" = $1
+            SET "deleted_at" = $1
             WHERE "id" = $2`;
         return await this.dataSource.query(query, [deletedAt, idOnSession]);
     }
@@ -39,8 +39,8 @@ export class SessionsPgRepository {
         const issuedAt = new Date().toISOString();
         const query = `
             UPDATE "security_device"
-            SET "deletedat" = $1
-            WHERE "deviceid" <> $2 AND "userid" = $3;`;
+            SET "deleted_at" = $1
+            WHERE "device_id" <> $2 AND "user_id" = $3;`;
         return await this.dataSource.query(query, [issuedAt, deviceId, userId]);
     }
 

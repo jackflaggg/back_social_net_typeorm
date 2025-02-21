@@ -7,8 +7,8 @@ export class PasswordRecoveryPgRepository {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
     async findCode(code: string) {
         const query = `
-            SELECT "userid" AS "userId" FROM "recovery_password"
-            WHERE "recoverycode" = $1
+            SELECT "user_id" AS "userId" FROM "recovery_password"
+            WHERE "recovery_code" = $1
         `;
         const result = await this.dataSource.query(query, [code]);
         if (!result || result.length === 0) {
@@ -25,7 +25,7 @@ export class PasswordRecoveryPgRepository {
     }
     async createPasswordRecovery(userId: string, code: string, expirationDate: Date) {
         const query = `
-            INSERT INTO "recovery_password"("userid", recoverycode, recoveryexpirationdate) VALUES($1, $2, $3)
+            INSERT INTO "recovery_password"("user_id", recovery_code, recovery_expiration_date) VALUES($1, $2, $3)
         `;
         const result = await this.dataSource.query(query, [userId, code, expirationDate.toISOString()]);
         if (!result || result.length === 0) {

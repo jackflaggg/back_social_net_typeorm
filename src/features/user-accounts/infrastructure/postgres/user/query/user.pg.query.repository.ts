@@ -18,7 +18,7 @@ export class UserPgQueryRepository {
         const offset = (pageNumber - 1) * pageSize;
 
         const queryUsers = `
-            SELECT "id", "login", "email", "createdat" AS "createdAt" FROM "users" WHERE "deletedat" IS NULL AND ("login" ILIKE '%' || $1 || '%' OR "email" ILIKE '%' || $2 || '%')
+            SELECT "id", "login", "email", "created_at" AS "createdAt" FROM "users" WHERE "deleted_at" IS NULL AND ("login" ILIKE '%' || $1 || '%' OR "email" ILIKE '%' || $2 || '%')
             ORDER BY ("${updatedSortBy}") ${sortDirection.toUpperCase()}
             LIMIT $3
             OFFSET $4
@@ -27,7 +27,7 @@ export class UserPgQueryRepository {
         const resultUsers = await this.dataSource.query(queryUsers, [searchLoginTerm, searchEmailTerm, Number(pageSize), Number(offset)]);
 
         const queryCount = `
-            SELECT COUNT(*) AS "totalCount" FROM "users" WHERE "deletedat" IS NULL AND ("login" ILIKE '%' || $1 || '%' OR "email" ILIKE '%' || $2 || '%')
+            SELECT COUNT(*) AS "totalCount" FROM "users" WHERE "deleted_at" IS NULL AND ("login" ILIKE '%' || $1 || '%' OR "email" ILIKE '%' || $2 || '%')
         `;
         const resultTotal = await this.dataSource.query(queryCount, [searchLoginTerm, searchEmailTerm]);
 
@@ -43,7 +43,7 @@ export class UserPgQueryRepository {
 
     async getUser(userId: string) {
         const queryUser = `
-        SELECT "id", "login", "email", "createdat" as "createdAt" FROM "users" WHERE "deletedat" IS NULL AND "id" = $1
+        SELECT "id", "login", "email", "created_at" as "createdAt" FROM "users" WHERE "deleted_at" IS NULL AND "id" = $1
         `;
         const result = await this.dataSource.query(queryUser, [userId]);
         if (!result || result.length === 0) {
@@ -54,7 +54,7 @@ export class UserPgQueryRepository {
 
     async getMe(userId: string) {
         const queryUser = `
-        SELECT "id" as "userId", "login", "email" FROM "users" WHERE "deletedat" IS NULL AND "id" = $1
+        SELECT "id" as "userId", "login", "email" FROM "users" WHERE "deleted_at" IS NULL AND "id" = $1
         `;
         const result = await this.dataSource.query(queryUser, [userId]);
         if (!result || result.length === 0) {
