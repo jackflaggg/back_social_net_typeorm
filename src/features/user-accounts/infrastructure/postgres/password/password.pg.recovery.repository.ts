@@ -7,7 +7,7 @@ export class PasswordRecoveryPgRepository {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
     async findCode(code: string) {
         const query = `
-            SELECT "user_id" AS "userId" FROM "recovery_password"
+            SELECT "id", "user_id" AS "userId", "used" FROM "recovery_password"
             WHERE "recovery_code" = $1
         `;
         const result = await this.dataSource.query(query, [code]);

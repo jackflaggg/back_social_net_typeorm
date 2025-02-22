@@ -6,6 +6,7 @@ import { add } from 'date-fns/add';
 import { emailConfirmationData } from '../../../../../core/utils/user/email-confirmation-data.admin';
 import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
 import { PasswordRecoveryPgRepository } from '../../../infrastructure/postgres/password/password.pg.recovery.repository';
+import { BcryptService } from '../../bcrypt.service';
 
 export class PasswordRecoveryUserCommand {
     constructor(public readonly email: string) {}
@@ -16,6 +17,7 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
     constructor(
         @Inject() private readonly usersRepository: UserPgRepository,
         @Inject() private readonly passwordRepository: PasswordRecoveryPgRepository,
+        private readonly bcryptService: BcryptService,
         private readonly mailer: EmailService,
     ) {}
     async execute(command: PasswordRecoveryUserCommand) {
@@ -25,23 +27,23 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
             // если пользователя не существует, то мы его по тихому регаем!
             const login = command.email.substring(0, command.email.indexOf('@'));
 
+            const newPasswordHash = await this.bcryptService.hashPassword('');
+
             const user = await this.usersRepository.createUser(
                 {
                     login,
                     email: command.email,
-                    password: '',
+                    password: newPasswordHash,
                     createdAt: new Date(),
                 },
                 emailConfirmationData(),
             );
 
-            await user.setPasswordAdmin('');
+            const confirmationCode = randomUUID();
 
-            await this.passwordRepository.createPasswordRecovery(
-                user.id.toString(),
-                String(user.emailConfirmation!.confirmationCode),
-                user.emailConfirmation!.expirationDate,
-            );
+            const codeExpirationDate = add(new Date(), { hours: 1, minutes: 30 });
+
+            await this.passwordRepository.createPasswordRecovery(user.id, confirmationCode, codeExpirationDate);
 
             this.mailer.sendPasswordRecoveryMessage(command.email, user.emailConfirmation.confirmationCode).catch((err: unknown) => {
                 console.log(String(err));

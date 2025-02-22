@@ -3,6 +3,7 @@ import { Inject } from '@nestjs/common';
 import { BadRequestDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
 import { PasswordRecoveryPgRepository } from '../../../infrastructure/postgres/password/password.pg.recovery.repository';
+import { BcryptService } from '../../bcrypt.service';
 
 export class NewPasswordUserCommand {
     constructor(
@@ -16,6 +17,7 @@ export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCo
     constructor(
         @Inject() private readonly usersRepository: UserPgRepository,
         @Inject() private readonly passwordRepository: PasswordRecoveryPgRepository,
+        private readonly bcryptService: BcryptService,
     ) {}
     async execute(command: NewPasswordUserCommand) {
         const findCode = await this.passwordRepository.findCode(command.recoveryCode);
@@ -28,10 +30,11 @@ export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCo
             throw BadRequestDomainException.create('данный код был уже использован!', 'code');
         }
 
-        const user = await this.usersRepository.findUserById(findCode.userId);
-        user.setPasswordAdmin(command.newPassword);
-        user.updateEmailConfirmation();
+        const user = await this.usersRepository.getPass(findCode.userId);
 
-        await this.passwordRepository.updateStatus(findCode._id.toString());
+        const newPasswordHash = await this.bcryptService.hashPassword(user.password);
+        await this.usersRepository.updatePassword(newPasswordHash, user.id);
+
+        await this.passwordRepository.updateStatus(findCode.id);
     }
 }

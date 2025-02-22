@@ -45,9 +45,25 @@ export class UserPgRepository {
         `;
         const result = await this.dataSource.query(query, [userId]);
         if (!result || result.length === 0) {
-            throw NotFoundDomainException.create('блог не найден', 'blogId');
+            throw NotFoundDomainException.create('юзер не найден', 'userId');
         }
         return result[0];
+    }
+    async getPass(userId: string) {
+        const query = `
+            SELECT u."id", u."password_hash" AS "password" FROM "users" AS "u" 
+        `;
+        const result = await this.dataSource.query(query, [userId]);
+        if (!result || result.length === 0) {
+            throw NotFoundDomainException.create('юзер не найден', 'userId');
+        }
+        return result[0];
+    }
+
+    async updatePassword(newPassword: string, userId: string) {
+        const query = `
+            UPDATE "users" SET "password_hash" = $1 WHERE "id" = $2`;
+        return await this.dataSource.query(query, [newPassword, userId]);
     }
 
     async createUser(newUser: UserCreateDtoRepo, emailConfirm: emailConfirmAdminInterface) {
