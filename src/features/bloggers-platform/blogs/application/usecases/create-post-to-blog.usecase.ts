@@ -1,8 +1,4 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BlogsRepository } from '../../infrastructure/blogs.repository';
-import { InjectModel } from '@nestjs/mongoose';
-import { PostsRepository } from '../../../posts/infrastructure/post.repository';
-import { PostEntity, PostModelType } from '../../../posts/domain/post.entity';
 import { PostToBlogCreateDtoApi } from '../../dto/api/blog.to.post.create.dto';
 import { BlogsPgRepository } from '../../infrastructure/postgres/blogs.pg.repository';
 import { PostsPgRepository } from '../../../posts/infrastructure/postgres/posts.pg.repository';
@@ -23,6 +19,7 @@ export class CreatePostToBlogUseCase implements ICommandHandler<CreatePostToBlog
     async execute(command: CreatePostToBlogCommand) {
         const blog = await this.blogRepository.findBlogById(command.blogId);
 
-        return await this.postRepository.createPost(command.payload, blog.id, blog.name);
+        console.log(typeof blog);
+        return await this.postRepository.createPost(command.payload, blog);
     }
 }

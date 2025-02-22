@@ -59,7 +59,8 @@ export class BlogsSaController {
     @Post(':blogId/posts')
     async createPostToBlog(@Param('blogId', ValidateSerialPipe) blogId: string, @Body() dto: PostToBlogCreateDtoApi) {
         const postId = await this.commandBus.execute(new CreatePostToBlogCommand(blogId, dto));
-        return this.postsQueryRepository.getPost(postId);
+        console.log(postId);
+        return this.postsQueryRepository.getPost(postId[0].id);
     }
 
     @UseGuards(JwtOptionalAuthGuard)

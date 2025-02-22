@@ -16,17 +16,17 @@ export class PostViewDto {
         newestLikes: { addedAt: Date; userId: string; login: string }[];
     };
     constructor(model: PostDocument) {
-        this.id = model._id.toString();
+        this.id = String(model.id);
         this.title = model.title;
         this.shortDescription = model.shortDescription;
         this.content = model.content;
-        this.blogId = model.blogId;
+        this.blogId = String(model.blogId);
         this.blogName = model.blogName;
         this.createdAt = model.createdAt;
         this.extendedLikesInfo = {
-            likesCount: model.extendedLikesInfo.likesCount || 0,
-            dislikesCount: model.extendedLikesInfo.dislikesCount || 0,
-            myStatus: model.extendedLikesInfo.myStatus || StatusLike.enum['None'],
+            likesCount: 0,
+            dislikesCount: 0,
+            myStatus: StatusLike.enum['None'],
             newestLikes: (model.extendedLikesInfo?.newestLikes
                 ?.map(like => ({
                     addedAt: like?.addedAt,

@@ -20,39 +20,39 @@ export class CommentController {
         private readonly commentsQueryRepository: CommentsPgQueryRepository,
         private readonly commandBus: CommandBus,
     ) {}
-    @UseGuards(JwtOptionalAuthGuard)
-    @Get('/:commentId')
-    async getComment(@Param('commentId', ValidateObjectIdPipe) id: string, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto) {
-        const userId = dtoUser ? dtoUser.userId : null;
-        return this.commentsQueryRepository.getComment(id, userId);
-    }
-
-    @HttpCode(HttpStatus.NO_CONTENT)
-    @UseGuards(JwtAuthGuard)
-    @Put('/:commentId')
-    async updateComment(
-        @Param('commentId', ValidateObjectIdPipe) id: string,
-        @Body() dto: UpdateCommentApiDto,
-        @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
-    ) {
-        return this.commandBus.execute(new UpdateContentCommentCommand(id, dto.content, dtoUser.userId));
-    }
-
-    @HttpCode(HttpStatus.NO_CONTENT)
-    @UseGuards(JwtAuthGuard)
-    @Put('/:commentId/like-status')
-    async likeComment(
-        @Param('commentId', ValidateObjectIdPipe) id: string,
-        @Body() dto: UpdateCommentCommandApiDto,
-        @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
-    ) {
-        return this.commandBus.execute(new UpdateStatusCommentCommand(id, dto.likeStatus, dtoUser.userId));
-    }
-
-    @HttpCode(HttpStatus.NO_CONTENT)
-    @UseGuards(JwtAuthGuard)
-    @Delete('/:commentId')
-    async deleteComment(@Param('commentId', ValidateObjectIdPipe) id: string, @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto) {
-        return this.commandBus.execute(new DeleteCommentCommand(id, dtoUser.userId));
-    }
+    // @UseGuards(JwtOptionalAuthGuard)
+    // @Get('/:commentId')
+    // async getComment(@Param('commentId', ValidateObjectIdPipe) id: string, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto) {
+    //     const userId = dtoUser ? dtoUser.userId : null;
+    //     return this.commentsQueryRepository.getComment(id, userId);
+    // }
+    //
+    // @HttpCode(HttpStatus.NO_CONTENT)
+    // @UseGuards(JwtAuthGuard)
+    // @Put('/:commentId')
+    // async updateComment(
+    //     @Param('commentId', ValidateObjectIdPipe) id: string,
+    //     @Body() dto: UpdateCommentApiDto,
+    //     @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
+    // ) {
+    //     return this.commandBus.execute(new UpdateContentCommentCommand(id, dto.content, dtoUser.userId));
+    // }
+    //
+    // @HttpCode(HttpStatus.NO_CONTENT)
+    // @UseGuards(JwtAuthGuard)
+    // @Put('/:commentId/like-status')
+    // async likeComment(
+    //     @Param('commentId', ValidateObjectIdPipe) id: string,
+    //     @Body() dto: UpdateCommentCommandApiDto,
+    //     @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
+    // ) {
+    //     return this.commandBus.execute(new UpdateStatusCommentCommand(id, dto.likeStatus, dtoUser.userId));
+    // }
+    //
+    // @HttpCode(HttpStatus.NO_CONTENT)
+    // @UseGuards(JwtAuthGuard)
+    // @Delete('/:commentId')
+    // async deleteComment(@Param('commentId', ValidateObjectIdPipe) id: string, @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto) {
+    //     return this.commandBus.execute(new DeleteCommentCommand(id, dtoUser.userId));
+    // }
 }

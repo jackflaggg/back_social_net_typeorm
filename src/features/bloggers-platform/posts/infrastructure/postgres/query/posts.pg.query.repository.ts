@@ -43,12 +43,12 @@ export class PostsPgQueryRepository {
             totalCount: +resultTotal[0].totalCount,
         });
     }
-    async getPost(blogId: string) {
-        const query = `SELECT "id", "created_at" AS "createdAt" FROM "posts" WHERE id = $1 AND "deleted_at" IS NULL`;
-        const result = await this.dataSource.query(query, [+blogId]);
+    async getPost(postId: string) {
+        const query = `SELECT p."id", p."title", p."short_description" AS "shortDescription", p."content", p."blog_id" AS "blogId", b."name" as "blogName", p."created_at" AS "createdAt" FROM "posts" AS p JOIN "blogs" b on b.id = p.blog_id WHERE p.id = $1 AND p."deleted_at" IS NULL `;
+        const result = await this.dataSource.query(query, [postId]);
         if (!result || result.length === 0) {
-            throw NotFoundDomainException.create('блог не найден', 'blogId');
+            throw NotFoundDomainException.create('Пост не найден', 'blogId');
         }
-        return BlogViewDto.mapToView(result[0]);
+        return PostViewDto.mapToView(result[0]);
     }
 }
