@@ -31,71 +31,69 @@ export class PostsController {
         private readonly commentQueryRepository: CommentsPgQueryRepository,
     ) {}
 
-    // @UseGuards(JwtOptionalAuthGuard)
-    // @Get()
-    // async getPosts(@Query() query: GetPostsQueryParams, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto | null) {
-    //     const userId = dtoUser ? dtoUser.userId : null;
-    //     return await this.postsQueryRepository.getAllPosts(query, userId);
-    // }
-    //
-    // @UseGuards(JwtOptionalAuthGuard)
-    // @Get(':postId')
-    // async getPost(@Param('postId', ValidateObjectIdPipe) postId: string, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto | null) {
-    //     const userId = dtoUser ? dtoUser.userId : null;
-    //     return this.postsQueryRepository.getPost(postId, userId);
-    // }
-    // @HttpCode(HttpStatus.CREATED)
-    // @UseGuards(BasicAuthGuard)
-    // @Post()
-    // async createPost(@Body() dto: PostCreateDtoApi) {
-    //     const postId = await this.commandBus.execute(new CreatePostCommand(dto));
-    //     return this.postsQueryRepository.getPost(postId);
-    // }
-    // @HttpCode(HttpStatus.NO_CONTENT)
-    // @UseGuards(BasicAuthGuard)
-    // @Put(':postId')
-    // async updatePost(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: PostUpdateDtoApi) {
-    //     return this.commandBus.execute(new UpdatePostCommand(postId, dto));
-    // }
-    // @HttpCode(HttpStatus.NO_CONTENT)
-    // @UseGuards(BasicAuthGuard)
-    // @Delete(':postId')
-    // async deleteBlog(@Param('postId', ValidateObjectIdPipe) postId: string) {
-    //     return this.commandBus.execute(new DeletePostCommand(postId));
-    // }
-    //
-    // @UseGuards(JwtAuthGuard)
-    // @Post(':postId/comments')
-    // async createCommentToPost(
-    //     @Param('postId', ValidateObjectIdPipe) id: string,
-    //     @Body() dto: CommentCreateToPostApi,
-    //     @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
-    // ) {
-    //     const commentId = await this.commandBus.execute(new CreateCommentCommand(dto, id, dtoUser.userId));
-    //     return this.commentQueryRepository.getComment(commentId, dtoUser.userId);
-    // }
-    //
-    // @HttpCode(HttpStatus.NO_CONTENT)
-    // @UseGuards(JwtAuthGuard)
-    // @Put(':postId/like-status')
-    // async likePost(
-    //     @Param('postId', ValidateObjectIdPipe) postId: string,
-    //     @Body() dto: PostLikeStatusApi,
-    //     @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
-    // ) {
-    //     const userId = dtoUser ? dtoUser.userId : null;
-    //     return this.commandBus.execute(new LikePostCommand(dto.likeStatus, postId, userId));
-    // }
-    //
-    // @UseGuards(JwtOptionalAuthGuard)
-    // @Get(':postId/comments')
-    // async getComments(
-    //     @Param('postId', ValidateObjectIdPipe) postId: string,
-    //     @Query() query: GetCommentsQueryParams,
-    //     @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
-    // ) {
-    //     const userId = dtoUser ? dtoUser.userId : null;
-    //     const post = await this.postsQueryRepository.getPost(postId);
-    //     return this.commentQueryRepository.getAllComments(post.id, query, userId);
-    // }
+    @UseGuards(JwtOptionalAuthGuard)
+    @Get()
+    async getPosts(@Query() query: GetPostsQueryParams) {
+        return await this.postsQueryRepository.getAllPosts(query);
+    }
+
+    @Get(':postId')
+    async getPost(@Param('postId', ValidateObjectIdPipe) postId: string) {
+        return this.postsQueryRepository.getPost(postId);
+    }
+
+    @HttpCode(HttpStatus.CREATED)
+    @UseGuards(BasicAuthGuard)
+    @Post()
+    async createPost(@Body() dto: PostCreateDtoApi) {
+        const postId = await this.commandBus.execute(new CreatePostCommand(dto));
+        return this.postsQueryRepository.getPost(postId);
+    }
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @UseGuards(BasicAuthGuard)
+    @Put(':postId')
+    async updatePost(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: PostUpdateDtoApi) {
+        return this.commandBus.execute(new UpdatePostCommand(postId, dto));
+    }
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @UseGuards(BasicAuthGuard)
+    @Delete(':postId')
+    async deleteBlog(@Param('postId', ValidateObjectIdPipe) postId: string) {
+        return this.commandBus.execute(new DeletePostCommand(postId));
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post(':postId/comments')
+    async createCommentToPost(
+        @Param('postId', ValidateObjectIdPipe) id: string,
+        @Body() dto: CommentCreateToPostApi,
+        @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
+    ) {
+        const commentId = await this.commandBus.execute(new CreateCommentCommand(dto, id, dtoUser.userId));
+        return this.commentQueryRepository.getComment(commentId, dtoUser.userId);
+    }
+
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @UseGuards(JwtAuthGuard)
+    @Put(':postId/like-status')
+    async likePost(
+        @Param('postId', ValidateObjectIdPipe) postId: string,
+        @Body() dto: PostLikeStatusApi,
+        @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
+    ) {
+        const userId = dtoUser ? dtoUser.userId : null;
+        return this.commandBus.execute(new LikePostCommand(dto.likeStatus, postId, userId));
+    }
+
+    @UseGuards(JwtOptionalAuthGuard)
+    @Get(':postId/comments')
+    async getComments(
+        @Param('postId', ValidateObjectIdPipe) postId: string,
+        @Query() query: GetCommentsQueryParams,
+        @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
+    ) {
+        const userId = dtoUser ? dtoUser.userId : null;
+        const post = await this.postsQueryRepository.getPost(postId);
+        return this.commentQueryRepository.getAllComments(post.id, query, userId);
+    }
 }

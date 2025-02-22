@@ -10,9 +10,10 @@ import { PostViewDto } from '../../../dto/repository/post-view';
 @Injectable()
 export class PostsPgQueryRepository {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
-    async getAllPosts(queryData: GetPostsQueryParams, blogId: string) {
+    async getAllPosts(queryData: GetPostsQueryParams, blogId?: string) {
         const { pageSize, pageNumber, sortBy, sortDirection } = getPostsQuery(queryData);
 
+        blogId = blogId ? blogId : '';
         const updatedSortBy = sortBy === 'createdAt' ? 'created_at' : sortBy.toLowerCase();
 
         const offset = (pageNumber - 1) * pageSize;
