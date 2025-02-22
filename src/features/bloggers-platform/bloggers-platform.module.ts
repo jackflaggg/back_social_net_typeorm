@@ -21,6 +21,7 @@ import { BlogsSaController } from './blogs/api/blogs.sa.controller';
 import { CommentsPgQueryRepository } from './comments/infrastructure/postgres/query/comments.pg.query.repository';
 import { UpdatePostToBlogUseCase } from './blogs/application/usecases/update-post-to-blog.usecase';
 import { DeletePostToBlogUseCase } from './blogs/application/usecases/delete-post-to-blog.usecase';
+import { PostsController } from './posts/api/post.controller';
 
 const repositoriesPostgres = [
     BlogsPgQueryRepository,
@@ -64,7 +65,7 @@ const useCases = [
         CqrsModule,
         UsersModule,
     ],
-    controllers: [BlogsController, BlogsSaController /*, PostsController, CommentController*/],
+    controllers: [BlogsController, BlogsSaController, PostsController /*, CommentController*/],
     providers: [...repositoriesPostgres, ...useCases],
 })
 export class BloggersPlatformModule {}

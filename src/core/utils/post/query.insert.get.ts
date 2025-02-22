@@ -16,6 +16,6 @@ export interface QueryPostInputInterface {
 export const getPostsQuery = (queryPost: QueryPostInputInterface): PostSortInterface => ({
     pageNumber: queryPost.pageNumber ?? 1,
     pageSize: queryPost.pageSize ?? 10,
-    sortBy: queryPost.sortBy ?? 'createdAt',
+    sortBy: queryPost.sortBy ?? 'created_at',
     sortDirection: queryPost.sortDirection ?? SortDirection.Desc,
 });

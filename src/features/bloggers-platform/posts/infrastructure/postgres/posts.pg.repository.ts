@@ -12,7 +12,7 @@ export class PostsPgRepository {
         return await this.dataSource.query(query, [dto.title, dto.shortDescription, dto.content, +blogId]);
     }
     async findPostById(postId: string) {
-        const query = `SELECT "id" FROM "posts" WHERE "id" = $1 AND "deleted_at" IS NOT NULL`;
+        const query = `SELECT "id" FROM "posts" WHERE "id" = $1 AND "deleted_at" IS NULL`;
         const result = await this.dataSource.query(query, [postId]);
         if (!result || result.length === 0) {
             return void 0;
@@ -21,7 +21,7 @@ export class PostsPgRepository {
     }
     async deletePost(postId: string) {
         const deletedPostDate = new Date().toISOString();
-        const query = `UPDATE "posts" SET "deleted_at" = $1 WHERE "id" = $1`;
+        const query = `UPDATE "posts" SET "deleted_at" = $1 WHERE "id" = $2 RETURNING "id"`;
         return await this.dataSource.query(query, [deletedPostDate, postId]);
     }
     async updatePost(dto: PostUpdateDtoApi, postId: string) {

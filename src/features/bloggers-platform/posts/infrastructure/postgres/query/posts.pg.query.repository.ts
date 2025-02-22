@@ -13,34 +13,45 @@ export class PostsPgQueryRepository {
     async getAllPosts(queryData: GetPostsQueryParams, blogId?: string) {
         const { pageSize, pageNumber, sortBy, sortDirection } = getPostsQuery(queryData);
 
-        blogId = blogId ? blogId : '';
-        const updatedSortBy = sortBy === 'createdAt' ? 'created_at' : sortBy.toLowerCase();
+        // Проверяем, является ли sortBy допустимым значением
+        const updatedSortBy = sortBy === 'blogName' ? `"${sortBy}"` : `"${sortBy}"`;
 
         const offset = (pageNumber - 1) * pageSize;
 
-        const queryPosts = `
-            SELECT p."id",
-                   p."title",
-                   p."short_description" AS "shortDescription",
-                   p."content",
-                   p."blog_id"           AS "blogId",
-                   b."name"              AS "blogName",
-                   p."created_at"        AS "createdAt"
-            FROM "posts" AS p
-            JOIN "blogs" AS b 
-                ON b.id = p.blog_id
-            WHERE b.id = $1
-              AND p."deleted_at" IS NULL
-            ORDER BY (p."${updatedSortBy}") ${sortDirection.toUpperCase()}
-            LIMIT $2
-            OFFSET $3
-            `;
+        let queryPosts = `
+        SELECT p."id",
+               p."title"                AS title,
+               p."short_description"    AS "shortDescription",
+               p."content"              AS content,
+               p."blog_id"              AS "blogId",
+               b."name"                 AS "blogName",
+               p."created_at"           AS "createdAt"
+        FROM "posts" AS p
+        JOIN "blogs" AS b 
+            ON b.id = p.blog_id
+        WHERE p."deleted_at" IS NULL`;
 
-        const resultPosts = await this.dataSource.query(queryPosts, [blogId, Number(pageSize), Number(offset)]);
+        const queryParams: number[] = [];
+
+        if (blogId) {
+            queryPosts += ` AND b.id = $1`;
+            queryParams.push(+blogId);
+        }
+
+        // Убедитесь, что вы правильно указываете таблицу в ORDER BY
+        queryPosts += `
+        ORDER BY ${updatedSortBy} ${sortDirection.toUpperCase()}
+        LIMIT $${queryParams.length + 1}
+        OFFSET $${queryParams.length + 2}
+    `;
+
+        queryParams.push(Number(pageSize), Number(offset));
+
+        const resultPosts = await this.dataSource.query(queryPosts, queryParams);
 
         const queryCount = `
-            SELECT COUNT(*) AS "totalCount" FROM "posts" WHERE "deleted_at" IS NULL
-        `;
+        SELECT COUNT(*) AS "totalCount" FROM "posts" WHERE "deleted_at" IS NULL
+    `;
         const resultTotal = await this.dataSource.query(queryCount);
 
         const postsView = resultPosts.map(post => PostViewDto.mapToView(post));
@@ -52,6 +63,7 @@ export class PostsPgQueryRepository {
             totalCount: +resultTotal[0].totalCount,
         });
     }
+
     async getPost(postId: string) {
         const query = `SELECT p."id", p."title", p."short_description" AS "shortDescription", p."content", p."blog_id" AS "blogId", b."name" as "blogName", p."created_at" AS "createdAt" FROM "posts" AS p JOIN "blogs" b on b.id = p.blog_id WHERE p.id = $1 AND p."deleted_at" IS NULL `;
         const result = await this.dataSource.query(query, [postId]);

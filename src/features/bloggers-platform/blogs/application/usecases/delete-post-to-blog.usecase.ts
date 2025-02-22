@@ -29,6 +29,6 @@ export class DeletePostToBlogUseCase implements ICommandHandler<DeletePostToBlog
             throw NotFoundDomainException.create('пост не найден', 'postId');
         }
 
-        await this.postRepository.deletePost(command.postId);
+        await this.postRepository.deletePost(post.id);
     }
 }

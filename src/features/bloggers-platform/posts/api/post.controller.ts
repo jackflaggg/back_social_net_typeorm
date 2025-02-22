@@ -1,27 +1,26 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { PostsQueryRepository } from '../infrastructure/query/posts.query-repository';
-import { GetPostsQueryParams } from '../dto/api/get-posts-query-params.input.dto';
-import { PostCreateDtoApi } from '../dto/api/post.create.dto';
-import { PostUpdateDtoApi } from '../dto/api/post.update.dto';
-import { CommentCreateToPostApi } from '../dto/api/comment.create.to.post';
 import { CommandBus } from '@nestjs/cqrs';
-import { CreatePostCommand } from '../application/usecases/create-post.usecase';
-import { UpdatePostCommand } from '../application/usecases/update-post.usecase';
-import { DeletePostCommand } from '../application/usecases/delete-post.usecase';
-import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
-import { ValidateObjectIdPipe } from '../../../../core/pipes/validation.input.data.pipe';
-import { JwtAuthGuard } from '../../../../core/guards/passport/guards/jwt.auth.guard';
-import { ExtractAnyUserFromRequest, ExtractUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
-import { UserJwtPayloadDto } from '../../../user-accounts/strategies/refresh.strategy';
-import { CreateCommentCommand } from '../../comments/application/usecases/create-comment.usecase';
-import { CommentsQueryRepository } from '../../comments/infrastructure/query/comments.query.repository';
-import { GetCommentsQueryParams } from '../../comments/dto/repository/query/query-parans-comments';
-import { PostLikeStatusApi } from '../dto/api/like-status.dto';
-import { LikePostCommand } from '../application/usecases/like-post.usecase';
-import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optional-auth.guard';
 import { PostsPgQueryRepository } from '../infrastructure/postgres/query/posts.pg.query.repository';
 import { CommentsPgQueryRepository } from '../../comments/infrastructure/postgres/query/comments.pg.query.repository';
 import { SETTINGS } from '../../../../core/settings';
+import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optional-auth.guard';
+import { GetPostsQueryParams } from '../dto/api/get-posts-query-params.input.dto';
+import { ValidateObjectIdPipe } from '../../../../core/pipes/validation.input.data.pipe';
+import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
+import { PostCreateDtoApi } from '../dto/api/post.create.dto';
+import { CreatePostCommand } from '../application/usecases/create-post.usecase';
+import { PostUpdateDtoApi } from '../dto/api/post.update.dto';
+import { UpdatePostCommand } from '../application/usecases/update-post.usecase';
+import { DeletePostCommand } from '../application/usecases/delete-post.usecase';
+import { JwtAuthGuard } from '../../../../core/guards/passport/guards/jwt.auth.guard';
+import { CommentCreateToPostApi } from '../dto/api/comment.create.to.post';
+import { ExtractAnyUserFromRequest, ExtractUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
+import { UserJwtPayloadDto } from '../../../user-accounts/strategies/refresh.strategy';
+import { CreateCommentCommand } from '../../comments/application/usecases/create-comment.usecase';
+import { PostLikeStatusApi } from '../dto/api/like-status.dto';
+import { LikePostCommand } from '../application/usecases/like-post.usecase';
+import { GetCommentsQueryParams } from '../../comments/dto/repository/query/query-parans-comments';
+import { ValidateSerialPipe } from '../../../../core/pipes/validation.input.serial';
 
 @Controller(SETTINGS.PATH.POSTS)
 export class PostsController {
@@ -38,7 +37,7 @@ export class PostsController {
     }
 
     @Get(':postId')
-    async getPost(@Param('postId', ValidateObjectIdPipe) postId: string) {
+    async getPost(@Param('postId', ValidateSerialPipe) postId: string) {
         return this.postsQueryRepository.getPost(postId);
     }
 
@@ -52,20 +51,20 @@ export class PostsController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(BasicAuthGuard)
     @Put(':postId')
-    async updatePost(@Param('postId', ValidateObjectIdPipe) postId: string, @Body() dto: PostUpdateDtoApi) {
+    async updatePost(@Param('postId', ValidateSerialPipe) postId: string, @Body() dto: PostUpdateDtoApi) {
         return this.commandBus.execute(new UpdatePostCommand(postId, dto));
     }
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(BasicAuthGuard)
     @Delete(':postId')
-    async deleteBlog(@Param('postId', ValidateObjectIdPipe) postId: string) {
+    async deleteBlog(@Param('postId', ValidateSerialPipe) postId: string) {
         return this.commandBus.execute(new DeletePostCommand(postId));
     }
 
     @UseGuards(JwtAuthGuard)
     @Post(':postId/comments')
     async createCommentToPost(
-        @Param('postId', ValidateObjectIdPipe) id: string,
+        @Param('postId', ValidateSerialPipe) id: string,
         @Body() dto: CommentCreateToPostApi,
         @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
@@ -77,7 +76,7 @@ export class PostsController {
     @UseGuards(JwtAuthGuard)
     @Put(':postId/like-status')
     async likePost(
-        @Param('postId', ValidateObjectIdPipe) postId: string,
+        @Param('postId', ValidateSerialPipe) postId: string,
         @Body() dto: PostLikeStatusApi,
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
@@ -88,7 +87,7 @@ export class PostsController {
     @UseGuards(JwtOptionalAuthGuard)
     @Get(':postId/comments')
     async getComments(
-        @Param('postId', ValidateObjectIdPipe) postId: string,
+        @Param('postId', ValidateSerialPipe) postId: string,
         @Query() query: GetCommentsQueryParams,
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
