@@ -14,6 +14,9 @@ import { DeleteBlogCommand } from '../application/usecases/delete-blog.usecase';
 import { GetPostsQueryParams } from '../../posts/dto/api/get-posts-query-params.input.dto';
 import { CreatePostToBlogCommand } from '../application/usecases/create-post-to-blog.usecase';
 import { PostToBlogCreateDtoApi } from '../dto/api/blog.to.post.create.dto';
+import { PostUpdateDtoApi } from '../../posts/dto/api/post.update.dto';
+import { UpdatePostToBlogCommand } from '../application/usecases/update-post-to-blog.usecase';
+import { DeletePostToBlogCommand } from '../application/usecases/delete-post-to-blog.usecase';
 
 @Controller(SETTINGS.PATH.SA_BLOGS)
 @UseGuards(BasicAuthGuard)
@@ -64,14 +67,18 @@ export class BlogsSaController {
     //TODO 1: Добавить PUT /sa/blogs/{blogId}/posts/{postId}
     @HttpCode(HttpStatus.NO_CONTENT)
     @Put(':blogId/posts/:postId')
-    async updatePostToBlog(@Param('blogId', ValidateSerialPipe) blogId: string) {
-        return this.commandBus.execute(new DeleteBlogCommand(blogId));
+    async updatePostToBlog(
+        @Param('blogId', ValidateSerialPipe) blogId: string,
+        @Param('postId', ValidateSerialPipe) postId: string,
+        @Body() dto: PostUpdateDtoApi,
+    ) {
+        return this.commandBus.execute(new UpdatePostToBlogCommand(blogId, postId, dto));
     }
 
     //TODO 2: Добавить DELETE /sa/blogs/{blogId}/posts/{postId}
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete(':blogId/posts/:postId')
-    async deletePostToBlog(@Param('blogId', ValidateSerialPipe) blogId: string) {
-        return this.commandBus.execute(new DeleteBlogCommand(blogId));
+    async deletePostToBlog(@Param('blogId', ValidateSerialPipe) blogId: string, @Param('postId', ValidateSerialPipe) postId: string) {
+        return this.commandBus.execute(new DeletePostToBlogCommand(blogId, postId));
     }
 }
