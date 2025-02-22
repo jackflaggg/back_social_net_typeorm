@@ -35,30 +35,26 @@ import { UpdateStatusCommentUseCase } from './comments/application/usecases/like
 import { UpdateContentCommentUseCase } from './comments/application/usecases/update-comment.usecase';
 import { ConfigModule } from '@nestjs/config';
 import { CoreConfig } from '../../core/config/core.config';
+import { BlogsPgQueryRepository } from './blogs/infrastructure/postgres/query/blogs.pg.query.repository';
+import { BlogsPgRepository } from './blogs/infrastructure/postgres/blogs.pg.repository';
+import { PostsPgRepository } from './posts/infrastructure/postgres/posts.pg.repository';
+import { PostsPgQueryRepository } from './posts/infrastructure/postgres/query/posts.pg.query.repository';
 
-const repositories = [
-    BlogsQueryRepository,
-    BlogsRepository,
-    CommentsQueryRepository,
-    PostsQueryRepository,
-    PostsRepository,
-    CommentRepository,
-    StatusRepository,
-];
+const repositoriesPostgres = [BlogsPgQueryRepository, BlogsPgRepository, PostsPgRepository, PostsPgQueryRepository];
 const useCases = [
     CreateBlogUseCase,
     DeleteBlogUseCase,
     UpdateBlogUseCase,
-    CreatePostToBlogUseCase,
-    CreateCommentUseCase,
-    CreatePostUseCase,
-    DeletePostUseCase,
-    UpdatePostUseCase,
-    LikePostUseCase,
-    DeleteCommentUseCase,
-    CheckUserCommentUseCase,
-    UpdateStatusCommentUseCase,
-    UpdateContentCommentUseCase,
+    // CreatePostToBlogUseCase,
+    // CreateCommentUseCase,
+    // CreatePostUseCase,
+    // DeletePostUseCase,
+    // UpdatePostUseCase,
+    // LikePostUseCase,
+    // DeleteCommentUseCase,
+    // CheckUserCommentUseCase,
+    // UpdateStatusCommentUseCase,
+    // UpdateContentCommentUseCase,
 ];
 
 @Module({
@@ -75,18 +71,10 @@ const useCases = [
             }),
         }),
         PassportModule,
-        MongooseModule.forFeature([
-            { name: BlogEntity.name, schema: BlogSchema },
-            { name: PostEntity.name, schema: PostSchema },
-            { name: CommentEntity.name, schema: CommentSchema },
-            { name: NewestLikesEntity.name, schema: NewestLikesSchema },
-            { name: ExtendedLikesEntity.name, schema: ExtendedLikesSchema },
-            { name: StatusEntity.name, schema: StatusSchema },
-        ]),
         CqrsModule,
         UsersModule,
     ],
-    controllers: [BlogsController, PostsController, CommentController],
-    providers: [...repositories, ...useCases],
+    controllers: [BlogsController /*, PostsController, CommentController*/],
+    providers: [...repositoriesPostgres, ...useCases],
 })
 export class BloggersPlatformModule {}

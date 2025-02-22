@@ -13,7 +13,7 @@ export class UserPgQueryRepository {
     async getAllUsers(queryData: GetUsersQueryParams) {
         const { sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm } = getUsersQuery(queryData);
 
-        const updatedSortBy = sortBy === 'createdAt' ? 'createdat' : sortBy.toLowerCase();
+        const updatedSortBy = sortBy === 'createdAt' ? 'created_at' : sortBy.toLowerCase();
 
         const offset = (pageNumber - 1) * pageSize;
 

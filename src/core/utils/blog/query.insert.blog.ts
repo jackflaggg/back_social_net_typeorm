@@ -17,7 +17,7 @@ export interface BlogSortInterface {
 }
 
 export const getBlogsQuery = (view: QueryBlogInputInterface): BlogSortInterface => ({
-    searchNameTerm: view.searchNameTerm ?? null,
+    searchNameTerm: view.searchNameTerm ?? '',
     sortBy: view.sortBy ?? 'createdAt',
     sortDirection: view.sortDirection ?? SortDirection.Desc,
     pageNumber: view.pageNumber ?? 1,

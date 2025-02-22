@@ -9,6 +9,7 @@ import { CustomLoggerModule } from './features/logger/logger.module';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { UsersModule } from './features/user-accounts/user-accounts.module';
 import { TestingModule } from './features/testing/testing.module';
+import { BloggersPlatformModule } from './features/bloggers-platform/bloggers-platform.module';
 
 @Module({
     imports: [
@@ -52,6 +53,7 @@ import { TestingModule } from './features/testing/testing.module';
         ]),
         TestingModule,
         UsersModule,
+        BloggersPlatformModule,
     ],
     controllers: [],
     providers: [],

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { emailConfirmAdminInterface } from '../../../../../core/utils/user/email-confirmation-data.admin';
+import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export interface UserCreateDtoRepo {
     login: string;
@@ -20,7 +21,7 @@ export class UserPgRepository {
         `;
         const result = await this.dataSource.query(query, [login, email]);
         if (!result || result.length === 0) {
-            return void 0;
+            throw NotFoundDomainException.create('блог не найден', 'blogId');
         }
 
         return result[0];
@@ -31,7 +32,7 @@ export class UserPgRepository {
         `;
         const result = await this.dataSource.query(query, [loginOrEmail]);
         if (!result || result.length === 0) {
-            return void 0;
+            throw NotFoundDomainException.create('блог не найден', 'blogId');
         }
 
         return result[0];
@@ -44,7 +45,7 @@ export class UserPgRepository {
         `;
         const result = await this.dataSource.query(query, [userId]);
         if (!result || result.length === 0) {
-            return void 0;
+            throw NotFoundDomainException.create('блог не найден', 'blogId');
         }
         return result[0];
     }
@@ -64,7 +65,7 @@ export class UserPgRepository {
         ]);
 
         if (!result || result.length === 0) {
-            return void 0;
+            throw NotFoundDomainException.create('блог не найден', 'blogId');
         }
 
         const userId = result[0].id;
@@ -112,7 +113,7 @@ export class UserPgRepository {
         `;
         const result = await this.dataSource.query(query, [code]);
         if (!result || result.length === 0) {
-            return void 0;
+            throw NotFoundDomainException.create('блог не найден', 'blogId');
         }
         return result[0];
     }

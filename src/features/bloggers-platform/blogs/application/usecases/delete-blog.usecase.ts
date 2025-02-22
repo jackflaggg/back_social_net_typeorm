@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BlogsRepository } from '../../infrastructure/blogs.repository';
+import { BlogsPgRepository } from '../../infrastructure/postgres/blogs.pg.repository';
+import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class DeleteBlogCommand {
     constructor(public readonly blogId: string) {}
@@ -7,12 +8,14 @@ export class DeleteBlogCommand {
 
 @CommandHandler(DeleteBlogCommand)
 export class DeleteBlogUseCase implements ICommandHandler<DeleteBlogCommand> {
-    constructor(private readonly blogRepository: BlogsRepository) {}
+    constructor(private readonly blogRepository: BlogsPgRepository) {}
     async execute(command: DeleteBlogCommand) {
-        const blog = await this.blogRepository.findBlogByIdOrFail(command.blogId);
+        const blog = await this.blogRepository.findBlogById(command.blogId);
 
-        blog.makeDeleted();
+        if (!blog) {
+            throw NotFoundDomainException.create('блог не найден', 'blogId');
+        }
 
-        await this.blogRepository.save(blog);
+        await this.blogRepository.deleteBlog(blog);
     }
 }

@@ -1,5 +1,3 @@
-import { BlogDocument } from '../../../domain/blog.entity';
-
 export class BlogViewDto {
     id: string;
     name: string;
@@ -8,8 +6,8 @@ export class BlogViewDto {
     isMembership: boolean;
     createdAt: Date;
 
-    constructor(model: BlogDocument) {
-        this.id = model._id.toString();
+    constructor(model: any) {
+        this.id = String(model.id);
         this.name = model.name;
         this.description = model.description;
         this.websiteUrl = model.websiteUrl;
@@ -17,7 +15,7 @@ export class BlogViewDto {
         this.isMembership = model.isMembership;
     }
 
-    static mapToView(blog: BlogDocument): BlogViewDto {
+    static mapToView(blog: any): BlogViewDto {
         return new BlogViewDto(blog);
     }
 }
