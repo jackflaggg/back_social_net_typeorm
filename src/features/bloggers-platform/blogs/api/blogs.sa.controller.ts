@@ -11,14 +11,12 @@ import { CreateBlogCommand } from '../application/usecases/create-blog.usecase';
 import { BlogUpdateDtoApi } from '../dto/api/blog.update.dto';
 import { UpdateBlogCommand } from '../application/usecases/update-blog.usecase';
 import { DeleteBlogCommand } from '../application/usecases/delete-blog.usecase';
-import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optional-auth.guard';
 import { GetPostsQueryParams } from '../../posts/dto/api/get-posts-query-params.input.dto';
-import { ExtractAnyUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
-import { UserJwtPayloadDto } from '../../../user-accounts/strategies/refresh.strategy';
 import { CreatePostToBlogCommand } from '../application/usecases/create-post-to-blog.usecase';
 import { PostToBlogCreateDtoApi } from '../dto/api/blog.to.post.create.dto';
 
 @Controller(SETTINGS.PATH.SA_BLOGS)
+@UseGuards(BasicAuthGuard)
 export class BlogsSaController {
     constructor(
         private readonly commandBus: CommandBus,
@@ -26,14 +24,12 @@ export class BlogsSaController {
         private readonly postsQueryRepository: PostsPgQueryRepository,
     ) {}
 
-    // мне нужно, чтоб этот роут был чисто по blogs, а остальные по /sa/blogs
     @Get()
     async getBlogs(@Query() query: GetBlogsQueryParams) {
         return this.blogsQueryRepository.getAllBlogs(query);
     }
 
     @HttpCode(HttpStatus.CREATED)
-    @UseGuards(BasicAuthGuard)
     @Post()
     async createBlog(@Body() dto: BlogCreateDtoApi) {
         const blogId = await this.commandBus.execute(new CreateBlogCommand(dto));
@@ -41,28 +37,24 @@ export class BlogsSaController {
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
-    @UseGuards(BasicAuthGuard)
     @Put(':blogId')
     async updateBlog(@Param('blogId', ValidateSerialPipe) blogId: string, @Body() dto: BlogUpdateDtoApi) {
         return this.commandBus.execute(new UpdateBlogCommand(blogId, dto));
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
-    @UseGuards(BasicAuthGuard)
     @Delete(':blogId')
     async deleteBlog(@Param('blogId', ValidateSerialPipe) blogId: string) {
         return this.commandBus.execute(new DeleteBlogCommand(blogId));
     }
 
     @HttpCode(HttpStatus.CREATED)
-    @UseGuards(BasicAuthGuard)
     @Post(':blogId/posts')
     async createPostToBlog(@Param('blogId', ValidateSerialPipe) blogId: string, @Body() dto: PostToBlogCreateDtoApi) {
         const postId = await this.commandBus.execute(new CreatePostToBlogCommand(blogId, dto));
         return this.postsQueryRepository.getPost(postId[0].id);
     }
 
-    @UseGuards(BasicAuthGuard)
     @Get(':blogId/posts')
     async getPosts(@Param('blogId', ValidateSerialPipe) blogId: string, @Query() query: GetPostsQueryParams) {
         const blog = await this.blogsQueryRepository.getBlog(blogId);
@@ -71,7 +63,6 @@ export class BlogsSaController {
 
     //TODO 1: Добавить PUT /sa/blogs/{blogId}/posts/{postId}
     @HttpCode(HttpStatus.NO_CONTENT)
-    @UseGuards(BasicAuthGuard)
     @Put(':blogId/posts/:postId')
     async updatePostToBlog(@Param('blogId', ValidateSerialPipe) blogId: string) {
         return this.commandBus.execute(new DeleteBlogCommand(blogId));
@@ -79,7 +70,6 @@ export class BlogsSaController {
 
     //TODO 2: Добавить DELETE /sa/blogs/{blogId}/posts/{postId}
     @HttpCode(HttpStatus.NO_CONTENT)
-    @UseGuards(BasicAuthGuard)
     @Delete(':blogId/posts/:postId')
     async deletePostToBlog(@Param('blogId', ValidateSerialPipe) blogId: string) {
         return this.commandBus.execute(new DeleteBlogCommand(blogId));
