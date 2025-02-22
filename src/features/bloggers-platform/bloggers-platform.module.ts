@@ -1,18 +1,5 @@
 import { Module } from '@nestjs/common';
 import { BlogsController } from './blogs/api/blogs.controller';
-import { MongooseModule } from '@nestjs/mongoose';
-import { BlogEntity, BlogSchema } from './blogs/domain/blog.entity';
-import { BlogsRepository } from './blogs/infrastructure/blogs.repository';
-import { BlogsQueryRepository } from './blogs/infrastructure/query/blogs.query-repository';
-import { PostsRepository } from './posts/infrastructure/post.repository';
-import { PostEntity, PostSchema } from './posts/domain/post.entity';
-import { NewestLikesEntity, NewestLikesSchema } from './posts/domain/last.three.likes.entity';
-import { ExtendedLikesEntity, ExtendedLikesSchema } from './posts/domain/extended.like.entity';
-import { PostsQueryRepository } from './posts/infrastructure/query/posts.query-repository';
-import { PostsController } from './posts/api/post.controller';
-import { CommentController } from './comments/api/comment.controller';
-import { CommentEntity, CommentSchema } from './comments/domain/comment.entity';
-import { CommentsQueryRepository } from './comments/infrastructure/query/comments.query.repository';
 import { CreateBlogUseCase } from './blogs/application/usecases/create-blog.usecase';
 import { DeleteBlogUseCase } from './blogs/application/usecases/delete-blog.usecase';
 import { UpdateBlogUseCase } from './blogs/application/usecases/update-blog.usecase';
@@ -21,18 +8,9 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { CreatePostUseCase } from './posts/application/usecases/create-post.usecase';
 import { DeletePostUseCase } from './posts/application/usecases/delete-post.usecase';
 import { UpdatePostUseCase } from './posts/application/usecases/update-post.usecase';
-import { CreateCommentUseCase } from './comments/application/usecases/create-comment.usecase';
 import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '../user-accounts/user-accounts.module';
-import { CommentRepository } from './comments/infrastructure/comment.repository';
-import { StatusEntity, StatusSchema } from './likes/domain/status.entity';
 import { JwtModule } from '@nestjs/jwt';
-import { StatusRepository } from './posts/infrastructure/status.repository';
-import { LikePostUseCase } from './posts/application/usecases/like-post.usecase';
-import { DeleteCommentUseCase } from './comments/application/usecases/delete-comment.usecase';
-import { CheckUserCommentUseCase } from './comments/application/usecases/check-user-comment.usecase';
-import { UpdateStatusCommentUseCase } from './comments/application/usecases/like-comment.usecase';
-import { UpdateContentCommentUseCase } from './comments/application/usecases/update-comment.usecase';
 import { ConfigModule } from '@nestjs/config';
 import { CoreConfig } from '../../core/config/core.config';
 import { BlogsPgQueryRepository } from './blogs/infrastructure/postgres/query/blogs.pg.query.repository';
@@ -41,6 +19,8 @@ import { PostsPgRepository } from './posts/infrastructure/postgres/posts.pg.repo
 import { PostsPgQueryRepository } from './posts/infrastructure/postgres/query/posts.pg.query.repository';
 import { BlogsSaController } from './blogs/api/blogs.sa.controller';
 import { CommentsPgQueryRepository } from './comments/infrastructure/postgres/query/comments.pg.query.repository';
+import { UpdatePostToBlogUseCase } from './blogs/application/usecases/update-post-to-blog.usecase';
+import { DeletePostToBlogUseCase } from './blogs/application/usecases/delete-post-to-blog.usecase';
 
 const repositoriesPostgres = [
     BlogsPgQueryRepository,
@@ -58,6 +38,8 @@ const useCases = [
     CreatePostUseCase,
     DeletePostUseCase,
     UpdatePostUseCase,
+    UpdatePostToBlogUseCase,
+    DeletePostToBlogUseCase,
     // LikePostUseCase,
     // DeleteCommentUseCase,
     // CheckUserCommentUseCase,
