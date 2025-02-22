@@ -21,7 +21,7 @@ export class UserPgRepository {
         `;
         const result = await this.dataSource.query(query, [login, email]);
         if (!result || result.length === 0) {
-            throw NotFoundDomainException.create('блог не найден', 'blogId');
+            return void 0;
         }
 
         return result[0];
@@ -32,7 +32,7 @@ export class UserPgRepository {
         `;
         const result = await this.dataSource.query(query, [loginOrEmail]);
         if (!result || result.length === 0) {
-            throw NotFoundDomainException.create('блог не найден', 'blogId');
+            return void 0;
         }
 
         return result[0];
@@ -65,7 +65,8 @@ export class UserPgRepository {
         ]);
 
         if (!result || result.length === 0) {
-            throw NotFoundDomainException.create('блог не найден', 'blogId');
+            console.log('reg!');
+            throw NotFoundDomainException.create('юзер не найден', 'userId');
         }
 
         const userId = result[0].id;
@@ -113,7 +114,7 @@ export class UserPgRepository {
         `;
         const result = await this.dataSource.query(query, [code]);
         if (!result || result.length === 0) {
-            throw NotFoundDomainException.create('блог не найден', 'blogId');
+            return void 0;
         }
         return result[0];
     }

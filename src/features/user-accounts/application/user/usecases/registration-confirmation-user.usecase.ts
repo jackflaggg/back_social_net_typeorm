@@ -24,6 +24,11 @@ export class RegistrationConfirmationUserUseCase implements ICommandHandler<Regi
         // 2. ищу код в email_confirmation
         const findCode = await this.usersRepository.findUserCode(command.code);
 
+        // P.S. Специфичная обработка ошибки для тестов!
+        if (!findCode || command.code !== findCode.confirmationCode) {
+            throw BadRequestDomainException.create('код не найден', 'code');
+        }
+
         // 3. проверка на истекание кода
         if (findCode.expirationDate !== null && !findCode.isConfirmed) {
             const currentDate = new Date();

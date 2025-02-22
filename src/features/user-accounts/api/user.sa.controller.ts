@@ -10,7 +10,7 @@ import { UserPgQueryRepository } from '../infrastructure/postgres/user/query/use
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/users')
-export class UserController {
+export class UserSaController {
     constructor(
         private readonly commandBus: CommandBus,
         private readonly userQueryRepository: UserPgQueryRepository,

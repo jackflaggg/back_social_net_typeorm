@@ -6,7 +6,7 @@ import { deleteAllData } from '../helpers/delete-all-data-test';
 import supertest from 'supertest';
 import { SETTINGS } from '../../src/core/settings';
 
-describe(SETTINGS.PATH.USERS, () => {
+describe(SETTINGS.PATH.SA_USERS, () => {
     let app: INestApplication;
     let userTestManger: UsersTestManager;
 

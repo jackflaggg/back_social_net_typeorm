@@ -3,8 +3,11 @@ config();
 
 export const SETTINGS = {
     PATH: {
-        BLOGS: 'blogs',
+        SA_BLOGS: '/sa/blogs',
+        BLOGS: '/blogs',
+        SA_POSTS: '/sa/posts',
         POSTS: 'posts',
+        SA_USERS: '/sa/users',
         USERS: 'users',
         AUTH: 'auth',
         COMMENTS: 'comments',

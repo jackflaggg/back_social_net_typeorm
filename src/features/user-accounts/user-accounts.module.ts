@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UserController } from './api/user.controller';
+import { UserSaController } from './api/user.sa.controller';
 import { AuthController } from './api/auth.controller';
 import { BasicStrategy } from './strategies/basic.strategy';
 import { CreateUserUseCase } from './application/user/usecases/create-user.usecase';
@@ -95,6 +95,6 @@ const handlers = [UserLoggedInEventHandler];
     ],
     exports: [UserPgRepository],
     providers: [...useCases, ...services, ...strategies, ...handlers, ...repositoriesPostgres],
-    controllers: [UserController, AuthController, SessionController],
+    controllers: [UserSaController, AuthController, SessionController],
 })
 export class UsersModule {}

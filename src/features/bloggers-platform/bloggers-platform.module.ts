@@ -39,6 +39,7 @@ import { BlogsPgQueryRepository } from './blogs/infrastructure/postgres/query/bl
 import { BlogsPgRepository } from './blogs/infrastructure/postgres/blogs.pg.repository';
 import { PostsPgRepository } from './posts/infrastructure/postgres/posts.pg.repository';
 import { PostsPgQueryRepository } from './posts/infrastructure/postgres/query/posts.pg.query.repository';
+import { BlogsSaController } from './blogs/api/blogs.sa.controller';
 
 const repositoriesPostgres = [BlogsPgQueryRepository, BlogsPgRepository, PostsPgRepository, PostsPgQueryRepository];
 const useCases = [
@@ -74,7 +75,7 @@ const useCases = [
         CqrsModule,
         UsersModule,
     ],
-    controllers: [BlogsController /*, PostsController, CommentController*/],
+    controllers: [BlogsController, BlogsSaController /*, PostsController, CommentController*/],
     providers: [...repositoriesPostgres, ...useCases],
 })
 export class BloggersPlatformModule {}

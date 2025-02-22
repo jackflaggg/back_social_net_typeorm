@@ -2,11 +2,11 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { TestingController } from './api/testing.controller';
 import { config } from 'dotenv';
 import { UsersModule } from '../user-accounts/user-accounts.module';
+import { BloggersPlatformModule } from '../bloggers-platform/bloggers-platform.module';
 config();
 
 @Module({
     controllers: [TestingController],
-    imports: [UsersModule],
     providers: [],
 })
 export class TestingModule {

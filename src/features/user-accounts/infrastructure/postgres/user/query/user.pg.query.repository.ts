@@ -5,6 +5,7 @@ import { PaginatedBlogViewDto } from '../../../../../../core/dto/base.paginated.
 import { UserViewDto } from '../../../../dto/api/user-view.dto';
 import { getUsersQuery } from '../../../../../../core/utils/user/query.insert.get';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 @Injectable()
 export class UserPgQueryRepository {
@@ -47,7 +48,7 @@ export class UserPgQueryRepository {
         `;
         const result = await this.dataSource.query(queryUser, [userId]);
         if (!result || result.length === 0) {
-            return void 0;
+            throw NotFoundDomainException.create('юзер не найден', 'userId');
         }
         return UserViewDto.mapToView(result[0]);
     }
@@ -58,7 +59,7 @@ export class UserPgQueryRepository {
         `;
         const result = await this.dataSource.query(queryUser, [userId]);
         if (!result || result.length === 0) {
-            return void 0;
+            throw NotFoundDomainException.create('юзер не найден', 'userId');
         }
         return UserViewDto.meUser(result[0]);
     }
