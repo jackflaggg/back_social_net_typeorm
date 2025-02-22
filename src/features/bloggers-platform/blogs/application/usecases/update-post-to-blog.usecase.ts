@@ -25,12 +25,12 @@ export class UpdatePostToBlogUseCase implements ICommandHandler<UpdatePostToBlog
             throw NotFoundDomainException.create('блог не найден', 'blogId');
         }
 
-        const post = await this.postRepository.findPostById(command.postId);
+        const postId = await this.postRepository.findPostById(command.postId);
 
-        if (!post) {
+        if (!postId) {
             throw NotFoundDomainException.create('пост не найден', 'postId');
         }
 
-        await this.postRepository.updatePost();
+        await this.postRepository.updatePost(command.dto, postId);
     }
 }

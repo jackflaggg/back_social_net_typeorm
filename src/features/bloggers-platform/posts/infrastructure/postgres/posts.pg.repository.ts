@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { PostToBlogCreateDtoApi } from '../../../blogs/dto/api/blog.to.post.create.dto';
+import { PostUpdateDtoApi } from '../../dto/api/post.update.dto';
 
 @Injectable()
 export class PostsPgRepository {
@@ -23,5 +24,8 @@ export class PostsPgRepository {
         const query = `UPDATE "posts" SET "deleted_at" = $1 WHERE "id" = $1`;
         return await this.dataSource.query(query, [deletedPostDate, postId]);
     }
-    async updatePost() {}
+    async updatePost(dto: PostUpdateDtoApi, postId: string) {
+        const query = `UPDATE "posts" SET "title" = $1, "short_description" = $2, "content" = $3 WHERE "id" = $4`;
+        return await this.dataSource.query(query, [dto.title, dto.shortDescription, dto.content, postId]);
+    }
 }
