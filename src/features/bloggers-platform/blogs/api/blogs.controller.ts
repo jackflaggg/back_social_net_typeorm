@@ -24,16 +24,10 @@ export class BlogsController {
         return this.blogsQueryRepository.getAllBlogs(query);
     }
 
-    @UseGuards(JwtOptionalAuthGuard)
     @Get(':blogId/posts')
-    async getPosts(
-        @Param('blogId', ValidateSerialPipe) blogId: string,
-        @Query() query: GetPostsQueryParams,
-        @ExtractAnyUserFromRequest() dto: UserJwtPayloadDto,
-    ) {
+    async getPosts(@Param('blogId', ValidateSerialPipe) blogId: string, @Query() query: GetPostsQueryParams) {
         const blog = await this.blogsQueryRepository.getBlog(blogId);
-        const userId = dto ? dto.userId : null;
-        return this.postsQueryRepository.getAllPosts(query, userId, blog.id);
+        return this.postsQueryRepository.getAllPosts(query, blog.id);
     }
 
     @Get(':blogId')

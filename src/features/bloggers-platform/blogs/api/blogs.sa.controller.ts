@@ -59,20 +59,14 @@ export class BlogsSaController {
     @Post(':blogId/posts')
     async createPostToBlog(@Param('blogId', ValidateSerialPipe) blogId: string, @Body() dto: PostToBlogCreateDtoApi) {
         const postId = await this.commandBus.execute(new CreatePostToBlogCommand(blogId, dto));
-        console.log(postId);
         return this.postsQueryRepository.getPost(postId[0].id);
     }
 
-    @UseGuards(JwtOptionalAuthGuard)
+    @UseGuards(BasicAuthGuard)
     @Get(':blogId/posts')
-    async getPosts(
-        @Param('blogId', ValidateSerialPipe) blogId: string,
-        @Query() query: GetPostsQueryParams,
-        @ExtractAnyUserFromRequest() dto: UserJwtPayloadDto,
-    ) {
+    async getPosts(@Param('blogId', ValidateSerialPipe) blogId: string, @Query() query: GetPostsQueryParams) {
         const blog = await this.blogsQueryRepository.getBlog(blogId);
-        const userId = dto ? dto.userId : null;
-        return this.postsQueryRepository.getAllPosts(query, userId, blog.id);
+        return this.postsQueryRepository.getAllPosts(query, blog.id);
     }
 
     //TODO 1: Добавить PUT /sa/blogs/{blogId}/posts/{postId}
