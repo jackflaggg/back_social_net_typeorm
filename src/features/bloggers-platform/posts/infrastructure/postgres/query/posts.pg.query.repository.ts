@@ -14,25 +14,25 @@ import { PostViewDto } from '../../../dto/repository/post-view';
 export class PostsPgQueryRepository {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
     async getAllPosts(queryData: GetPostsQueryParams, userId: string | null, blogId: string) {
-        const { pageSize, pageNumber, searchNameTerm, sortBy, sortDirection } = getPostsQuery(queryData);
+        const { pageSize, pageNumber, sortBy, sortDirection } = getPostsQuery(queryData);
 
         const updatedSortBy = sortBy === 'createdAt' ? 'created_at' : sortBy.toLowerCase();
 
         const offset = (pageNumber - 1) * pageSize;
 
         const queryPosts = `
-            SELECT "id", "name", "description", "website_url" AS "websiteUrl", "created_at" AS "createdAt", "is_membership" AS "isMembership" FROM "posts" WHERE "deleted_at" IS NULL AND ("name" ILIKE '%' || $1 || '%')
+            SELECT "id",  "created_at" AS "createdAt" FROM "posts" WHERE "deleted_at" IS NULL AND ("id" ILIKE '%' || $1 || '%')
             ORDER BY ("${updatedSortBy}") ${sortDirection.toUpperCase()}
             LIMIT $2
             OFFSET $3
             `;
 
-        const resultPosts = await this.dataSource.query(queryPosts, [searchNameTerm, Number(pageSize), Number(offset)]);
+        const resultPosts = await this.dataSource.query(queryPosts, [Number(pageSize), Number(offset)]);
 
         const queryCount = `
             SELECT COUNT(*) AS "totalCount" FROM "blogs" WHERE "deleted_at" IS NULL AND ("name" ILIKE '%' || $1 || '%')
         `;
-        const resultTotal = await this.dataSource.query(queryCount, [searchNameTerm]);
+        const resultTotal = await this.dataSource.query(queryCount);
 
         const blogsView = resultPosts.map(blog => BlogViewDto.mapToView(blog));
 
@@ -44,7 +44,7 @@ export class PostsPgQueryRepository {
         });
     }
     async getPost(blogId: string) {
-        const query = `SELECT "id", "name", "description", "website_url" AS "websiteUrl", "created_at" AS "createdAt", "is_membership" AS "isMembership" FROM "posts" WHERE id = $1 AND "deleted_at" IS NULL`;
+        const query = `SELECT "id", "created_at" AS "createdAt" FROM "posts" WHERE id = $1 AND "deleted_at" IS NULL`;
         const result = await this.dataSource.query(query, [+blogId]);
         if (!result || result.length === 0) {
             throw NotFoundDomainException.create('блог не найден', 'blogId');

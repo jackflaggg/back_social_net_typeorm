@@ -7,8 +7,9 @@ import { DeleteSessionsCommand } from '../application/device/usecases/delete-ses
 import { Controller, Delete, Get, HttpCode, HttpStatus, Param, UseGuards } from '@nestjs/common';
 import { SessionQueryPgRepository } from '../infrastructure/postgres/sessions/query/sessions.pg.query.repository';
 import { ValidateUUIDPipe } from '../../../core/pipes/validation.input.uuid';
+import { SETTINGS } from '../../../core/settings';
 
-@Controller('security')
+@Controller(SETTINGS.PATH.SECURITY_DEVICES)
 export class SessionController {
     constructor(
         private readonly commandBus: CommandBus,

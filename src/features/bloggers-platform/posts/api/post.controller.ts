@@ -19,13 +19,16 @@ import { GetCommentsQueryParams } from '../../comments/dto/repository/query/quer
 import { PostLikeStatusApi } from '../dto/api/like-status.dto';
 import { LikePostCommand } from '../application/usecases/like-post.usecase';
 import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optional-auth.guard';
+import { PostsPgQueryRepository } from '../infrastructure/postgres/query/posts.pg.query.repository';
+import { CommentsPgQueryRepository } from '../../comments/infrastructure/postgres/query/comments.pg.query.repository';
+import { SETTINGS } from '../../../../core/settings';
 
-@Controller('posts')
+@Controller(SETTINGS.PATH.POSTS)
 export class PostsController {
     constructor(
         private readonly commandBus: CommandBus,
-        private readonly postsQueryRepository: PostsQueryRepository,
-        private readonly commentQueryRepository: CommentsQueryRepository,
+        private readonly postsQueryRepository: PostsPgQueryRepository,
+        private readonly commentQueryRepository: CommentsPgQueryRepository,
     ) {}
 
     @UseGuards(JwtOptionalAuthGuard)

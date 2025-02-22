@@ -23,8 +23,9 @@ import { UserJwtPayloadDto } from '../strategies/refresh.strategy';
 import { RefreshTokenUserCommand } from '../application/user/usecases/refresh-token.user.usecase';
 import { LogoutUserCommand } from '../application/user/usecases/logout-user.usecase';
 import { UserPgQueryRepository } from '../infrastructure/postgres/user/query/user.pg.query.repository';
+import { SETTINGS } from '../../../core/settings';
 
-@Controller('auth')
+@Controller(SETTINGS.PATH.AUTH)
 export class AuthController {
     constructor(
         private readonly commandBus: CommandBus,

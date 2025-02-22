@@ -26,7 +26,7 @@ export class BlogsSaController {
         private readonly postsQueryRepository: PostsPgQueryRepository,
     ) {}
 
-    // мне нужно, чтоб этот роут был чисто по blogs , а остальные по /sa/blogs
+    // мне нужно, чтоб этот роут был чисто по blogs, а остальные по /sa/blogs
     @Get()
     async getBlogs(@Query() query: GetBlogsQueryParams) {
         return this.blogsQueryRepository.getAllBlogs(query);
@@ -75,6 +75,18 @@ export class BlogsSaController {
     }
 
     //TODO 1: Добавить PUT /sa/blogs/{blogId}/posts/{postId}
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @UseGuards(BasicAuthGuard)
+    @Put(':blogId/posts/:postId')
+    async updatePostToBlog(@Param('blogId', ValidateSerialPipe) blogId: string) {
+        return this.commandBus.execute(new DeleteBlogCommand(blogId));
+    }
 
     //TODO 2: Добавить DELETE /sa/blogs/{blogId}/posts/{postId}
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @UseGuards(BasicAuthGuard)
+    @Delete(':blogId/posts/:postId')
+    async deletePostToBlog(@Param('blogId', ValidateSerialPipe) blogId: string) {
+        return this.commandBus.execute(new DeleteBlogCommand(blogId));
+    }
 }

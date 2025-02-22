@@ -40,17 +40,24 @@ import { BlogsPgRepository } from './blogs/infrastructure/postgres/blogs.pg.repo
 import { PostsPgRepository } from './posts/infrastructure/postgres/posts.pg.repository';
 import { PostsPgQueryRepository } from './posts/infrastructure/postgres/query/posts.pg.query.repository';
 import { BlogsSaController } from './blogs/api/blogs.sa.controller';
+import { CommentsPgQueryRepository } from './comments/infrastructure/postgres/query/comments.pg.query.repository';
 
-const repositoriesPostgres = [BlogsPgQueryRepository, BlogsPgRepository, PostsPgRepository, PostsPgQueryRepository];
+const repositoriesPostgres = [
+    BlogsPgQueryRepository,
+    BlogsPgRepository,
+    PostsPgRepository,
+    PostsPgQueryRepository,
+    CommentsPgQueryRepository,
+];
 const useCases = [
     CreateBlogUseCase,
     DeleteBlogUseCase,
     UpdateBlogUseCase,
-    // CreatePostToBlogUseCase,
+    CreatePostToBlogUseCase,
     // CreateCommentUseCase,
-    // CreatePostUseCase,
-    // DeletePostUseCase,
-    // UpdatePostUseCase,
+    CreatePostUseCase,
+    DeletePostUseCase,
+    UpdatePostUseCase,
     // LikePostUseCase,
     // DeleteCommentUseCase,
     // CheckUserCommentUseCase,

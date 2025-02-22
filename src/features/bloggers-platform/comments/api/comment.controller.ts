@@ -11,11 +11,13 @@ import { UpdateCommentCommandApiDto } from '../dto/api/update.statuses.comment.d
 import { UpdateContentCommentCommand } from '../application/usecases/update-comment.usecase';
 import { UpdateStatusCommentCommand } from '../application/usecases/like-comment.usecase';
 import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optional-auth.guard';
+import { CommentsPgQueryRepository } from '../infrastructure/postgres/query/comments.pg.query.repository';
+import { SETTINGS } from '../../../../core/settings';
 
-@Controller('/comments')
+@Controller(SETTINGS.PATH.COMMENTS)
 export class CommentController {
     constructor(
-        private readonly commentsQueryRepository: CommentsQueryRepository,
+        private readonly commentsQueryRepository: CommentsPgQueryRepository,
         private readonly commandBus: CommandBus,
     ) {}
     @UseGuards(JwtOptionalAuthGuard)

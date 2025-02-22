@@ -9,7 +9,7 @@ export class BlogsPgRepository {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
 
     async findBlogById(blogId: string) {
-        const query = `SELECT "id" FROM "blogs" WHERE id = $1 AND "deleted_at" IS NULL`;
+        const query = `SELECT "id", "name" FROM "blogs" WHERE id = $1 AND "deleted_at" IS NULL`;
         const result = await this.dataSource.query(query, [blogId]);
         if (!result || result.length === 0) {
             throw NotFoundDomainException.create('блог не найден', 'blogId');

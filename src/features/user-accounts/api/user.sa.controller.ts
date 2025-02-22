@@ -7,9 +7,10 @@ import { CreateUserCommand } from '../application/user/usecases/create-user.usec
 import { DeleteUserCommand } from '../application/user/usecases/delete-user.usecase';
 import { ValidateSerialPipe } from '../../../core/pipes/validation.input.serial';
 import { UserPgQueryRepository } from '../infrastructure/postgres/user/query/user.pg.query.repository';
+import { SETTINGS } from '../../../core/settings';
 
 @UseGuards(BasicAuthGuard)
-@Controller('sa/users')
+@Controller(SETTINGS.PATH.SA_USERS)
 export class UserSaController {
     constructor(
         private readonly commandBus: CommandBus,

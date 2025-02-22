@@ -4,6 +4,8 @@ import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository'
 import { PostsRepository } from '../../infrastructure/post.repository';
 import { InjectModel } from '@nestjs/mongoose';
 import { PostEntity, PostModelType } from '../../domain/post.entity';
+import { BlogsPgRepository } from '../../../blogs/infrastructure/postgres/blogs.pg.repository';
+import { PostsPgRepository } from '../../infrastructure/postgres/posts.pg.repository';
 
 export class CreatePostCommand {
     constructor(public payload: PostCreateDtoService) {}
@@ -12,15 +14,12 @@ export class CreatePostCommand {
 @CommandHandler(CreatePostCommand)
 export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
     constructor(
-        private readonly blogsRepository: BlogsRepository,
-        private readonly postsRepository: PostsRepository,
-        @InjectModel(PostEntity.name) private readonly postModel: PostModelType,
+        private readonly blogsRepository: BlogsPgRepository,
+        private readonly postsRepository: PostsPgRepository,
     ) {}
 
     async execute(command: CreatePostCommand) {
-        const blog = await this.blogsRepository.findBlogByIdOrFail(command.payload.blogId);
-        const post = this.postModel.buildInstance(command.payload, command.payload.blogId, blog.name);
-        await this.postsRepository.save(post);
-        return post._id.toString();
+        const blog = await this.blogsRepository.findBlogById(command.payload.blogId);
+        return await this.postsRepository.createPost(command.payload, blog.id, blog.name);
     }
 }
