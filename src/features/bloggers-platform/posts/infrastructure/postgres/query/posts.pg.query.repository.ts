@@ -14,7 +14,7 @@ export class PostsPgQueryRepository {
         const { pageSize, pageNumber, sortBy, sortDirection } = getPostsQuery(queryData);
 
         // Проверяем, является ли sortBy допустимым значением
-        const updatedSortBy = sortBy === 'blogName' ? `"${sortBy}"` : `"${sortBy}"`;
+        const updatedSortBy = sortBy === 'blogName' ? `"${sortBy}"` : `p."${sortBy}"`;
 
         const offset = (pageNumber - 1) * pageSize;
 
@@ -27,7 +27,8 @@ export class PostsPgQueryRepository {
                b."name"                 AS "blogName",
                p."created_at"           AS "createdAt"
         FROM "posts" AS p
-        JOIN "blogs" AS b 
+            -- левое соединение, потому что хочу получить все возможные посты
+        LEFT JOIN "blogs" AS b 
             ON b.id = p.blog_id
         WHERE p."deleted_at" IS NULL`;
 
