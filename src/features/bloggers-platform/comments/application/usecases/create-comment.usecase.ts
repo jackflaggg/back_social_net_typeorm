@@ -3,6 +3,7 @@ import { CommentCreateToPostApi } from '../../../posts/dto/api/comment.create.to
 import { UserPgRepository } from '../../../../user-accounts/infrastructure/postgres/user/user.pg.repository';
 import { PostsPgRepository } from '../../../posts/infrastructure/postgres/posts.pg.repository';
 import { CommentsPgRepository } from '../../infrastructure/postgres/comments.pg.repository';
+import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 // класс для создания комментария
 export class CreateCommentCommand {
@@ -26,14 +27,12 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
     ) {}
     async execute(command: CreateCommentCommand) {
         const post = await this.postsRepository.findPostById(command.postId);
+        if (!post) {
+            throw NotFoundDomainException.create('пост не найден', 'postId');
+        }
         const user = await this.usersRepository.findUserById(command.userId);
-        console.log('я нашел юзера: ' + user);
-        // const result = this.CommentModel.buildInstance(
-        //     command.payload.content,
-        //     { userId: user._id.toString(), userLogin: user.login },
-        //     command.postId,
-        // );
-        // await this.commentsRepository.save(result);
-        // return result._id.toString();
+
+        const comment = await this.commentsRepository.createComment(command.payload.content, post.id, user.id);
+        return comment[0].id;
     }
 }

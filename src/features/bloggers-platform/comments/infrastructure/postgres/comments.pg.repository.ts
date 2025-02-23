@@ -1,9 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 @Injectable()
 export class CommentsPgRepository {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
     async findCommentById(commentId: string) {}
+    async createComment(content: string, postId: string, userId: string) {
+        const parentType = 'comment';
+
+        try {
+            // Начинаем транзакцию
+            await this.dataSource.query('BEGIN');
+
+            // Вставка комментария
+            const queryOne = `INSERT INTO "comments" (content, post_id, commentator_id) VALUES ($1, $2, $3) RETURNING "id"`;
+            const resultComments = await this.dataSource.query(queryOne, [content, postId, userId]);
+
+            // Вставка статуса
+            const queryTwo = `INSERT INTO "likes" (parent_type, comment_id, user_id) VALUES ($1, $2, $3)`;
+            await this.dataSource.query(queryTwo, [parentType, resultComments[0].id, userId]);
+
+            // Подтверждаем транзакцию
+            await this.dataSource.query('COMMIT');
+            return resultComments;
+        } catch (err: unknown) {
+            // Откатываем транзакцию в случае ошибки
+            await this.dataSource.query('ROLLBACK');
+            throw BadRequestDomainException.create('упала транзакция в создании комментария!' + err, 'commentId');
+        }
+    }
 }

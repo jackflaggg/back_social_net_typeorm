@@ -16,3 +16,20 @@ export function transformCommentToGet(valueOne: any, valueTwo?: any) {
         },
     };
 }
+
+export function transformComment(valueOne: any) {
+    return {
+        id: String(valueOne.id),
+        content: valueOne.content || '',
+        commentatorInfo: {
+            userId: valueOne.userId || '',
+            userLogin: valueOne.userLogin || '',
+        },
+        createdAt: valueOne.createdAt || '',
+        likesInfo: {
+            likesCount: 0,
+            dislikesCount: 0,
+            myStatus: StatusLike.enum['None'],
+        },
+    };
+}
