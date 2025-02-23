@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { emailConfirmAdminInterface } from '../../../../../core/utils/user/email-confirmation-data.admin';
-import { BadRequestDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import {
+    BadRequestDomainException,
+    NotFoundDomainException,
+    UnauthorizedDomainException,
+} from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export interface UserCreateDtoRepo {
     login: string;
@@ -46,6 +50,18 @@ export class UserPgRepository {
         const result = await this.dataSource.query(query, [userId]);
         if (!result || result.length === 0) {
             throw NotFoundDomainException.create('юзер не найден', 'userId');
+        }
+        return result[0];
+    }
+    async findUserAuth(userId: string) {
+        const query = `
+            SELECT u."id", ec."confirmation_code" AS "confirmationCode" FROM "users" AS "u" 
+            JOIN "email_confirmation" AS ec on u.id = ec.user_id
+            WHERE u."id" = $1 AND u."deleted_at" IS NULL
+        `;
+        const result = await this.dataSource.query(query, [userId]);
+        if (!result || result.length === 0) {
+            throw UnauthorizedDomainException.create();
         }
         return result[0];
     }

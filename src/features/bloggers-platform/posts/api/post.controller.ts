@@ -79,8 +79,7 @@ export class PostsController {
         @Body() dto: PostLikeStatusApi,
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
-        const userId = dtoUser ? dtoUser.userId : null;
-        return this.commandBus.execute(new LikePostCommand(dto.likeStatus, postId, userId));
+        return this.commandBus.execute(new LikePostCommand(dto.likeStatus, postId, dtoUser.userId));
     }
 
     @UseGuards(JwtOptionalAuthGuard)

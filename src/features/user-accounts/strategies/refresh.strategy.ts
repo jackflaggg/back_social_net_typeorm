@@ -33,11 +33,7 @@ export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, '
     }
 
     async validate(payload: UserJwtPayloadDto) {
-        const user = await this.usersRepository.findUserById(payload.userId);
-
-        if (!user) {
-            throw UnauthorizedDomainException.create();
-        }
+        await this.usersRepository.findUserAuth(payload.userId);
 
         const device = await this.securityDevicesRepository.findSessionByDeviceId(payload.deviceId);
 
@@ -46,8 +42,6 @@ export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, '
         }
 
         const unixTimestamp = Math.floor(device.issuedAt.getTime() / 1000);
-
-        console.log(device.issuedAt.getTime());
 
         if (unixTimestamp !== payload.iat) {
             throw UnauthorizedDomainException.create();

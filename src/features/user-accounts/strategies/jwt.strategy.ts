@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { UnauthorizedDomainException } from '../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { CoreConfig } from '../../../core/config/core.config';
 import { UserPgRepository } from '../infrastructure/postgres/user/user.pg.repository';
 
@@ -19,10 +18,6 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt-access'
     }
 
     async validate(payload: any) {
-        const user = await this.usersRepository.findUserById(payload.userId);
-        if (!user) {
-            throw UnauthorizedDomainException.create();
-        }
-        return payload;
+        return await this.usersRepository.findUserAuth(payload.userId);
     }
 }
