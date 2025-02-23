@@ -3,6 +3,6 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 @Injectable()
-export class CommentsPgRepository {
+export class StatusPgRepository {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
 }

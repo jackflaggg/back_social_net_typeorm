@@ -1,11 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostsRepository } from '../../infrastructure/post.repository';
-import { InjectModel } from '@nestjs/mongoose';
 import { calculateStatus } from '../../../../../core/utils/like/features/calculate.status';
-import { StatusRepository } from '../../infrastructure/status.repository';
-import { likeViewModel, StatusEntity, StatusModelType } from '../../../likes/domain/status.entity';
+import { likeViewModel } from '../../../likes/domain/status.entity';
 import { StatusLike } from '../../../../../libs/contracts/enums/status.like';
-import { UserRepository } from '../../../../user-accounts/infrastructure/mongoose/user/user.repository';
+import { StatusPgRepository } from '../../../likes/infrastructure/postgres/status.pg.repository';
+import { PostsPgRepository } from '../../infrastructure/postgres/posts.pg.repository';
+import { UserPgRepository } from '../../../../user-accounts/infrastructure/postgres/user/user.pg.repository';
 
 export class LikePostCommand {
     constructor(
@@ -18,14 +17,13 @@ export class LikePostCommand {
 @CommandHandler(LikePostCommand)
 export class LikePostUseCase implements ICommandHandler<LikePostCommand> {
     constructor(
-        private readonly statusRepository: StatusRepository,
-        private readonly postsRepository: PostsRepository,
-        private readonly usersRepository: UserRepository,
-        @InjectModel(StatusEntity.name) private readonly statusModel: StatusModelType,
+        private readonly statusRepository: StatusPgRepository,
+        private readonly postsRepository: PostsPgRepository,
+        private readonly usersRepository: UserPgRepository,
     ) {}
 
     async execute(command: LikePostCommand) {
-        const post = await this.postsRepository.findPostByIdOrFail(command.postId);
+        const post = await this.postsRepository.findPostById(command.postId);
         const currentStatuses = await this.statusRepository.getStatusPost(post._id.toString(), command.userId!);
 
         let dislike: number = 0;

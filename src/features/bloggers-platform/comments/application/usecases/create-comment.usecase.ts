@@ -1,10 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostsRepository } from '../../../posts/infrastructure/post.repository';
-import { CommentRepository } from '../../infrastructure/comment.repository';
-import { InjectModel } from '@nestjs/mongoose';
-import { CommentEntity, CommentModelType } from '../../domain/comment.entity';
 import { CommentCreateToPostApi } from '../../../posts/dto/api/comment.create.to.post';
-import { UserRepository } from '../../../../user-accounts/infrastructure/mongoose/user/user.repository';
+import { UserPgRepository } from '../../../../user-accounts/infrastructure/postgres/user/user.pg.repository';
+import { PostsPgRepository } from '../../../posts/infrastructure/postgres/posts.pg.repository';
+import { CommentsPgRepository } from '../../infrastructure/postgres/comments.pg.repository';
 
 // класс для создания комментария
 export class CreateCommentCommand {
@@ -22,21 +20,20 @@ export class CreateCommentCommand {
 @CommandHandler(CreateCommentCommand)
 export class CreateCommentUseCase implements ICommandHandler<CreateCommentCommand> {
     constructor(
-        private readonly postsRepository: PostsRepository,
-        private readonly usersRepository: UserRepository,
-        private readonly commentsRepository: CommentRepository,
-        @InjectModel(CommentEntity.name) private CommentModel: CommentModelType,
+        private readonly postsRepository: PostsPgRepository,
+        private readonly usersRepository: UserPgRepository,
+        private readonly commentsRepository: CommentsPgRepository,
     ) {}
     async execute(command: CreateCommentCommand) {
-        const post = await this.postsRepository.findPostByIdOrFail(command.postId);
-        const user = await this.usersRepository.findUserByIdOrFail(command.userId);
+        const post = await this.postsRepository.findPostById(command.postId);
+        const user = await this.usersRepository.findUserById(command.userId);
         console.log('я нашел юзера: ' + user);
-        const result = this.CommentModel.buildInstance(
-            command.payload.content,
-            { userId: user._id.toString(), userLogin: user.login },
-            command.postId,
-        );
-        await this.commentsRepository.save(result);
-        return result._id.toString();
+        // const result = this.CommentModel.buildInstance(
+        //     command.payload.content,
+        //     { userId: user._id.toString(), userLogin: user.login },
+        //     command.postId,
+        // );
+        // await this.commentsRepository.save(result);
+        // return result._id.toString();
     }
 }

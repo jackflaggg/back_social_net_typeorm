@@ -2,6 +2,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CommentRepository } from '../../infrastructure/comment.repository';
 import { ForbiddenDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { CommentsPgRepository } from '../../infrastructure/postgres/comments.pg.repository';
 
 export class CheckUserCommentCommand {
     constructor(
@@ -16,7 +17,7 @@ export class CheckUserCommentCommand {
 // Это позволяет отделить команду от логики обработки
 @CommandHandler(CheckUserCommentCommand)
 export class CheckUserCommentUseCase implements ICommandHandler<CheckUserCommentCommand> {
-    constructor(private readonly commentRepository: CommentRepository) {}
+    constructor(private readonly commentRepository: CommentsPgRepository) {}
     async execute(command: CheckUserCommentCommand) {
         const comment = await this.commentRepository.findCommentById(command.commentId);
         if (command.userId !== comment.commentatorInfo.userId) {

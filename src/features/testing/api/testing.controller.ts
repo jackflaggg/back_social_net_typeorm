@@ -9,8 +9,8 @@ export class TestingController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete('all-data')
     async deleteAll() {
-        const dataTables = ['users', 'blogs', 'posts'];
-        const query = `TRUNCATE TABLE ${dataTables[0]}, ${dataTables[1]}, ${dataTables[2]} RESTART IDENTITY cascade`;
+        const dataTables = ['users', 'blogs', 'posts', 'likes'];
+        const query = `TRUNCATE TABLE ${dataTables[0]}, ${dataTables[1]}, ${dataTables[2]}, ${dataTables[3]} RESTART IDENTITY cascade`;
         await this.dataSource.query(query);
         try {
             return;

@@ -1,12 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CommentRepository } from '../../infrastructure/comment.repository';
 import { calculateStatus } from '../../../../../core/utils/like/features/calculate.status';
-import { StatusRepository } from '../../../posts/infrastructure/status.repository';
-import { likeViewModel, StatusEntity, StatusModelType } from '../../../likes/domain/status.entity';
-import { InjectModel } from '@nestjs/mongoose';
-import { CommentEntity, CommentModelType } from '../../domain/comment.entity';
+import { likeViewModel } from '../../../likes/domain/status.entity';
 import { StatusLike } from '../../../../../libs/contracts/enums/status.like';
-import { UserRepository } from '../../../../user-accounts/infrastructure/mongoose/user/user.repository';
+import { UserPgRepository } from '../../../../user-accounts/infrastructure/postgres/user/user.pg.repository';
+import { CommentsPgRepository } from '../../infrastructure/postgres/comments.pg.repository';
+import { StatusPgRepository } from '../../../likes/infrastructure/postgres/status.pg.repository';
 
 export class UpdateStatusCommentCommand {
     constructor(
@@ -23,11 +21,9 @@ export class UpdateStatusCommentCommand {
 @CommandHandler(UpdateStatusCommentCommand)
 export class UpdateStatusCommentUseCase implements ICommandHandler<UpdateStatusCommentCommand> {
     constructor(
-        private readonly commentsRepository: CommentRepository,
-        private readonly statusRepository: StatusRepository,
-        private readonly usersRepository: UserRepository,
-        @InjectModel(StatusEntity.name) private readonly statusModel: StatusModelType,
-        @InjectModel(CommentEntity.name) private readonly commentModel: CommentModelType,
+        private readonly commentsRepository: CommentsPgRepository,
+        private readonly statusRepository: StatusPgRepository,
+        private readonly usersRepository: UserPgRepository,
     ) {}
     async execute(command: UpdateStatusCommentCommand) {
         const comment = await this.commentsRepository.findCommentById(command.commentId);

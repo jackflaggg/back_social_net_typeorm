@@ -22,6 +22,15 @@ import { CommentsPgQueryRepository } from './comments/infrastructure/postgres/qu
 import { UpdatePostToBlogUseCase } from './blogs/application/usecases/update-post-to-blog.usecase';
 import { DeletePostToBlogUseCase } from './blogs/application/usecases/delete-post-to-blog.usecase';
 import { PostsController } from './posts/api/post.controller';
+import { CommentController } from './comments/api/comment.controller';
+import { CreateCommentUseCase } from './comments/application/usecases/create-comment.usecase';
+import { LikePostUseCase } from './posts/application/usecases/like-post.usecase';
+import { DeleteCommentUseCase } from './comments/application/usecases/delete-comment.usecase';
+import { CheckUserCommentUseCase } from './comments/application/usecases/check-user-comment.usecase';
+import { UpdateStatusCommentUseCase } from './comments/application/usecases/like-comment.usecase';
+import { UpdateContentCommentUseCase } from './comments/application/usecases/update-comment.usecase';
+import { CommentsPgRepository } from './comments/infrastructure/postgres/comments.pg.repository';
+import { StatusPgRepository } from './likes/infrastructure/postgres/status.pg.repository';
 
 const repositoriesPostgres = [
     BlogsPgQueryRepository,
@@ -29,23 +38,25 @@ const repositoriesPostgres = [
     PostsPgRepository,
     PostsPgQueryRepository,
     CommentsPgQueryRepository,
+    CommentsPgRepository,
+    StatusPgRepository,
 ];
 const useCases = [
     CreateBlogUseCase,
     DeleteBlogUseCase,
     UpdateBlogUseCase,
     CreatePostToBlogUseCase,
-    // CreateCommentUseCase,
+    CreateCommentUseCase,
     CreatePostUseCase,
     DeletePostUseCase,
     UpdatePostUseCase,
     UpdatePostToBlogUseCase,
     DeletePostToBlogUseCase,
-    // LikePostUseCase,
-    // DeleteCommentUseCase,
-    // CheckUserCommentUseCase,
-    // UpdateStatusCommentUseCase,
-    // UpdateContentCommentUseCase,
+    LikePostUseCase,
+    DeleteCommentUseCase,
+    CheckUserCommentUseCase,
+    UpdateStatusCommentUseCase,
+    UpdateContentCommentUseCase,
 ];
 
 @Module({
@@ -65,7 +76,7 @@ const useCases = [
         CqrsModule,
         UsersModule,
     ],
-    controllers: [BlogsController, BlogsSaController, PostsController /*, CommentController*/],
+    controllers: [BlogsController, BlogsSaController, PostsController, CommentController],
     providers: [...repositoriesPostgres, ...useCases],
 })
 export class BloggersPlatformModule {}

@@ -51,7 +51,7 @@ import { BloggersPlatformModule } from './features/bloggers-platform/bloggers-pl
                 limit: 5,
             },
         ]),
-        TestingModule,
+        TestingModule.register(),
         UsersModule,
         BloggersPlatformModule,
     ],
