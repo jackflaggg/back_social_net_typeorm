@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { emailConfirmAdminInterface } from '../../../../../core/utils/user/email-confirmation-data.admin';
-import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { BadRequestDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export interface UserCreateDtoRepo {
     login: string;
@@ -67,38 +67,48 @@ export class UserPgRepository {
     }
 
     async createUser(newUser: UserCreateDtoRepo, emailConfirm: emailConfirmAdminInterface) {
-        const queryUsers = `
+        try {
+            // Начинаем транзакцию
+            await this.dataSource.query('BEGIN');
+
+            const queryUsers = `
             INSERT INTO "users" ("login", "email", "created_at", "password_hash")
             VALUES ($1, $2, $3, $4)
             RETURNING "id" as "id", login as "login", "email" as "email", "created_at" as "createdAt"
         `;
 
-        const result = await this.dataSource.query(queryUsers, [
-            newUser.login,
-            newUser.email,
-            newUser.createdAt.toISOString(),
-            newUser.password,
-        ]);
+            const result = await this.dataSource.query(queryUsers, [
+                newUser.login,
+                newUser.email,
+                newUser.createdAt.toISOString(),
+                newUser.password,
+            ]);
 
-        if (!result || result.length === 0) {
-            console.log('reg!');
-            throw NotFoundDomainException.create('юзер не найден', 'userId');
-        }
+            // Проверяем, что результат не пустой
+            if (!result || result.length === 0) {
+                throw NotFoundDomainException.create('юзер не найден', 'userId');
+            }
 
-        const userId = result[0].id;
+            const userId = result[0].id;
 
-        const queryEmailConfirmation = `
+            const queryEmailConfirmation = `
             INSERT INTO "email_confirmation" ("confirmation_code", "expiration_date", "is_confirmed", "user_id")
             VALUES ($1, $2, $3, $4)`;
 
-        await this.dataSource.query(queryEmailConfirmation, [
-            emailConfirm.emailConfirmation.confirmationCode,
-            emailConfirm.emailConfirmation.expirationDate.toISOString(),
-            emailConfirm.emailConfirmation.isConfirmed,
-            userId,
-        ]);
-
-        return userId;
+            await this.dataSource.query(queryEmailConfirmation, [
+                emailConfirm.emailConfirmation.confirmationCode,
+                emailConfirm.emailConfirmation.expirationDate.toISOString(),
+                emailConfirm.emailConfirmation.isConfirmed,
+                userId,
+            ]);
+            await this.dataSource.query('COMMIT');
+            return userId;
+        } catch (err: unknown) {
+            // Начинаем транзакцию
+            await this.dataSource.query('ROLLBACK');
+            console.log(String(err));
+            throw BadRequestDomainException.create('произошла ошибка во время создания юзера!', 'userId');
+        }
     }
     async updateDeletedAt(userId: string) {
         //TODO: Как мне удалять, чтобы секвенсы не путались?

@@ -5,7 +5,6 @@ import { CommentsPgQueryRepository } from '../../comments/infrastructure/postgre
 import { SETTINGS } from '../../../../core/settings';
 import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optional-auth.guard';
 import { GetPostsQueryParams } from '../dto/api/get-posts-query-params.input.dto';
-import { ValidateObjectIdPipe } from '../../../../core/pipes/validation.input.data.pipe';
 import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
 import { PostCreateDtoApi } from '../dto/api/post.create.dto';
 import { CreatePostCommand } from '../application/usecases/create-post.usecase';
