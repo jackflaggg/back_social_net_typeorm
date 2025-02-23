@@ -22,11 +22,11 @@ export class StatusPgRepository {
         return result[0].status;
     }
     async createLikeStatusComment(commentId: string, userId: string, status: string) {
-        const query = `INSERT INTO "likes" (parent_type, comment_id, status, user_id) VALUES ($1, $2, $3) RETURNING "id"`;
+        const query = `INSERT INTO "likes" (parent_type, comment_id, user_id, status) VALUES ($1, $2, $3, $4) RETURNING "id"`;
         return await this.dataSource.query(query, ['comment', commentId, userId, status]);
     }
     async createLikeStatusPost(postId: string, userId: string, status: string) {
-        const query = `INSERT INTO "likes" (parent_type, comment_id, status, user_id) VALUES ($1, $2, $3) RETURNING "id"`;
+        const query = `INSERT INTO "likes" (parent_type, post_id, user_id, status) VALUES ($1, $2, $3, $4) RETURNING "id"`;
         return await this.dataSource.query(query, ['post', postId, userId, status]);
     }
     async updateLikeStatusComment(commentId: string, userId: string, status: string) {
