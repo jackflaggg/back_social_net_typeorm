@@ -43,4 +43,9 @@ export class CommentsPgRepository {
         UPDATE "comments" SET "content" = $1 WHERE "id" = $2`;
         await this.dataSource.query(query, [content, commentId]);
     }
+    async deleteComment(dateExpired: string, commentId: string) {
+        const query = `
+        UPDATE "comments" SET "deleted_at" = $1 WHERE "id" = $2`;
+        await this.dataSource.query(query, [dateExpired, commentId]);
+    }
 }

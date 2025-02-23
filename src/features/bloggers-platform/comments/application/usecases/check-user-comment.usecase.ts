@@ -1,7 +1,6 @@
-// класс для создания комментария
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { ForbiddenDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { CommentsPgRepository } from '../../infrastructure/postgres/comments.pg.repository';
+import { ForbiddenDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class CheckUserCommentCommand {
     constructor(
@@ -19,9 +18,9 @@ export class CheckUserCommentUseCase implements ICommandHandler<CheckUserComment
     constructor(private readonly commentRepository: CommentsPgRepository) {}
     async execute(command: CheckUserCommentCommand) {
         const comment = await this.commentRepository.findCommentById(command.commentId);
-        // if (command.userId !== comment.userId) {
-        //     throw ForbiddenDomainException.create('это не ваш комментарий!', 'userid');
-        // }
-        // return comment;
+        if (command.userId !== comment.userId) {
+            throw ForbiddenDomainException.create('это не ваш комментарий!', 'userid');
+        }
+        return comment;
     }
 }

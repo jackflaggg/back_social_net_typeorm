@@ -1,8 +1,5 @@
-// класс для создания комментария
-import { CommentRepository } from '../../infrastructure/comment.repository';
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CheckUserCommentCommand } from './check-user-comment.usecase';
-import { ForbiddenDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { CommentsPgRepository } from '../../infrastructure/postgres/comments.pg.repository';
 
 export class DeleteCommentCommand {
@@ -24,10 +21,7 @@ export class DeleteCommentUseCase implements ICommandHandler<DeleteCommentComman
     ) {}
     async execute(command: DeleteCommentCommand) {
         const comment = await this.commandBus.execute(new CheckUserCommentCommand(command.commentId, command.userId));
-        if (comment.commentatorInfo.userId !== command.userId) {
-            throw ForbiddenDomainException.create();
-        }
-        // comment.makeDeleted();
-        // await this.commentsRepository.save(comment);
+        const dateExpiredComment = new Date().toISOString();
+        await this.commentsRepository.deleteComment(dateExpiredComment, comment.id);
     }
 }
