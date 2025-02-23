@@ -19,10 +19,10 @@ export class UpdateContentCommentUseCase implements ICommandHandler<UpdateConten
     constructor(private readonly commentsRepository: CommentsPgRepository) {}
     async execute(command: UpdateContentCommentCommand) {
         const comment = await this.commentsRepository.findCommentById(command.commentId);
-        if (comment.commentatorInfo.userId !== command.userId) {
-            throw ForbiddenDomainException.create();
-        }
-        comment.updateContent(command.content);
-        await this.commentsRepository.save(comment);
+        // if (comment.commentatorInfo.userId !== command.userId) {
+        //     throw ForbiddenDomainException.create();
+        // }
+        // comment.updateContent(command.content);
+        // await this.commentsRepository.save(comment);
     }
 }

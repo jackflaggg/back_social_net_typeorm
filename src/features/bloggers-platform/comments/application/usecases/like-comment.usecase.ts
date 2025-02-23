@@ -27,43 +27,43 @@ export class UpdateStatusCommentUseCase implements ICommandHandler<UpdateStatusC
     ) {}
     async execute(command: UpdateStatusCommentCommand) {
         const comment = await this.commentsRepository.findCommentById(command.commentId);
-        const currentStatuses = await this.statusRepository.getStatus(comment._id.toString(), command.userId);
-
-        let dislike: number = 0;
-        let like: number = 0;
-
-        if (currentStatuses) {
-            await this.statusRepository.updateLikeStatus(comment._id.toString(), command.userId, command.status);
-
-            const { dislikesCount, likesCount } = calculateStatus(currentStatuses, command.status);
-            dislike = dislikesCount;
-            like = likesCount;
-        } else {
-            const user = await this.usersRepository.findUserByIdOrFail(command.userId!);
-            const dtoStatus: likeViewModel = {
-                userId: user._id.toString(),
-                userLogin: user.login,
-                parentId: comment._id.toString(),
-                status: command.status,
-            };
-
-            const newStatus = this.statusModel.buildInstance(dtoStatus);
-
-            await this.statusRepository.save(newStatus);
-
-            like = command.status === StatusLike.enum['Like'] ? 1 : 0;
-            dislike = command.status === StatusLike.enum['Dislike'] ? 1 : 0;
-        }
-
-        const likesCount = comment.likesInfo.likesCount + like;
-
-        const dislikesCount = comment.likesInfo.dislikesCount + dislike;
-
-        const updatedComment = {
-            likesCount: likesCount >= 0 ? likesCount : 0,
-            dislikesCount: dislikesCount >= 0 ? dislikesCount : 0,
-        };
-        comment.updateStatus(updatedComment.likesCount, updatedComment.dislikesCount);
-        await this.commentsRepository.save(comment);
+        // const currentStatuses = await this.statusRepository.getStatus(comment._id.toString(), command.userId);
+        //
+        // let dislike: number = 0;
+        // let like: number = 0;
+        //
+        // if (currentStatuses) {
+        //     await this.statusRepository.updateLikeStatus(comment._id.toString(), command.userId, command.status);
+        //
+        //     const { dislikesCount, likesCount } = calculateStatus(currentStatuses, command.status);
+        //     dislike = dislikesCount;
+        //     like = likesCount;
+        // } else {
+        //     const user = await this.usersRepository.findUserByIdOrFail(command.userId!);
+        //     const dtoStatus: likeViewModel = {
+        //         userId: user._id.toString(),
+        //         userLogin: user.login,
+        //         parentId: comment._id.toString(),
+        //         status: command.status,
+        //     };
+        //
+        //     const newStatus = this.statusModel.buildInstance(dtoStatus);
+        //
+        //     await this.statusRepository.save(newStatus);
+        //
+        //     like = command.status === StatusLike.enum['Like'] ? 1 : 0;
+        //     dislike = command.status === StatusLike.enum['Dislike'] ? 1 : 0;
+        // }
+        //
+        // const likesCount = comment.likesInfo.likesCount + like;
+        //
+        // const dislikesCount = comment.likesInfo.dislikesCount + dislike;
+        //
+        // const updatedComment = {
+        //     likesCount: likesCount >= 0 ? likesCount : 0,
+        //     dislikesCount: dislikesCount >= 0 ? dislikesCount : 0,
+        // };
+        // comment.updateStatus(updatedComment.likesCount, updatedComment.dislikesCount);
+        // await this.commentsRepository.save(comment);
     }
 }

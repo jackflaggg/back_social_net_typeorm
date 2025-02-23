@@ -27,7 +27,7 @@ export class DeleteCommentUseCase implements ICommandHandler<DeleteCommentComman
         if (comment.commentatorInfo.userId !== command.userId) {
             throw ForbiddenDomainException.create();
         }
-        comment.makeDeleted();
-        await this.commentsRepository.save(comment);
+        // comment.makeDeleted();
+        // await this.commentsRepository.save(comment);
     }
 }
