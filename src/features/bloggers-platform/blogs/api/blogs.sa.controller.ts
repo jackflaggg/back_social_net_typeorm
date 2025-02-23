@@ -64,7 +64,6 @@ export class BlogsSaController {
         return this.postsQueryRepository.getAllPosts(query, blog.id);
     }
 
-    //TODO 1: Добавить PUT /sa/blogs/{blogId}/posts/{postId}
     @HttpCode(HttpStatus.NO_CONTENT)
     @Put(':blogId/posts/:postId')
     async updatePostToBlog(
@@ -75,7 +74,6 @@ export class BlogsSaController {
         return this.commandBus.execute(new UpdatePostToBlogCommand(blogId, postId, dto));
     }
 
-    //TODO 2: Добавить DELETE /sa/blogs/{blogId}/posts/{postId}
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete(':blogId/posts/:postId')
     async deletePostToBlog(@Param('blogId', ValidateSerialPipe) blogId: string, @Param('postId', ValidateSerialPipe) postId: string) {
