@@ -55,7 +55,7 @@ export class UserPgRepository {
     }
     async findUserAuth(userId: string) {
         const query = `
-            SELECT u."id", ec."confirmation_code" AS "confirmationCode" FROM "users" AS "u" 
+            SELECT u."id" AS "userId" FROM "users" AS "u" 
             JOIN "email_confirmation" AS ec on u.id = ec.user_id
             WHERE u."id" = $1 AND u."deleted_at" IS NULL
         `;

@@ -1,8 +1,8 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { BlogDocument, BlogEntity, BlogModelType } from '../domain/blog.entity';
+import { BlogDocument, BlogEntity, BlogModelType } from '../../domain/blog.entity';
 import { Injectable } from '@nestjs/common';
-import { NotFoundDomainException } from '../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { DeletionStatus } from '../../../../libs/contracts/enums/deletion-status.enum';
+import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { DeletionStatus } from '../../../../../libs/contracts/enums/deletion-status.enum';
 
 @Injectable()
 export class BlogsRepository {

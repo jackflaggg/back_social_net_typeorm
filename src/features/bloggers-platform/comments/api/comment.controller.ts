@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Put, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../../../../core/guards/passport/guards/jwt.auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
-import { ValidateObjectIdPipe } from '../../../../core/pipes/validation.input.data.pipe';
 import { DeleteCommentCommand } from '../application/usecases/delete-comment.usecase';
 import { ExtractAnyUserFromRequest, ExtractUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
 import { UserJwtPayloadDto } from '../../../user-accounts/strategies/refresh.strategy';
@@ -42,11 +41,11 @@ export class CommentController {
     @UseGuards(JwtAuthGuard)
     @Put('/:commentId/like-status')
     async likeComment(
-        @Param('commentId', ValidateSerialPipe) id: string,
+        @Param('commentId', ValidateSerialPipe) commentId: string,
         @Body() dto: UpdateCommentCommandApiDto,
         @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
-        return this.commandBus.execute(new UpdateStatusCommentCommand(id, dto.likeStatus, dtoUser.userId));
+        return this.commandBus.execute(new UpdateStatusCommentCommand(commentId, dto.likeStatus, dtoUser.userId));
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
