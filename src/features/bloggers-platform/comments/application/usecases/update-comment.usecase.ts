@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { ForbiddenDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { ForbiddenDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { CommentsPgRepository } from '../../infrastructure/postgres/comments.pg.repository';
 
 export class UpdateContentCommentCommand {
@@ -19,10 +19,12 @@ export class UpdateContentCommentUseCase implements ICommandHandler<UpdateConten
     constructor(private readonly commentsRepository: CommentsPgRepository) {}
     async execute(command: UpdateContentCommentCommand) {
         const comment = await this.commentsRepository.findCommentById(command.commentId);
-        // if (comment.commentatorInfo.userId !== command.userId) {
-        //     throw ForbiddenDomainException.create();
-        // }
-        // comment.updateContent(command.content);
-        // await this.commentsRepository.save(comment);
+        if (!comment) {
+            throw NotFoundDomainException.create('комментарий не существует!', 'commentId');
+        }
+        if (comment.userId !== command.userId) {
+            throw ForbiddenDomainException.create();
+        }
+        await this.commentsRepository.updateComment(comment.id, command.content);
     }
 }

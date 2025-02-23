@@ -1,12 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { BadRequestDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 @Injectable()
 export class CommentsPgRepository {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
-    async findCommentById(commentId: string) {}
+    async findCommentById(commentId: string) {
+        const query = `SELECT "id", "commentator_id" AS "userId" FROM "comments" WHERE "deleted_at" IS NULL AND "id" = $1`;
+        const result = await this.dataSource.query(query, [commentId]);
+        if (!result || result.length === 0) {
+            throw NotFoundDomainException.create('коммент не найден', 'commentId');
+        }
+        return result[0];
+    }
     async createComment(content: string, postId: string, userId: string) {
         const parentType = 'comment';
 
@@ -30,5 +37,10 @@ export class CommentsPgRepository {
             await this.dataSource.query('ROLLBACK');
             throw BadRequestDomainException.create('упала транзакция в создании комментария!' + err, 'commentId');
         }
+    }
+    async updateComment(commentId: string, content: string) {
+        const query = `
+        UPDATE "comments" SET "content" = $1 WHERE "id" = $2`;
+        await this.dataSource.query(query, [content, commentId]);
     }
 }
