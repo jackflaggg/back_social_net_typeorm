@@ -2,6 +2,7 @@ import { Controller, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { SETTINGS } from '../../../core/settings';
+import { TablesEnum } from '../../../libs/contracts/enums/tables.enum';
 
 @Controller(SETTINGS.PATH.TESTING)
 export class TestingController {
@@ -10,13 +11,25 @@ export class TestingController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete('all-data')
     async deleteAll() {
-        const dataTables = ['users', 'blogs', 'posts', 'comments', 'likes'];
-        const query = `TRUNCATE TABLE ${dataTables[0]}, ${dataTables[1]}, ${dataTables[2]}, ${dataTables[3]} RESTART IDENTITY cascade`;
-        await this.dataSource.query(query);
-        try {
-            return;
-        } catch (err: unknown) {
-            return err;
+        const dataTables = [
+            TablesEnum.enum['users'],
+            TablesEnum.enum['blogs'],
+            TablesEnum.enum['posts'],
+            TablesEnum.enum['comments'],
+            TablesEnum.enum['likes'],
+        ];
+
+        let allWords: string = '';
+
+        for (let i = 0; i < dataTables.length; i++) {
+            allWords += dataTables[i];
+
+            if (i < dataTables.length - 1) {
+                allWords += ', ';
+            }
         }
+
+        const query = `TRUNCATE TABLE ${allWords} RESTART IDENTITY cascade`;
+        await this.dataSource.query(query);
     }
 }
