@@ -1,5 +1,4 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Put, UseGuards } from '@nestjs/common';
-import { CommentsQueryRepository } from '../infrastructure/query/comments.query.repository';
 import { JwtAuthGuard } from '../../../../core/guards/passport/guards/jwt.auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { ValidateObjectIdPipe } from '../../../../core/pipes/validation.input.data.pipe';
