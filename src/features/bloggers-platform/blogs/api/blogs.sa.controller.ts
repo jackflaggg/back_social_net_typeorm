@@ -17,6 +17,8 @@ import { PostToBlogCreateDtoApi } from '../dto/api/blog.to.post.create.dto';
 import { PostUpdateDtoApi } from '../../posts/dto/api/post.update.dto';
 import { UpdatePostToBlogCommand } from '../application/usecases/update-post-to-blog.usecase';
 import { DeletePostToBlogCommand } from '../application/usecases/delete-post-to-blog.usecase';
+import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optional-auth.guard';
+import { ExtractAnyUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
 
 @Controller(SETTINGS.PATH.SA_BLOGS)
 @UseGuards(BasicAuthGuard)
@@ -55,13 +57,19 @@ export class BlogsSaController {
     @Post(':blogId/posts')
     async createPostToBlog(@Param('blogId', ValidateSerialPipe) blogId: string, @Body() dto: PostToBlogCreateDtoApi) {
         const postId = await this.commandBus.execute(new CreatePostToBlogCommand(blogId, dto));
-        return this.postsQueryRepository.getPost(postId[0].id);
+        return this.postsQueryRepository.getPost(postId[0].id, blogId);
     }
 
+    @UseGuards(JwtOptionalAuthGuard)
     @Get(':blogId/posts')
-    async getPosts(@Param('blogId', ValidateSerialPipe) blogId: string, @Query() query: GetPostsQueryParams) {
+    async getPosts(
+        @Param('blogId', ValidateSerialPipe) blogId: string,
+        @Query() query: GetPostsQueryParams,
+        @ExtractAnyUserFromRequest() user: any,
+    ) {
+        const userId = user ? user.userId : null;
         const blog = await this.blogsQueryRepository.getBlog(blogId);
-        return this.postsQueryRepository.getAllPosts(query, blog.id);
+        return this.postsQueryRepository.getAllPosts(query, blog.id, userId);
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)

@@ -31,13 +31,20 @@ export class PostsController {
 
     @UseGuards(JwtOptionalAuthGuard)
     @Get()
-    async getPosts(@Query() query: GetPostsQueryParams) {
-        return await this.postsQueryRepository.getAllPosts(query);
+    async getPosts(
+        @Query() query: GetPostsQueryParams,
+        @Param('blogId', ValidateSerialPipe) blogId: string,
+        @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
+    ) {
+        const userId = dtoUser ? dtoUser.userId : null;
+        return await this.postsQueryRepository.getAllPosts(query, blogId, userId);
     }
 
+    @UseGuards(JwtOptionalAuthGuard)
     @Get(':postId')
-    async getPost(@Param('postId', ValidateSerialPipe) postId: string) {
-        return this.postsQueryRepository.getPost(postId);
+    async getPost(@Param('postId', ValidateSerialPipe) postId: string, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto) {
+        const userId = dtoUser ? dtoUser.userId : null;
+        return this.postsQueryRepository.getPost(postId, userId);
     }
 
     @HttpCode(HttpStatus.CREATED)
@@ -56,7 +63,7 @@ export class PostsController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(BasicAuthGuard)
     @Delete(':postId')
-    async deleteBlog(@Param('postId', ValidateSerialPipe) postId: string) {
+    async deletePost(@Param('postId', ValidateSerialPipe) postId: string) {
         return this.commandBus.execute(new DeletePostCommand(postId));
     }
 
@@ -77,8 +84,9 @@ export class PostsController {
     async likePost(
         @Param('postId', ValidateSerialPipe) postId: string,
         @Body() dto: PostLikeStatusApi,
-        @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
+        @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
+        await this.postsQueryRepository.getPost(postId, dtoUser.userId);
         return this.commandBus.execute(new LikePostCommand(dto.likeStatus, postId, dtoUser.userId));
     }
 
@@ -87,7 +95,7 @@ export class PostsController {
     async getComments(
         @Param('postId', ValidateSerialPipe) postId: string,
         @Query() query: GetCommentsQueryParams,
-        @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
+        @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto | null,
     ) {
         const userId = dtoUser ? dtoUser.userId : null;
         const post = await this.postsQueryRepository.getPost(postId);

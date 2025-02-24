@@ -1,5 +1,4 @@
 import { PostDocument } from '../../domain/post.entity';
-import { StatusLike } from '../../../../../libs/contracts/enums/status.like';
 
 export class PostViewDto {
     id: string;
@@ -10,12 +9,12 @@ export class PostViewDto {
     blogName: string;
     createdAt: Date;
     extendedLikesInfo: {
-        likesCount: number;
-        dislikesCount: number;
+        likesCount: number | string;
+        dislikesCount: number | string;
         myStatus: string;
         newestLikes: { addedAt: Date; userId: string; login: string }[];
     };
-    constructor(model: PostDocument) {
+    constructor(model: any) {
         this.id = String(model.id);
         this.title = model.title;
         this.shortDescription = model.shortDescription;
@@ -24,20 +23,14 @@ export class PostViewDto {
         this.blogName = model.blogName;
         this.createdAt = model.createdAt;
         this.extendedLikesInfo = {
-            likesCount: 0,
-            dislikesCount: 0,
-            myStatus: StatusLike.enum['None'],
-            newestLikes: (model.extendedLikesInfo?.newestLikes
-                ?.map(like => ({
-                    addedAt: like?.addedAt,
-                    userId: like?.userId,
-                    login: like?.login,
-                }))
-                .filter(Boolean) || []) as { addedAt: Date; userId: string; login: string }[],
+            likesCount: String(model.likesCount),
+            dislikesCount: String(model.dislikesCount),
+            myStatus: model.myStatus,
+            newestLikes: model.newestLikes || [],
         };
     }
 
-    static mapToView(blog: PostDocument): PostViewDto {
+    static mapToView(blog: PostDocument): any {
         return new PostViewDto(blog);
     }
 }
