@@ -1,10 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { StatusPgRepository } from '../../../likes/infrastructure/postgres/status.pg.repository';
 import { PostsPgRepository } from '../../infrastructure/postgres/posts.pg.repository';
-import { UserPgRepository } from '../../../../user-accounts/infrastructure/postgres/user/user.pg.repository';
-import { calculateStatus } from '../../../../../core/utils/like/features/calculate.status';
-import { likeViewModel } from '../../../likes/domain/status.entity';
-import { StatusLike } from '../../../../../libs/contracts/enums/status.like';
 
 export class LikePostCommand {
     constructor(

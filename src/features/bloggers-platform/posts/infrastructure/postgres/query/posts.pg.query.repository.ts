@@ -12,16 +12,24 @@ import { StatusLike } from '../../../../../../libs/contracts/enums/status.like';
 @Injectable()
 export class PostsPgQueryRepository {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
-    async getAllPosts(queryData: GetPostsQueryParams, blogId?: string, userId?: string | null) {
+    async getAllPosts(queryData: GetPostsQueryParams, userId: string | null, blogId?: string) {
+        const updateQueryBlogId = blogId ? `AND p."blog_id" = ${blogId}` : ``;
         const { pageSize, pageNumber, sortBy, sortDirection } = getPostsQuery(queryData);
 
+        function convertCamelCaseToSnakeCase(str: string) {
+            const hardValueSortByTest = ['createdAt', 'shortDescription'];
+            if (hardValueSortByTest.includes(sortBy)) return str.replace(/([A-Z])/g, '_\$1').toLowerCase();
+            return str.toLowerCase();
+        }
+
         // Проверяем, является ли sortBy допустимым значением
-        const updatedSortBy = sortBy === 'blogName' ? `"${sortBy}"` : `p."${sortBy}"`;
+        const updatedSortBy = sortBy === 'blogName' ? `"${sortBy}"` : `p."${convertCamelCaseToSnakeCase(sortBy)}"`;
 
         const orderBy = `${updatedSortBy} ${sortDirection.toUpperCase()}`;
 
         const offset = (pageNumber - 1) * pageSize;
 
+        // TODO: Не понимаю почему подсвечиваетсчя как ошибка!
         const query = `
             SELECT
                 p."id",
@@ -39,7 +47,7 @@ export class PostsPgQueryRepository {
                     FROM (
                              SELECT
                                  l."updated_at" AS "addedAt",
-                                 l."user_id" AS "userId",
+                                 l."user_id"::INT AS "userId",
                                  u."login"
                              FROM "likes" AS l
                                       JOIN "users" AS u ON l."user_id" = u."id"
@@ -51,7 +59,7 @@ export class PostsPgQueryRepository {
             FROM "posts" AS p
                      LEFT JOIN "blogs" AS b ON b.id = p.blog_id
                      LEFT JOIN "likes" AS l ON p.id = l.post_id
-            WHERE p."deleted_at" IS NULL
+            WHERE p."deleted_at" IS NULL ${updateQueryBlogId}
             GROUP BY p."id", b."name"
             ORDER BY ${orderBy}
             LIMIT $10
@@ -73,8 +81,8 @@ export class PostsPgQueryRepository {
 
         const queryCount = `
             SELECT COUNT(*) AS "totalCount" 
-            FROM "posts" 
-            WHERE "deleted_at" IS NULL`;
+            FROM "posts" p
+            WHERE p."deleted_at" IS NULL ${updateQueryBlogId}`;
 
         const resultTotalCount = await this.dataSource.query(queryCount);
 
@@ -88,7 +96,7 @@ export class PostsPgQueryRepository {
         });
     }
 
-    async getPost(postId: string, userId?: string | null) {
+    async getPost(postId: string, userId: string | null) {
         const query = `
             SELECT
                 p."id",

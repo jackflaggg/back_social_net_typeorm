@@ -1,5 +1,4 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostsRepository } from '../../infrastructure/mongoose/post.repository';
 import { PostsPgRepository } from '../../infrastructure/postgres/posts.pg.repository';
 
 export class DeletePostCommand {
@@ -12,6 +11,6 @@ export class DeletePostUseCase implements ICommandHandler<DeletePostCommand> {
 
     async execute(command: DeletePostCommand) {
         const result = await this.postsRepository.findPostById(command.postId);
-        // await this.postsRepository.deletePost(result.id);
+        await this.postsRepository.deletePost(result.id);
     }
 }

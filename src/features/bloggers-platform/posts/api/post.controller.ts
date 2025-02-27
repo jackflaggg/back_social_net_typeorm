@@ -37,7 +37,7 @@ export class PostsController {
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
         const userId = dtoUser ? dtoUser.userId : null;
-        return await this.postsQueryRepository.getAllPosts(query, blogId, userId);
+        return await this.postsQueryRepository.getAllPosts(query, userId, blogId);
     }
 
     @UseGuards(JwtOptionalAuthGuard)
@@ -51,8 +51,9 @@ export class PostsController {
     @UseGuards(BasicAuthGuard)
     @Post()
     async createPost(@Body() dto: PostCreateDtoApi) {
+        const userId = null;
         const postId = await this.commandBus.execute(new CreatePostCommand(dto));
-        return this.postsQueryRepository.getPost(postId);
+        return this.postsQueryRepository.getPost(postId, userId);
     }
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(BasicAuthGuard)
@@ -86,8 +87,8 @@ export class PostsController {
         @Body() dto: PostLikeStatusApi,
         @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
-        await this.postsQueryRepository.getPost(postId, dtoUser.userId);
-        return this.commandBus.execute(new LikePostCommand(dto.likeStatus, postId, dtoUser.userId));
+        const checkPost = await this.postsQueryRepository.getPost(postId, dtoUser.userId);
+        return this.commandBus.execute(new LikePostCommand(dto.likeStatus, checkPost.id, dtoUser.userId));
     }
 
     @UseGuards(JwtOptionalAuthGuard)
@@ -98,7 +99,7 @@ export class PostsController {
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto | null,
     ) {
         const userId = dtoUser ? dtoUser.userId : null;
-        const post = await this.postsQueryRepository.getPost(postId);
+        const post = await this.postsQueryRepository.getPost(postId, userId);
         return this.commentQueryRepository.getAllComments(post.id, query, userId);
     }
 }

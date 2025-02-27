@@ -16,6 +16,6 @@ export interface QueryCommentInputInterface {
 export const getCommentQuery = (queryPost: QueryCommentInputInterface): CommentSortInterface => ({
     pageNumber: queryPost.pageNumber ?? 1,
     pageSize: queryPost.pageSize ?? 10,
-    sortBy: queryPost.sortBy ?? 'createdAt',
+    sortBy: queryPost.sortBy ?? 'c.created_at',
     sortDirection: queryPost.sortDirection ?? SortDirection.Desc,
 });

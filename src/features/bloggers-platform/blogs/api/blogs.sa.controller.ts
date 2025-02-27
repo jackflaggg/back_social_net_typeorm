@@ -19,6 +19,7 @@ import { UpdatePostToBlogCommand } from '../application/usecases/update-post-to-
 import { DeletePostToBlogCommand } from '../application/usecases/delete-post-to-blog.usecase';
 import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optional-auth.guard';
 import { ExtractAnyUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
+import { UserJwtPayloadDto } from '../../../user-accounts/strategies/refresh.strategy';
 
 @Controller(SETTINGS.PATH.SA_BLOGS)
 @UseGuards(BasicAuthGuard)
@@ -53,11 +54,17 @@ export class BlogsSaController {
         return this.commandBus.execute(new DeleteBlogCommand(blogId));
     }
 
+    @UseGuards(JwtOptionalAuthGuard)
     @HttpCode(HttpStatus.CREATED)
     @Post(':blogId/posts')
-    async createPostToBlog(@Param('blogId', ValidateSerialPipe) blogId: string, @Body() dto: PostToBlogCreateDtoApi) {
+    async createPostToBlog(
+        @Param('blogId', ValidateSerialPipe) blogId: string,
+        @Body() dto: PostToBlogCreateDtoApi,
+        @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
+    ) {
+        const userId = dtoUser ? dtoUser.userId : null;
         const postId = await this.commandBus.execute(new CreatePostToBlogCommand(blogId, dto));
-        return this.postsQueryRepository.getPost(postId[0].id, blogId);
+        return this.postsQueryRepository.getPost(postId[0].id, userId);
     }
 
     @UseGuards(JwtOptionalAuthGuard)
@@ -65,11 +72,11 @@ export class BlogsSaController {
     async getPosts(
         @Param('blogId', ValidateSerialPipe) blogId: string,
         @Query() query: GetPostsQueryParams,
-        @ExtractAnyUserFromRequest() user: any,
+        @ExtractAnyUserFromRequest() user: UserJwtPayloadDto,
     ) {
         const userId = user ? user.userId : null;
         const blog = await this.blogsQueryRepository.getBlog(blogId);
-        return this.postsQueryRepository.getAllPosts(query, blog.id, userId);
+        return this.postsQueryRepository.getAllPosts(query, userId, blog.id);
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)

@@ -54,7 +54,7 @@ export const BlogSchema = SchemaFactory.createForClass(BlogEntity);
 BlogSchema.loadClass(BlogEntity);
 
 // Определяет тип для документа блога, который будет содержать
-// свойства и методы из Mongoose, а также будет типизирован
+// свойства и методы из Mongoose, а также будет типизирован.
 export type BlogDocument = HydratedDocument<BlogEntity>;
 
 // тип модели, которая включает в себя все методы и свойства класса

@@ -1,4 +1,34 @@
-import { PostDocument } from '../../domain/post.entity';
+import { StatusLike } from '../../../../../libs/contracts/enums/status.like';
+
+export interface postOutInterface {
+    id: string;
+    title: string;
+    shortDescription: string;
+    content: string;
+    blogId: string;
+    blogName: string;
+    createdAt: Date;
+    extendedLikesInfo: {
+        likesCount: number;
+        dislikesCount: number;
+        myStatus: string;
+        newestLikes: { addedAt: Date; userId: number | string; login: string }[];
+    };
+}
+
+export interface postIntInterface {
+    id: string | number;
+    title: string;
+    shortDescription: string;
+    content: string;
+    blogId: string;
+    blogName: string;
+    createdAt: Date;
+    likesCount: string;
+    dislikesCount: string;
+    myStatus: string;
+    newestLikes: { addedAt: Date; userId: string | number; login: string }[] | void[];
+}
 
 export class PostViewDto {
     id: string;
@@ -9,12 +39,12 @@ export class PostViewDto {
     blogName: string;
     createdAt: Date;
     extendedLikesInfo: {
-        likesCount: number | string;
-        dislikesCount: number | string;
+        likesCount: number;
+        dislikesCount: number;
         myStatus: string;
-        newestLikes: { addedAt: Date; userId: string; login: string }[];
+        newestLikes: { addedAt: Date; userId: string | number; login: string }[];
     };
-    constructor(model: any) {
+    constructor(model: postIntInterface) {
         this.id = String(model.id);
         this.title = model.title;
         this.shortDescription = model.shortDescription;
@@ -23,14 +53,18 @@ export class PostViewDto {
         this.blogName = model.blogName;
         this.createdAt = model.createdAt;
         this.extendedLikesInfo = {
-            likesCount: String(model.likesCount),
-            dislikesCount: String(model.dislikesCount),
-            myStatus: model.myStatus,
-            newestLikes: model.newestLikes || [],
+            likesCount: +model.likesCount || 0,
+            dislikesCount: +model.dislikesCount || 0,
+            myStatus: model.myStatus || StatusLike.enum['None'],
+            newestLikes: (model.newestLikes || []).map(like => ({
+                addedAt: like.addedAt,
+                userId: String(like.userId), // Приведение к числу
+                login: like.login,
+            })),
         };
     }
 
-    static mapToView(blog: PostDocument): any {
+    static mapToView(blog: postIntInterface): postOutInterface {
         return new PostViewDto(blog);
     }
 }

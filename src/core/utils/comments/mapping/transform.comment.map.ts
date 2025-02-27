@@ -1,23 +1,32 @@
-import { StatusLike } from '../../../../libs/contracts/enums/status.like';
+import { StatusLike, StatusLikeType } from '../../../../libs/contracts/enums/status.like';
 
-export function transformCommentToGet(valueOne: any, valueTwo?: any) {
-    return {
-        id: String(valueOne._id),
-        content: valueOne.content || '',
-        commentatorInfo: {
-            userId: valueOne.commentatorInfo?.userId || valueTwo?.userId || '',
-            userLogin: valueOne.commentatorInfo?.userLogin || valueTwo?.userLogin || '',
-        },
-        createdAt: valueOne.createdAt || '',
-        likesInfo: {
-            likesCount: valueOne.likesInfo.likesCount || 0,
-            dislikesCount: valueOne.likesInfo.dislikesCount || 0,
-            myStatus: valueTwo?.status || StatusLike.enum['None'],
-        },
+export interface commentOutInterface {
+    id: number;
+    content: string;
+    userId: number;
+    createdAt: Date;
+    userLogin: string;
+    myStatus: string;
+    likesCount: string;
+    dislikesCount: string;
+}
+
+export interface commentIntInterface {
+    id: string;
+    content: string;
+    commentatorInfo: {
+        userId: string;
+        userLogin: string;
+    };
+    createdAt: Date | string;
+    likesInfo: {
+        likesCount: number;
+        dislikesCount: number;
+        myStatus: StatusLikeType | string;
     };
 }
 
-export function transformComment(valueOne: any) {
+export function transformComment(valueOne: commentOutInterface): commentIntInterface {
     return {
         id: String(valueOne.id) || '',
         content: valueOne.content || '',
@@ -27,8 +36,8 @@ export function transformComment(valueOne: any) {
         },
         createdAt: valueOne.createdAt || '',
         likesInfo: {
-            likesCount: valueOne.likesCount || 0,
-            dislikesCount: valueOne.dislikesCount || 0,
+            likesCount: +valueOne.likesCount,
+            dislikesCount: +valueOne.dislikesCount,
             myStatus: valueOne.myStatus || StatusLike.enum['None'],
         },
     };
