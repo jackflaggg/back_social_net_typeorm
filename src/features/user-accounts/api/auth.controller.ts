@@ -10,7 +10,7 @@ import { Response, Request } from 'express';
 import { LocalAuthGuard } from '../../../core/guards/passport/guards/local.auth.guard';
 import { JwtAuthGuard } from '../../../core/guards/passport/guards/jwt.auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
-import { LoginUserCommand } from '../application/user/usecases/login-user.usecase';
+import { findUserByLoginOrEmailInterface, LoginUserCommand } from '../application/user/usecases/login-user.usecase';
 import { RegistrationUserCommand } from '../application/user/usecases/registration-user.usecase';
 import { UniqueEmailAuthGuard, UniqueLoginAuthGuard } from '../../../core/guards/passport/guards/uniqueLoginAuthGuard';
 import { RegistrationConfirmationUserCommand } from '../application/user/usecases/registration-confirmation-user.usecase';
@@ -35,7 +35,9 @@ export class AuthController {
     @UseGuards(ThrottlerGuard, LocalAuthGuard)
     @Post('login')
     async login(@Req() req: Request, @Res({ passthrough: true }) res: Response, @Body() dto: AuthLoginDtoApi) {
-        const { jwt, refresh } = await this.commandBus.execute(new LoginUserCommand(req.ip, req.headers['user-agent'], req.user));
+        const { jwt, refresh } = await this.commandBus.execute(
+            new LoginUserCommand(req.ip, req.headers['user-agent'], req.user as findUserByLoginOrEmailInterface),
+        );
         res.cookie('refreshToken', refresh, { httpOnly: true, secure: true });
         return {
             accessToken: jwt,

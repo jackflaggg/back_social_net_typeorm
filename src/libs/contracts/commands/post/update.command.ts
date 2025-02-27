@@ -1,6 +1,5 @@
 import { z } from 'zod';
-import { trimString } from '../../models/post/post.models';
-import mongoose from 'mongoose';
+import { trimString } from '../../models/post/post.model';
 
 const PostUpdateRequestSchema = z.object({
     title: z.string().trim().min(1).max(30).transform(trimString),

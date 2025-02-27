@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { EventBus, EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { compare } from 'bcrypt';
 import { UserPgRepository } from '../infrastructure/postgres/user/user.pg.repository';
+import { findUserByLoginOrEmailInterface } from './user/usecases/login-user.usecase';
 
 export class UserLoggedInEvent {
     constructor(public readonly userId: string) {}
@@ -15,7 +16,7 @@ export class AuthService {
         private readonly eventBus: EventBus, // Внедрение EventBus
     ) {}
 
-    async validateUser(userName: string, password: string) {
+    async validateUser(userName: string, password: string): Promise<findUserByLoginOrEmailInterface> {
         const user = await this.usersRepository.findUserByLoginOrEmail(userName);
         if (!user) {
             throw UnauthorizedDomainException.create();
@@ -28,7 +29,7 @@ export class AuthService {
         // Генерация события при успешной аутентификации
         this.eventBus.publish(new UserLoggedInEvent(user.id));
 
-        return user;
+        return user as findUserByLoginOrEmailInterface;
     }
     async uniqueLoginUser(login: string) {
         const result = await this.usersRepository.findUserByLoginOrEmail(login);

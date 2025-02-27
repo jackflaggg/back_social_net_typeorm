@@ -43,6 +43,4 @@ export class SessionsPgRepository {
             WHERE "device_id" <> $2 AND "user_id" = $3;`;
         return await this.dataSource.query(query, [issuedAt, deviceId, userId]);
     }
-
-    async updateSession(issuedAt: string, deviceId: string) {}
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { BlogViewDto } from '../../../dto/repository/query/blog-view.dto';
+import { BlogIntInterface, BlogViewDto } from '../../../dto/repository/query/blog-view.dto';
 import { GetBlogsQueryParams } from '../../../dto/repository/query/get-blogs-query-params.input-dto';
 import { getBlogsQuery } from '../../../../../../core/utils/blog/query.insert.blog';
 import { PaginatedBlogViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
@@ -31,7 +31,7 @@ export class BlogsPgQueryRepository {
         `;
         const resultTotal = await this.dataSource.query(queryCount, [searchNameTerm]);
 
-        const blogsView = resultBlogs.map(blog => BlogViewDto.mapToView(blog));
+        const blogsView = resultBlogs.map((blog: BlogIntInterface) => BlogViewDto.mapToView(blog));
 
         return PaginatedBlogViewDto.mapToView<BlogViewDto[]>({
             items: blogsView,

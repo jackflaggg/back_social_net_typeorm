@@ -26,7 +26,7 @@ export class DeviceEntity {
     @Prop({ type: String, required: true, default: DeletionStatus.enum['not-deleted'] })
     deletionStatus: DeletionStatusType;
 
-    public static buildInstance(dto: any) {
+    public static buildInstance(dto: { deviceId: string; issuedAt: Date; userId: string; ip: string; deviceName: string }) {
         const session = new this();
         session.deviceId = dto.deviceId;
         session.issuedAt = dto.issuedAt;

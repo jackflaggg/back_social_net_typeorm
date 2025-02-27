@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { contentConstraints } from '../../constants/comment/comment-property.constraints';
-import { trimString } from '../../models/post/post.models';
+import { trimString } from '../../models/post/post.model';
 import { CommentModels } from '../../models/comment/comment.model';
 
 const CommentCreateRequestSchema = z.object({

@@ -1,10 +1,10 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { BaseSortablePaginationParams } from '../../../../core/dto/base.query-params.input-dto';
-import { UsersSortBy } from './user-sort.query';
+import { UsersSortByEnum, UsersSortByValues } from '../../../../libs/contracts/enums/user.sort.by.enum';
 
-export class GetUsersQueryParams extends BaseSortablePaginationParams<UsersSortBy> {
-    @IsEnum(UsersSortBy)
-    sortBy = UsersSortBy.CreatedAt;
+export class GetUsersQueryParams extends BaseSortablePaginationParams<UsersSortByEnum> {
+    @IsEnum(UsersSortByValues)
+    sortBy = UsersSortByValues[0];
 
     @IsString()
     @IsOptional()

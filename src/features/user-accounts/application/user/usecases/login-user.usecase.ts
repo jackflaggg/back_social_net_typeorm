@@ -5,11 +5,20 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateSessionCommand } from '../../device/usecases/create-session.usecase';
 import { CoreConfig } from '../../../../../core/config/core.config';
 
+// u."id", u."email", u."password_hash" AS "password", em."is_confirmed" AS "isConfirmed"
+export interface findUserByLoginOrEmailInterface {
+    id: string;
+    email: string;
+    password: string;
+    isConfirmed: boolean;
+    confirmationCode: string;
+}
+
 export class LoginUserCommand {
     constructor(
         public readonly ip: string = '255.255.255.0',
         public readonly userAgent: string = 'google',
-        public readonly user: any,
+        public readonly user: findUserByLoginOrEmailInterface,
     ) {}
 }
 

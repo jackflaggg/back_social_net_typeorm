@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PostModels, trimString } from '../../models/post/post.models';
+import { PostModel, trimString } from '../../models/post/post.model';
 import { contentConstraints, shortDescriptionConstraints, titleConstraints } from '../../constants/post/post-property.constraints';
 
 const PostToBlogCreateRequestSchema = z.object({
@@ -16,6 +16,6 @@ export namespace PostToBlogCreateCommand {
     export const RequestSchema = PostToBlogCreateRequestSchema;
     export type Request = z.infer<typeof RequestSchema>;
 
-    export const ResponseSchema = PostModels;
+    export const ResponseSchema = PostModel;
     export type Response = z.infer<typeof ResponseSchema>;
 }

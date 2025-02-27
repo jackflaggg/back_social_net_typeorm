@@ -37,8 +37,4 @@ export class BlogsPgRepository {
 
         return result[0].id;
     }
-
-    deleteAll() {
-        this.dataSource.query(`TRUNCATE TABLE blogs RESTART IDENTITY cascade`);
-    }
 }

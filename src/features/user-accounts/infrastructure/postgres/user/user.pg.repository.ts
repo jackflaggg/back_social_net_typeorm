@@ -7,6 +7,7 @@ import {
     NotFoundDomainException,
     UnauthorizedDomainException,
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { findUserByLoginOrEmailInterface } from '../../../application/user/usecases/login-user.usecase';
 
 export interface UserCreateDtoRepo {
     login: string;
@@ -30,9 +31,9 @@ export class UserPgRepository {
 
         return result[0];
     }
-    async findUserByLoginOrEmail(loginOrEmail: string) {
+    async findUserByLoginOrEmail(loginOrEmail: string): Promise<findUserByLoginOrEmailInterface | undefined> {
         const query = `
-            SELECT u."id", u."email", u."password_hash" AS "password", em."is_confirmed" AS "isConfirmed" FROM "users" AS "u" JOIN "email_confirmation" AS "em" ON u.id = em.user_id WHERE u."deleted_at" IS NULL AND (u."login" = $1 OR u."email" = $1);
+            SELECT u."id", u."email", u."password_hash" AS "password", em."is_confirmed" AS "isConfirmed", em."confirmation_code" AS "confirmationCode" FROM "users" AS "u" JOIN "email_confirmation" AS "em" ON u.id = em.user_id WHERE u."deleted_at" IS NULL AND (u."login" = $1 OR u."email" = $1);
         `;
         const result = await this.dataSource.query(query, [loginOrEmail]);
         if (!result || result.length === 0) {
@@ -127,15 +128,10 @@ export class UserPgRepository {
         }
     }
     async updateDeletedAt(userId: string) {
-        //TODO: Как мне удалять, чтобы секвенсы не путались?
         const query = `
         UPDATE "users" SET "deleted_at" = $1 WHERE id = $2
         `;
         await this.dataSource.query(query, [new Date().toISOString(), userId]);
-        //await this.dataSource.query(`ALTER SEQUENCE users_id_seq RESTART WITH ${userId}`);
-    }
-    deleteAll() {
-        this.dataSource.query(`TRUNCATE TABLE users RESTART IDENTITY cascade`);
     }
     async updateUserToCodeAndDate(userId: string, generateCode: string, newExpirationDate: string) {
         const query = `

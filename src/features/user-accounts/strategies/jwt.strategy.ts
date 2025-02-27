@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { CoreConfig } from '../../../core/config/core.config';
 import { UserPgRepository } from '../infrastructure/postgres/user/user.pg.repository';
+import { UserJwtPayloadDto } from './refresh.strategy';
 
 @Injectable()
 export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt-access') {
@@ -17,7 +18,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt-access'
         });
     }
 
-    async validate(payload: any) {
+    async validate(payload: UserJwtPayloadDto) {
         return await this.usersRepository.findUserAuth(payload.userId);
     }
 }

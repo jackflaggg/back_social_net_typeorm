@@ -18,7 +18,7 @@ export class BlogsController {
         private readonly postsQueryRepository: PostsPgQueryRepository,
     ) {}
 
-    // мне нужно, чтоб этот роут был чисто по blogs, а остальные по /sa/blogs
+    // мне нужно, чтоб эта ручка была чисто по blogs, а остальные по /sa/blogs
     @Get()
     async getBlogs(@Query() query: GetBlogsQueryParams) {
         return this.blogsQueryRepository.getAllBlogs(query);

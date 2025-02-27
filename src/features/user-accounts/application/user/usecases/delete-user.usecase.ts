@@ -1,6 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
-import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class DeleteUserCommand {
     constructor(public readonly userId: string) {}

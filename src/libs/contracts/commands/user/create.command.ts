@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { trimString } from '../../models/post/post.models';
-import { UserModels } from '../../models/user/user.models';
+import { trimString } from '../../models/post/post.model';
+import { UserModel } from '../../models/user/user.model';
 import { loginConstraints, passwordConstraints } from '../../constants/user/user-property.constraints';
 import { emailRegexp } from '../../constants/user/email.regexp';
 
@@ -17,6 +17,6 @@ export namespace UserCreateCommand {
     export const RequestSchema = UserCreateRequestSchema;
     export type Request = z.infer<typeof RequestSchema>;
 
-    export const ResponseSchema = UserModels.omit({ password: true });
+    export const ResponseSchema = UserModel.omit({ password: true });
     export type Response = z.infer<typeof ResponseSchema>;
 }

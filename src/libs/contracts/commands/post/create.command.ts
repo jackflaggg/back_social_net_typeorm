@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PostModels, trimString } from '../../models/post/post.models';
+import { PostModel, trimString } from '../../models/post/post.model';
 import { shortDescriptionConstraints, titleConstraints } from '../../constants/post/post-property.constraints';
 import mongoose from 'mongoose';
 
@@ -29,6 +29,6 @@ export namespace PostCreateCommand {
     export const RequestSchema = PostCreateRequestSchema;
     export type Request = z.infer<typeof RequestSchema>;
 
-    export const ResponseSchema = PostModels;
+    export const ResponseSchema = PostModel;
     export type Response = z.infer<typeof ResponseSchema>;
 }

@@ -1,8 +1,8 @@
 import { BaseSortablePaginationParams } from '../../../../../core/dto/base.query-params.input-dto';
 import { IsEnum } from 'class-validator';
-import { PostsSortBy } from './post-sort-by';
+import { PostSortByEnum, PostSortByValues } from '../../../../../libs/contracts/enums/post.sort.by.enum';
 
-export class GetPostsQueryParams extends BaseSortablePaginationParams<PostsSortBy> {
-    @IsEnum(PostsSortBy)
-    sortBy = PostsSortBy.CreatedAt;
+export class GetPostsQueryParams extends BaseSortablePaginationParams<PostSortByEnum> {
+    @IsEnum(PostSortByValues)
+    sortBy = PostSortByValues[0];
 }

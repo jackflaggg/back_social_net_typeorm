@@ -1,10 +1,10 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { BaseSortablePaginationParams } from '../../../../../../core/dto/base.query-params.input-dto';
-import { BlogsSortBy } from './blogs-sort-by';
+import { BlogSortByEnum, BlogSortByValues } from '../../../../../../libs/contracts/enums/blog.sort.by.enum';
 
-export class GetBlogsQueryParams extends BaseSortablePaginationParams<BlogsSortBy> {
-    @IsEnum(BlogsSortBy)
-    sortBy = BlogsSortBy.CreatedAt;
+export class GetBlogsQueryParams extends BaseSortablePaginationParams<BlogSortByEnum> {
+    @IsEnum(BlogSortByValues)
+    sortBy = BlogSortByValues[0];
 
     @IsString()
     @IsOptional()

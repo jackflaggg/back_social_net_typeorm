@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { trimString } from '../post/post.models';
+import { trimString } from '../post/post.model';
 import { contentConstraints } from '../../constants/comment/comment-property.constraints';
 import { StatusLike } from '../../enums/status.like';
 

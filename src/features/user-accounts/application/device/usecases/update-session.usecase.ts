@@ -15,6 +15,5 @@ export class UpdateSessionUseCase implements ICommandHandler<UpdateSessionComman
         if (!session) {
             throw NotFoundDomainException.create();
         }
-        await this.sessionRepository.updateSession(new Date(command.dto.iat * 1000).toISOString(), command.dto.deviceId);
     }
 }

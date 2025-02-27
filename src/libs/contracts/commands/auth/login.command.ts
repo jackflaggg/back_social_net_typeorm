@@ -7,7 +7,7 @@ const loginRegex = /^[a-zA-Z0-9.-]+$/;
 const UserLoginRequestSchema = z.object({
     loginOrEmail: z
         .string()
-        .refine((value: any) => {
+        .refine((value: string | number) => {
             if (typeof value !== 'string' || value.trim() === '') {
                 return false;
             }

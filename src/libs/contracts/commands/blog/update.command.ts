@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { nameConstraints } from '../../constants/blog/blog-property.constraints';
-import { trimString } from '../../models/post/post.models';
+import { trimString } from '../../models/post/post.model';
 
 const BlogUpdateRequestSchema = z.object({
     name: z.string().trim().min(nameConstraints.minLength).max(nameConstraints.maxLength),

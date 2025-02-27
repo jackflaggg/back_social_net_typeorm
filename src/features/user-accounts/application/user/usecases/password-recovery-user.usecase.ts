@@ -61,7 +61,7 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
 
             await this.passwordRepository.createPasswordRecovery(findUser.id, generateCode, newExpirationDate);
 
-            this.mailer.sendPasswordRecoveryMessage(command.email, findUser.emailConfirmation.confirmationCode).catch((err: unknown) => {
+            this.mailer.sendPasswordRecoveryMessage(command.email, findUser.confirmationCode).catch((err: unknown) => {
                 console.log(String(err));
             });
         }

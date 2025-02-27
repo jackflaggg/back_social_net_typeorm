@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { DeletionStatus } from '../../enums/deletion-status.enum';
 import { nameConstraints } from '../../constants/blog/blog-property.constraints';
-import { trimString } from '../post/post.models';
+import { trimString } from '../post/post.model';
 
 export const BlogModels = z.object({
     id: z.string().transform(trimString),

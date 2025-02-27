@@ -27,7 +27,6 @@ import { SessionController } from './api/session.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JwtRefreshAuthPassportStrategy } from './strategies/refresh.strategy';
 import { DeleteSessionsUseCase } from './application/device/usecases/delete-sessions.usecase';
-import { UpdateSessionUseCase } from './application/device/usecases/update-session.usecase';
 import { CoreConfig } from '../../core/config/core.config';
 import { ConfigModule } from '@nestjs/config';
 import { EmailAdapter } from '../notifications/adapter/email.adapter';
@@ -54,7 +53,6 @@ const useCases = [
     RefreshTokenUserUseCase,
     LogoutUserUseCase,
     DeleteSessionsUseCase,
-    UpdateSessionUseCase,
 ];
 
 const repositoriesPostgres = [

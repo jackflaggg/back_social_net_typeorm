@@ -4,7 +4,7 @@ import { contentConstraints, shortDescriptionConstraints, titleConstraints } fro
 
 export const trimString = (str: string) => str.trim();
 
-export const PostModels = z.object({
+export const PostModel = z.object({
     id: z
         .string()
         .refine(str => str.length > 0, { message: 'ID cannot be empty' })

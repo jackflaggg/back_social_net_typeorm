@@ -2,6 +2,7 @@ import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
+import { findUserByLoginOrEmailInterface } from '../application/user/usecases/login-user.usecase';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
@@ -10,7 +11,7 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
         super({ usernameField: 'loginOrEmail' });
     }
 
-    async validate(username: string, password: string) {
+    async validate(username: string, password: string): Promise<findUserByLoginOrEmailInterface> {
         username = username.trim();
         password = password.trim();
         return await this.authService.validateUser(username, password);

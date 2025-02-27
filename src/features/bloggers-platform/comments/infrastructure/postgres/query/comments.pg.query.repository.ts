@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { transformComment } from '../../../../../../core/utils/comments/mapping/transform.comment.map';
+import { commentOutInterface, transformComment } from '../../../../../../core/utils/comments/mapping/transform.comment.map';
 import { getCommentQuery } from '../../../../../../core/utils/comments/query.insert.get.comments';
 import { GetCommentsQueryParams } from '../../../dto/repository/query/query-parans-comments';
 import { ParentTypes } from '../../../../../../libs/contracts/enums/parent.type.likes';
@@ -89,7 +89,7 @@ export class CommentsPgQueryRepository {
             offset,
         ]);
 
-        const commentsView = resultComments.map(comment => transformComment(comment));
+        const commentsView = resultComments.map((comment: commentOutInterface) => transformComment(comment));
 
         const queryCount = `
             SELECT COUNT(*) AS "totalCount" 

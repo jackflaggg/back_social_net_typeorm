@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DeviceViewDto } from '../../../../dto/repository/device-view.dto';
+import { deviceIntInterface, DeviceViewDto } from '../../../../dto/repository/device-view.dto';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
@@ -11,6 +11,6 @@ export class SessionQueryPgRepository {
         const query = `
         SELECT "device_id" AS "deviceId", "device_name" AS "deviceName", "ip", "issued_at" AS "issuedAt" FROM "security_device" WHERE "deleted_at" IS NULL AND "user_id" = $1`;
         const result = await this.dataSource.query(query, [userId]);
-        return result ? result.map(elem => DeviceViewDto.mapToView(elem)) : [];
+        return result ? result.map((elem: deviceIntInterface) => DeviceViewDto.mapToView(elem)) : [];
     }
 }

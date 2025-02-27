@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { trimString } from '../post/post.models';
+import { trimString } from '../post/post.model';
 import { loginConstraints, passwordConstraints } from '../../constants/user/user-property.constraints';
 import { emailRegexp } from '../../constants/user/email.regexp';
 
-export const UserModels = z.object({
+export const UserModel = z.object({
     id: z
         .string()
         .refine(str => str.length > 0, { message: 'ID cannot be empty' })
