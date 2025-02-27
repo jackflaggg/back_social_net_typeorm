@@ -4,13 +4,13 @@ import { join } from 'path';
 
 export const configModule = ConfigModule.forRoot({
     envFilePath: [
-        // high priority
+        // высокий приоритет
         ...(process.env.ENV_FILE_PATH ? [process.env.ENV_FILE_PATH.trim()] : []),
-        // lower priority
+        // низкий приоритет
         join(__dirname, `../.env`),
-        // lower priority
+        // низкий приоритет
         join(__dirname, `./env/.env.${process.env.NODE_ENV}`),
-        // lower priority
+        // низкий приоритет
         join(__dirname, './env/.env.production'),
     ],
     isGlobal: true,
