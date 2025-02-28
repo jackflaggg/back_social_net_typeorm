@@ -21,7 +21,7 @@ export class PasswordRecoveryPgRepository {
             UPDATE "recovery_password" SET "used" = TRUE
             WHERE "id" = $1
         `;
-        return await this.dataSource.query(query, [+passwordId]);
+        await this.dataSource.query(query, [Number(passwordId)]);
     }
     async createPasswordRecovery(userId: string, code: string, expirationDate: Date) {
         const query = `

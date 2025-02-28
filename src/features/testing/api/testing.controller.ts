@@ -10,7 +10,7 @@ export class TestingController {
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete('all-data')
-    async deleteAll() {
+    async deleteAll(): Promise<void> {
         const dataTables = [
             TablesEnum.enum['users'],
             TablesEnum.enum['blogs'],

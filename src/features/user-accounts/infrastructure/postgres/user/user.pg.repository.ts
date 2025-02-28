@@ -8,13 +8,7 @@ import {
     UnauthorizedDomainException,
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { findUserByLoginOrEmailInterface } from '../../../application/user/usecases/login-user.usecase';
-
-export interface UserCreateDtoRepo {
-    login: string;
-    email: string;
-    password: string;
-    createdAt: Date;
-}
+import { UserCreateDtoRepo } from '../../../dto/repository/user.create.dto';
 
 @Injectable()
 export class UserPgRepository {
@@ -101,7 +95,6 @@ export class UserPgRepository {
                 newUser.password,
             ]);
 
-            // Проверяем, что результат не пустой
             if (!result || result.length === 0) {
                 throw NotFoundDomainException.create('юзер не найден', 'userId');
             }

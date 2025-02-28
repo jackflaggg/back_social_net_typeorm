@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { BlogIntInterface, BlogViewDto } from '../../../dto/repository/query/blog-view.dto';
+import { BlogIntInterface, BlogOutInterface, BlogViewDto } from '../../../dto/repository/query/blog-view.dto';
 import { GetBlogsQueryParams } from '../../../dto/repository/query/get-blogs-query-params.input-dto';
 import { getBlogsQuery } from '../../../../../../core/utils/blog/query.insert.blog';
-import { PaginatedBlogViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
+import { PaginatedBlogViewDto, PaginatedViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 @Injectable()
 export class BlogsPgQueryRepository {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
-    async getAllBlogs(queryData: GetBlogsQueryParams) {
+
+    async getAllBlogs(queryData: GetBlogsQueryParams): Promise<PaginatedViewDto<BlogViewDto[]>> {
         const { pageSize, pageNumber, searchNameTerm, sortBy, sortDirection } = getBlogsQuery(queryData);
 
         const updatedSortBy = sortBy === 'createdAt' ? 'created_at' : sortBy.toLowerCase();
@@ -40,12 +41,15 @@ export class BlogsPgQueryRepository {
             totalCount: +resultTotal[0].totalCount,
         });
     }
-    async getBlog(blogId: string) {
+    async getBlog(blogId: string): Promise<BlogOutInterface> {
         const query = `SELECT "id", "name", "description", "website_url" AS "websiteUrl", "created_at" AS "createdAt", "is_membership" AS "isMembership" FROM "blogs" WHERE id = $1 AND "deleted_at" IS NULL`;
-        const result = await this.dataSource.query(query, [+blogId]);
+
+        const result = await this.dataSource.query(query, [Number(blogId)]);
+
         if (!result || result.length === 0) {
             throw NotFoundDomainException.create('блог не найден', 'blogId');
         }
+
         return BlogViewDto.mapToView(result[0]);
     }
 }

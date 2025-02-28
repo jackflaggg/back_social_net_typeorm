@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { BadRequestDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { ParentTypes } from '../../../../../libs/contracts/enums/parent.type.likes';
 
 @Injectable()
 export class CommentsPgRepository {
@@ -15,35 +16,35 @@ export class CommentsPgRepository {
         return result[0];
     }
     async createComment(content: string, postId: string, userId: string) {
-        const parentType = 'comment';
-
         try {
             // Начинаем транзакцию
             await this.dataSource.query('BEGIN');
 
             // Вставка комментария
             const queryOne = `INSERT INTO "comments" (content, post_id, commentator_id) VALUES ($1, $2, $3) RETURNING "id"`;
-            const resultComments = await this.dataSource.query(queryOne, [content, postId, userId]);
+            const resultComment = await this.dataSource.query(queryOne, [content, postId, userId]);
 
             // Вставка статуса
             const queryTwo = `INSERT INTO "likes" (parent_type, comment_id, user_id) VALUES ($1, $2, $3)`;
-            await this.dataSource.query(queryTwo, [parentType, resultComments[0].id, userId]);
+            await this.dataSource.query(queryTwo, [ParentTypes.enum['comment'], resultComment[0].id, userId]);
 
             // Подтверждаем транзакцию
             await this.dataSource.query('COMMIT');
-            return resultComments;
+            return resultComment;
         } catch (err: unknown) {
             // Откатываем транзакцию в случае ошибки
             await this.dataSource.query('ROLLBACK');
             throw BadRequestDomainException.create('упала транзакция в создании комментария!' + err, 'commentId');
         }
     }
-    async updateComment(commentId: string, content: string) {
+
+    async updateComment(commentId: string, content: string): Promise<void> {
         const query = `
         UPDATE "comments" SET "content" = $1 WHERE "id" = $2`;
         await this.dataSource.query(query, [content, commentId]);
     }
-    async deleteComment(dateExpired: string, commentId: string) {
+
+    async deleteComment(dateExpired: string, commentId: string): Promise<void> {
         const query = `
         UPDATE "comments" SET "deleted_at" = $1 WHERE "id" = $2`;
         await this.dataSource.query(query, [dateExpired, commentId]);

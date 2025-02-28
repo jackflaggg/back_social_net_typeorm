@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { commentOutInterface, transformComment } from '../../../../../../core/utils/comments/mapping/transform.comment.map';
+import {
+    commentIntInterface,
+    commentOutInterface,
+    transformComment,
+} from '../../../../../../core/utils/comments/mapping/transform.comment.map';
 import { getCommentQuery } from '../../../../../../core/utils/comments/query.insert.get.comments';
 import { GetCommentsQueryParams } from '../../../dto/repository/query/query-parans-comments';
 import { ParentTypes } from '../../../../../../libs/contracts/enums/parent.type.likes';
@@ -11,7 +15,7 @@ import { StatusLike } from '../../../../../../libs/contracts/enums/status.like';
 @Injectable()
 export class CommentsPgQueryRepository {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
-    async getComment(commentId: string, userId: string | null) {
+    async getComment(commentId: string, userId: string | null): Promise<commentIntInterface> {
         const query = `
             SELECT c."id",
                    c."content",
@@ -23,7 +27,7 @@ export class CommentsPgQueryRepository {
                    SUM(CASE WHEN l.status = $6 AND l.parent_type = $7 AND c.id = l.comment_id THEN 1 ELSE 0 END) AS "dislikesCount"
             FROM "comments" c
             LEFT JOIN "users" u ON u."id" = c."commentator_id"
-            LEFT JOIN "likes" l ON l."comment_id" = c."id" --AND l."user_id" = $8
+            LEFT JOIN "likes" l ON l."comment_id" = c."id"
             WHERE c."id" = $8
             AND c."deleted_at" IS NULL
             GROUP BY c."id", u."login"`;
@@ -36,10 +40,8 @@ export class CommentsPgQueryRepository {
             ParentTypes.enum['comment'],
             StatusLike.enum['Dislike'],
             ParentTypes.enum['comment'],
-            //userId,
             commentId,
         ]);
-        console.log(result);
 
         if (!result || result.length === 0) {
             throw NotFoundDomainException.create('Непредвиденная ошибка, коммент не найден', 'commentId');
@@ -83,7 +85,6 @@ export class CommentsPgQueryRepository {
             ParentTypes.enum['comment'],
             StatusLike.enum['Dislike'],
             ParentTypes.enum['comment'],
-            //userId,
             postId,
             pageSize,
             offset,
@@ -98,13 +99,13 @@ export class CommentsPgQueryRepository {
 
         const totalCountComments = await this.dataSource.query(queryCount, [postId]);
 
-        const pagesCount = Math.ceil(+totalCountComments[0].totalCount / pageSize);
+        const pagesCount = Math.ceil(Number(totalCountComments[0].totalCount) / pageSize);
 
         return {
-            pagesCount: +pagesCount,
-            page: +pageNumber,
-            pageSize: +pageSize,
-            totalCount: +totalCountComments[0].totalCount,
+            pagesCount: Number(pagesCount),
+            page: Number(pageNumber),
+            pageSize: Number(pageSize),
+            totalCount: Number(totalCountComments[0].totalCount),
             items: commentsView,
         };
     }

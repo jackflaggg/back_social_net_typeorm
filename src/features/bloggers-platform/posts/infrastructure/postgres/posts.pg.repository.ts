@@ -7,6 +7,7 @@ import { PostUpdateDtoApi } from '../../dto/api/post.update.dto';
 @Injectable()
 export class PostsPgRepository {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
+
     async createPost(dto: PostToBlogCreateDtoApi, blogId: string) {
         const query = `INSERT INTO "posts" (title, short_description, content, blog_id) VALUES ($1, $2, $3, $4) RETURNING "id"`;
         return await this.dataSource.query(query, [dto.title, dto.shortDescription, dto.content, +blogId]);
@@ -19,13 +20,13 @@ export class PostsPgRepository {
         }
         return result[0];
     }
-    async deletePost(postId: string) {
+    async deletePost(postId: string): Promise<void> {
         const deletedPostDate = new Date().toISOString();
         const query = `UPDATE "posts" SET "deleted_at" = $1 WHERE "id" = $2 RETURNING "id"`;
-        return await this.dataSource.query(query, [deletedPostDate, postId]);
+        await this.dataSource.query(query, [deletedPostDate, postId]);
     }
-    async updatePost(dto: PostUpdateDtoApi, postId: string) {
+    async updatePost(dto: PostUpdateDtoApi, postId: string): Promise<void> {
         const query = `UPDATE "posts" SET "title" = $1, "short_description" = $2, "content" = $3 WHERE "id" = $4`;
-        return await this.dataSource.query(query, [dto.title, dto.shortDescription, dto.content, postId]);
+        await this.dataSource.query(query, [dto.title, dto.shortDescription, dto.content, postId]);
     }
 }

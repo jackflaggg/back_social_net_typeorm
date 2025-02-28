@@ -15,7 +15,7 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
     ) {}
 
     async execute(command: CreatePostCommand) {
-        const blog = await this.blogsRepository.findBlogById(command.payload.blogId);
-        return await this.postsRepository.createPost(command.payload, blog.id);
+        const blogId = await this.blogsRepository.findBlogById(command.payload.blogId);
+        return await this.postsRepository.createPost(command.payload, blogId);
     }
 }

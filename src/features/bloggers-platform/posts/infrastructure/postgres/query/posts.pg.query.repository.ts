@@ -29,7 +29,6 @@ export class PostsPgQueryRepository {
 
         const offset = (pageNumber - 1) * pageSize;
 
-        // TODO: Не понимаю почему подсвечиваетсчя как ошибка!
         const query = `
             SELECT
                 p."id",
