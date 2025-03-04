@@ -11,7 +11,6 @@ import { LoginUserUseCase } from './application/user/usecases/login-user.usecase
 import { AuthService } from './application/auth.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { CreateSessionUseCase } from './application/device/usecases/create-session.usecase';
-import { UniqueStrategy } from './strategies/uniqueStrategy';
 import { RegistrationUserUseCase } from './application/user/usecases/registration-user.usecase';
 import { EmailService } from '../notifications/application/mail.service';
 import { CommonCreateUserUseCase } from './application/user/usecases/common-create-user.usecase';
@@ -65,7 +64,8 @@ const repositoriesPostgres = [
     SessionQueryPgRepository,
     PasswordRecoveryPgRepository,
 ];
-const strategies = [BasicStrategy, LocalStrategy, UniqueStrategy, AccessTokenStrategy, JwtRefreshAuthPassportStrategy];
+
+const strategies = [BasicStrategy, LocalStrategy, AccessTokenStrategy, JwtRefreshAuthPassportStrategy];
 const services = [AuthService, JwtService, EmailService, EmailAdapter, BcryptService];
 const handlers = [UserLoggedInEventHandler, UserRegistrationEventHandler];
 
@@ -81,7 +81,6 @@ const handlers = [UserLoggedInEventHandler, UserRegistrationEventHandler];
                 signOptions: { expiresIn: coreConfig.accessTokenExpirationTime },
             }),
         }),
-        EventEmitterModule.forRoot({}),
         PassportModule,
         //если в системе несколько токенов (например, access и refresh) с разными опциями (время жизни, секрет)
         //можно переопределить опции при вызове метода jwt.service.sign

@@ -23,6 +23,7 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
         if (existingUser) {
             throw BadRequestDomainException.create('такой юзер уже существует!', 'login');
         }
+
         const userId = await this.commandBus.execute<CommonCreateUserCommand, string>(new CommonCreateUserCommand(command.payload));
 
         const user = await this.userRepository.findUserById(userId);

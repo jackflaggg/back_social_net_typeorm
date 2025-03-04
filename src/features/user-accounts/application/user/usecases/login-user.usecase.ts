@@ -5,8 +5,6 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateSessionCommand } from '../../device/usecases/create-session.usecase';
 import { CoreConfig } from '../../../../../core/config/core.config';
 import { findUserByLoginOrEmailInterface } from 'src/features/user-accounts/dto/api/user.in.jwt.find.dto';
-import { OnEvent } from '@nestjs/event-emitter';
-import { UserLoggedInEvent } from '../../../event-bus/auth/user.logged.event';
 
 export class LoginUserCommand {
     constructor(
@@ -23,13 +21,6 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
         private readonly commandBus: CommandBus,
         private readonly coreConfig: CoreConfig,
     ) {}
-
-    @OnEvent('login-user')
-    async onUserLoggedIn(event: UserLoggedInEvent) {
-        // Обработка события логина пользователя
-        console.log(`Юзер залогинился EventEmitter: ${event}`);
-        // Здесь вы можете добавить логику, связанную с логином пользователя
-    }
 
     async execute(command: LoginUserCommand) {
         // 1. генерирую девайсАйди

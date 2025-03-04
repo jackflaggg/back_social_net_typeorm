@@ -24,7 +24,6 @@ import { LogoutUserCommand } from '../application/user/usecases/logout-user.usec
 import { UserPgQueryRepository } from '../infrastructure/postgres/user/query/user.pg.query.repository';
 import { SETTINGS } from '../../../core/settings';
 import { findUserByLoginOrEmailInterface } from '../dto/api/user.in.jwt.find.dto';
-import { UniqueUserAuthGuard } from '../../../core/guards/passport/guards/unique.auth.guard';
 
 @Controller(SETTINGS.PATH.AUTH)
 export class AuthController {
@@ -60,7 +59,7 @@ export class AuthController {
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
-    @UseGuards(ThrottlerGuard, UniqueUserAuthGuard)
+    @UseGuards(ThrottlerGuard)
     @Post('registration')
     async registration(@Body() dto: AuthRegistrationDtoApi) {
         return this.commandBus.execute(new RegistrationUserCommand(dto));
