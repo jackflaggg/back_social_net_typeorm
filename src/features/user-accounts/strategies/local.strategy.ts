@@ -2,7 +2,7 @@ import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
-import { findUserByLoginOrEmailInterface } from '../application/user/usecases/login-user.usecase';
+import { findUserByLoginOrEmailInterface } from '../dto/api/user.in.jwt.find.dto';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy, 'local') {

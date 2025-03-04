@@ -8,10 +8,10 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { LocalStrategy } from './strategies/local.strategy';
 import { ValidateUserUseCase } from './application/user/usecases/validate-user.usecase';
 import { LoginUserUseCase } from './application/user/usecases/login-user.usecase';
-import { AuthService, UserLoggedInEventHandler } from './application/auth.service';
+import { AuthService } from './application/auth.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { CreateSessionUseCase } from './application/device/usecases/create-session.usecase';
-import { UniqueEmailStrategy, UniqueLoginStrategy } from './strategies/uniqueLoginStrategy';
+import { UniqueStrategy } from './strategies/uniqueStrategy';
 import { RegistrationUserUseCase } from './application/user/usecases/registration-user.usecase';
 import { EmailService } from '../notifications/application/mail.service';
 import { CommonCreateUserUseCase } from './application/user/usecases/common-create-user.usecase';
@@ -36,6 +36,9 @@ import { UserPgQueryRepository } from './infrastructure/postgres/user/query/user
 import { SessionsPgRepository } from './infrastructure/postgres/sessions/sessions.pg.repository';
 import { SessionQueryPgRepository } from './infrastructure/postgres/sessions/query/sessions.pg.query.repository';
 import { PasswordRecoveryPgRepository } from './infrastructure/postgres/password/password.pg.recovery.repository';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { UserLoggedInEventHandler } from './event-bus/auth/user.logged.event';
+import { UserRegistrationEventHandler } from './event-bus/auth/user.registration.event';
 
 const useCases = [
     CreateSessionUseCase,
@@ -62,16 +65,9 @@ const repositoriesPostgres = [
     SessionQueryPgRepository,
     PasswordRecoveryPgRepository,
 ];
-const strategies = [
-    BasicStrategy,
-    LocalStrategy,
-    UniqueLoginStrategy,
-    UniqueEmailStrategy,
-    AccessTokenStrategy,
-    JwtRefreshAuthPassportStrategy,
-];
+const strategies = [BasicStrategy, LocalStrategy, UniqueStrategy, AccessTokenStrategy, JwtRefreshAuthPassportStrategy];
 const services = [AuthService, JwtService, EmailService, EmailAdapter, BcryptService];
-const handlers = [UserLoggedInEventHandler];
+const handlers = [UserLoggedInEventHandler, UserRegistrationEventHandler];
 
 @Module({
     imports: [
@@ -85,6 +81,7 @@ const handlers = [UserLoggedInEventHandler];
                 signOptions: { expiresIn: coreConfig.accessTokenExpirationTime },
             }),
         }),
+        EventEmitterModule.forRoot({}),
         PassportModule,
         //если в системе несколько токенов (например, access и refresh) с разными опциями (время жизни, секрет)
         //можно переопределить опции при вызове метода jwt.service.sign

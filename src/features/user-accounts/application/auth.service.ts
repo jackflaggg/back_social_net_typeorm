@@ -1,19 +1,19 @@
 import { BadRequestDomainException, UnauthorizedDomainException } from '../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { Inject, Injectable } from '@nestjs/common';
-import { EventBus, EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import { EventBus } from '@nestjs/cqrs';
 import { compare } from 'bcrypt';
 import { UserPgRepository } from '../infrastructure/postgres/user/user.pg.repository';
-import { findUserByLoginOrEmailInterface } from './user/usecases/login-user.usecase';
-
-export class UserLoggedInEvent {
-    constructor(public readonly userId: string) {}
-}
+import { findUserByLoginOrEmailInterface } from '../dto/api/user.in.jwt.find.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { UserLoggedInEvent } from '../event-bus/auth/user.logged.event';
+import { UserRegistrationEvent } from '../event-bus/auth/user.registration.event';
 
 @Injectable()
 export class AuthService {
     constructor(
         @Inject() private readonly usersRepository: UserPgRepository,
         private readonly eventBus: EventBus, // Внедрение EventBus
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     async validateUser(userName: string, password: string): Promise<findUserByLoginOrEmailInterface> {
@@ -22,39 +22,28 @@ export class AuthService {
             throw UnauthorizedDomainException.create();
         }
 
-        const comparePassword = await compare(password, user.password);
+        const comparePassword: boolean = await compare(password, user.password);
         if (!comparePassword) {
             throw UnauthorizedDomainException.create();
         }
         // Генерация события при успешной аутентификации
         this.eventBus.publish(new UserLoggedInEvent(user.id));
 
+        // Проверка работы eventEmitter
+        this.eventEmitter.emit('login-user', user.id);
+
         return user as findUserByLoginOrEmailInterface;
     }
-    async uniqueLoginUser(login: string) {
-        const result = await this.usersRepository.findUserByLoginOrEmail(login);
+
+    async uniqueUser(login: string) {
+        const result = await this.usersRepository.findUserLogin(login);
 
         if (result) {
             throw BadRequestDomainException.create('поля должны быть уникальными!', 'login');
         }
+
+        this.eventBus.publish(new UserRegistrationEvent(!result));
+
         return !result;
-    }
-
-    async uniqueEmailUser(email: string) {
-        const result = await this.usersRepository.findUserByLoginOrEmail(email);
-
-        if (result) {
-            throw BadRequestDomainException.create('поля должны быть уникальными!', 'email');
-        }
-        return !result;
-    }
-}
-
-@EventsHandler(UserLoggedInEvent)
-export class UserLoggedInEventHandler implements IEventHandler<UserLoggedInEvent> {
-    handle(event: UserLoggedInEvent) {
-        console.log(`User ${event.userId} has logged in.`);
-        // Здесь вы можете выполнить дополнительные действия, такие как логирование,
-        // обновление статистики, отправка уведомлений и т.д.
     }
 }

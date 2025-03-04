@@ -4,7 +4,7 @@ import { EmailService } from '../../../../notifications/application/mail.service
 import { CommonCreateUserCommand } from './common-create-user.usecase';
 import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
 import { AuthRegistrationDtoApi } from '../../../dto/api/auth.registration.dto';
-import { BadRequestDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class RegistrationUserCommand {
     constructor(public readonly payload: AuthRegistrationDtoApi) {}

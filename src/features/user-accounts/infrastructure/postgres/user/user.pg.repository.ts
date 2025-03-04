@@ -7,8 +7,8 @@ import {
     NotFoundDomainException,
     UnauthorizedDomainException,
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { findUserByLoginOrEmailInterface } from '../../../application/user/usecases/login-user.usecase';
 import { UserCreateDtoRepo } from '../../../dto/repository/user.create.dto';
+import { findUserByLoginOrEmailInterface } from '../../../dto/api/user.in.jwt.find.dto';
 
 @Injectable()
 export class UserPgRepository {
@@ -30,6 +30,17 @@ export class UserPgRepository {
             SELECT u."id", u."email", u."password_hash" AS "password", em."is_confirmed" AS "isConfirmed", em."confirmation_code" AS "confirmationCode" FROM "users" AS "u" JOIN "email_confirmation" AS "em" ON u.id = em.user_id WHERE u."deleted_at" IS NULL AND (u."login" = $1 OR u."email" = $1);
         `;
         const result = await this.dataSource.query(query, [loginOrEmail]);
+        if (!result || result.length === 0) {
+            return void 0;
+        }
+
+        return result[0];
+    }
+    async findUserLogin(login: string): Promise<findUserByLoginOrEmailInterface | undefined> {
+        const query = `
+            SELECT u."id", u."email", u."password_hash" AS "password", em."is_confirmed" AS "isConfirmed", em."confirmation_code" AS "confirmationCode" FROM "users" AS "u" JOIN "email_confirmation" AS "em" ON u.id = em.user_id WHERE u."deleted_at" IS NULL AND (u."login" = $1);
+        `;
+        const result = await this.dataSource.query(query, [login]);
         if (!result || result.length === 0) {
             return void 0;
         }

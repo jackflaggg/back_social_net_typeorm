@@ -10,9 +10,8 @@ import { Response, Request } from 'express';
 import { LocalAuthGuard } from '../../../core/guards/passport/guards/local.auth.guard';
 import { JwtAuthGuard } from '../../../core/guards/passport/guards/jwt.auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
-import { findUserByLoginOrEmailInterface, LoginUserCommand } from '../application/user/usecases/login-user.usecase';
+import { LoginUserCommand } from '../application/user/usecases/login-user.usecase';
 import { RegistrationUserCommand } from '../application/user/usecases/registration-user.usecase';
-import { UniqueEmailAuthGuard, UniqueLoginAuthGuard } from '../../../core/guards/passport/guards/uniqueLoginAuthGuard';
 import { RegistrationConfirmationUserCommand } from '../application/user/usecases/registration-confirmation-user.usecase';
 import { PasswordRecoveryUserCommand } from '../application/user/usecases/password-recovery-user.usecase';
 import { RegistrationEmailResendUserCommand } from '../application/user/usecases/registration-email-resend-user.usecase';
@@ -24,6 +23,8 @@ import { RefreshTokenUserCommand } from '../application/user/usecases/refresh-to
 import { LogoutUserCommand } from '../application/user/usecases/logout-user.usecase';
 import { UserPgQueryRepository } from '../infrastructure/postgres/user/query/user.pg.query.repository';
 import { SETTINGS } from '../../../core/settings';
+import { findUserByLoginOrEmailInterface } from '../dto/api/user.in.jwt.find.dto';
+import { UniqueUserAuthGuard } from '../../../core/guards/passport/guards/unique.auth.guard';
 
 @Controller(SETTINGS.PATH.AUTH)
 export class AuthController {
@@ -59,7 +60,7 @@ export class AuthController {
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
-    @UseGuards(ThrottlerGuard, UniqueEmailAuthGuard, UniqueLoginAuthGuard)
+    @UseGuards(ThrottlerGuard, UniqueUserAuthGuard)
     @Post('registration')
     async registration(@Body() dto: AuthRegistrationDtoApi) {
         return this.commandBus.execute(new RegistrationUserCommand(dto));
