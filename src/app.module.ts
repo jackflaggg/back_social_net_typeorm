@@ -42,7 +42,7 @@ import { BloggersPlatformModule } from './features/bloggers-platform/bloggers-pl
                     // можете потерять рабочие данные
                     autoLoadEntities: true,
                     // Чтобы автоматически загружать сущности
-                    logging: false,
+                    logging: true,
                 }) as TypeOrmModuleAsyncOptions,
         }),
         ThrottlerModule.forRoot([
