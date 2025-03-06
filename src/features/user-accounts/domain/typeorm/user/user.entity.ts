@@ -31,4 +31,23 @@ export class User {
 
     @OneToMany(() => SecurityDevice, securityDevice => securityDevice.user)
     securityDevices: SecurityDevice[];
+
+    static buildInstance(login: string, email: string, passwordHash: string): User {
+        const user = new this();
+        user.login = login;
+        user.email = email;
+        user.passwordHash = passwordHash;
+        return user;
+    }
+
+    markDeleted() {
+        if (this.deletedAt) {
+            throw new Error('Entity already deleted');
+        }
+
+        this.deletedAt = new Date();
+    }
+    updatePassword(newPasswordHash: string) {
+        this.passwordHash = newPasswordHash;
+    }
 }
