@@ -2,6 +2,7 @@ import { ConfigModule } from '@nestjs/config';
 import process from 'node:process';
 import { join } from 'path';
 
+// данный модуль я кастомизирую из ConfigModule
 export const configModule = ConfigModule.forRoot({
     envFilePath: [
         // высокий приоритет

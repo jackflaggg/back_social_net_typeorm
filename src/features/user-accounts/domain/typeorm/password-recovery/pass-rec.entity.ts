@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../user/user.entity';
 
-@Entity('RecoveryPassword')
+@Entity('recovery_password')
 export class RecoveryPassword {
     @PrimaryColumn()
     userId: number;

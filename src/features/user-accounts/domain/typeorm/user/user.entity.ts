@@ -3,7 +3,7 @@ import { EmailConfirmation } from './email.confirmation.entity';
 import { RecoveryPassword } from '../password-recovery/pass-rec.entity';
 import { SecurityDevice } from '../device/device.entity';
 
-@Entity('User')
+@Entity('user')
 export class User {
     @PrimaryGeneratedColumn()
     id: number;

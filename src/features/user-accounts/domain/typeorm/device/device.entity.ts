@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../user/user.entity';
 
-@Entity('SecurityDevice')
+@Entity('security_device')
 export class SecurityDevice {
     @PrimaryColumn()
     deviceId: string;
