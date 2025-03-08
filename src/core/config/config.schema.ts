@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { configValidationUtility } from '../utils/config-validation.utility';
 import { ZodEnvironments } from '../../libs/contracts/enums/enviroments';
 
 export const configSchema = z.object({
