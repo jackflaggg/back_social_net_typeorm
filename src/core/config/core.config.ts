@@ -5,7 +5,6 @@ import { configSchema } from './config.schema';
 @Injectable()
 export class CoreConfig {
     public port: number;
-    // public mongoUrl: string;
     public env: string;
     // public isSwaggerEnabled: boolean;
     // public includeTestingModule: boolean;
@@ -26,7 +25,7 @@ export class CoreConfig {
     public passwordSql: string;
     public databaseNameSql: string;
 
-    constructor(private configService: ConfigService<any, true>) {
+    constructor(private configService: ConfigService<Record<string, unknown>, true>) {
         const config = {
             port: this.configService.get('PORT'),
             // mongoUrl: this.configService.get('MONGO_URI'),
