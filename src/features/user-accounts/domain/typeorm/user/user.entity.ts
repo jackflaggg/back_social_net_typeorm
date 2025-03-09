@@ -25,6 +25,9 @@ export class User extends BaseEntity {
     @CreateDateColumn({ type: 'timestamptz' }) // default не нужен в TypeORM
     updatedBusiness: Date;
 
+    @Column({ type: 'boolean', default: false })
+    sentEmailRegistration: boolean;
+
     @OneToOne(() => EmailConfirmation, emailConfirmation => emailConfirmation.user)
     emailConfirmation: EmailConfirmation;
 

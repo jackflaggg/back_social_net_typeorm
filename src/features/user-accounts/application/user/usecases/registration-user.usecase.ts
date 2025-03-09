@@ -29,6 +29,7 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
         const user = await this.userRepository.findUserById(userId);
 
         this.mailer.sendEmailRecoveryMessage(command.payload.email, user.confirmationCode).catch((err: unknown) => {
+            // здесь нужно будет обновлять поле sentEmailRegistration!
             console.log(err);
         });
     }

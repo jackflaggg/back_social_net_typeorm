@@ -42,6 +42,8 @@ import { User } from './domain/typeorm/user/user.entity';
 import { EmailConfirmation } from './domain/typeorm/email-confirmation/email.confirmation.entity';
 import { RecoveryPassword } from './domain/typeorm/password-recovery/pass-rec.entity';
 import { Comments } from '../bloggers-platform/comments/domain/typeorm/comment.entity';
+import { EmailRetryService } from '../notifications/application/mail.retry.service';
+import { EmailScheduler } from '../notifications/scheduler/email.scheduler';
 
 const useCases = [
     CreateSessionUseCase,
@@ -70,7 +72,7 @@ const repositoriesPostgres = [
 ];
 
 const strategies = [BasicStrategy, LocalStrategy, AccessTokenStrategy, JwtRefreshAuthPassportStrategy];
-const services = [AuthService, JwtService, EmailService, EmailAdapter, BcryptService];
+const services = [AuthService, JwtService, EmailService, EmailAdapter, BcryptService, EmailRetryService, EmailScheduler];
 const handlers = [LogUserInformationWhenUserLoggedInEventHandler];
 
 @Module({
