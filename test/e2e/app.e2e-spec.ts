@@ -1,8 +1,8 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { UsersTestManager } from '../helpers/users-test-helper';
-import { initSettings } from '../helpers/init-settings-test';
+import { UsersTestManager } from '../helpers-e2e/users-test-helper';
+import { initSettings } from '../helpers-e2e/init-settings-test';
 import { JwtService } from '@nestjs/jwt';
-import { deleteAllData } from '../helpers/delete-all-data-test';
+import { deleteAllData } from '../helpers-e2e/delete-all-data-test';
 import supertest from 'supertest';
 import { SETTINGS } from '../../src/core/settings';
 
