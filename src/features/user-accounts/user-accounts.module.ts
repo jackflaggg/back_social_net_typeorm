@@ -36,6 +36,10 @@ import { SessionsPgRepository } from './infrastructure/postgres/sessions/session
 import { SessionQueryPgRepository } from './infrastructure/postgres/sessions/query/sessions.pg.query.repository';
 import { PasswordRecoveryPgRepository } from './infrastructure/postgres/password/password.pg.recovery.repository';
 import { LogUserInformationWhenUserLoggedInEventHandler } from './application/user/event-handlers/logUserInformationWhenUserLoggedInEventHandler';
+import { SecurityDevice } from './domain/typeorm/device/device.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './domain/typeorm/user/user.entity';
+import { EmailConfirmation } from './domain/typeorm/email-confirmation/email.confirmation.entity';
 
 const useCases = [
     CreateSessionUseCase,
@@ -79,6 +83,7 @@ const handlers = [LogUserInformationWhenUserLoggedInEventHandler];
                 signOptions: { expiresIn: coreConfig.accessTokenExpirationTime },
             }),
         }),
+        TypeOrmModule.forFeature([User, EmailConfirmation, SecurityDevice]),
         PassportModule,
         //если в системе несколько токенов (например, access и refresh) с разными опциями (время жизни, секрет)
         //можно переопределить опции при вызове метода jwt.service.sign
