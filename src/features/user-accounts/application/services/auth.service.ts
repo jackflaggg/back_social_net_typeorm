@@ -1,10 +1,10 @@
-import { UnauthorizedDomainException } from '../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { UnauthorizedDomainException } from '../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { Inject, Injectable } from '@nestjs/common';
 import { EventBus } from '@nestjs/cqrs';
 import { compare } from 'bcrypt';
-import { UserPgRepository } from '../infrastructure/postgres/user/user.pg.repository';
-import { findUserByLoginOrEmailInterface } from '../dto/api/user.in.jwt.find.dto';
-import { UserLoggedInEvent } from './user/event-handlers/logUserInformationWhenUserLoggedInEventHandler';
+import { UserPgRepository } from '../../infrastructure/postgres/user/user.pg.repository';
+import { findUserByLoginOrEmailInterface } from '../../dto/api/user.in.jwt.find.dto';
+import { UserLoggedInEvent } from '../user/event-handlers/logUserInformationWhenUserLoggedInEventHandler';
 
 @Injectable()
 export class AuthService {

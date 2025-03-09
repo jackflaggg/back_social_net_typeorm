@@ -6,7 +6,7 @@ import { add } from 'date-fns/add';
 import { emailConfirmationData } from '../../../../../core/utils/user/email-confirmation-data.admin';
 import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
 import { PasswordRecoveryPgRepository } from '../../../infrastructure/postgres/password/password.pg.recovery.repository';
-import { BcryptService } from '../../bcrypt.service';
+import { BcryptService } from '../../services/bcrypt.service';
 
 export class PasswordRecoveryUserCommand {
     constructor(public readonly email: string) {}

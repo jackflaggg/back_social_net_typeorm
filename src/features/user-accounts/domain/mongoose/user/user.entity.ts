@@ -3,8 +3,8 @@ import { HydratedDocument, Model } from 'mongoose';
 import { genSalt, hash } from 'bcrypt';
 import * as crypto from 'node:crypto';
 import { EmailConfirmation, EmailConfirmationSchema } from './email.confirmation.shema';
-import { loginConstraints } from '../../../../libs/contracts/constants/user/user-property.constraints';
-import { DeletionStatus, DeletionStatusType } from '../../../../libs/contracts/enums/deletion-status.enum';
+import { loginConstraints } from '../../../../../libs/contracts/constants/user/user-property.constraints';
+import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/deletion-status.enum';
 
 @Schema({ timestamps: true })
 export class UserEntity {

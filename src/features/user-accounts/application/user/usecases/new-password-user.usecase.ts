@@ -3,7 +3,7 @@ import { Inject } from '@nestjs/common';
 import { BadRequestDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
 import { PasswordRecoveryPgRepository } from '../../../infrastructure/postgres/password/password.pg.recovery.repository';
-import { BcryptService } from '../../bcrypt.service';
+import { BcryptService } from '../../services/bcrypt.service';
 
 export class NewPasswordUserCommand {
     constructor(

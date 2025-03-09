@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserCreateDtoService } from '../../../dto/service/user.create.dto';
 import { emailConfirmationDataAdmin } from '../../../../../core/utils/user/email-confirmation-data.admin';
 import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
-import { BcryptService } from '../../bcrypt.service';
+import { BcryptService } from '../../services/bcrypt.service';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { UserCreateDtoRepo } from '../../../dto/repository/user.create.dto';
 
