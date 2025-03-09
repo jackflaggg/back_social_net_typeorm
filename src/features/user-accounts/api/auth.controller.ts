@@ -31,6 +31,7 @@ export class AuthController {
         private readonly commandBus: CommandBus,
         private readonly userQueryRepository: UserPgQueryRepository,
     ) {}
+
     @HttpCode(HttpStatus.OK)
     @UseGuards(ThrottlerGuard, LocalAuthGuard)
     @Post('login')

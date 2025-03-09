@@ -4,9 +4,9 @@ import { User } from '../../../../domain/typeorm/user/user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class UserOrmRepository {
-    constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) {}
-    async save(user: any){
-
+export class UserQueryRepository {
+    constructor(@InjectRepository(User) private readonly users: Repository<User>) {}
+    async save(entity: User) {
+        await this.users.save(entity);
     }
 }
