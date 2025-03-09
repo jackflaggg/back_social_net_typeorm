@@ -1,10 +1,10 @@
-import { BadRequestDomainException, UnauthorizedDomainException } from '../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { UnauthorizedDomainException } from '../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { Inject, Injectable } from '@nestjs/common';
 import { EventBus } from '@nestjs/cqrs';
 import { compare } from 'bcrypt';
 import { UserPgRepository } from '../infrastructure/postgres/user/user.pg.repository';
 import { findUserByLoginOrEmailInterface } from '../dto/api/user.in.jwt.find.dto';
-import { UserLoggedInEvent } from '../event-bus/auth/user.logged.event';
+import { UserLoggedInEvent } from './user/event-handlers/logUserInformationWhenUserLoggedInEventHandler';
 
 @Injectable()
 export class AuthService {
@@ -20,9 +20,11 @@ export class AuthService {
         }
 
         const comparePassword: boolean = await compare(password, user.password);
+
         if (!comparePassword) {
             throw UnauthorizedDomainException.create();
         }
+        // TODO: Перенести в юзкейс!
         // Генерация события при успешной аутентификации
         this.eventBus.publish(new UserLoggedInEvent(user.id));
 

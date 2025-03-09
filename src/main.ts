@@ -5,14 +5,21 @@ import { CoreConfig } from './core/config/core.config';
 import { configApp } from './setup/config.setup';
 
 async function bootstrap() {
+    const appContext = await NestFactory.createApplicationContext(AppModule);
+
+    const coreConfig = appContext.get<CoreConfig>(CoreConfig);
+
+    await appContext.close();
+
     const app = await NestFactory.create(AppModule);
 
-    const coreConfig = app.get<CoreConfig>(CoreConfig);
-
     app.use(cookieParser());
+
     configApp(app);
+
     await app.listen(coreConfig.port, () => {
-        console.log('Server started on port ' + coreConfig.port);
+        console.log('Сервер запущен на порту: ' + coreConfig.port + ' порт!');
     });
 }
+
 bootstrap();

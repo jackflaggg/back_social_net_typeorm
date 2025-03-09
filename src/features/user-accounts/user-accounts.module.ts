@@ -35,9 +35,7 @@ import { UserPgQueryRepository } from './infrastructure/postgres/user/query/user
 import { SessionsPgRepository } from './infrastructure/postgres/sessions/sessions.pg.repository';
 import { SessionQueryPgRepository } from './infrastructure/postgres/sessions/query/sessions.pg.query.repository';
 import { PasswordRecoveryPgRepository } from './infrastructure/postgres/password/password.pg.recovery.repository';
-import { EventEmitterModule } from '@nestjs/event-emitter';
-import { UserLoggedInEventHandler } from './event-bus/auth/user.logged.event';
-import { UserRegistrationEventHandler } from './event-bus/auth/user.registration.event';
+import { LogUserInformationWhenUserLoggedInEventHandler } from './application/user/event-handlers/logUserInformationWhenUserLoggedInEventHandler';
 
 const useCases = [
     CreateSessionUseCase,
@@ -67,7 +65,7 @@ const repositoriesPostgres = [
 
 const strategies = [BasicStrategy, LocalStrategy, AccessTokenStrategy, JwtRefreshAuthPassportStrategy];
 const services = [AuthService, JwtService, EmailService, EmailAdapter, BcryptService];
-const handlers = [UserLoggedInEventHandler, UserRegistrationEventHandler];
+const handlers = [LogUserInformationWhenUserLoggedInEventHandler];
 
 @Module({
     imports: [
