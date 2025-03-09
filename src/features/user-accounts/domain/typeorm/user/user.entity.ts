@@ -26,8 +26,8 @@ export class User {
     @OneToOne(() => EmailConfirmation, emailConfirmation => emailConfirmation.user)
     emailConfirmation: EmailConfirmation;
 
-    @OneToOne(() => RecoveryPassword, recoveryConfirmation => recoveryConfirmation.user)
-    recoveryConfirmation: RecoveryPassword;
+    // @OneToOne(() => RecoveryPassword, recoveryConfirmation => recoveryConfirmation.user)
+    // recoveryConfirmation: RecoveryPassword;
 
     @OneToMany(() => SecurityDevice, securityDevice => securityDevice.user)
     securityDevices: SecurityDevice[];

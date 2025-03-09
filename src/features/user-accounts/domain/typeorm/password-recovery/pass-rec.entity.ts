@@ -12,7 +12,7 @@ export class RecoveryPassword {
     @Column({ type: 'timestamptz', nullable: true })
     recoveryExpirationDate: Date;
 
-    @OneToOne(() => User, user => user.recoveryConfirmation)
-    @JoinColumn({ name: 'userId' })
-    user: User;
+    // @OneToOne(() => User, user => user.recoveryConfirmation)
+    // @JoinColumn({ name: 'userId' })
+    // user: User;
 }
