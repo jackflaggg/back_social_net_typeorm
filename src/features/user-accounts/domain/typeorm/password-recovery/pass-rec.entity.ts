@@ -1,8 +1,9 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../user/user.entity';
+import { BaseEntity } from '../../../../../core/domain/base.entity';
 
 @Entity('recovery_password')
-export class RecoveryPassword {
+export class RecoveryPassword extends BaseEntity {
     @PrimaryColumn()
     userId: number;
 
@@ -12,7 +13,7 @@ export class RecoveryPassword {
     @Column({ type: 'timestamptz', nullable: true })
     recoveryExpirationDate: Date;
 
-    // @OneToOne(() => User, user => user.recoveryConfirmation)
-    // @JoinColumn({ name: 'userId' })
-    // user: User;
+    @OneToOne(() => User, user => user.recoveryConfirmation)
+    @JoinColumn({ name: 'userId' })
+    user: User;
 }

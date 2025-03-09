@@ -1,9 +1,12 @@
 import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { EmailConfirmation } from '../email-confirmation/email.confirmation.entity';
 import { SecurityDevice } from '../device/device.entity';
+import { BaseEntity } from '../../../../../core/domain/base.entity';
+import { RecoveryPassword } from '../password-recovery/pass-rec.entity';
+import { Comments } from '../../../../bloggers-platform/comments/domain/typeorm/comment.entity';
 
 @Entity('user')
-export class User {
+export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -20,16 +23,19 @@ export class User {
     deletedAt: Date | null;
 
     @CreateDateColumn({ type: 'timestamptz' }) // default не нужен в TypeORM
-    createdAt: Date;
+    updatedBusiness: Date;
 
     @OneToOne(() => EmailConfirmation, emailConfirmation => emailConfirmation.user)
     emailConfirmation: EmailConfirmation;
 
-    // @OneToOne(() => RecoveryPassword, recoveryConfirmation => recoveryConfirmation.user)
-    // recoveryConfirmation: RecoveryPassword;
+    @OneToOne(() => RecoveryPassword, recoveryConfirmation => recoveryConfirmation.user)
+    recoveryConfirmation: RecoveryPassword;
 
     @OneToMany(() => SecurityDevice, securityDevice => securityDevice.user)
     securityDevices: SecurityDevice[];
+
+    @OneToMany(() => Comments, comments => comments.user)
+    comments: Comments[];
 
     static buildInstance(login: string, email: string, passwordHash: string): User {
         const user = new this();
