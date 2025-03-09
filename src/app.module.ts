@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { JwtModule } from '@nestjs/jwt';
 import { configModule } from './config';
-import { CoreConfig } from './core/config/core.config';
 import { CoreModule } from './core/config/config.module';
 import { ConfigModule } from '@nestjs/config';
 import { CustomLoggerModule } from './features/logger/logger.module';
@@ -12,6 +11,7 @@ import { TestingModule } from './features/testing/testing.module';
 import { BloggersPlatformModule } from './features/bloggers-platform/bloggers-platform.module';
 import { throttlerConfig } from './core/config/throttler.config';
 import { typeOrmDb } from './core/config/typeorm.config';
+import { CoreConfig } from './core/config/core.config';
 
 @Module({
     imports: [
