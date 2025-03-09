@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { BlogCreateDtoApi } from '../dto/api/blog.create.dto';
-import { BlogUpdateDtoApi } from '../dto/api/blog.update.dto';
+import { BlogCreateDtoApi } from '../../dto/api/blog.create.dto';
+import { BlogUpdateDtoApi } from '../../dto/api/blog.update.dto';
 import {
     descriptionConstraints,
     nameConstraints,
     websiteUrlConstraints,
-} from '../../../../libs/contracts/constants/blog/blog-property.constraints';
-import { DeletionStatus, DeletionStatusType } from '../../../../libs/contracts/enums/deletion-status.enum';
+} from '../../../../../libs/contracts/constants/blog/blog-property.constraints';
+import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/deletion-status.enum';
 
 @Schema({ timestamps: true })
 export class BlogEntity {

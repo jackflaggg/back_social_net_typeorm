@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { ExtendedLikesSchema } from '../../posts/domain/extended.like.entity';
-import { DeletionStatus, DeletionStatusType } from '../../../../libs/contracts/enums/deletion-status.enum';
-import { defaultLike } from '../../../../libs/contracts/constants/post/default.like.schema';
+import { ExtendedLikesSchema } from '../../../posts/domain/mongoose/extended.like.entity';
+import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/deletion-status.enum';
+import { defaultLike } from '../../../../../libs/contracts/constants/post/default.like.schema';
 
 export interface CommentatorInfoInterface {
     userId: string;

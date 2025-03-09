@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { EmailConfirmation } from './email.confirmation.entity';
+import { EmailConfirmation } from '../email-confirmation/email.confirmation.entity';
 import { RecoveryPassword } from '../password-recovery/pass-rec.entity';
 import { SecurityDevice } from '../device/device.entity';
 
