@@ -1,8 +1,9 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../user/user.entity';
+import { BaseEntity } from '../../../../../core/domain/base.entity';
 
 @Entity('security_device')
-export class SecurityDevice {
+export class SecurityDevice extends BaseEntity {
     @PrimaryColumn()
     deviceId: string;
 
