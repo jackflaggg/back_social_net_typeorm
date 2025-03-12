@@ -21,6 +21,7 @@ export class UserRepository {
     ) {}
     async save(entity: User) {
         await this.userRepositoryTypeOrm.save(entity);
+        return;
     }
     async findUsersWithUnsentEmails() {
         return [];
