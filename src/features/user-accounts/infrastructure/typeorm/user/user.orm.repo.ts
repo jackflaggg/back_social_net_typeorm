@@ -25,6 +25,14 @@ export class UserRepository {
     async findUsersWithUnsentEmails() {
         return [];
     }
+    async findUserByLoginAndEmail(email: string) {
+        const result = await this.userRepositoryTypeOrm.findOne({ where: { email } });
+        if (!result) {
+            return void 0;
+        }
+        return result;
+    }
+
     // async findUserByLoginAndEmail(login: string, email: string) {
     //     const query = `
     //         SELECT "id" FROM "users" WHERE "deleted_at" IS NULL AND ("login" = $1 OR "email" = $2);
