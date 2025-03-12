@@ -41,5 +41,4 @@ export namespace UserLoginCommand {
     export type Request = z.infer<typeof RequestSchema>;
 
     export const ResponseSchema = UserLoginResponseSchema;
-    export type Response = z.infer<typeof ResponseSchema>;
 }
