@@ -80,7 +80,7 @@ const handlers = [LogUserInformationWhenUserLoggedInEventHandler];
 @Module({
     imports: [
         // Вы можете игнорировать expiresIn: '5m' в JwtModule.register(),
-        // так как в вашей логике этот параметр переопределяется.
+        // так как в вашей логике этот параметр переопределяется!
         JwtModule.registerAsync({
             imports: [ConfigModule],
             inject: [CoreConfig],
@@ -94,6 +94,7 @@ const handlers = [LogUserInformationWhenUserLoggedInEventHandler];
         //если в системе несколько токенов (например, access и refresh) с разными опциями (время жизни, секрет)
         //можно переопределить опции при вызове метода jwt.service.sign
         //или написать свой tokens сервис (адаптер), где эти опции будут уже учтены
+        // и тд!
         CqrsModule,
     ],
     exports: [UserPgRepository],
