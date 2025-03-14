@@ -33,6 +33,7 @@ export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCo
         const user = await this.usersRepository.getPass(findCode.userId);
 
         const newPasswordHash = await this.bcryptService.hashPassword(user.password);
+
         await this.usersRepository.updatePassword(newPasswordHash, user.id);
 
         await this.passwordRepository.updateStatus(findCode.id);

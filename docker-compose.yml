@@ -2,7 +2,7 @@ version: '3.7'
 services:
   postgres:
     image: postgres:13
-    container_name: postgres_db_typeorm
+    container_name: postgres_db_typeorm_windows
     ports:
       - '5433:5432'
       # 1) куда будет развернуто внутри докера! в постгресе тоже!

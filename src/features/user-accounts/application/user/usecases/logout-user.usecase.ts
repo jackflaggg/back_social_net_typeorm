@@ -26,6 +26,7 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
         if (!currentDevice) {
             throw NotFoundDomainException.create('девайс не найден!');
         }
+
         const isOwner = currentDevice.userId === command.dtoUser.userId;
 
         if (!isOwner) {

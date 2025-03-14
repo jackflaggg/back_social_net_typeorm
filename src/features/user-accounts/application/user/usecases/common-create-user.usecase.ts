@@ -15,6 +15,7 @@ export class CommonCreateUserUseCase implements ICommandHandler<CommonCreateUser
         @Inject() private readonly usersRepository: UserPgRepository,
         private readonly bcryptService: BcryptService,
     ) {}
+
     async execute(command: CommonCreateUserCommand) {
         const hashPassword = await this.bcryptService.hashPassword(command.payload.password);
         return await this.usersRepository.createUser(
