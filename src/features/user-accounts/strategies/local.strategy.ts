@@ -1,7 +1,7 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { AuthService } from '../application/services/auth.service';
+import { AuthService } from '../application/other_services/auth.service';
 import { findUserByLoginOrEmailInterface } from '../dto/api/user.in.jwt.find.dto';
 
 @Injectable()
