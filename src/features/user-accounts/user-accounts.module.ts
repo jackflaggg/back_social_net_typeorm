@@ -36,11 +36,11 @@ import { SessionsPgRepository } from './infrastructure/postgres/sessions/session
 import { SessionQueryPgRepository } from './infrastructure/postgres/sessions/query/sessions.pg.query.repository';
 import { PasswordRecoveryPgRepository } from './infrastructure/postgres/password/password.pg.recovery.repository';
 import { LogUserInformationWhenUserLoggedInEventHandler } from './application/user/event-handlers/logUserInformationWhenUserLoggedInEventHandler';
-import { SecurityDevice } from './domain/typeorm/device/device.entity';
+import { SecurityDeviceToUser } from './domain/typeorm/device/device.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './domain/typeorm/user/user.entity';
-import { EmailConfirmation } from './domain/typeorm/email-confirmation/email.confirmation.entity';
-import { RecoveryPassword } from './domain/typeorm/password-recovery/pass-rec.entity';
+import { EmailConfirmationToUser } from './domain/typeorm/email-confirmation/email.confirmation.entity';
+import { RecoveryPasswordToUser } from './domain/typeorm/password-recovery/pass-rec.entity';
 // import { Comments } from '../bloggers-platform/comments/domain/typeorm/comment.entity';
 import { EmailRetryService } from '../notifications/application/mail.retry.service';
 import { EmailScheduler } from '../notifications/scheduler/email.scheduler';
@@ -89,7 +89,7 @@ const handlers = [LogUserInformationWhenUserLoggedInEventHandler];
                 signOptions: { expiresIn: coreConfig.accessTokenExpirationTime },
             }),
         }),
-        TypeOrmModule.forFeature([User, EmailConfirmation, SecurityDevice, RecoveryPassword]),
+        TypeOrmModule.forFeature([User, EmailConfirmationToUser, SecurityDeviceToUser, RecoveryPasswordToUser]),
         PassportModule,
         //если в системе несколько токенов (например, access и refresh) с разными опциями (время жизни, секрет)
         //можно переопределить опции при вызове метода jwt.service.sign

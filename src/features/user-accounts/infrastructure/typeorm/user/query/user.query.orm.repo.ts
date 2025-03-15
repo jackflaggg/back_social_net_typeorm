@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../../../domain/typeorm/user/user.entity';
 import { EntityManager, Repository } from 'typeorm';
-import { EmailConfirmation } from '../../../../domain/typeorm/email-confirmation/email.confirmation.entity';
+import { EmailConfirmationToUser } from '../../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 import { GetUsersQueryParams } from '../../../../dto/api/get-users-query-params.input-dto';
 import { getUsersQuery } from '../../../../../../core/utils/user/query.insert.get';
 import { UserViewDto } from '../../../../dto/api/user-view.dto';
@@ -13,7 +13,7 @@ import { NotFoundDomainException } from '../../../../../../core/exceptions/incub
 export class UserQueryRepository {
     constructor(
         @InjectRepository(User) private userRepositoryTypeOrm: Repository<User>,
-        @InjectRepository(EmailConfirmation) private emailConfirmationRepositoryTypeOrm: Repository<EmailConfirmation>,
+        @InjectRepository(EmailConfirmationToUser) private emailConfirmationRepositoryTypeOrm: Repository<EmailConfirmationToUser>,
         @InjectEntityManager() private readonly entityManager: EntityManager,
     ) {}
     async save(entity: User) {

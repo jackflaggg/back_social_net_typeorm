@@ -1,8 +1,8 @@
 import { Column, CreateDateColumn, Entity, OneToMany, OneToOne } from 'typeorm';
-import { EmailConfirmation } from '../email-confirmation/email.confirmation.entity';
-import { SecurityDevice } from '../device/device.entity';
+import { EmailConfirmationToUser } from '../email-confirmation/email.confirmation.entity';
+import { SecurityDeviceToUser } from '../device/device.entity';
 import { BaseEntity } from '../../../../../core/domain/base.entity';
-import { RecoveryPassword } from '../password-recovery/pass-rec.entity';
+import { RecoveryPasswordToUser } from '../password-recovery/pass-rec.entity';
 import { isNull } from '../../../../../core/utils/user/is.null';
 
 @Entity('users')
@@ -24,14 +24,14 @@ export class User extends BaseEntity {
     @Column({ name: 'sent_email_registration', type: 'boolean', default: false })
     sentEmailRegistration: boolean;
 
-    @OneToOne(() => EmailConfirmation, emailConfirmation => emailConfirmation.user)
-    emailConfirmation: EmailConfirmation;
+    @OneToOne(() => EmailConfirmationToUser, emailConfirmation => emailConfirmation.user)
+    emailConfirmation: EmailConfirmationToUser;
 
-    @OneToOne(() => RecoveryPassword, recoveryConfirmation => recoveryConfirmation.user)
-    recoveryConfirmation: RecoveryPassword;
+    @OneToOne(() => RecoveryPasswordToUser, recoveryConfirmation => recoveryConfirmation.user)
+    recoveryConfirmation: RecoveryPasswordToUser;
 
-    @OneToMany(() => SecurityDevice, securityDevice => securityDevice.user)
-    securityDevices: SecurityDevice[];
+    @OneToMany(() => SecurityDeviceToUser, securityDevice => securityDevice.user)
+    securityDevices: SecurityDeviceToUser[];
 
     // создаю emailConf прям тут, чтоб покрывать агрегейшен рут,
     // если делать в разных сущностях, то это уже не агрегат ddd ?
@@ -51,7 +51,7 @@ export class User extends BaseEntity {
 
     private createEmailConfirmation(dto: any, userId: number): void {
         // инкапсуляция
-        this.emailConfirmation = new EmailConfirmation();
+        this.emailConfirmation = new EmailConfirmationToUser();
 
         this.emailConfirmation.confirmationCode = dto.confirmationCode;
         this.emailConfirmation.expirationDate = dto.expirationDate;
@@ -59,6 +59,7 @@ export class User extends BaseEntity {
         this.emailConfirmation.userId = userId;
     }
 
+    // TODO: Можно ли это считать как за то, что у меня тут бизнес логика?
     private markDeleted() {
         // метод обертка!
         if (!isNull(this.deletedAt)) {

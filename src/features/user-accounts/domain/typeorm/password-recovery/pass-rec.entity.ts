@@ -1,9 +1,8 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../user/user.entity';
-import { BaseEntity } from '../../../../../core/domain/base.entity';
 
-@Entity('recovery_password')
-export class RecoveryPassword extends BaseEntity {
+@Entity('recovery_password_to_user')
+export class RecoveryPasswordToUser {
     @PrimaryColumn({ name: 'user_id' })
     userId: number;
 

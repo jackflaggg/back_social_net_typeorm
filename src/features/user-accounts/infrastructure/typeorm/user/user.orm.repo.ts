@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../../domain/typeorm/user/user.entity';
 import { EntityManager, Repository } from 'typeorm';
-import { EmailConfirmation } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
+import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 import { findUserByLoginOrEmailInterface } from '../../../dto/api/user.in.jwt.find.dto';
 import {
     BadRequestDomainException,
@@ -16,7 +16,7 @@ import { emailConfirmAdminInterface } from '../../../../../core/utils/user/email
 export class UserRepository {
     constructor(
         @InjectRepository(User) private userRepositoryTypeOrm: Repository<User>,
-        @InjectRepository(EmailConfirmation) private emailConfirmationRepositoryTypeOrm: Repository<EmailConfirmation>,
+        @InjectRepository(EmailConfirmationToUser) private emailConfirmationRepositoryTypeOrm: Repository<EmailConfirmationToUser>,
         @InjectEntityManager() private readonly entityManager: EntityManager,
     ) {}
     async save(entity: User) {
