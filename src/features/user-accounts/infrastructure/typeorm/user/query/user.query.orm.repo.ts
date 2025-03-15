@@ -5,7 +5,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { EmailConfirmationToUser } from '../../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 import { GetUsersQueryParams } from '../../../../dto/api/get-users-query-params.input-dto';
 import { getUsersQuery } from '../../../../../../core/utils/user/query.insert.get';
-import { UserViewDto } from '../../../../dto/api/user-view.dto';
+import { MeUserIntInterface, UserViewDto } from '../../../../dto/api/user-view.dto';
 import { PaginatedBlogViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
@@ -16,59 +16,65 @@ export class UserQueryRepository {
         @InjectRepository(EmailConfirmationToUser) private emailConfirmationRepositoryTypeOrm: Repository<EmailConfirmationToUser>,
         @InjectEntityManager() private readonly entityManager: EntityManager,
     ) {}
-    async save(entity: User) {
-        await this.userRepositoryTypeOrm.save(entity);
+    async getAllUsers(queryData: GetUsersQueryParams) {
+        const { sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm } = getUsersQuery(queryData);
+
+        const updatedSortBy = sortBy === 'createdAt' ? 'created_at' : sortBy.toLowerCase();
+
+        const offset = (pageNumber - 1) * pageSize;
+
+        const [resultUsers, resultTotal] = await this.userRepositoryTypeOrm
+            .createQueryBuilder('users')
+            .select(['users.id', 'users.login', 'users.email', 'users.created_at AS createdAt'])
+            .where('users.deleted_at IS NULL')
+            .andWhere('(users.login ILIKE :login OR users.email ILIKE :email)', {
+                login: `%${searchLoginTerm}%`,
+                email: `%${searchEmailTerm}%`,
+            })
+            .orderBy(`users.${updatedSortBy}`, sortDirection)
+            .skip(offset)
+            .take(pageSize)
+            .getManyAndCount();
+
+        const usersView = resultUsers.map(user => UserViewDto.mapToView(user));
+
+        return PaginatedBlogViewDto.mapToView<UserViewDto[]>({
+            items: usersView,
+            page: pageNumber,
+            size: pageSize,
+            totalCount: +resultTotal[0].totalCount,
+        });
     }
-    // async getAllUsers(queryData: GetUsersQueryParams) {
-    //     const { sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm } = getUsersQuery(queryData);
-    //
-    //     const updatedSortBy = sortBy === 'createdAt' ? 'created_at' : sortBy.toLowerCase();
-    //
-    //     const offset = (pageNumber - 1) * pageSize;
-    //
-    //     const queryUsers = `
-    //         SELECT "id", "login", "email", "created_at" AS "createdAt" FROM "users" WHERE "deleted_at" IS NULL AND ("login" ILIKE '%' || $1 || '%' OR "email" ILIKE '%' || $2 || '%')
-    //         ORDER BY ("${updatedSortBy}") ${sortDirection.toUpperCase()}
-    //         LIMIT $3
-    //         OFFSET $4
-    //         `;
-    //
-    //     const resultUsers = await this.dataSource.query(queryUsers, [searchLoginTerm, searchEmailTerm, Number(pageSize), Number(offset)]);
-    //
-    //     const queryCount = `
-    //         SELECT COUNT(*) AS "totalCount" FROM "users" WHERE "deleted_at" IS NULL AND ("login" ILIKE '%' || $1 || '%' OR "email" ILIKE '%' || $2 || '%')
-    //     `;
-    //     const resultTotal = await this.dataSource.query(queryCount, [searchLoginTerm, searchEmailTerm]);
-    //
-    //     const usersView = resultUsers.map(user => UserViewDto.mapToView(user));
-    //
-    //     return PaginatedBlogViewDto.mapToView<UserViewDto[]>({
-    //         items: usersView,
-    //         page: pageNumber,
-    //         size: pageSize,
-    //         totalCount: +resultTotal[0].totalCount,
-    //     });
-    // }
-    //
-    // async getUser(userId: string) {
-    //     const queryUser = `
-    //     SELECT "id", "login", "email", "created_at" as "createdAt" FROM "users" WHERE "deleted_at" IS NULL AND "id" = $1
-    //     `;
-    //     const result = await this.dataSource.query(queryUser, [userId]);
-    //     if (!result || result.length === 0) {
-    //         throw NotFoundDomainException.create('юзер не найден', 'userId');
-    //     }
-    //     return UserViewDto.mapToView(result[0]);
-    // }
-    //
-    // async getMe(userId: string) {
-    //     const queryUser = `
-    //     SELECT "id" as "userId", "login", "email" FROM "users" WHERE "deleted_at" IS NULL AND "id" = $1
-    //     `;
-    //     const result = await this.dataSource.query(queryUser, [userId]);
-    //     if (!result || result.length === 0) {
-    //         throw NotFoundDomainException.create('юзер не найден', 'userId');
-    //     }
-    //     return UserViewDto.meUser(result[0]);
-    // }
+
+    async getUser(userId: string) {
+        const result = await this.userRepositoryTypeOrm
+            .createQueryBuilder('users')
+            .select('id, login, email, created_at AS createdAt')
+            .where('users.id = :userId AND users.deleted_at IS NULL', { userId })
+            .getOne();
+        if (!result) {
+            throw NotFoundDomainException.create('юзер не найден', 'userId');
+        }
+        return UserViewDto.mapToView(result);
+    }
+
+    async getMe(userId: string) {
+        const result = await this.userRepositoryTypeOrm
+            .createQueryBuilder('users')
+            .select('id AS userId, login, email')
+            .where('users.id = :userId AND users.deleted_at IS NULL', { userId })
+            .getOne();
+        if (!result) {
+            throw NotFoundDomainException.create('юзер не найден', 'userId');
+        }
+
+        // Преобразуем результат в нужный формат
+        const meData: MeUserIntInterface = {
+            login: result.login,
+            userId: String(result.id), // Приводим id к строке
+            email: result.email,
+        };
+
+        return UserViewDto.meUser(meData);
+    }
 }

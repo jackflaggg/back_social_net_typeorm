@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../../domain/typeorm/user/user.entity';
-import { EntityManager, IsNull, Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
+import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 @Injectable()
 export class UserRepositoryOrm {
@@ -18,6 +19,16 @@ export class UserRepositoryOrm {
     async findUsersWithUnsentEmails() {
         return [];
     }
+    async findUserById(userId: string) {
+        const result = await this.userRepositoryTypeOrm
+            .createQueryBuilder('users')
+            .where('users.id = :userId AND users.deleted_at IS NULL', { userId })
+            .getOne();
+        if (!result) {
+            throw NotFoundDomainException.create('юзер не найден', 'userId');
+        }
+        return result[0];
+    }
     // TODO: Правильно ли сделал метод для проверки существования записи?
     async findCheckExistUser(login: string, email: string) {
         const result = await this.userRepositoryTypeOrm
@@ -28,6 +39,15 @@ export class UserRepositoryOrm {
             return void 0;
         }
         return result;
+    }
+
+    async updateDeletedAt(userId: string) {
+        await this.userRepositoryTypeOrm
+            .createQueryBuilder()
+            .update(User)
+            .set({ deletedAt: new Date() })
+            .where('id = :userId', { userId })
+            .execute();
     }
 
     // async findUserByLoginAndEmail(login: string, email: string) {
