@@ -48,23 +48,22 @@ export class User extends BaseEntity {
         user.login = dto.login;
         user.email = dto.email;
         user.passwordHash = dto.password;
+        user.sentEmailRegistration = dto.sentEmailRegistration;
 
-        user.createEmailConfirmation(dto.emailConfirmation, user.id);
+        user.createEmailConfirmation(dto.emailConfirmation);
 
         return user as User;
     }
 
-    private createEmailConfirmation(dto: any, userId: number): void {
+    private createEmailConfirmation(dto: any): void {
         // инкапсуляция
         this.emailConfirmation = new EmailConfirmationToUser();
 
         this.emailConfirmation.confirmationCode = dto.confirmationCode;
         this.emailConfirmation.expirationDate = dto.expirationDate;
         this.emailConfirmation.isConfirmed = dto.isConfirmed;
-        this.emailConfirmation.userId = userId;
     }
 
-    // TODO: Можно ли это считать как за то, что у меня тут бизнес логика?
     private markDeleted() {
         // метод обертка!
         if (!isNull(this.deletedAt)) throw new Error('Entity already deleted');

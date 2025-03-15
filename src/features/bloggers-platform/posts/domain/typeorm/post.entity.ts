@@ -18,9 +18,6 @@ export class Post extends BaseEntity {
     @Column({ name: 'blog_id', type: 'varchar' })
     blogId: string;
 
-    @Column({ name: 'blog_name', type: 'varchar' })
-    blogName: string;
-
     @CreateDateColumn({ name: 'updated_business_logic', type: 'timestamptz', default: null })
     updatedBusLogic: Date | null;
 
@@ -31,7 +28,6 @@ export class Post extends BaseEntity {
         post.shortDescription = dto.shortDescription;
         post.content = dto.content;
         post.blogId = blogId;
-        post.blogName = blogName;
 
         return post;
     }

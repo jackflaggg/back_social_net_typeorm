@@ -5,26 +5,25 @@ import { EntityManager, IsNull, Repository } from 'typeorm';
 import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 
 @Injectable()
-export class UserRepository {
+export class UserRepositoryOrm {
     constructor(
         @InjectRepository(User) private userRepositoryTypeOrm: Repository<User>,
         @InjectRepository(EmailConfirmationToUser) private emailConfirmationRepositoryTypeOrm: Repository<EmailConfirmationToUser>,
         @InjectEntityManager() private readonly entityManager: EntityManager,
     ) {}
     async save(entity: User) {
-        await this.userRepositoryTypeOrm.save(entity);
+        const result = await this.userRepositoryTypeOrm.save(entity);
+        return result.id;
     }
     async findUsersWithUnsentEmails() {
         return [];
     }
-    async findUserByLoginAndEmail(login: string, email: string) {
-        const result = await this.userRepositoryTypeOrm.findOne({
-            where: {
-                email,
-                login,
-                deletedAt: IsNull(),
-            },
-        });
+    // TODO: Правильно ли сделал метод для проверки существования записи?
+    async findCheckExistUser(login: string, email: string) {
+        const result = await this.userRepositoryTypeOrm
+            .createQueryBuilder('users')
+            .where('users.email = :email OR users.login = :login', { email, login })
+            .getOne();
         if (!result) {
             return void 0;
         }

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from '../../user-accounts/infrastructure/typeorm/user/user.orm.repo';
+import { UserRepositoryOrm } from '../../user-accounts/infrastructure/typeorm/user/user.orm.repo';
 import { EmailService } from './mail.service';
 
 @Injectable()
 export class EmailRetryService {
     constructor(
-        private readonly userRepository: UserRepository,
+        private readonly userRepository: UserRepositoryOrm,
         private readonly mailer: EmailService,
     ) {}
     async retryFailedEmail() {

@@ -44,7 +44,7 @@ import { RecoveryPasswordToUser } from './domain/typeorm/password-recovery/pass-
 // import { Comments } from '../bloggers-platform/comments/domain/typeorm/comment.entity';
 import { EmailRetryService } from '../notifications/application/mail.retry.service';
 import { EmailScheduler } from '../notifications/scheduler/email.scheduler';
-import { UserRepository } from './infrastructure/typeorm/user/user.orm.repo';
+import { UserRepositoryOrm } from './infrastructure/typeorm/user/user.orm.repo';
 
 const useCases = [
     CreateSessionUseCase,
@@ -70,7 +70,7 @@ const repositoriesPostgres = [
     SessionsPgRepository,
     SessionQueryPgRepository,
     PasswordRecoveryPgRepository,
-    UserRepository,
+    UserRepositoryOrm,
 ];
 
 const strategies = [BasicStrategy, LocalStrategy, AccessTokenStrategy, JwtRefreshAuthPassportStrategy];

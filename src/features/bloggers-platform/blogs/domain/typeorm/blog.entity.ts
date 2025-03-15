@@ -1,17 +1,11 @@
-import { Prop, Schema } from '@nestjs/mongoose';
 import { BlogCreateDtoApi } from '../../dto/api/blog.create.dto';
 import { BlogUpdateDtoApi } from '../../dto/api/blog.update.dto';
-import {
-    descriptionConstraints,
-    nameConstraints,
-    websiteUrlConstraints,
-} from '../../../../../libs/contracts/constants/blog/blog-property.constraints';
-import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/deletion-status.enum';
+import { nameConstraints } from '../../../../../libs/contracts/constants/blog/blog-property.constraints';
 import { Column, CreateDateColumn, Entity } from 'typeorm';
 import { BaseEntity } from '../../../../../core/domain/base.entity';
 import { isNull } from '../../../../../core/utils/user/is.null';
 
-@Entity('posts')
+@Entity('blogs')
 export class Blog extends BaseEntity {
     @Column({ name: 'title', type: 'varchar', collation: 'C', length: nameConstraints.maxLength })
     name: string;

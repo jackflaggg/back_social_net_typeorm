@@ -6,10 +6,10 @@ export class SecurityDeviceToUser {
     @PrimaryColumn({ name: 'device_id' })
     deviceId: string;
 
-    @Column({ name: 'device_name' })
+    @Column({ name: 'device_name', type: 'varchar', default: 'Google' })
     deviceName: string;
 
-    @Column()
+    @Column({ name: 'device_name', type: 'varchar', default: '255.255.255.255' })
     ip: string;
 
     @Column({ name: 'user_id' })
