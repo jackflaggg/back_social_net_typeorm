@@ -1,17 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { SecurityDeviceToUser } from '../../../domain/typeorm/device/device.entity';
 
 @Injectable()
 export class SessionsRepositoryOrm {
-    constructor(@InjectDataSource() protected dataSource: DataSource) {}
-    async createSession(ip: string, userAgent: string, deviceId: string, userId: string, issuedAtRefreshToken: Date) {
-        const query = `INSERT INTO "security_device" ("ip", "device_name", "user_id", "device_id", "issued_at") VALUES ($1, $2, $3, $4, $5) RETURNING *`;
-        const result = await this.dataSource.query(query, [ip, userAgent, +userId, deviceId, issuedAtRefreshToken.toISOString()]);
-        if (!result) {
-            return void 0;
-        }
-        return result;
+    constructor(@InjectRepository(SecurityDeviceToUser) private sessionsRepositoryTypeOrm: Repository<SecurityDeviceToUser>) {}
+    async save(entity: SecurityDeviceToUser) {
+        const result = await this.sessionsRepositoryTypeOrm.save(entity);
+        return result.deviceId;
     }
 
     async findSessionByDeviceId(deviceId: string) {

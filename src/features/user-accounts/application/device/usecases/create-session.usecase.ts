@@ -1,5 +1,4 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { SessionsPgRepository } from '../../../infrastructure/postgres/sessions/sessions.pg.repository';
 import { SessionsRepositoryOrm } from '../../../infrastructure/typeorm/sessions/sessions.orm.repository';
 
 export class CreateSessionCommand {

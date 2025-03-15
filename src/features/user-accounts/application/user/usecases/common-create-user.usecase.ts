@@ -1,7 +1,5 @@
 import { UserCreateDtoService } from '../../../dto/service/user.create.dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { emailConfirmationData } from '../../../../../core/utils/user/email-confirmation-data.admin';
-import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
 import { BcryptService } from '../../other_services/bcrypt.service';
 import { Inject } from '@nestjs/common';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';

@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { RecoveryPasswordToUser } from '../../../domain/typeorm/password-recovery/pass-rec.entity';
 
 @Injectable()
 export class PasswordRecoveryRepositoryOrm {
-    constructor(@InjectDataSource() protected dataSource: DataSource) {}
+    constructor(@InjectRepository(RecoveryPasswordToUser) private recPassRepositoryTypeOrm: Repository<RecoveryPasswordToUser>) {}
     async findCode(code: string) {
         const query = `
             SELECT "id", "user_id" AS "userId", "used" FROM "recovery_password"

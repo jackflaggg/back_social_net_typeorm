@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { deviceIntInterface, DeviceViewDto } from '../../../../dto/repository/device-view.dto';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { SecurityDeviceToUser } from '../../../../domain/typeorm/device/device.entity';
 
 @Injectable()
 export class SessionQueryRepositoryOrm {
-    constructor(@InjectDataSource() protected dataSource: DataSource) {}
+    constructor(@InjectRepository(SecurityDeviceToUser) private sessionsRepositoryTypeOrm: Repository<SecurityDeviceToUser>) {}
 
     async getSessions(userId: string): Promise<DeviceViewDto[] | void> {
         const query = `
