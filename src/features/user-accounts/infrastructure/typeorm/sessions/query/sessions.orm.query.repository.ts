@@ -9,9 +9,11 @@ export class SessionQueryRepositoryOrm {
     constructor(@InjectRepository(SecurityDeviceToUser) private sessionsRepositoryTypeOrm: Repository<SecurityDeviceToUser>) {}
 
     async getSessions(userId: string): Promise<DeviceViewDto[] | void> {
-        const query = `
-        SELECT "device_id" AS "deviceId", "device_name" AS "deviceName", "ip", "issued_at" AS "issuedAt" FROM "security_device" WHERE "deleted_at" IS NULL AND "user_id" = $1`;
-        const result = await this.dataSource.query(query, [userId]);
+        const result = await this.sessionsRepositoryTypeOrm
+            .createQueryBuilder('security_device_to_user')
+            .select('device_id AS deviceId, device_name AS deviceName, ip, issued_at AS issuedAt')
+            .where('deleted_at IS NULL AND user_id = :userId', { userId })
+            .getRawMany();
         return result ? result.map((elem: deviceIntInterface) => DeviceViewDto.mapToView(elem)) : [];
     }
 }

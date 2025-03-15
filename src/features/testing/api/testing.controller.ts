@@ -1,6 +1,6 @@
 import { Controller, Delete, HttpCode, HttpStatus } from '@nestjs/common';
-import { InjectDataSource, InjectEntityManager } from '@nestjs/typeorm';
-import { DataSource, EntityManager } from 'typeorm';
+import { InjectEntityManager } from '@nestjs/typeorm';
+import { EntityManager } from 'typeorm';
 import { SETTINGS } from '../../../core/settings';
 import { TablesEnum } from '../../../libs/contracts/enums/tables.enum';
 
