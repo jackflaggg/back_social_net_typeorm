@@ -1,5 +1,4 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Model } from 'mongoose';
+import { Prop, Schema } from '@nestjs/mongoose';
 import { BlogCreateDtoApi } from '../../dto/api/blog.create.dto';
 import { BlogUpdateDtoApi } from '../../dto/api/blog.update.dto';
 import {
@@ -34,7 +33,7 @@ export class BlogEntity {
         blog.name = dto.name;
         blog.description = dto.description;
         blog.websiteUrl = dto.websiteUrl;
-        return blog as BlogDocument;
+        return blog;
     }
 
     makeDeleted() {
@@ -47,15 +46,3 @@ export class BlogEntity {
         this.websiteUrl = dto.websiteUrl;
     }
 }
-// Создает схему для сущности блога и загружает её в базу данных
-export const BlogSchema = SchemaFactory.createForClass(BlogEntity);
-
-// Загружает методы из класса BlogEntity в схему
-BlogSchema.loadClass(BlogEntity);
-
-// Определяет тип для документа блога, который будет содержать
-// свойства и методы из Mongoose, а также будет типизирован.
-export type BlogDocument = HydratedDocument<BlogEntity>;
-
-// тип модели, которая включает в себя все методы и свойства класса
-export type BlogModelType = Model<BlogDocument> & typeof BlogEntity;
