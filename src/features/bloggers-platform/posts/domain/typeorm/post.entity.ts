@@ -1,6 +1,4 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Model } from 'mongoose';
-import { ExtendedLikesEntity, ExtendedLikesSchema } from './extended.like.entity';
+import { Prop, Schema } from '@nestjs/mongoose';
 import { PostUpdateDtoService } from '../../dto/service/post.update.dto';
 import { PostToBlogCreateDtoApi } from '../../../blogs/dto/api/blog.to.post.create.dto';
 import {
@@ -9,7 +7,6 @@ import {
     titleConstraints,
 } from '../../../../../libs/contracts/constants/post/post-property.constraints';
 import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/deletion-status.enum';
-import { defaultLike } from '../../../../../libs/contracts/constants/post/default.like.schema';
 
 @Schema({ timestamps: true })
 export class PostEntity {
@@ -34,14 +31,7 @@ export class PostEntity {
     @Prop({ type: String, required: true, default: DeletionStatus.enum['not-deleted'] })
     deletionStatus: DeletionStatusType;
 
-    @Prop({
-        type: ExtendedLikesSchema,
-        required: true,
-        default: defaultLike,
-    })
-    extendedLikesInfo: ExtendedLikesEntity;
-
-    static buildInstance(dto: PostToBlogCreateDtoApi, blogId: string, blogName: string): PostDocument {
+    static buildInstance(dto: PostToBlogCreateDtoApi, blogId: string, blogName: string) {
         const post = new this();
 
         post.title = dto.title;
@@ -50,7 +40,7 @@ export class PostEntity {
         post.blogId = blogId;
         post.blogName = blogName;
 
-        return post as PostDocument;
+        return post;
     }
 
     update(dto: PostUpdateDtoService): void {
@@ -63,11 +53,3 @@ export class PostEntity {
         this.deletionStatus = DeletionStatus.enum['permanent-deleted'];
     }
 }
-
-export const PostSchema = SchemaFactory.createForClass(PostEntity);
-
-PostSchema.loadClass(PostEntity);
-
-export type PostDocument = HydratedDocument<PostEntity>;
-
-export type PostModelType = Model<PostDocument> & typeof PostEntity;

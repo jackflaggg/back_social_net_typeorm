@@ -1,13 +1,16 @@
-import { CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export abstract class BaseEntity {
     @PrimaryGeneratedColumn()
     public id: number;
 
     // https://typeorm.io/entities#special-columns
-    @CreateDateColumn()
+    @CreateDateColumn({ name: 'created_at' })
     public createdAt: Date;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({ name: 'updated_at' })
     public updatedAt: Date;
+
+    @Column({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+    deletedAt: Date | null;
 }

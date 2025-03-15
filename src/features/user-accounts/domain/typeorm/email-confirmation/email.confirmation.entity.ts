@@ -4,19 +4,19 @@ import { BaseEntity } from '../../../../../core/domain/base.entity';
 
 @Entity('email_confirmation')
 export class EmailConfirmation extends BaseEntity {
-    @PrimaryColumn()
+    @PrimaryColumn({ name: 'user_id' })
     userId: number;
 
-    @Column({ type: 'varchar', length: 255, unique: true }) // Строгий тип для confirmationCode
+    @Column({ name: 'confirmation_code', type: 'varchar', length: 255, unique: true })
     confirmationCode: string;
 
-    @Column({ type: 'timestamptz', nullable: true }) //nullable:true
+    @Column({ name: 'expiration_date', type: 'timestamptz', nullable: true })
     expirationDate: Date | null;
 
-    @Column({ type: 'boolean', default: false })
+    @Column({ name: 'is_confirmed', type: 'boolean', default: false })
     isConfirmed: boolean;
 
-    @OneToOne(() => User, user => user.emailConfirmation) // добавили обратную связь
-    @JoinColumn({ name: 'userId' })
+    @OneToOne(() => User, user => user.emailConfirmation)
+    @JoinColumn({ name: 'user_id' })
     user: User;
 }

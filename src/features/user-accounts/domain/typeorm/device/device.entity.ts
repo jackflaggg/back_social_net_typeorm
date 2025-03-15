@@ -4,25 +4,22 @@ import { BaseEntity } from '../../../../../core/domain/base.entity';
 
 @Entity('security_device')
 export class SecurityDevice extends BaseEntity {
-    @PrimaryColumn()
+    @PrimaryColumn({ name: 'device_id' })
     deviceId: string;
 
-    @Column()
+    @Column({ name: 'device_name' })
     deviceName: string;
 
     @Column()
     ip: string;
 
-    @Column()
+    @Column({ name: 'user_id' })
     userId: number;
 
-    @Column({ type: 'timestamptz', nullable: true }) // nullable: true  важно!
-    deletedAt: Date | null;
-
-    @CreateDateColumn({ type: 'timestamptz' }) // default не нужен в TypeORM
+    @CreateDateColumn({ name: 'issued_at', type: 'timestamptz' }) // default не нужен в TypeORM
     issuedAt: Date;
 
     @ManyToOne(() => User, user => user.securityDevices)
-    @JoinColumn({ name: 'userId' })
+    @JoinColumn({ name: 'user_id' })
     user: User;
 }

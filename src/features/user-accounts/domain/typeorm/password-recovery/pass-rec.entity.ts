@@ -4,16 +4,16 @@ import { BaseEntity } from '../../../../../core/domain/base.entity';
 
 @Entity('recovery_password')
 export class RecoveryPassword extends BaseEntity {
-    @PrimaryColumn()
+    @PrimaryColumn({ name: 'user_id' })
     userId: number;
 
-    @Column({ nullable: true })
+    @Column({ name: 'recovery_code', nullable: true })
     recoveryCode: string;
 
-    @Column({ type: 'timestamptz', nullable: true })
+    @Column({ name: 'recovery_expiration_date', type: 'timestamptz', nullable: true })
     recoveryExpirationDate: Date;
 
     @OneToOne(() => User, user => user.recoveryConfirmation)
-    @JoinColumn({ name: 'userId' })
+    @JoinColumn({ name: 'user_id' })
     user: User;
 }

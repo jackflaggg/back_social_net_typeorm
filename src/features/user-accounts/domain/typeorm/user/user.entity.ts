@@ -1,31 +1,26 @@
-import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, OneToOne } from 'typeorm';
 import { EmailConfirmation } from '../email-confirmation/email.confirmation.entity';
 import { SecurityDevice } from '../device/device.entity';
 import { BaseEntity } from '../../../../../core/domain/base.entity';
 import { RecoveryPassword } from '../password-recovery/pass-rec.entity';
 import { Comments } from '../../../../bloggers-platform/comments/domain/typeorm/comment.entity';
+import { isNull } from '../../../../../core/utils/user/is.null';
 
-@Entity('user')
+@Entity('users')
 export class User extends BaseEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
-
     @Column({ type: 'varchar', length: 20, unique: true, collation: 'C' })
     login: string;
 
     @Column({ type: 'varchar', length: 60, unique: true, collation: 'C' })
     email: string;
 
-    @Column({ type: 'varchar', length: 255 })
+    @Column({ name: 'password_hash', type: 'varchar', length: 255 })
     passwordHash: string;
 
-    @Column({ type: 'timestamptz', nullable: true }) // nullable: true  важно!
-    deletedAt: Date | null;
+    @CreateDateColumn({ name: 'updated_business_client', type: 'timestamptz', default: new Date() })
+    updatedBusinessClient: Date;
 
-    @CreateDateColumn({ type: 'timestamptz' }) // default не нужен в TypeORM
-    updatedBusiness: Date;
-
-    @Column({ type: 'boolean', default: false })
+    @Column({ name: 'sent_email_registration', type: 'boolean', default: false })
     sentEmailRegistration: boolean;
 
     @OneToOne(() => EmailConfirmation, emailConfirmation => emailConfirmation.user)
@@ -40,21 +35,28 @@ export class User extends BaseEntity {
     @OneToMany(() => Comments, comments => comments.user)
     comments: Comments[];
 
+    // @OneToMany(() => likesComments, comments => comments.user)
+    // statusesComment: likesComments[];
+
+    // @OneToMany(() => likesPosts, posts => posts.user)
+    // statusesPost: likesPosts[];
+
     static buildInstance(login: string, email: string, passwordHash: string): User {
         const user = new this();
         user.login = login;
         user.email = email;
         user.passwordHash = passwordHash;
-        return user;
+        return user as User;
     }
 
     markDeleted() {
-        if (this.deletedAt) {
+        if (!isNull(this.deletedAt)) {
             throw new Error('Entity already deleted');
         }
 
         this.deletedAt = new Date();
     }
+
     updatePassword(newPasswordHash: string) {
         this.passwordHash = newPasswordHash;
     }
