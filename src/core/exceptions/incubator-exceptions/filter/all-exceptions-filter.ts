@@ -1,13 +1,13 @@
 //сюда прилетают Все ошибки
 import { Catch, HttpException, HttpStatus } from '@nestjs/common';
 import { BaseExceptionFilter } from './domain-exceptions-filter';
-import { CoreConfig } from '../../../config/core.config';
+import { AppConfig } from '../../../config/app.config';
 import { LoggerService } from '../../../../features/logger/application/logger.service';
 
 @Catch()
 export class AllExceptionsFilter extends BaseExceptionFilter {
     constructor(
-        private readonly coreConfig: CoreConfig,
+        private readonly coreConfig: AppConfig,
         private readonly logger: LoggerService,
     ) {
         super();

@@ -2,7 +2,7 @@ import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { CreateSessionCommand } from '../../device/usecases/create-session.usecase';
-import { CoreConfig } from '../../../../../core/config/core.config';
+import { AppConfig } from '../../../../../core/config/app.config';
 import { SessionsPgRepository } from '../../../infrastructure/postgres/sessions/sessions.pg.repository';
 
 export class RefreshTokenUserCommand {
@@ -20,7 +20,7 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
         private readonly jwtService: JwtService,
         private readonly commandBus: CommandBus,
         private readonly sessionRepository: SessionsPgRepository,
-        private readonly coreConfig: CoreConfig,
+        private readonly coreConfig: AppConfig,
     ) {}
     async execute(command: RefreshTokenUserCommand) {
         if (!command.userId) {

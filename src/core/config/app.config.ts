@@ -2,12 +2,14 @@ import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 import { configSchema } from './config.schema';
 
+/**
+ * Сервис для хранения конфигурации приложения.
+ * Загружает настройки из переменных окружения и предоставляет доступ к ним.
+ */
 @Injectable()
-export class CoreConfig {
+export class AppConfig {
     public port: number;
     public env: string;
-    // public isSwaggerEnabled: boolean;
-    // public includeTestingModule: boolean;
     public refreshTokenSecret: string;
     public accessTokenSecret: string;
     public accessTokenExpirationTime: string;
@@ -16,7 +18,6 @@ export class CoreConfig {
     public adminPassword: string;
     public adminEmail: string;
     public adminEmailPassword: string;
-    // public testUrl: string;
 
     public typeSql: string;
     public hostSql: string;
@@ -25,14 +26,14 @@ export class CoreConfig {
     public passwordSql: string;
     public databaseNameSql: string;
 
+    // public testUrl: string;
+    // public isSwaggerEnabled: boolean;
+    // public includeTestingModule: boolean;
+
     constructor(private configService: ConfigService<Record<string, unknown>, true>) {
         const config = {
             port: this.configService.get('PORT'),
-            // mongoUrl: this.configService.get('MONGO_URI'),
-            // testUrl: this.configService.get('DB_URI_TEST'),
             env: this.configService.get('NODE_ENV'),
-            // isSwaggerEnabled: this.configService.get('IS_SWAGGER_ENABLED'),
-            // includeTestingModule: this.configService.get('INCLUDE_TESTING_MODULE'),
             refreshTokenSecret: this.configService.get('JWT_REFRESH_SECRET'),
             accessTokenSecret: this.configService.get('JWT_ACCESS_SECRET'),
             accessTokenExpirationTime: this.configService.get('JWT_ACCESS_EXPIRATION_TIME'),
@@ -48,6 +49,11 @@ export class CoreConfig {
             usernameSql: this.configService.get('USERNAME_SQL'),
             passwordSql: this.configService.get('PASSWORD_SQL'),
             databaseNameSql: this.configService.get('DATABASE_NAME_SQL'),
+
+            // isSwaggerEnabled: this.configService.get('IS_SWAGGER_ENABLED'),
+            // includeTestingModule: this.configService.get('INCLUDE_TESTING_MODULE'),
+            // mongoUrl: this.configService.get('MONGO_URI'),
+            // testUrl: this.configService.get('DB_URI_TEST'),
         };
 
         try {

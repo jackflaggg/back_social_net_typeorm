@@ -2,8 +2,11 @@ import { ConfigModule } from '@nestjs/config';
 import process from 'node:process';
 import { join } from 'path';
 
-// данный модуль я кастомизирую из ConfigModule
-export const configModule = ConfigModule.forRoot({
+/**
+ * Модуль для настройки конфигурации приложения.
+ * Загружает переменные окружения из файлов .env с различным приоритетом.
+ */
+export const envModule = ConfigModule.forRoot({
     envFilePath: [
         // высокий приоритет
         ...(process.env.ENV_FILE_PATH ? [process.env.ENV_FILE_PATH.trim()] : []),

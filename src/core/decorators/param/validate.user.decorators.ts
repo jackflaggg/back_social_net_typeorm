@@ -7,7 +7,7 @@ export const ExtractUserFromRequest = createParamDecorator((data: unknown, conte
     const user = request.user;
 
     if (!user) {
-        throw new Error('There is no user in the request object!');
+        throw new Error('В объекте запроса нет пользователя!');
     }
 
     return user;

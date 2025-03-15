@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { CoreConfig } from '../../../core/config/core.config';
+import { AppConfig } from '../../../core/config/app.config';
 import { UserPgRepository } from '../infrastructure/postgres/user/user.pg.repository';
 import { UserJwtPayloadDto } from './refresh.strategy';
 
@@ -9,7 +9,7 @@ import { UserJwtPayloadDto } from './refresh.strategy';
 export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt-access') {
     constructor(
         @Inject() private readonly usersRepository: UserPgRepository,
-        private readonly coreConfig: CoreConfig,
+        private readonly coreConfig: AppConfig,
     ) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

@@ -2,7 +2,7 @@ import { AppModule } from '../../src/app.module';
 import { Test, TestingModuleBuilder } from '@nestjs/testing';
 import { UsersTestManager } from './users-test-helper';
 import { deleteAllData } from './delete-all-data-test';
-import { configApp } from '../../src/setup/config.setup';
+import { fullConfigApp } from '../../src/setup/config.setup';
 
 export const initSettings = async (
     //передаем callback, который получает ModuleBuilder, если хотим изменить настройку тестового модуля
@@ -20,7 +20,7 @@ export const initSettings = async (
 
     const app = testingAppModule.createNestApplication();
 
-    configApp(app);
+    fullConfigApp(app);
     await app.init();
 
     // const databaseConnection = app.get<Connection>(getConnectionToken());

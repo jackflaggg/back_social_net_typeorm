@@ -12,7 +12,7 @@ import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '../user-accounts/user-accounts.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
-import { CoreConfig } from '../../core/config/core.config';
+import { AppConfig } from '../../core/config/app.config';
 import { BlogsPgQueryRepository } from './blogs/infrastructure/postgres/query/blogs.pg.query.repository';
 import { BlogsPgRepository } from './blogs/infrastructure/postgres/blogs.pg.repository';
 import { PostsPgRepository } from './posts/infrastructure/postgres/posts.pg.repository';
@@ -65,9 +65,9 @@ const useCases = [
         JwtModule.registerAsync({
             imports: [ConfigModule],
             // Указывает, какие зависимости нужно "внедрить" в фабричную функцию useFactory.
-            inject: [CoreConfig],
+            inject: [AppConfig],
             // фабричная функция, которая будет возвращать объект конфигурации
-            useFactory: async (coreConfig: CoreConfig) => ({
+            useFactory: async (coreConfig: AppConfig) => ({
                 secret: coreConfig.accessTokenSecret,
                 signOptions: { expiresIn: coreConfig.accessTokenExpirationTime },
             }),

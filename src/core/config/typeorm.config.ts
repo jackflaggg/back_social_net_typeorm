@@ -1,7 +1,7 @@
-import { CoreConfig } from './core.config';
+import { AppConfig } from './app.config';
 import { TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 
-export const typeOrmDb = (coreConfig: CoreConfig) =>
+export const typeOrmDb = (coreConfig: AppConfig) =>
     ({
         type: coreConfig.typeSql,
         host: coreConfig.hostSql,

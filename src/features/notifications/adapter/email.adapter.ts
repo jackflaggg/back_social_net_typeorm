@@ -1,12 +1,12 @@
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { emailTemplates } from '../../../templates/email.templates';
 import nodemailer from 'nodemailer';
-import { CoreConfig } from '../../../core/config/core.config';
+import { AppConfig } from '../../../core/config/app.config';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class EmailAdapter {
-    constructor(private readonly coreConfig: CoreConfig) {}
+    constructor(private readonly coreConfig: AppConfig) {}
     async sendEmail(emailFrom: string, messageCode: string): Promise<SMTPTransport.SentMessageInfo | null> {
         try {
             const transporter = nodemailer.createTransport({

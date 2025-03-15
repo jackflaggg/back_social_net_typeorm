@@ -4,7 +4,7 @@ import { exceptionFilterSetup } from './exception-filter.setup';
 import { interceptorSetup } from './interceptor.setup';
 import { swaggerSetup } from './swagger.setup';
 
-export function configApp(app: INestApplication) {
+export function fullConfigApp(app: INestApplication): void {
     pipesSetup(app);
 
     interceptorSetup(app);

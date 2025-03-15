@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { UnauthorizedDomainException } from '../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { CoreConfig } from '../../../core/config/core.config';
+import { AppConfig } from '../../../core/config/app.config';
 import { UserPgRepository } from '../infrastructure/postgres/user/user.pg.repository';
 import { SessionsPgRepository } from '../infrastructure/postgres/sessions/sessions.pg.repository';
 
@@ -18,7 +18,7 @@ export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, '
     constructor(
         @Inject() private readonly usersRepository: UserPgRepository,
         @Inject() private readonly securityDevicesRepository: SessionsPgRepository,
-        private readonly coreConfig: CoreConfig,
+        private readonly coreConfig: AppConfig,
     ) {
         super({
             jwtFromRequest: ExtractJwt.fromExtractors([

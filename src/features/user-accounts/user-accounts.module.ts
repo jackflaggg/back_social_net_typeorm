@@ -26,7 +26,7 @@ import { SessionController } from './api/session.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JwtRefreshAuthPassportStrategy } from './strategies/refresh.strategy';
 import { DeleteSessionsUseCase } from './application/device/usecases/delete-sessions.usecase';
-import { CoreConfig } from '../../core/config/core.config';
+import { AppConfig } from '../../core/config/app.config';
 import { ConfigModule } from '@nestjs/config';
 import { EmailAdapter } from '../notifications/adapter/email.adapter';
 import { UserPgRepository } from './infrastructure/postgres/user/user.pg.repository';
@@ -83,8 +83,8 @@ const handlers = [LogUserInformationWhenUserLoggedInEventHandler];
         // так как в вашей логике этот параметр переопределяется!
         JwtModule.registerAsync({
             imports: [ConfigModule],
-            inject: [CoreConfig],
-            useFactory: async (coreConfig: CoreConfig) => ({
+            inject: [AppConfig],
+            useFactory: async (coreConfig: AppConfig) => ({
                 secret: coreConfig.accessTokenSecret,
                 signOptions: { expiresIn: coreConfig.accessTokenExpirationTime },
             }),

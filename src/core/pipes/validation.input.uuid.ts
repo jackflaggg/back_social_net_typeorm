@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
 import { validate } from 'uuid';
-import { BadRequestDomainException, NotFoundDomainException } from '../exceptions/incubator-exceptions/domain-exceptions';
+import { NotFoundDomainException } from '../exceptions/incubator-exceptions/domain-exceptions';
 
 @Injectable()
 export class ValidateUUIDPipe implements PipeTransform<string> {

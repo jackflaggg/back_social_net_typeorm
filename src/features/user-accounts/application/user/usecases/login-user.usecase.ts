@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateSessionCommand } from '../../device/usecases/create-session.usecase';
-import { CoreConfig } from '../../../../../core/config/core.config';
+import { AppConfig } from '../../../../../core/config/app.config';
 import { findUserByLoginOrEmailInterface } from 'src/features/user-accounts/dto/api/user.in.jwt.find.dto';
 
 export class LoginUserCommand {
@@ -19,7 +19,7 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
     constructor(
         @Inject() private readonly jwtService: JwtService,
         private readonly commandBus: CommandBus,
-        private readonly coreConfig: CoreConfig,
+        private readonly coreConfig: AppConfig,
     ) {}
 
     async execute(command: LoginUserCommand) {

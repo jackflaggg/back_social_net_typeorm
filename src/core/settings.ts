@@ -1,6 +1,3 @@
-import { config } from 'dotenv';
-config();
-
 export const SETTINGS = {
     PATH: {
         SA_BLOGS: '/sa/blogs',
