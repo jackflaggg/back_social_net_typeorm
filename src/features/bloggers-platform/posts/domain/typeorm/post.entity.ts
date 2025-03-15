@@ -6,13 +6,13 @@ import { isNull } from '../../../../../core/utils/user/is.null';
 
 @Entity('posts')
 export class Post extends BaseEntity {
-    @Column({ name: 'title', type: 'varchar', collation: 'C' })
+    @Column({ name: 'title', type: 'varchar', length: '30', collation: 'C' })
     title: string;
 
-    @Column({ name: 'short_description', type: 'varchar', collation: 'C' })
+    @Column({ name: 'short_description', type: 'varchar', length: '255', collation: 'C' })
     shortDescription: string;
 
-    @Column({ name: 'content', type: 'varchar', collation: 'C' })
+    @Column({ name: 'content', type: 'varchar', length: '255', collation: 'C' })
     content: string;
 
     @Column({ name: 'blog_id', type: 'varchar' })

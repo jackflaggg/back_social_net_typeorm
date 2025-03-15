@@ -7,13 +7,13 @@ import { isNull } from '../../../../../core/utils/user/is.null';
 
 @Entity('blogs')
 export class Blog extends BaseEntity {
-    @Column({ name: 'title', type: 'varchar', collation: 'C', length: nameConstraints.maxLength })
+    @Column({ name: 'title', type: 'varchar', length: '20', collation: 'C', length: nameConstraints.maxLength })
     name: string;
 
-    @Column({ name: 'title', type: 'varchar', collation: 'C' })
+    @Column({ name: 'title', type: 'varchar', length: '510', collation: 'C' })
     description: string;
 
-    @Column({ name: 'title', type: 'varchar', collation: 'C' })
+    @Column({ name: 'title', type: 'varchar', length: '120', collation: 'C' })
     websiteUrl: string;
 
     @Column({ type: Boolean, default: false })
