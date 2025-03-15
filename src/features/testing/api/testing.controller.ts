@@ -1,12 +1,12 @@
 import { Controller, Delete, HttpCode, HttpStatus } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectDataSource, InjectEntityManager } from '@nestjs/typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { SETTINGS } from '../../../core/settings';
 import { TablesEnum } from '../../../libs/contracts/enums/tables.enum';
 
 @Controller(SETTINGS.PATH.TESTING)
 export class TestingController {
-    constructor(@InjectDataSource() protected dataSource: DataSource) {}
+    constructor(@InjectEntityManager() protected entityManager: EntityManager) {}
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete('all-data')
@@ -19,17 +19,8 @@ export class TestingController {
             TablesEnum.enum['likes'],
         ];
 
-        let allWords: string = '';
-
-        for (let i = 0; i < dataTables.length; i++) {
-            allWords += dataTables[i];
-
-            if (i < dataTables.length - 1) {
-                allWords += ', ';
-            }
+        for (const table of dataTables) {
+            await this.entityManager.query(`TRUNCATE TABLE ${table} RESTART IDENTITY CASCADE`);
         }
-
-        const query = `TRUNCATE TABLE ${allWords} RESTART IDENTITY cascade`;
-        await this.dataSource.query(query);
     }
 }
