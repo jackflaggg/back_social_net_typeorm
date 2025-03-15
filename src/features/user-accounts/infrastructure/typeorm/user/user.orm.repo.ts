@@ -1,16 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../../domain/typeorm/user/user.entity';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, IsNull, Repository } from 'typeorm';
 import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
-import { findUserByLoginOrEmailInterface } from '../../../dto/api/user.in.jwt.find.dto';
-import {
-    BadRequestDomainException,
-    NotFoundDomainException,
-    UnauthorizedDomainException,
-} from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { UserCreateDtoRepo } from '../../../dto/repository/user.create.dto';
-import { emailConfirmAdminInterface } from '../../../../../core/utils/user/email-confirmation-data.admin';
 
 @Injectable()
 export class UserRepository {
@@ -21,13 +13,12 @@ export class UserRepository {
     ) {}
     async save(entity: User) {
         await this.userRepositoryTypeOrm.save(entity);
-        return;
     }
     async findUsersWithUnsentEmails() {
         return [];
     }
     async findUserByLoginAndEmail(email: string) {
-        const result = await this.userRepositoryTypeOrm.findOne({ where: { email } });
+        const result = await this.userRepositoryTypeOrm.findOne({ where: { email, deletedAt: IsNull() } });
         if (!result) {
             return void 0;
         }
