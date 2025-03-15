@@ -7,26 +7,26 @@ import {
     websiteUrlConstraints,
 } from '../../../../../libs/contracts/constants/blog/blog-property.constraints';
 import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/deletion-status.enum';
+import { Column, CreateDateColumn, Entity } from 'typeorm';
+import { BaseEntity } from '../../../../../core/domain/base.entity';
+import { isNull } from '../../../../../core/utils/user/is.null';
 
-@Schema({ timestamps: true })
-export class BlogEntity {
-    @Prop({ type: String, required: true, ...nameConstraints })
+@Entity('posts')
+export class Blog extends BaseEntity {
+    @Column({ name: 'title', type: 'varchar', collation: 'C', length: nameConstraints.maxLength })
     name: string;
 
-    @Prop({ type: String, required: true, ...descriptionConstraints })
+    @Column({ name: 'title', type: 'varchar', collation: 'C' })
     description: string;
 
-    @Prop({ type: String, required: true, ...websiteUrlConstraints })
+    @Column({ name: 'title', type: 'varchar', collation: 'C' })
     websiteUrl: string;
 
-    @Prop({ type: Date })
-    createdAt: Date;
-
-    @Prop({ type: String, required: true, default: DeletionStatus.enum['not-deleted'] })
-    deletionStatus: DeletionStatusType;
-
-    @Prop({ type: Boolean, required: false, default: false })
+    @Column({ type: Boolean, default: false })
     isMembership: boolean;
+
+    @CreateDateColumn({ name: 'updated_business_logic', type: 'timestamptz', default: null })
+    updatedBusLogic: Date | null;
 
     public static buildInstance(dto: BlogCreateDtoApi) {
         const blog = new this();
@@ -37,7 +37,10 @@ export class BlogEntity {
     }
 
     makeDeleted() {
-        this.deletionStatus = DeletionStatus.enum['permanent-deleted'];
+        if (!isNull(this.deletedAt)) throw new Error('Entity already deleted');
+
+        this.deletedAt = new Date();
+        this.updatedBusLogic = new Date();
     }
 
     update(dto: BlogUpdateDtoApi) {

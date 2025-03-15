@@ -1,35 +1,28 @@
-import { Prop, Schema } from '@nestjs/mongoose';
 import { PostUpdateDtoService } from '../../dto/service/post.update.dto';
 import { PostToBlogCreateDtoApi } from '../../../blogs/dto/api/blog.to.post.create.dto';
-import {
-    contentConstraints,
-    shortDescriptionConstraints,
-    titleConstraints,
-} from '../../../../../libs/contracts/constants/post/post-property.constraints';
-import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/deletion-status.enum';
+import { BaseEntity } from '../../../../../core/domain/base.entity';
+import { Column, CreateDateColumn, Entity } from 'typeorm';
+import { isNull } from '../../../../../core/utils/user/is.null';
 
-@Schema({ timestamps: true })
-export class PostEntity {
-    @Prop({ type: String, required: true, ...titleConstraints })
+@Entity('posts')
+export class Post extends BaseEntity {
+    @Column({ name: 'title', type: 'varchar', collation: 'C' })
     title: string;
 
-    @Prop({ type: String, required: true, ...shortDescriptionConstraints })
+    @Column({ name: 'short_description', type: 'varchar', collation: 'C' })
     shortDescription: string;
 
-    @Prop({ type: String, required: true, ...contentConstraints })
+    @Column({ name: 'content', type: 'varchar', collation: 'C' })
     content: string;
 
-    @Prop({ type: String, required: true, ref: 'Blog' })
+    @Column({ name: 'blog_id', type: 'varchar' })
     blogId: string;
 
-    @Prop({ type: String, required: true })
+    @Column({ name: 'blog_name', type: 'varchar' })
     blogName: string;
 
-    @Prop({ type: Date })
-    createdAt: Date;
-
-    @Prop({ type: String, required: true, default: DeletionStatus.enum['not-deleted'] })
-    deletionStatus: DeletionStatusType;
+    @CreateDateColumn({ name: 'updated_business_logic', type: 'timestamptz', default: null })
+    updatedBusLogic: Date | null;
 
     static buildInstance(dto: PostToBlogCreateDtoApi, blogId: string, blogName: string) {
         const post = new this();
@@ -49,7 +42,9 @@ export class PostEntity {
         this.content = dto.content;
     }
 
-    makeDeleted(): void {
-        this.deletionStatus = DeletionStatus.enum['permanent-deleted'];
+    markDeleted(): void {
+        if (!isNull(this.deletedAt)) throw new Error('Entity already deleted');
+        this.deletedAt = new Date();
+        this.updatedBusLogic = new Date();
     }
 }
