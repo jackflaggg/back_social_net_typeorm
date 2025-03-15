@@ -1,9 +1,9 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../user/user.entity';
-import { BaseEntity } from '../../../../../core/domain/base.entity';
+import { BaseEntityWithoutDeletedAt } from '../../../../../core/domain/base.entity';
 
 @Entity('email_confirmation')
-export class EmailConfirmation extends BaseEntity {
+export class EmailConfirmation extends BaseEntityWithoutDeletedAt {
     @PrimaryColumn({ name: 'user_id' })
     userId: number;
 

@@ -3,7 +3,6 @@ import { EmailConfirmation } from '../email-confirmation/email.confirmation.enti
 import { SecurityDevice } from '../device/device.entity';
 import { BaseEntity } from '../../../../../core/domain/base.entity';
 import { RecoveryPassword } from '../password-recovery/pass-rec.entity';
-import { Comments } from '../../../../bloggers-platform/comments/domain/typeorm/comment.entity';
 import { isNull } from '../../../../../core/utils/user/is.null';
 
 @Entity('users')
@@ -17,8 +16,10 @@ export class User extends BaseEntity {
     @Column({ name: 'password_hash', type: 'varchar', length: 255 })
     passwordHash: string;
 
-    @CreateDateColumn({ name: 'updated_business_client', type: 'timestamptz', default: new Date() })
-    updatedBusinessClient: Date;
+    // паттерн состояния
+    // пока ниче сущ-го не произошло, оно в null!
+    @CreateDateColumn({ name: 'updated_business_logic', type: 'timestamptz', default: null })
+    updatedBusLogic: Date | null;
 
     @Column({ name: 'sent_email_registration', type: 'boolean', default: false })
     sentEmailRegistration: boolean;
@@ -32,32 +33,44 @@ export class User extends BaseEntity {
     @OneToMany(() => SecurityDevice, securityDevice => securityDevice.user)
     securityDevices: SecurityDevice[];
 
-    @OneToMany(() => Comments, comments => comments.user)
-    comments: Comments[];
-
-    // @OneToMany(() => likesComments, comments => comments.user)
-    // statusesComment: likesComments[];
-
-    // @OneToMany(() => likesPosts, posts => posts.user)
-    // statusesPost: likesPosts[];
-
-    static buildInstance(login: string, email: string, passwordHash: string): User {
+    // создаю emailConf прям тут, чтоб покрывать агрегейшен рут,
+    // если делать в разных сущностях, то это уже не агрегат ddd ?
+    // User может рассматриваться как агрегатный корень, а EmailConfirmation — как часть этого агрегата.
+    // Важно, чтобы доступ к EmailConfirmation происходил только через User, чтобы сохранить инкапсуляцию.
+    static buildInstance(dto: any): User {
+        // служит в качестве фабрики для создания экземпляров User.
         const user = new this();
-        user.login = login;
-        user.email = email;
-        user.passwordHash = passwordHash;
+        user.login = dto.login;
+        user.email = dto.email;
+        user.passwordHash = dto.password;
+
+        user.createEmailConfirmation(dto.emailConfirmation, user.id);
+
         return user as User;
     }
 
-    markDeleted() {
+    private createEmailConfirmation(dto: any, userId: number): void {
+        // инкапсуляция
+        this.emailConfirmation = new EmailConfirmation();
+
+        this.emailConfirmation.confirmationCode = dto.confirmationCode;
+        this.emailConfirmation.expirationDate = dto.expirationDate;
+        this.emailConfirmation.isConfirmed = dto.isConfirmed;
+        this.emailConfirmation.userId = userId;
+    }
+
+    private markDeleted() {
+        // метод обертка!
         if (!isNull(this.deletedAt)) {
             throw new Error('Entity already deleted');
         }
 
         this.deletedAt = new Date();
+        this.updatedBusLogic = new Date();
     }
 
-    updatePassword(newPasswordHash: string) {
-        this.passwordHash = newPasswordHash;
+    private updatePassword(newPassword: string) {
+        this.passwordHash = newPassword;
+        this.updatedBusLogic = new Date();
     }
 }

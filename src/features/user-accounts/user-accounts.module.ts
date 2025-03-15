@@ -41,7 +41,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './domain/typeorm/user/user.entity';
 import { EmailConfirmation } from './domain/typeorm/email-confirmation/email.confirmation.entity';
 import { RecoveryPassword } from './domain/typeorm/password-recovery/pass-rec.entity';
-import { Comments } from '../bloggers-platform/comments/domain/typeorm/comment.entity';
+// import { Comments } from '../bloggers-platform/comments/domain/typeorm/comment.entity';
 import { EmailRetryService } from '../notifications/application/mail.retry.service';
 import { EmailScheduler } from '../notifications/scheduler/email.scheduler';
 import { UserRepository } from './infrastructure/typeorm/user/user.orm.repo';
@@ -89,7 +89,7 @@ const handlers = [LogUserInformationWhenUserLoggedInEventHandler];
                 signOptions: { expiresIn: coreConfig.accessTokenExpirationTime },
             }),
         }),
-        TypeOrmModule.forFeature([User, EmailConfirmation, SecurityDevice, RecoveryPassword, Comments]),
+        TypeOrmModule.forFeature([User, EmailConfirmation, SecurityDevice, RecoveryPassword]),
         PassportModule,
         //если в системе несколько токенов (например, access и refresh) с разными опциями (время жизни, секрет)
         //можно переопределить опции при вызове метода jwt.service.sign
