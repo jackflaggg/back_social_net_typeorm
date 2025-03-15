@@ -10,7 +10,7 @@ import { PaginatedBlogViewDto } from '../../../../../../core/dto/base.paginated.
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 @Injectable()
-export class UserQueryRepository {
+export class UserQueryRepositoryOrm {
     constructor(
         @InjectRepository(User) private userRepositoryTypeOrm: Repository<User>,
         @InjectRepository(EmailConfirmationToUser) private emailConfirmationRepositoryTypeOrm: Repository<EmailConfirmationToUser>,

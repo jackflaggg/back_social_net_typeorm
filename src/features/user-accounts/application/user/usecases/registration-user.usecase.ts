@@ -5,6 +5,7 @@ import { CommonCreateUserCommand } from './common-create-user.usecase';
 import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
 import { AuthRegistrationDtoApi } from '../../../dto/api/auth.registration.dto';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
 
 export class RegistrationUserCommand {
     constructor(public readonly payload: AuthRegistrationDtoApi) {}
@@ -13,7 +14,7 @@ export class RegistrationUserCommand {
 @CommandHandler(RegistrationUserCommand)
 export class RegistrationUserUseCase implements ICommandHandler<RegistrationUserCommand> {
     constructor(
-        @Inject() private readonly userRepository: UserPgRepository,
+        @Inject() private readonly userRepository: UserRepositoryOrm,
         private readonly commandBus: CommandBus,
         private readonly mailer: EmailService,
     ) {}

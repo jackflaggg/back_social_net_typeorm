@@ -3,6 +3,8 @@ import { Inject } from '@nestjs/common';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
 import { PasswordRecoveryPgRepository } from '../../../infrastructure/postgres/password/password.pg.recovery.repository';
+import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
+import { PasswordRecoveryRepositoryOrm } from '../../../infrastructure/typeorm/password/password.orm.recovery.repository';
 
 export class RegistrationConfirmationUserCommand {
     constructor(public readonly code: string) {}
@@ -11,8 +13,8 @@ export class RegistrationConfirmationUserCommand {
 @CommandHandler(RegistrationConfirmationUserCommand)
 export class RegistrationConfirmationUserUseCase implements ICommandHandler<RegistrationConfirmationUserCommand> {
     constructor(
-        @Inject() private readonly usersRepository: UserPgRepository,
-        @Inject() private readonly passwordRepository: PasswordRecoveryPgRepository,
+        @Inject() private readonly usersRepository: UserRepositoryOrm,
+        @Inject() private readonly passwordRepository: PasswordRecoveryRepositoryOrm,
     ) {}
     async execute(command: RegistrationConfirmationUserCommand) {
         // 1. если я нашел код в другой табличке, значит, ошибка!

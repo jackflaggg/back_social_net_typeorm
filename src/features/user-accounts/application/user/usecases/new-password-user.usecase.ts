@@ -1,9 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { BadRequestDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
-import { PasswordRecoveryPgRepository } from '../../../infrastructure/postgres/password/password.pg.recovery.repository';
 import { BcryptService } from '../../other_services/bcrypt.service';
+import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
+import { PasswordRecoveryRepositoryOrm } from '../../../infrastructure/typeorm/password/password.orm.recovery.repository';
 
 export class NewPasswordUserCommand {
     constructor(
@@ -15,8 +15,8 @@ export class NewPasswordUserCommand {
 @CommandHandler(NewPasswordUserCommand)
 export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCommand> {
     constructor(
-        @Inject() private readonly usersRepository: UserPgRepository,
-        @Inject() private readonly passwordRepository: PasswordRecoveryPgRepository,
+        @Inject() private readonly usersRepository: UserRepositoryOrm,
+        @Inject() private readonly passwordRepository: PasswordRecoveryRepositoryOrm,
         private readonly bcryptService: BcryptService,
     ) {}
     async execute(command: NewPasswordUserCommand) {

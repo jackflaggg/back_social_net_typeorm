@@ -6,15 +6,15 @@ import { CommandBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../application/user/usecases/create-user.usecase';
 import { DeleteUserCommand } from '../application/user/usecases/delete-user.usecase';
 import { ValidateSerialPipe } from '../../../core/pipes/validation.input.serial';
-import { UserPgQueryRepository } from '../infrastructure/postgres/user/query/user.pg.query.repository';
 import { SETTINGS } from '../../../core/settings';
+import { UserQueryRepositoryOrm } from '../infrastructure/typeorm/user/query/user.query.orm.repo';
 
 @UseGuards(BasicAuthGuard)
 @Controller(SETTINGS.PATH.SA_USERS)
 export class UserSaController {
     constructor(
         private readonly commandBus: CommandBus,
-        private readonly userQueryRepository: UserPgQueryRepository,
+        private readonly userQueryRepository: UserQueryRepositoryOrm,
     ) {}
 
     @Post()

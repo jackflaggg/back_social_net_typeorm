@@ -5,6 +5,8 @@ import { UnauthorizedDomainException } from '../../../core/exceptions/incubator-
 import { AppConfig } from '../../../core/config/app.config';
 import { UserPgRepository } from '../infrastructure/postgres/user/user.pg.repository';
 import { SessionsPgRepository } from '../infrastructure/postgres/sessions/sessions.pg.repository';
+import { UserRepositoryOrm } from '../infrastructure/typeorm/user/user.orm.repo';
+import { SessionsRepositoryOrm } from '../infrastructure/typeorm/sessions/sessions.orm.repository';
 
 export class UserJwtPayloadDto {
     userId: string;
@@ -16,8 +18,8 @@ export class UserJwtPayloadDto {
 @Injectable()
 export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
     constructor(
-        @Inject() private readonly usersRepository: UserPgRepository,
-        @Inject() private readonly securityDevicesRepository: SessionsPgRepository,
+        @Inject() private readonly usersRepository: UserRepositoryOrm,
+        @Inject() private readonly securityDevicesRepository: SessionsRepositoryOrm,
         private readonly coreConfig: AppConfig,
     ) {
         super({

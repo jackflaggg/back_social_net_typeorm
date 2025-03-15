@@ -4,13 +4,14 @@ import { UnauthorizedDomainException } from '../../../../../core/exceptions/incu
 import { CreateSessionCommand } from '../../device/usecases/create-session.usecase';
 import { AppConfig } from '../../../../../core/config/app.config';
 import { SessionsPgRepository } from '../../../infrastructure/postgres/sessions/sessions.pg.repository';
+import { SessionsRepositoryOrm } from '../../../infrastructure/typeorm/sessions/sessions.orm.repository';
 
 export class RefreshTokenUserCommand {
     constructor(
         public readonly userId: string,
         public readonly deviceId: string,
-        public readonly ip: string = '255.255.255.0',
-        public readonly userAgent: string = 'google',
+        public readonly ip: string,
+        public readonly userAgent: string,
     ) {}
 }
 
@@ -19,7 +20,7 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
     constructor(
         private readonly jwtService: JwtService,
         private readonly commandBus: CommandBus,
-        private readonly sessionRepository: SessionsPgRepository,
+        private readonly sessionRepository: SessionsRepositoryOrm,
         private readonly coreConfig: AppConfig,
     ) {}
     async execute(command: RefreshTokenUserCommand) {

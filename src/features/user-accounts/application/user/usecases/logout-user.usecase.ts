@@ -1,12 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import {
-    ForbiddenDomainException,
-    NotFoundDomainException,
-    UnauthorizedDomainException,
-} from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { ForbiddenDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { UserJwtPayloadDto } from '../../../strategies/refresh.strategy';
-import { SessionsPgRepository } from '../../../infrastructure/postgres/sessions/sessions.pg.repository';
+import { SessionsRepositoryOrm } from '../../../infrastructure/typeorm/sessions/sessions.orm.repository';
 
 export class LogoutUserCommand {
     constructor(public readonly dtoUser: UserJwtPayloadDto) {}
@@ -14,13 +10,9 @@ export class LogoutUserCommand {
 
 @CommandHandler(LogoutUserCommand)
 export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
-    constructor(@Inject() private readonly sessionRepository: SessionsPgRepository) {}
+    constructor(@Inject() private readonly sessionRepository: SessionsRepositoryOrm) {}
 
     async execute(command: LogoutUserCommand) {
-        if (!command.dtoUser || !command.dtoUser.deviceId) {
-            throw UnauthorizedDomainException.create();
-        }
-
         const currentDevice = await this.sessionRepository.findSessionByDeviceId(command.dtoUser.deviceId);
 
         if (!currentDevice) {

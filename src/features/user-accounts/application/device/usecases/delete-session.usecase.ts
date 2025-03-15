@@ -5,6 +5,7 @@ import {
     UnauthorizedDomainException,
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { SessionsPgRepository } from '../../../infrastructure/postgres/sessions/sessions.pg.repository';
+import { SessionsRepositoryOrm } from '../../../infrastructure/typeorm/sessions/sessions.orm.repository';
 
 export class DeleteSessionCommand {
     constructor(
@@ -15,7 +16,7 @@ export class DeleteSessionCommand {
 
 @CommandHandler(DeleteSessionCommand)
 export class DeleteSessionUseCase implements ICommandHandler<DeleteSessionCommand> {
-    constructor(private readonly sessionRepository: SessionsPgRepository) {}
+    constructor(private readonly sessionRepository: SessionsRepositoryOrm) {}
     async execute(command: DeleteSessionCommand) {
         if (!command.deviceId) {
             throw UnauthorizedDomainException.create();

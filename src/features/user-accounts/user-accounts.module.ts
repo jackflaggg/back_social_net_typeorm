@@ -31,20 +31,19 @@ import { ConfigModule } from '@nestjs/config';
 import { EmailAdapter } from '../notifications/adapter/email.adapter';
 import { UserPgRepository } from './infrastructure/postgres/user/user.pg.repository';
 import { BcryptService } from './application/other_services/bcrypt.service';
-import { UserPgQueryRepository } from './infrastructure/postgres/user/query/user.pg.query.repository';
-import { SessionsPgRepository } from './infrastructure/postgres/sessions/sessions.pg.repository';
-import { SessionQueryPgRepository } from './infrastructure/postgres/sessions/query/sessions.pg.query.repository';
-import { PasswordRecoveryPgRepository } from './infrastructure/postgres/password/password.pg.recovery.repository';
 import { LogUserInformationWhenUserLoggedInEventHandler } from './application/user/event-handlers/logUserInformationWhenUserLoggedInEventHandler';
 import { SecurityDeviceToUser } from './domain/typeorm/device/device.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './domain/typeorm/user/user.entity';
 import { EmailConfirmationToUser } from './domain/typeorm/email-confirmation/email.confirmation.entity';
 import { RecoveryPasswordToUser } from './domain/typeorm/password-recovery/pass-rec.entity';
-// import { Comments } from '../bloggers-platform/comments/domain/typeorm/comment.entity';
 import { EmailRetryService } from '../notifications/application/mail.retry.service';
 import { EmailScheduler } from '../notifications/scheduler/email.scheduler';
 import { UserRepositoryOrm } from './infrastructure/typeorm/user/user.orm.repo';
+import { UserQueryRepositoryOrm } from './infrastructure/typeorm/user/query/user.query.orm.repo';
+import { SessionsRepositoryOrm } from './infrastructure/typeorm/sessions/sessions.orm.repository';
+import { SessionQueryRepositoryOrm } from './infrastructure/typeorm/sessions/query/sessions.orm.query.repository';
+import { PasswordRecoveryRepositoryOrm } from './infrastructure/typeorm/password/password.orm.recovery.repository';
 
 const useCases = [
     CreateSessionUseCase,
@@ -64,13 +63,13 @@ const useCases = [
     DeleteSessionsUseCase,
 ];
 
-const repositoriesPostgres = [
-    UserPgRepository,
-    UserPgQueryRepository,
-    SessionsPgRepository,
-    SessionQueryPgRepository,
-    PasswordRecoveryPgRepository,
+const repositories = [
     UserRepositoryOrm,
+    UserQueryRepositoryOrm,
+    UserPgRepository,
+    SessionsRepositoryOrm,
+    SessionQueryRepositoryOrm,
+    PasswordRecoveryRepositoryOrm,
 ];
 
 const strategies = [BasicStrategy, LocalStrategy, AccessTokenStrategy, JwtRefreshAuthPassportStrategy];
@@ -98,7 +97,7 @@ const handlers = [LogUserInformationWhenUserLoggedInEventHandler];
         CqrsModule,
     ],
     exports: [UserPgRepository],
-    providers: [...useCases, ...services, ...strategies, ...handlers, ...repositoriesPostgres],
+    providers: [...useCases, ...services, ...strategies, ...handlers, ...repositories],
     controllers: [UserSaController, AuthController, SessionController],
 })
 export class UsersModule {}

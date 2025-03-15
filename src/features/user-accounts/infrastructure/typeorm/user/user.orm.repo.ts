@@ -3,7 +3,11 @@ import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../../domain/typeorm/user/user.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
-import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import {
+    NotFoundDomainException,
+    UnauthorizedDomainException,
+} from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { findUserByLoginOrEmailInterface } from '../../../dto/api/user.in.jwt.find.dto';
 
 @Injectable()
 export class UserRepositoryOrm {
@@ -27,7 +31,7 @@ export class UserRepositoryOrm {
         if (!result) {
             throw NotFoundDomainException.create('юзер не найден', 'userId');
         }
-        return result[0];
+        return result.id.toString();
     }
     // TODO: Правильно ли сделал метод для проверки существования записи?
     async findCheckExistUser(login: string, email: string) {
@@ -40,7 +44,6 @@ export class UserRepositoryOrm {
         }
         return result;
     }
-
     async updateDeletedAt(userId: string) {
         await this.userRepositoryTypeOrm
             .createQueryBuilder()
@@ -48,6 +51,36 @@ export class UserRepositoryOrm {
             .set({ deletedAt: new Date() })
             .where('id = :userId', { userId })
             .execute();
+    }
+    async findUserByLoginOrEmail(loginOrEmail: string): Promise<findUserByLoginOrEmailInterface | undefined> {
+        const result = await this.userRepositoryTypeOrm
+            .createQueryBuilder('users')
+            .select([
+                'users.id',
+                'users.email',
+                'users.password_hash AS password',
+                'em.is_confirmed AS isConfirmed',
+                'em.confirmation_code AS confirmationCode',
+            ])
+            .innerJoin('email_confirmation_to_user', 'em', 'users.id = em.user_id')
+            .where('users.login = :loginOrEmail OR users.email = :loginOrEmail AND users.deleted_at IS NULL', { loginOrEmail })
+            .getRawOne();
+        if (!result) {
+            return void 0;
+        }
+        return result;
+    }
+    async findUserAuth(userId: string) {
+        const result = await this.userRepositoryTypeOrm
+            .createQueryBuilder('users')
+            .select('users.id AS userId')
+            .innerJoin('email_confirmation_to_user', 'em', 'users.id = em.user_id')
+            .where('users.id = :userId AND users.deleted_at IS NULL', { userId })
+            .getRawOne();
+        if (!result) {
+            throw UnauthorizedDomainException.create();
+        }
+        return result;
     }
 
     // async findUserByLoginAndEmail(login: string, email: string) {
@@ -61,17 +94,7 @@ export class UserRepositoryOrm {
     //
     //     return result[0];
     // }
-    // async findUserByLoginOrEmail(loginOrEmail: string): Promise<findUserByLoginOrEmailInterface | undefined> {
-    //     const query = `
-    //         SELECT u."id", u."email", u."password_hash" AS "password", em."is_confirmed" AS "isConfirmed", em."confirmation_code" AS "confirmationCode" FROM "users" AS "u" JOIN "email_confirmation" AS "em" ON u.id = em.user_id WHERE u."deleted_at" IS NULL AND (u."login" = $1 OR u."email" = $1);
-    //     `;
-    //     const result = await this.dataSource.query(query, [loginOrEmail]);
-    //     if (!result || result.length === 0) {
-    //         return void 0;
-    //     }
-    //
-    //     return result[0];
-    // }
+
     // async findUserLogin(login: string): Promise<findUserByLoginOrEmailInterface | undefined> {
     //     const query = `
     //         SELECT u."id", u."email", u."password_hash" AS "password", em."is_confirmed" AS "isConfirmed", em."confirmation_code" AS "confirmationCode" FROM "users" AS "u" JOIN "email_confirmation" AS "em" ON u.id = em.user_id WHERE u."deleted_at" IS NULL AND (u."login" = $1);
@@ -92,18 +115,6 @@ export class UserRepositoryOrm {
     //     const result = await this.dataSource.query(query, [userId]);
     //     if (!result || result.length === 0) {
     //         throw NotFoundDomainException.create('юзер не найден', 'userId');
-    //     }
-    //     return result[0];
-    // }
-    // async findUserAuth(userId: string) {
-    //     const query = `
-    //         SELECT u."id" AS "userId" FROM "users" AS "u"
-    //         JOIN "email_confirmation" AS ec on u.id = ec.user_id
-    //         WHERE u."id" = $1 AND u."deleted_at" IS NULL
-    //     `;
-    //     const result = await this.dataSource.query(query, [userId]);
-    //     if (!result || result.length === 0) {
-    //         throw UnauthorizedDomainException.create();
     //     }
     //     return result[0];
     // }

@@ -7,6 +7,8 @@ import { emailConfirmationData } from '../../../../../core/utils/user/email-conf
 import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
 import { PasswordRecoveryPgRepository } from '../../../infrastructure/postgres/password/password.pg.recovery.repository';
 import { BcryptService } from '../../other_services/bcrypt.service';
+import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
+import { PasswordRecoveryRepositoryOrm } from '../../../infrastructure/typeorm/password/password.orm.recovery.repository';
 
 export class PasswordRecoveryUserCommand {
     constructor(public readonly email: string) {}
@@ -15,8 +17,8 @@ export class PasswordRecoveryUserCommand {
 @CommandHandler(PasswordRecoveryUserCommand)
 export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordRecoveryUserCommand> {
     constructor(
-        @Inject() private readonly usersRepository: UserPgRepository,
-        @Inject() private readonly passwordRepository: PasswordRecoveryPgRepository,
+        @Inject() private readonly usersRepository: UserRepositoryOrm,
+        @Inject() private readonly passwordRepository: PasswordRecoveryRepositoryOrm,
         private readonly bcryptService: BcryptService,
         private readonly mailer: EmailService,
     ) {}

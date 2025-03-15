@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SessionsPgRepository } from '../../../infrastructure/postgres/sessions/sessions.pg.repository';
+import { SessionsRepositoryOrm } from '../../../infrastructure/typeorm/sessions/sessions.orm.repository';
 
 export class CreateSessionCommand {
     constructor(
@@ -13,7 +14,7 @@ export class CreateSessionCommand {
 
 @CommandHandler(CreateSessionCommand)
 export class CreateSessionUseCase implements ICommandHandler<CreateSessionCommand> {
-    constructor(private readonly sessionRepository: SessionsPgRepository) {}
+    constructor(private readonly sessionRepository: SessionsRepositoryOrm) {}
     async execute(command: CreateSessionCommand) {
         return await this.sessionRepository.createSession(
             command.ip,

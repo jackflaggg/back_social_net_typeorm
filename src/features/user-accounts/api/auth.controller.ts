@@ -21,23 +21,25 @@ import { ExtractAnyUserFromRequest, ExtractUserFromRequest } from '../../../core
 import { UserJwtPayloadDto } from '../strategies/refresh.strategy';
 import { RefreshTokenUserCommand } from '../application/user/usecases/refresh-token.user.usecase';
 import { LogoutUserCommand } from '../application/user/usecases/logout-user.usecase';
-import { UserPgQueryRepository } from '../infrastructure/postgres/user/query/user.pg.query.repository';
 import { SETTINGS } from '../../../core/settings';
 import { findUserByLoginOrEmailInterface } from '../dto/api/user.in.jwt.find.dto';
+import { UserQueryRepositoryOrm } from '../infrastructure/typeorm/user/query/user.query.orm.repo';
 
 @Controller(SETTINGS.PATH.AUTH)
 export class AuthController {
     constructor(
         private readonly commandBus: CommandBus,
-        private readonly userQueryRepository: UserPgQueryRepository,
+        private readonly userQueryRepository: UserQueryRepositoryOrm,
     ) {}
 
     @HttpCode(HttpStatus.OK)
     @UseGuards(ThrottlerGuard, LocalAuthGuard)
     @Post('login')
     async login(@Req() req: Request, @Res({ passthrough: true }) res: Response, @Body() dto: AuthLoginDtoApi) {
+        const ipDefault = req.ip ?? '8.8.8.8';
+        const userAgentDefault = req.headers['user-agent'] ?? 'google';
         const { jwt, refresh } = await this.commandBus.execute(
-            new LoginUserCommand(req.ip, req.headers['user-agent'], req.user as findUserByLoginOrEmailInterface),
+            new LoginUserCommand(ipDefault, userAgentDefault, req.user as findUserByLoginOrEmailInterface),
         );
         res.cookie('refreshToken', refresh, { httpOnly: true, secure: true });
         return {

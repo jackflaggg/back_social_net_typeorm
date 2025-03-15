@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { add } from 'date-fns/add';
 import { EmailService } from '../../../../notifications/application/mail.service';
 import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
+import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
 
 export class RegistrationEmailResendUserCommand {
     constructor(public readonly email: string) {}
@@ -13,7 +14,7 @@ export class RegistrationEmailResendUserCommand {
 @CommandHandler(RegistrationEmailResendUserCommand)
 export class RegistrationEmailResendUserUseCase implements ICommandHandler<RegistrationEmailResendUserCommand> {
     constructor(
-        @Inject() private readonly usersRepository: UserPgRepository,
+        @Inject() private readonly usersRepository: UserRepositoryOrm,
         private readonly mailer: EmailService,
     ) {}
     async execute(command: RegistrationEmailResendUserCommand) {
