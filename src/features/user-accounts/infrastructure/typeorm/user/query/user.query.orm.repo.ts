@@ -23,11 +23,14 @@ export class UserQueryRepositoryOrm {
 
         const offset = (pageNumber - 1) * pageSize;
 
+        const cteToCountUsers =
+            '(SELECT COUNT(*) FROM users WHERE deleted_at IS NULL AND (login ILIKE :login OR email ILIKE :email)) AS totalCount';
+
         const resultUsers = await this.userRepositoryTypeOrm
             .createQueryBuilder('u')
-            .select(['u.id as id', 'u.login as login', 'u.email as email', 'u.created_at AS createdAt'])
+            .select(['u.id as id', 'u.login as login', 'u.email as email', 'u.created_at AS createdAt', cteToCountUsers])
             .where('u.deleted_at IS NULL')
-            .andWhere('u.login ILIKE :login OR u.email ILIKE :email', {
+            .andWhere('(u.login ILIKE :login OR u.email ILIKE :email)', {
                 login: `%${searchLoginTerm}%`,
                 email: `%${searchEmailTerm}%`,
             })
@@ -35,7 +38,8 @@ export class UserQueryRepositoryOrm {
             .skip(offset)
             .take(pageSize)
             .getRawMany();
-        console.log(resultUsers);
+
+        const totalCount = resultUsers.length > 0 ? Number(resultUsers[0].totalcount) : 0;
 
         const usersView = resultUsers.map(user => UserViewDto.mapToView(user));
 
@@ -43,19 +47,17 @@ export class UserQueryRepositoryOrm {
             items: usersView,
             page: pageNumber,
             size: pageSize,
-            totalCount: 1 /*resultTotal*/,
+            totalCount,
         });
     }
 
-    // TODO: не используем для доставки умных сущностей!
     async getUser(userId: string) {
         const result = await this.userRepositoryTypeOrm
             .createQueryBuilder('u')
-            //.select('u.id, u.login, u.email')
-            .where('u.id = :userId', { userId })
-            .andWhere('u.deleted_at IS NULL')
+            .select('u.id as id, u.login as login, u.email as email, u.created_at as createdAt')
+            .where('u.deleted_at IS NULL AND u.id = :userId', { userId })
             .execute();
-        console.log(result);
+
         if (!result) {
             throw NotFoundDomainException.create('юзер не найден', 'userId');
         }
