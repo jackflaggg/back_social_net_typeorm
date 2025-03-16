@@ -23,18 +23,19 @@ export class UserQueryRepositoryOrm {
 
         const offset = (pageNumber - 1) * pageSize;
 
-        const [resultUsers, resultTotal] = await this.userRepositoryTypeOrm
-            .createQueryBuilder('users')
-            .select(['users.id', 'users.login', 'users.email', 'users.created_at AS createdAt'])
-            .where('users.deleted_at IS NULL')
-            .andWhere('(users.login ILIKE :login OR users.email ILIKE :email)', {
+        const resultUsers = await this.userRepositoryTypeOrm
+            .createQueryBuilder('u')
+            .select(['u.id as id', 'u.login as login', 'u.email as email', 'u.created_at AS createdAt'])
+            .where('u.deleted_at IS NULL')
+            .andWhere('u.login ILIKE :login OR u.email ILIKE :email', {
                 login: `%${searchLoginTerm}%`,
                 email: `%${searchEmailTerm}%`,
             })
-            .orderBy(`users.${updatedSortBy}`, sortDirection)
+            .orderBy(`u.${updatedSortBy}`, sortDirection)
             .skip(offset)
             .take(pageSize)
-            .getManyAndCount();
+            .getRawMany();
+        console.log(resultUsers);
 
         const usersView = resultUsers.map(user => UserViewDto.mapToView(user));
 
@@ -42,7 +43,7 @@ export class UserQueryRepositoryOrm {
             items: usersView,
             page: pageNumber,
             size: pageSize,
-            totalCount: resultTotal,
+            totalCount: 1 /*resultTotal*/,
         });
     }
 
@@ -53,7 +54,7 @@ export class UserQueryRepositoryOrm {
             //.select('u.id, u.login, u.email')
             .where('u.id = :userId', { userId })
             .andWhere('u.deleted_at IS NULL')
-            .getOne();
+            .execute();
         console.log(result);
         if (!result) {
             throw NotFoundDomainException.create('юзер не найден', 'userId');

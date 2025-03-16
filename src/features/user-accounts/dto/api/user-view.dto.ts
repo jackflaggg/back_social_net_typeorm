@@ -2,7 +2,7 @@ export interface UserIntInterface {
     id: number | string;
     login: string;
     email: string;
-    createdAt: Date;
+    createdat: Date;
 }
 
 export interface MeUserIntInterface {
@@ -18,13 +18,13 @@ export class UserViewDto {
     createdAt: Date;
 
     constructor(model: UserIntInterface) {
-        this.id = model.id.toString();
+        this.id = model.id;
         this.login = model.login;
         this.email = model.email;
-        this.createdAt = model.createdAt;
+        this.createdAt = model.createdat;
     }
 
-    static mapToView(user: UserIntInterface): UserIntInterface {
+    static mapToView(user: UserIntInterface) {
         return new UserViewDto(user);
     }
 
