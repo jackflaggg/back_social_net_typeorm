@@ -3,12 +3,13 @@ import { Inject } from '@nestjs/common';
 import { EmailService } from '../../../../notifications/application/mail.service';
 import { randomUUID } from 'node:crypto';
 import { add } from 'date-fns/add';
-import { emailConfirmationData } from '../../../../../core/utils/user/email-confirmation-data.admin';
+import { emailConfirmationData, emailConfirmationDataAdmin } from '../../../../../core/utils/user/email-confirmation-data.admin';
 import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
 import { PasswordRecoveryPgRepository } from '../../../infrastructure/postgres/password/password.pg.recovery.repository';
 import { BcryptService } from '../../other_services/bcrypt.service';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
 import { PasswordRecoveryRepositoryOrm } from '../../../infrastructure/typeorm/password/password.orm.recovery.repository';
+import { User } from '../../../domain/typeorm/user/user.entity';
 
 export class PasswordRecoveryUserCommand {
     constructor(public readonly email: string) {}
@@ -31,22 +32,30 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
 
             const newPasswordHash = await this.bcryptService.hashPassword('');
 
-            const user = await this.usersRepository.createUser(
-                {
-                    login,
-                    email: command.email,
-                    password: newPasswordHash,
+            const emailConfirmationData = emailConfirmationDataAdmin();
+
+            const userDto = {
+                login: login,
+                email: command.email,
+                password: newPasswordHash,
+                sentEmailRegistration: true,
+                emailConfirmation: {
+                    confirmationCode: emailConfirmationData.emailConfirmation.confirmationCode,
+                    expirationDate: emailConfirmationData.emailConfirmation.expirationDate,
+                    isConfirmed: emailConfirmationData.emailConfirmation.isConfirmed,
                 },
-                emailConfirmationData(),
-            );
+            };
+
+            const newUser = User.buildInstance(userDto);
+            const userId = await this.usersRepository.save(newUser);
 
             const confirmationCode = randomUUID();
 
             const codeExpirationDate = add(new Date(), { hours: 1, minutes: 30 });
 
-            await this.passwordRepository.createPasswordRecovery(user.id, confirmationCode, codeExpirationDate);
+            await this.passwordRepository.createPasswordRecovery(userId, confirmationCode, codeExpirationDate);
 
-            this.mailer.sendPasswordRecoveryMessage(command.email, user.emailConfirmation.confirmationCode).catch((err: unknown) => {
+            this.mailer.sendPasswordRecoveryMessage(command.email, newUser.emailConfirmation.confirmationCode).catch((err: unknown) => {
                 console.log(String(err));
             });
         } else {

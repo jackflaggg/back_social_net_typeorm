@@ -38,6 +38,6 @@ export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCo
 
         await this.usersRepository.save(user);
 
-        await this.passwordRepository.updateStatus(findCode.id);
+        //await this.passwordRepository.updateStatus(findCode.id);
     }
 }
