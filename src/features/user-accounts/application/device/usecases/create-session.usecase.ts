@@ -1,6 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SessionsRepositoryOrm } from '../../../infrastructure/typeorm/sessions/sessions.orm.repository';
 import { SecurityDeviceToUser } from '../../../domain/typeorm/device/device.entity';
+import { randomUUID } from 'node:crypto';
 
 export class CreateSessionCommand {
     constructor(
@@ -16,13 +17,15 @@ export class CreateSessionCommand {
 export class CreateSessionUseCase implements ICommandHandler<CreateSessionCommand> {
     constructor(private readonly sessionRepository: SessionsRepositoryOrm) {}
     async execute(command: CreateSessionCommand) {
-        const sessionDate = SecurityDeviceToUser.buildInstance();
-        return await this.sessionRepository.createSession(
-            command.ip,
-            command.userAgent,
-            command.deviceId,
-            command.userId,
-            command.dateDevice,
-        );
+        const deviceSessionId = randomUUID();
+        const sessionDate = {
+            deviceId: deviceSessionId,
+            ip: command.ip,
+            userAgent: command.userAgent,
+            userId: command.userId,
+            createdAt: command.dateDevice,
+        };
+        const session = SecurityDeviceToUser.buildInstance(sessionDate);
+        return await this.sessionRepository.save(session);
     }
 }
