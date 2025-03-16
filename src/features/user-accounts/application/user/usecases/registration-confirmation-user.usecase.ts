@@ -1,8 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
-import { PasswordRecoveryPgRepository } from '../../../infrastructure/postgres/password/password.pg.recovery.repository';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
 import { PasswordRecoveryRepositoryOrm } from '../../../infrastructure/typeorm/password/password.orm.recovery.repository';
 
@@ -47,6 +45,12 @@ export class RegistrationConfirmationUserUseCase implements ICommandHandler<Regi
         }
 
         // 5. обновляю
-        return await this.usersRepository.updateUserToEmailConf(findCode.userId);
+        const userEntity = await this.usersRepository.findUserByIdEntity(findCode['user_idd']);
+
+        const confirmationCode = '+';
+        const isConfirmed = true;
+
+        userEntity.updateEmailConfirmation(confirmationCode, isConfirmed);
+        return await this.usersRepository.save(userEntity);
     }
 }

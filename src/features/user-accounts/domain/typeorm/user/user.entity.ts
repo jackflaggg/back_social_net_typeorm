@@ -76,4 +76,10 @@ export class User extends BaseEntity {
         this.passwordHash = newPassword;
         this.updatedBusLogic = new Date();
     }
+
+    public updateEmailConfirmation(confirmationCode: string, isConfirmed: boolean) {
+        this.emailConfirmation.confirmationCode = confirmationCode;
+        this.emailConfirmation.isConfirmed = isConfirmed;
+        this.updatedBusLogic = new Date();
+    }
 }

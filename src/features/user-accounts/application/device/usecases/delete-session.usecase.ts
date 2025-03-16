@@ -4,7 +4,6 @@ import {
     NotFoundDomainException,
     UnauthorizedDomainException,
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { SessionsPgRepository } from '../../../infrastructure/postgres/sessions/sessions.pg.repository';
 import { SessionsRepositoryOrm } from '../../../infrastructure/typeorm/sessions/sessions.orm.repository';
 
 export class DeleteSessionCommand {

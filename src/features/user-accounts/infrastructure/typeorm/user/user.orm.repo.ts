@@ -27,11 +27,21 @@ export class UserRepositoryOrm {
         const result = await this.userRepositoryTypeOrm
             .createQueryBuilder('users')
             .where('users.id = :userId AND users.deleted_at IS NULL', { userId })
-            .getOne();
+            .execute();
         if (!result) {
             throw NotFoundDomainException.create('юзер не найден', 'userId');
         }
         return result.id.toString();
+    }
+    async findUserByIdEntity(userId: string) {
+        const result = await this.userRepositoryTypeOrm
+            .createQueryBuilder('users')
+            .where('users.id = :userId AND users.deleted_at IS NULL', { userId })
+            .getOne();
+        if (!result) {
+            throw NotFoundDomainException.create('юзер не найден', 'userId');
+        }
+        return result;
     }
     // TODO: Правильно ли сделал метод для проверки существования записи?
     async findCheckExistUser(login: string, email: string) {
@@ -196,20 +206,16 @@ export class UserRepositoryOrm {
     //         WHERE "user_id" = $3`;
     //     return await this.dataSource.query(query, [generateCode, newExpirationDate, userId]);
     // }
-    // async findUserCode(code: string) {
-    //     const query = `
-    //     SELECT u."id" AS "userId", em."is_confirmed" AS "isConfirmed", em.expiration_date AS "expirationDate", em.confirmation_code AS "confirmationCode"
-    //     FROM "users" AS "u"
-    //         JOIN "email_confirmation" AS "em"
-    //             ON u.id = em.user_id
-    //         WHERE confirmation_code = $1
-    //     `;
-    //     const result = await this.dataSource.query(query, [code]);
-    //     if (!result || result.length === 0) {
-    //         return void 0;
-    //     }
-    //     return result[0];
-    // }
+    async findUserCode(code: string) {
+        const result = await this.userRepositoryTypeOrm
+            .createQueryBuilder('email_confirmation_to_user')
+            .where('confirmation_code = :code', { code })
+            .execute();
+        if (!result) {
+            return void 0;
+        }
+        return result;
+    }
     // async updateUserToEmailConf(userId: string) {
     //     const query = `
     //         UPDATE "email_confirmation"

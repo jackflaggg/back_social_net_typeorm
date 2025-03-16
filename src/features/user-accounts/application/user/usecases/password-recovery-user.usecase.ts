@@ -36,7 +36,6 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
                     login,
                     email: command.email,
                     password: newPasswordHash,
-                    createdAt: new Date(),
                 },
                 emailConfirmationData(),
             );
