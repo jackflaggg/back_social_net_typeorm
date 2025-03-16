@@ -4,7 +4,6 @@ import { BadRequestDomainException } from '../../../../../core/exceptions/incuba
 import { randomUUID } from 'node:crypto';
 import { add } from 'date-fns/add';
 import { EmailService } from '../../../../notifications/application/mail.service';
-import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
 
 export class RegistrationEmailResendUserCommand {

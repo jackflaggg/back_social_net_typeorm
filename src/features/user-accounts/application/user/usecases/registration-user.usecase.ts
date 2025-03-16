@@ -2,7 +2,6 @@ import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { EmailService } from '../../../../notifications/application/mail.service';
 import { CommonCreateUserCommand } from './common-create-user.usecase';
-import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
 import { AuthRegistrationDtoApi } from '../../../dto/api/auth.registration.dto';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
