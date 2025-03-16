@@ -9,8 +9,8 @@ export class DeleteUserCommand {
 export class DeleteUserUseCase implements ICommandHandler<DeleteUserCommand> {
     constructor(private readonly userRepository: UserRepositoryOrm) {}
     async execute(command: DeleteUserCommand) {
-        const userId = await this.userRepository.findUserById(command.userId);
-
-        await this.userRepository.updateDeletedAt(userId);
+        const user = await this.userRepository.findUserById(command.userId);
+        user.markDeleted();
+        await this.userRepository.save(user);
     }
 }

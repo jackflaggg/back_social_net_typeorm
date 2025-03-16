@@ -7,7 +7,6 @@ import {
     NotFoundDomainException,
     UnauthorizedDomainException,
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { findUserByLoginOrEmailInterface } from '../../../dto/api/user.in.jwt.find.dto';
 
 @Injectable()
 export class UserRepositoryOrm {
@@ -25,13 +24,13 @@ export class UserRepositoryOrm {
     }
     async findUserById(userId: string) {
         const result = await this.userRepositoryTypeOrm
-            .createQueryBuilder('users')
-            .where('users.id = :userId AND users.deleted_at IS NULL', { userId })
-            .execute();
+            .createQueryBuilder('u')
+            .where('u.id = :userId AND u.deleted_at IS NULL', { userId })
+            .getOne();
         if (!result) {
             throw NotFoundDomainException.create('юзер не найден', 'userId');
         }
-        return result.id.toString();
+        return result;
     }
     async findUserByIdEntity(userId: string) {
         const result = await this.userRepositoryTypeOrm
