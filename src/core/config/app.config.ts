@@ -14,6 +14,8 @@ export class AppConfig {
     public accessTokenSecret: string;
     public accessTokenExpirationTime: string;
     public refreshTokenExpirationTime: string;
+    public ip: string;
+    public userAgent: string;
     public adminUsername: string;
     public adminPassword: string;
     public adminEmail: string;
@@ -42,7 +44,8 @@ export class AppConfig {
             adminPassword: this.configService.get('ADMIN_PASS'),
             adminEmail: this.configService.get('ADMIN_EMAIL'),
             adminEmailPassword: this.configService.get('ADMIN_EMAIL_PASSWORD'),
-
+            ip: this.configService.get('IP_TEST'),
+            userAgent: this.configService.get('USER_AGENT'),
             typeSql: this.configService.get('TYPE_SQL'),
             hostSql: this.configService.get('HOST_SQL'),
             portSql: this.configService.get('PORT_SQL'),

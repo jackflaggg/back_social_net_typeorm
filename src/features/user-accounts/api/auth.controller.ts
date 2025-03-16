@@ -31,14 +31,16 @@ export class AuthController {
     constructor(
         private readonly commandBus: CommandBus,
         private readonly userQueryRepository: UserQueryRepositoryOrm,
+        private readonly appConfig: AppConfig,
     ) {}
 
     @HttpCode(HttpStatus.OK)
     @UseGuards(ThrottlerGuard, LocalAuthGuard)
     @Post('login')
     async login(@Req() req: Request, @Res({ passthrough: true }) res: Response, @Body() dto: AuthLoginDtoApi) {
-        const ipDefault = req.ip ?? '8.8.8.8';
-        const userAgentDefault = req.headers['user-agent'] ?? 'google';
+        const ipDefault = req.ip ?? this.appConfig.ip;
+        const userAgentDefault = req.headers['user-agent'] ?? this.appConfig.userAgent;
+
         const { jwt, refresh } = await this.commandBus.execute(
             new LoginUserCommand(ipDefault, userAgentDefault, req.user as findUserByLoginOrEmailInterface),
         );
