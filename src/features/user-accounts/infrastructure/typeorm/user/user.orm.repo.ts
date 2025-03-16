@@ -94,11 +94,11 @@ export class UserRepositoryOrm {
 
     async findUserByLoginAndEmail(login: string, email: string) {
         const result = await this.userRepositoryTypeOrm
-            .createQueryBuilder('users')
-            .select('users.id')
-            .where('users.login = :login OR users.email = :email', { login, email })
-            .andWhere('users.deleted_at IS NULL')
-            .execute();
+            .createQueryBuilder('u')
+            .select(['u.id AS id', 'u.login AS login', 'u.email AS email'])
+            .where('(u.login = :login OR u.email = :email)', { login, email })
+            .andWhere('u.deleted_at IS NULL')
+            .getRawOne();
         if (!result) {
             return void 0;
         }
