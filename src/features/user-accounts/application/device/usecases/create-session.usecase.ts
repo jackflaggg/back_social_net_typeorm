@@ -16,7 +16,7 @@ export class CreateSessionCommand {
 export class CreateSessionUseCase implements ICommandHandler<CreateSessionCommand> {
     constructor(private readonly sessionRepository: SessionsRepositoryOrm) {}
     async execute(command: CreateSessionCommand) {
-        const sessionDate = SecurityDeviceToUser.b;
+        const sessionDate = SecurityDeviceToUser.buildInstance();
         return await this.sessionRepository.createSession(
             command.ip,
             command.userAgent,

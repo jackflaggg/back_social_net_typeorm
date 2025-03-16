@@ -1,6 +1,6 @@
 export const nameConstraints = {
     minLength: 1,
-    maxLength: 15,
+    maxLength: 20,
 };
 
 export const descriptionConstraints = {

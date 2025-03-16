@@ -83,17 +83,19 @@ export class UserRepositoryOrm {
         return result;
     }
 
-    // async findUserByLoginAndEmail(login: string, email: string) {
-    //     const query = `
-    //         SELECT "id" FROM "users" WHERE "deleted_at" IS NULL AND ("login" = $1 OR "email" = $2);
-    //     `;
-    //     const result = await this.dataSource.query(query, [login, email]);
-    //     if (!result || result.length === 0) {
-    //         return void 0;
-    //     }
-    //
-    //     return result[0];
-    // }
+    async findUserByLoginAndEmail(login: string, email: string) {
+        const result = await this.userRepositoryTypeOrm
+            .createQueryBuilder('users')
+            .select('users.id')
+            .where('users.login = :login OR users.email = :email', { login, email })
+            .andWhere('users.deleted_at IS NULL')
+            .execute();
+        if (!result) {
+            return void 0;
+        }
+
+        return result;
+    }
 
     // async findUserLogin(login: string): Promise<findUserByLoginOrEmailInterface | undefined> {
     //     const query = `

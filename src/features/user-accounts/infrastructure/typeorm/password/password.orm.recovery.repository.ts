@@ -11,7 +11,7 @@ export class PasswordRecoveryRepositoryOrm {
             SELECT "id", "user_id" AS "userId", "used" FROM "recovery_password"
             WHERE "recovery_code" = $1
         `;
-        const result = await this.dataSource.query(query, [code]);
+        const result = await this.recPassRepositoryTypeOrm.query(query, [code]);
         if (!result) {
             return void 0;
         }
@@ -22,13 +22,13 @@ export class PasswordRecoveryRepositoryOrm {
             UPDATE "recovery_password" SET "used" = TRUE
             WHERE "id" = $1
         `;
-        await this.dataSource.query(query, [Number(passwordId)]);
+        await this.recPassRepositoryTypeOrm.query(query, [Number(passwordId)]);
     }
     async createPasswordRecovery(userId: string, code: string, expirationDate: Date) {
         const query = `
             INSERT INTO "recovery_password"("user_id", recovery_code, recovery_expiration_date) VALUES($1, $2, $3)
         `;
-        const result = await this.dataSource.query(query, [userId, code, expirationDate.toISOString()]);
+        const result = await this.recPassRepositoryTypeOrm.query(query, [userId, code, expirationDate.toISOString()]);
         if (!result) {
             return void 0;
         }

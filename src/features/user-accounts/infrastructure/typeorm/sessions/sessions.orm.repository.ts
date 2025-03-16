@@ -16,7 +16,7 @@ export class SessionsRepositoryOrm {
             SELECT "id", "device_id" as "deviceId", "issued_at" as "issuedAt", "user_id" AS "userId" FROM "security_device"  
             WHERE "device_id" = $1 AND "deleted_at" IS NULL
         `;
-        const result = await this.dataSource.query(query, [deviceId]);
+        const result = await this.sessionsRepositoryTypeOrm.query(query, [deviceId]);
         if (!result) {
             return void 0;
         }
@@ -29,7 +29,7 @@ export class SessionsRepositoryOrm {
             UPDATE "security_device"
             SET "deleted_at" = $1
             WHERE "id" = $2`;
-        return await this.dataSource.query(query, [deletedAt, idOnSession]);
+        return await this.sessionsRepositoryTypeOrm.query(query, [deletedAt, idOnSession]);
     }
 
     async deleteAllSessions(userId: string, deviceId: string) {
@@ -38,6 +38,6 @@ export class SessionsRepositoryOrm {
             UPDATE "security_device"
             SET "deleted_at" = $1
             WHERE "device_id" <> $2 AND "user_id" = $3;`;
-        return await this.dataSource.query(query, [issuedAt, deviceId, userId]);
+        return await this.sessionsRepositoryTypeOrm.query(query, [issuedAt, deviceId, userId]);
     }
 }
