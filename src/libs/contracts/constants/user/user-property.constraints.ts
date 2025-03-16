@@ -1,6 +1,6 @@
 export const loginConstraints = {
     minLength: 3,
-    maxLength: 20,
+    maxLength: 10,
 };
 
 export const passwordConstraints = {

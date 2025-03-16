@@ -18,7 +18,7 @@ export class UserViewDto {
     createdAt: Date;
 
     constructor(model: UserIntInterface) {
-        this.id = model.id;
+        this.id = String(model.id);
         this.login = model.login;
         this.email = model.email;
         this.createdAt = model.createdat;
