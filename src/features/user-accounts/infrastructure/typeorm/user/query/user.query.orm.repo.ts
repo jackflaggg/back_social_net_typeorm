@@ -42,7 +42,7 @@ export class UserQueryRepositoryOrm {
             items: usersView,
             page: pageNumber,
             size: pageSize,
-            totalCount: +resultTotal[0].totalCount,
+            totalCount: resultTotal,
         });
     }
 

@@ -37,7 +37,7 @@ import { AppConfig } from './core/config/app.config';
         }),
         ThrottlerModule.forRoot([throttlerConfig]),
         UsersModule,
-        BloggersPlatformModule,
+        // BloggersPlatformModule,
         TestingModule.register(),
     ],
 })

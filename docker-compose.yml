@@ -5,8 +5,8 @@ services:
     container_name: postgres_db_typeorm_windows
     ports:
       - '5433:5432'
-      # 1) куда будет развернуто внутри докера! в постгресе тоже!
-      # 2) порт, по которому будет отзываться!
+      # 1) куда будет развернуто внутри докера! в постгресе тоже! - внешний
+      # 2) порт, по которому будет отзываться! - внутренний
     environment:
       POSTGRES_DB: social_network_develope
       POSTGRES_USER: postgres

@@ -12,6 +12,7 @@ export class BasicStrategy extends PassportStrategy(Strategy, 'basic-admin') {
     async validate(username: string, password: string) {
         const adminName = this.appConfig.adminUsername;
         const adminPassword = this.appConfig.adminPassword;
+
         if (adminName === username && adminPassword === password) {
             return true;
         }

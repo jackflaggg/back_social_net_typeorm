@@ -66,7 +66,6 @@ const useCases = [
 const repositories = [
     UserRepositoryOrm,
     UserQueryRepositoryOrm,
-    UserPgRepository,
     SessionsRepositoryOrm,
     SessionQueryRepositoryOrm,
     PasswordRecoveryRepositoryOrm,
@@ -96,7 +95,7 @@ const handlers = [LogUserInformationWhenUserLoggedInEventHandler];
         // и тд!
         CqrsModule,
     ],
-    exports: [UserPgRepository],
+    exports: [UserRepositoryOrm],
     providers: [...useCases, ...services, ...strategies, ...handlers, ...repositories],
     controllers: [UserSaController, AuthController, SessionController],
 })

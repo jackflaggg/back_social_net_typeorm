@@ -1,6 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserJwtPayloadDto } from '../../../strategies/refresh.strategy';
-import { SessionsPgRepository } from '../../../infrastructure/postgres/sessions/sessions.pg.repository';
 import { Inject } from '@nestjs/common';
 import { SessionsRepositoryOrm } from '../../../infrastructure/typeorm/sessions/sessions.orm.repository';
 
