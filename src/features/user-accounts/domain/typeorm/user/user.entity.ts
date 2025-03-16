@@ -82,4 +82,10 @@ export class User extends BaseEntity {
         this.emailConfirmation.isConfirmed = isConfirmed;
         this.updatedBusLogic = new Date();
     }
+
+    public updateUserToCodeAndDate(generateCode: string, newExpirationDate: Date, isConfirmed: boolean) {
+        this.emailConfirmation.confirmationCode = generateCode;
+        this.emailConfirmation.expirationDate = newExpirationDate;
+        this.emailConfirmation.isConfirmed = isConfirmed;
+    }
 }

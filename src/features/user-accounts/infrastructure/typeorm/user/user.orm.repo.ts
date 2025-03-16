@@ -62,7 +62,7 @@ export class UserRepositoryOrm {
             .where('id = :userId', { userId })
             .execute();
     }
-    async findUserByLoginOrEmail(loginOrEmail: string): Promise<findUserByLoginOrEmailInterface | undefined> {
+    async findUserByLoginOrEmail(loginOrEmail: string) {
         const result = await this.userRepositoryTypeOrm
             .createQueryBuilder('users')
             .select([

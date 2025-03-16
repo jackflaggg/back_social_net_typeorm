@@ -34,7 +34,9 @@ export class RegistrationEmailResendUserUseCase implements ICommandHandler<Regis
             minutes: 30,
         }).toISOString();
 
-        await this.usersRepository.updateUserToCodeAndDate(user.id, generateCode, newExpirationDate);
+        const newIsConfirmed = false;
+
+        user.updateUserToCodeAndDate(generateCode, newExpirationDate, newIsConfirmed);
 
         this.mailer.sendEmailRecoveryMessage(user.email, generateCode).catch(async (err: unknown) => {
             console.log(String(err));

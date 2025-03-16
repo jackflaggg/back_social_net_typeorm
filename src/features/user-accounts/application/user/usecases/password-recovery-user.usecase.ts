@@ -67,7 +67,10 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
                 minutes: 30,
             });
 
-            await this.usersRepository.updateUserToCodeAndDate(findUser.id, generateCode, newExpirationDate.toISOString());
+            const newIsConfirmed = false;
+
+            findUser.updateUserToCodeAndDate(generateCode, newExpirationDate, newIsConfirmed);
+            await this.usersRepository.save(findUser);
 
             await this.passwordRepository.createPasswordRecovery(findUser.id, generateCode, newExpirationDate);
 
