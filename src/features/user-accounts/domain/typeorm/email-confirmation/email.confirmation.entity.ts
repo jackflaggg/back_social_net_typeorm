@@ -19,4 +19,6 @@ export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {
     @OneToOne(() => User, user => user.emailConfirmation)
     @JoinColumn({ name: 'user_id' })
     user: User;
+
+    //TODO: Это не тупая сущность, к ней мы тоже можем обращаться!
 }

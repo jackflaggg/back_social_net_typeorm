@@ -15,8 +15,8 @@ export class TestingController {
             TablesEnum.enum['users'],
             TablesEnum.enum['blogs'],
             TablesEnum.enum['posts'],
-            TablesEnum.enum['comments'],
-            TablesEnum.enum['likes'],
+            //TablesEnum.enum['comments'],
+            //TablesEnum.enum['likes'],
         ];
 
         for (const table of dataTables) {

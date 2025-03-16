@@ -31,6 +31,9 @@ import { UpdateStatusCommentUseCase } from './comments/application/usecases/like
 import { UpdateContentCommentUseCase } from './comments/application/usecases/update-comment.usecase';
 import { CommentsPgRepository } from './comments/infrastructure/postgres/comments.pg.repository';
 import { StatusPgRepository } from './likes/infrastructure/postgres/status.pg.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Blog } from './blogs/domain/typeorm/blog.entity';
+import { Post } from './posts/domain/typeorm/post.entity';
 
 const repositoriesPostgres = [
     BlogsPgQueryRepository,
@@ -72,6 +75,7 @@ const useCases = [
                 signOptions: { expiresIn: coreConfig.accessTokenExpirationTime },
             }),
         }),
+        TypeOrmModule.forFeature([Blog, Post]),
         PassportModule,
         CqrsModule,
         UsersModule,

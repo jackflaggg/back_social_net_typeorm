@@ -10,13 +10,13 @@ export class Blog extends BaseEntity {
     @Column({ name: 'title', type: 'varchar', length: nameConstraints.maxLength, collation: 'C' })
     name: string;
 
-    @Column({ name: 'title', type: 'varchar', length: '510', collation: 'C' })
+    @Column({ name: 'description', type: 'varchar', length: '510', collation: 'C' })
     description: string;
 
-    @Column({ name: 'title', type: 'varchar', length: '120', collation: 'C' })
+    @Column({ name: 'website_url', type: 'varchar', length: '120', collation: 'C' })
     websiteUrl: string;
 
-    @Column({ type: Boolean, default: false })
+    @Column({ name: 'is_membership', type: Boolean, default: false })
     isMembership: boolean;
 
     @CreateDateColumn({ name: 'updated_business_logic', type: 'timestamptz', default: null })

@@ -46,12 +46,15 @@ export class UserQueryRepositoryOrm {
         });
     }
 
+    // TODO: не используем для доставки умных сущностей!
     async getUser(userId: string) {
         const result = await this.userRepositoryTypeOrm
-            .createQueryBuilder('users')
-            .select('id, login, email, created_at AS createdAt')
-            .where('users.id = :userId AND users.deleted_at IS NULL', { userId })
+            .createQueryBuilder('u')
+            //.select('u.id, u.login, u.email')
+            .where('u.id = :userId', { userId })
+            .andWhere('u.deleted_at IS NULL')
             .getOne();
+        console.log(result);
         if (!result) {
             throw NotFoundDomainException.create('юзер не найден', 'userId');
         }
