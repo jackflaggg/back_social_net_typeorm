@@ -24,6 +24,7 @@ import { LogoutUserCommand } from '../application/user/usecases/logout-user.usec
 import { SETTINGS } from '../../../core/settings';
 import { findUserByLoginOrEmailInterface } from '../dto/api/user.in.jwt.find.dto';
 import { UserQueryRepositoryOrm } from '../infrastructure/typeorm/user/query/user.query.orm.repo';
+import { AppConfig } from '../../../core/config/app.config';
 
 @Controller(SETTINGS.PATH.AUTH)
 export class AuthController {

@@ -8,12 +8,13 @@ import { Controller, Delete, Get, HttpCode, HttpStatus, Param, UseGuards } from 
 import { SessionQueryPgRepository } from '../infrastructure/postgres/sessions/query/sessions.pg.query.repository';
 import { ValidateUUIDPipe } from '../../../core/pipes/validation.input.uuid';
 import { SETTINGS } from '../../../core/settings';
+import { SessionQueryRepositoryOrm } from '../infrastructure/typeorm/sessions/query/sessions.orm.query.repository';
 
 @Controller(SETTINGS.PATH.SECURITY_DEVICES)
 export class SessionController {
     constructor(
         private readonly commandBus: CommandBus,
-        private readonly sessionQueryRepository: SessionQueryPgRepository,
+        private readonly sessionQueryRepository: SessionQueryRepositoryOrm,
     ) {}
 
     @UseGuards(RefreshAuthGuard)

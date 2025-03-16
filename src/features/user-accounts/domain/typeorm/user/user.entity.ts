@@ -66,7 +66,7 @@ export class User extends BaseEntity {
 
     private markDeleted() {
         // метод обертка!
-        if (!isNull(this.deletedAt)) throw new Error('Entity already deleted');
+        if (!isNull(this.deletedAt)) throw new Error('Данный объект уже был помечен на удаление');
 
         this.deletedAt = new Date();
         this.updatedBusLogic = new Date();
