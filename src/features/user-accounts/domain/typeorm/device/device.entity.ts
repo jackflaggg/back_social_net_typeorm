@@ -4,13 +4,13 @@ import { isNull } from '../../../../../core/utils/user/is.null';
 
 @Entity('security_device_to_user')
 export class SecurityDeviceToUser {
-    @PrimaryColumn({ name: 'device_id', type: 'string' })
+    @PrimaryColumn({ name: 'device_id', type: 'varchar' })
     deviceId: string;
 
     @Column({ name: 'device_name', type: 'varchar', default: 'Google' })
     deviceName: string;
 
-    @Column({ name: 'device_name', type: 'varchar', default: '255.255.255.255' })
+    @Column({ name: 'ip', type: 'varchar', default: '255.255.255.255' })
     ip: string;
 
     @Column({ name: 'user_id' })
