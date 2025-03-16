@@ -18,7 +18,7 @@ export class RegistrationConfirmationUserUseCase implements ICommandHandler<Regi
     ) {}
     async execute(command: RegistrationConfirmationUserCommand) {
         // 1. если я нашел код в другой табличке, значит, ошибка!
-        const recCode = await this.passwordRepository.findCode(command.code);
+        const recCode = await this.passwordRepository.findCodeEntity(command.code);
 
         if (recCode) {
             throw BadRequestDomainException.create('этот код предназначен для new-password', 'RegistrationConfirmationUserUseCase');
