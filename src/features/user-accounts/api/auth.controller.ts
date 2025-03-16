@@ -102,8 +102,9 @@ export class AuthController {
     @UseGuards(RefreshAuthGuard)
     @Post('refresh-token')
     async refreshToken(@ExtractUserFromRequest() user: UserJwtPayloadDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
-        const ipDefault = req.ip ?? '8.8.8.8';
-        const userAgentDefault = req.headers['user-agent'] ?? 'google';
+        const ipDefault = req.ip ?? this.appConfig.ip;
+        const userAgentDefault = req.headers['user-agent'] ?? this.appConfig.userAgent;
+
         const { jwt, refresh } = await this.commandBus.execute(
             new RefreshTokenUserCommand(user.userId, user.deviceId, ipDefault, userAgentDefault),
         );
