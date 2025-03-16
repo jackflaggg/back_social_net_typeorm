@@ -18,7 +18,7 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
         private readonly mailer: EmailService,
     ) {}
     async execute(command: RegistrationUserCommand) {
-        const existingUser = await this.userRepository.findUserByLoginAndEmail(command.payload.login, command.payload.email);
+        const existingUser = await this.userRepository.findCheckExistUser(command.payload.login, command.payload.email);
 
         if (existingUser) {
             throw BadRequestDomainException.create(
