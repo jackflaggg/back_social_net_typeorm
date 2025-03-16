@@ -56,11 +56,12 @@ export class UserQueryRepositoryOrm {
             .createQueryBuilder('u')
             .select('u.id as id, u.login as login, u.email as email, u.created_at as createdAt')
             .where('u.deleted_at IS NULL AND u.id = :userId', { userId })
-            .execute();
+            .getRawOne();
 
         if (!result) {
             throw NotFoundDomainException.create('юзер не найден', 'userId');
         }
+
         return UserViewDto.mapToView(result);
     }
 
