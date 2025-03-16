@@ -64,7 +64,7 @@ export class User extends BaseEntity {
         this.emailConfirmation.isConfirmed = dto.isConfirmed;
     }
 
-    private markDeleted() {
+    public markDeleted() {
         // метод обертка!
         if (!isNull(this.deletedAt)) throw new Error('Данный объект уже был помечен на удаление');
 
@@ -72,7 +72,7 @@ export class User extends BaseEntity {
         this.updatedBusLogic = new Date();
     }
 
-    private updatePassword(newPassword: string) {
+    public updatePassword(newPassword: string) {
         this.passwordHash = newPassword;
         this.updatedBusLogic = new Date();
     }

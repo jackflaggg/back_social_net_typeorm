@@ -120,12 +120,12 @@ export class UserRepositoryOrm {
     //     }
     //     return result[0];
     // }
-    async getPass(userId: string) {
+    async getPassEntity(userId: string) {
         const result = await this.userRepositoryTypeOrm
             .createQueryBuilder('users')
             .select('users.id, users.password_hash AS password')
             .where('users.deleted_at IS NULL AND users.id = :userId', { userId })
-            .execute();
+            .getOne();
         if (!result) {
             throw NotFoundDomainException.create('юзер не найден', 'userId');
         }
