@@ -67,10 +67,10 @@ export class UserQueryRepositoryOrm {
 
     async getMe(userId: string) {
         const result = await this.userRepositoryTypeOrm
-            .createQueryBuilder('users')
-            .select('id AS userId, login, email')
-            .where('users.id = :userId AND users.deleted_at IS NULL', { userId })
-            .getOne();
+            .createQueryBuilder('u')
+            .select('u.id AS userId, u.login as login, u.email as email')
+            .where('u.id = :userId AND u.deleted_at IS NULL', { userId })
+            .getRawOne();
         if (!result) {
             throw NotFoundDomainException.create('юзер не найден', 'userId');
         }
