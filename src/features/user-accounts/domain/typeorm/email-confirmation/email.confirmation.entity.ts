@@ -37,9 +37,9 @@ export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {
         this.isConfirmed = isConfirmed;
     }
 
-    public updateUserToCodeAndDate(generateCode: string, newExpirationDate: Date, isConfirmed: boolean) {
-        this.confirmationCode = generateCode;
-        this.expirationDate = newExpirationDate;
-        this.isConfirmed = isConfirmed;
+    public updateUserToCodeAndDate(dto: any) {
+        this.confirmationCode = dto.confirmationCode;
+        this.expirationDate = dto.expirationDate;
+        this.isConfirmed = dto.isConfirmed;
     }
 }

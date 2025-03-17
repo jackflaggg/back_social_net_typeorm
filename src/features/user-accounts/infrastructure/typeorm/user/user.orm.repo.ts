@@ -71,17 +71,28 @@ export class UserRepositoryOrm {
     }
     async findUserByLoginOrEmail(loginOrEmail: string) {
         const result = await this.userRepositoryTypeOrm
-            .createQueryBuilder('users')
+            .createQueryBuilder('u')
             .select([
-                'users.id',
-                'users.email',
-                'users.password_hash AS password',
+                'u.id AS id',
+                'u.email AS email',
+                'u.password_hash AS password',
                 'em.is_confirmed AS isConfirmed',
                 'em.confirmation_code AS confirmationCode',
             ])
-            .innerJoin('email_confirmation_to_user', 'em', 'users.id = em.user_id')
-            .where('users.login = :loginOrEmail OR users.email = :loginOrEmail AND users.deleted_at IS NULL', { loginOrEmail })
+            .innerJoin('email_confirmation_to_user', 'em', 'u.id = em.user_id')
+            .where('(u.login = :loginOrEmail OR users.email = :loginOrEmail)', { loginOrEmail })
+            .andWhere('u.deleted_at IS NULL')
             .getRawOne();
+        if (!result) {
+            return void 0;
+        }
+        return result;
+    }
+    async findEmailConfirmation(userId: string) {
+        const result = await this.emailConfirmationRepositoryTypeOrm
+            .createQueryBuilder('em')
+            .where('em.user_id = :userId', { userId })
+            .getOne();
         if (!result) {
             return void 0;
         }

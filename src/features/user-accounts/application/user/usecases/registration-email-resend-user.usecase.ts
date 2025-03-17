@@ -1,10 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { randomUUID } from 'node:crypto';
-import { add } from 'date-fns/add';
 import { EmailService } from '../../../../notifications/application/mail.service';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
+import { emailConfirmationData } from '../../../../../core/utils/user/email-confirmation-data.admin';
 
 export class RegistrationEmailResendUserCommand {
     constructor(public readonly email: string) {}
@@ -26,19 +25,23 @@ export class RegistrationEmailResendUserUseCase implements ICommandHandler<Regis
         if (user.isConfirmed) {
             throw BadRequestDomainException.create('аккаунт уже был активирован', 'email');
         }
-        const generateCode = randomUUID();
+        const emailConfirmation = await this.usersRepository.findEmailConfirmation(user.id);
 
-        const newExpirationDate = add(new Date(), {
-            hours: 1,
-            minutes: 30,
-        }).toISOString();
+        if (!emailConfirmation) {
+            throw BadRequestDomainException.create('произошла неожиданная ошибка 🥶', 'emailConfirmation');
+        }
 
-        const newIsConfirmed = false;
+        const emailConfirmDto = emailConfirmationData();
 
-        user.updateUserToCodeAndDate(generateCode, newExpirationDate, newIsConfirmed);
+        emailConfirmation.updateUserToCodeAndDate(emailConfirmDto);
 
-        this.mailer.sendEmailRecoveryMessage(user.email, generateCode).catch(async (err: unknown) => {
-            console.log(String(err));
-        });
+        await this.usersRepository.saveEmailConfirmation(emailConfirmation);
+
+        this.mailer
+            .sendEmailRecoveryMessage(user.email, emailConfirmDto.confirmationCode)
+            .then(() => {})
+            .catch(async (err: unknown) => {
+                console.log(String(err));
+            });
     }
 }
