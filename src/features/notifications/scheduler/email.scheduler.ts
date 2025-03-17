@@ -10,9 +10,9 @@ export class EmailScheduler {
     private start() {
         const job = new CronJob('*/15 * * * *', () => {
             // Каждые 60 минут
-            this.emailRetryService.retryFailedEmail().catch(err => {
-                console.log('Ошибка в задаче повторной отправки email:', err);
-            });
+            // this.emailRetryService.retryFailedEmail().catch(err => {
+            //     console.log('Ошибка в задаче повторной отправки email:', err);
+            // });
         });
 
         job.start();

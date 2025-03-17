@@ -6,10 +6,10 @@ import { RecoveryPasswordToUser } from '../../../domain/typeorm/password-recover
 @Injectable()
 export class PasswordRecoveryRepositoryOrm {
     constructor(@InjectRepository(RecoveryPasswordToUser) private recPassRepositoryTypeOrm: Repository<RecoveryPasswordToUser>) {}
-    async findCodeEntity(code: string) {
+    async findCode(code: string) {
         const result = await this.recPassRepositoryTypeOrm
-            .createQueryBuilder('recovery_password_to_user')
-            .where('recovery_password_to_user.recovery_code = :code', { code })
+            .createQueryBuilder('rec')
+            .where('rec.recovery_code = :code', { code })
             .getRawOne();
         if (!result) {
             return void 0;

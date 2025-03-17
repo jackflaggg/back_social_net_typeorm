@@ -8,16 +8,16 @@ export class EmailRetryService {
         private readonly userRepository: UserRepositoryOrm,
         private readonly mailer: EmailService,
     ) {}
-    async retryFailedEmail() {
-        const users = await this.userRepository.findUsersWithUnsentEmails();
-        for (const user of users) {
-            try {
-                // await this.mailer.sendEmailRecoveryMessage(user.email, user.confirmationCode);
-                // Обновляем sentEmail на true после успешной отправки
-                // await this.userRepository.update(user.id, { sentEmail: true });
-            } catch (err) {
-                console.log('Ошибка при повторной отправке email:', err);
-            }
-        }
-    }
+    // async retryFailedEmail() {
+    //     const users = await this.userRepository.findUsersWithUnsentEmails();
+    //     for (const user of users) {
+    //         try {
+    //             // await this.mailer.sendEmailRecoveryMessage(user.email, user.confirmationCode);
+    //             // Обновляем sentEmail на true после успешной отправки
+    //             // await this.userRepository.update(user.id, { sentEmail: true });
+    //         } catch (err) {
+    //             console.log('Ошибка при повторной отправке email:', err);
+    //         }
+    //     }
+    // }
 }

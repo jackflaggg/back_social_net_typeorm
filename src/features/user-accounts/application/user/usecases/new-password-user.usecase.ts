@@ -20,7 +20,7 @@ export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCo
         private readonly bcryptService: BcryptService,
     ) {}
     async execute(command: NewPasswordUserCommand) {
-        const findCode = await this.passwordRepository.findCodeEntity(command.recoveryCode);
+        const findCode = await this.passwordRepository.findCode(command.recoveryCode);
 
         if (!findCode) {
             throw NotFoundDomainException.create('произошла непредвиденная ошибка, код не найден', 'code');
@@ -30,7 +30,7 @@ export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCo
             throw BadRequestDomainException.create('данный код был уже использован!', 'code');
         }
 
-        const user = await this.usersRepository.getPassEntity(findCode['user_id']);
+        const user = await this.usersRepository.getPasswordUserEntity(findCode['user_id']);
 
         const newPasswordHash = await this.bcryptService.hashPassword(user.passwordHash);
 

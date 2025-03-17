@@ -19,17 +19,6 @@ export class UserRepositoryOrm {
         const result = await this.userRepositoryTypeOrm.save(entity);
         return result.id;
     }
-    async saveEmailConfirmation(entity: EmailConfirmationToUser) {
-        const result = await this.emailConfirmationRepositoryTypeOrm.save(entity);
-        // TODO: Переделать на функцию маппер!
-        return {
-            userId: result.userId,
-            confirmationCode: result.confirmationCode,
-        };
-    }
-    async findUsersWithUnsentEmails() {
-        return [];
-    }
     async findUserById(userId: string) {
         const result = await this.userRepositoryTypeOrm
             .createQueryBuilder('u')
@@ -40,34 +29,15 @@ export class UserRepositoryOrm {
         }
         return result;
     }
-    async findUserByIdEntity(userId: string) {
-        const result = await this.userRepositoryTypeOrm
-            .createQueryBuilder('users')
-            .where('users.id = :userId AND users.deleted_at IS NULL', { userId })
-            .getOne();
-        if (!result) {
-            throw NotFoundDomainException.create('юзер не найден', 'userId');
-        }
-        return result;
-    }
-    // TODO: Правильно ли сделал метод для проверки существования записи?
     async findCheckExistUser(login: string, email: string) {
         const result = await this.userRepositoryTypeOrm
-            .createQueryBuilder('users')
-            .where('users.email = :email OR users.login = :login', { email, login })
+            .createQueryBuilder('u')
+            .where('u.email = :email OR u.login = :login', { email, login })
             .getOne();
         if (!result) {
             return void 0;
         }
         return result;
-    }
-    async updateDeletedAt(userId: string) {
-        await this.userRepositoryTypeOrm
-            .createQueryBuilder()
-            .update(User)
-            .set({ deletedAt: new Date() })
-            .where('id = :userId', { userId })
-            .execute();
     }
     async findUserByLoginOrEmail(loginOrEmail: string) {
         const result = await this.userRepositoryTypeOrm
@@ -80,11 +50,34 @@ export class UserRepositoryOrm {
                 'em.confirmation_code AS confirmationCode',
             ])
             .innerJoin('email_confirmation_to_user', 'em', 'u.id = em.user_id')
-            .where('(u.login = :loginOrEmail OR users.email = :loginOrEmail)', { loginOrEmail })
+            .where('(u.login = :loginOrEmail OR u.email = :loginOrEmail)', { loginOrEmail })
             .andWhere('u.deleted_at IS NULL')
             .getRawOne();
         if (!result) {
             return void 0;
+        }
+        return result;
+    }
+    async findUserAuth(userId: string) {
+        const result = await this.userRepositoryTypeOrm
+            .createQueryBuilder('u')
+            .select('u.id AS userId')
+            .innerJoin('email_confirmation_to_user', 'em', 'u.id = em.user_id')
+            .where('u.id = :userId AND u.deleted_at IS NULL', { userId })
+            .getRawOne();
+        if (!result) {
+            throw UnauthorizedDomainException.create();
+        }
+        return result;
+    }
+    async getPasswordUserEntity(userId: string) {
+        const result = await this.userRepositoryTypeOrm
+            .createQueryBuilder('u')
+            .select('u.id as id, u.password_hash AS password')
+            .where('u.deleted_at IS NULL AND u.id = :userId', { userId })
+            .getOne();
+        if (!result) {
+            throw NotFoundDomainException.create('юзер не найден', 'userId');
         }
         return result;
     }
@@ -98,148 +91,22 @@ export class UserRepositoryOrm {
         }
         return result;
     }
-    async findUserAuth(userId: string) {
+    async findCodeToEmailRegistration(code: string) {
         const result = await this.userRepositoryTypeOrm
-            .createQueryBuilder('users')
-            .select('users.id AS userId')
-            .innerJoin('email_confirmation_to_user', 'em', 'users.id = em.user_id')
-            .where('users.id = :userId AND users.deleted_at IS NULL', { userId })
-            .getRawOne();
-        if (!result) {
-            throw UnauthorizedDomainException.create();
-        }
-        return result;
-    }
-
-    async findUserByLoginAndEmail(login: string, email: string) {
-        const result = await this.userRepositoryTypeOrm
-            .createQueryBuilder('u')
-            .select(['u.id AS id', 'u.login AS login', 'u.email AS email'])
-            .where('(u.login = :login OR u.email = :email)', { login, email })
-            .andWhere('u.deleted_at IS NULL')
+            .createQueryBuilder('em')
+            .where('em.confirmation_code = :code', { code })
             .getRawOne();
         if (!result) {
             return void 0;
         }
-
         return result;
     }
-
-    // async findUserLogin(login: string): Promise<findUserByLoginOrEmailInterface | undefined> {
-    //     const query = `
-    //         SELECT u."id", u."email", u."password_hash" AS "password", em."is_confirmed" AS "isConfirmed", em."confirmation_code" AS "confirmationCode" FROM "users" AS "u" JOIN "email_confirmation" AS "em" ON u.id = em.user_id WHERE u."deleted_at" IS NULL AND (u."login" = $1);
-    //     `;
-    //     const result = await this.dataSource.query(query, [login]);
-    //     if (!result || result.length === 0) {
-    //         return void 0;
-    //     }
-    //
-    //     return result[0];
-    // }
-    // async findUserById(userId: string) {
-    //     const query = `
-    //         SELECT u."id", ec."confirmation_code" AS "confirmationCode" FROM "users" AS "u"
-    //         JOIN "email_confirmation" AS ec on u.id = ec.user_id
-    //         WHERE u."id" = $1 AND u."deleted_at" IS NULL
-    //     `;
-    //     const result = await this.dataSource.query(query, [userId]);
-    //     if (!result || result.length === 0) {
-    //         throw NotFoundDomainException.create('юзер не найден', 'userId');
-    //     }
-    //     return result[0];
-    // }
-    async getPassEntity(userId: string) {
-        const result = await this.userRepositoryTypeOrm
-            .createQueryBuilder('users')
-            .select('users.id, users.password_hash AS password')
-            .where('users.deleted_at IS NULL AND users.id = :userId', { userId })
-            .getOne();
-        if (!result) {
-            throw NotFoundDomainException.create('юзер не найден', 'userId');
-        }
-        return result;
+    async saveEmailConfirmation(entity: EmailConfirmationToUser) {
+        const result = await this.emailConfirmationRepositoryTypeOrm.save(entity);
+        // TODO: Переделать на функцию маппер!
+        return {
+            userId: result.userId,
+            confirmationCode: result.confirmationCode,
+        };
     }
-    //
-    // async updatePassword(newPassword: string, userId: string) {
-    //     const query = `
-    //         UPDATE "users" SET "password_hash" = $1 WHERE "id" = $2`;
-    //     return await this.dataSource.query(query, [newPassword, userId]);
-    // }
-    //
-    // async createUser(newUser: UserCreateDtoRepo, emailConfirm: emailConfirmAdminInterface) {
-    //     try {
-    //         // Начинаем транзакцию
-    //         await this.dataSource.query('BEGIN');
-    //
-    //         const queryUsers = `
-    //         INSERT INTO "users" ("login", "email", "created_at", "password_hash")
-    //         VALUES ($1, $2, $3, $4)
-    //         RETURNING "id" as "id", login as "login", "email" as "email", "created_at" as "createdAt"
-    //     `;
-    //
-    //         const result = await this.dataSource.query(queryUsers, [
-    //             newUser.login,
-    //             newUser.email,
-    //             newUser.createdAt.toISOString(),
-    //             newUser.password,
-    //         ]);
-    //
-    //         if (!result || result.length === 0) {
-    //             throw NotFoundDomainException.create('юзер не найден', 'userId');
-    //         }
-    //
-    //         const userId = result[0].id;
-    //
-    //         const queryEmailConfirmation = `
-    //         INSERT INTO "email_confirmation" ("confirmation_code", "expiration_date", "is_confirmed", "user_id")
-    //         VALUES ($1, $2, $3, $4)`;
-    //
-    //         await this.dataSource.query(queryEmailConfirmation, [
-    //             emailConfirm.emailConfirmation.confirmationCode,
-    //             emailConfirm.emailConfirmation.expirationDate.toISOString(),
-    //             emailConfirm.emailConfirmation.isConfirmed,
-    //             userId,
-    //         ]);
-    //         await this.dataSource.query('COMMIT');
-    //         return userId;
-    //     } catch (err: unknown) {
-    //         // Начинаем транзакцию
-    //         await this.dataSource.query('ROLLBACK');
-    //         console.log(String(err));
-    //         throw BadRequestDomainException.create('произошла ошибка во время создания юзера!', 'userId');
-    //     }
-    // }
-    // async updateDeletedAt(userId: string) {
-    //     const query = `
-    //     UPDATE "users" SET "deleted_at" = $1 WHERE id = $2
-    //     `;
-    //     await this.dataSource.query(query, [new Date().toISOString(), userId]);
-    // }
-    // async updateUserToCodeAndDate(userId: string, generateCode: string, newExpirationDate: string) {
-    //     const query = `
-    //         UPDATE "email_confirmation"
-    //         SET "confirmation_code" = $1,
-    //             "expiration_date" = $2,
-    //             "is_confirmed" = FALSE
-    //         WHERE "user_id" = $3`;
-    //     return await this.dataSource.query(query, [generateCode, newExpirationDate, userId]);
-    // }
-    async findUserCode(code: string) {
-        const result = await this.userRepositoryTypeOrm
-            .createQueryBuilder('email_confirmation_to_user')
-            .where('confirmation_code = :code', { code })
-            .execute();
-        if (!result) {
-            return void 0;
-        }
-        return result;
-    }
-    // async updateUserToEmailConf(userId: string) {
-    //     const query = `
-    //         UPDATE "email_confirmation"
-    //         SET "confirmation_code" = $1,
-    //             "is_confirmed" = TRUE
-    //         WHERE "user_id" = $2`;
-    //     return await this.dataSource.query(query, ['+', userId]);
-    // }
 }

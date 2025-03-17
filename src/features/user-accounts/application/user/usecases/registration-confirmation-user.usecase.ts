@@ -16,13 +16,13 @@ export class RegistrationConfirmationUserUseCase implements ICommandHandler<Regi
     ) {}
     async execute(command: RegistrationConfirmationUserCommand) {
         // 1. если я нашел код в другой табличке, значит, ошибка!
-        const recCode = await this.passwordRepository.findCodeEntity(command.code);
+        const recCode = await this.passwordRepository.findCode(command.code);
 
         if (recCode) {
             throw BadRequestDomainException.create('этот код предназначен для new-password', 'RegistrationConfirmationUserUseCase');
         }
         // 2. ищу код в email_confirmation
-        const findCode = await this.usersRepository.findUserCode(command.code);
+        const findCode = await this.usersRepository.findCodeToEmailRegistration(command.code);
 
         // P.S. Специфичная обработка ошибки для тестов!
         if (!findCode || command.code !== findCode.confirmationCode) {
@@ -45,7 +45,7 @@ export class RegistrationConfirmationUserUseCase implements ICommandHandler<Regi
         }
 
         // 5. обновляю
-        const userEntity = await this.usersRepository.findUserByIdEntity(findCode['user_idd']);
+        const userEntity = await this.usersRepository.findUserById(findCode);
 
         const confirmationCode = '+';
         const isConfirmed = true;
