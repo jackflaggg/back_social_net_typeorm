@@ -12,24 +12,14 @@ export class SessionsRepositoryOrm {
     }
 
     async findSessionByDeviceId(deviceId: string) {
-        const query = `
-            SELECT "id", "device_id" as "deviceId", "issued_at" as "issuedAt", "user_id" AS "userId" FROM "security_device"  
-            WHERE "device_id" = $1 AND "deleted_at" IS NULL
-        `;
-        const result = await this.sessionsRepositoryTypeOrm.query(query, [deviceId]);
+        const result = await this.sessionsRepositoryTypeOrm
+            .createQueryBuilder('s')
+            .where('s.deleted_at IS NULL AND s.device_id = :deviceId', { deviceId })
+            .getOne();
         if (!result) {
             return void 0;
         }
         return result;
-    }
-
-    async removeOldSession(idOnSession: string) {
-        const deletedAt = new Date().toISOString();
-        const query = `
-            UPDATE "security_device"
-            SET "deleted_at" = $1
-            WHERE "id" = $2`;
-        return await this.sessionsRepositoryTypeOrm.query(query, [deletedAt, idOnSession]);
     }
 
     async deleteAllSessions(userId: string, deviceId: string) {

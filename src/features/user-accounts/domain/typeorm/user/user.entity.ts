@@ -21,9 +21,6 @@ export class User extends BaseEntity {
     @Column({ name: 'password_hash', type: 'varchar', length: passwordHashConstraints.maxLength })
     passwordHash: string;
 
-    @CreateDateColumn({ name: 'updated_business_logic', type: 'timestamptz', default: null })
-    updatedBusLogic: Date | null;
-
     @Column({ name: 'sent_email_registration', type: 'boolean', default: false })
     sentEmailRegistration: boolean;
 
@@ -50,12 +47,10 @@ export class User extends BaseEntity {
         if (!isNull(this.deletedAt)) throw new Error('Данный объект уже был помечен на удаление');
 
         this.deletedAt = new Date();
-        this.updatedBusLogic = new Date();
     }
 
     public updatePassword(newPassword: string) {
         this.passwordHash = newPassword;
-        this.updatedBusLogic = new Date();
     }
 
     public confirmedSendEmailRegistration() {

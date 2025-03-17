@@ -28,9 +28,9 @@ export class CommonCreateUserUseCase implements ICommandHandler<CommonCreateUser
             sentEmailRegistration: false,
         };
 
-        const userAggregationRoot = User.buildInstance(userDto);
+        const user = User.buildInstance(userDto);
 
-        const userId = await this.userRepository.save(userAggregationRoot);
+        const userId = await this.userRepository.save(user);
 
         const emailConfirmDto = emailConfirmationData();
 

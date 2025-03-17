@@ -34,7 +34,7 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
         }
 
         // TODO: Верно ли удалять по идентификатору записи или нужно по девайсАйди
-        await this.sessionRepository.removeOldSession(session.id);
+        // await this.sessionRepository.removeOldSession(session.id);
 
         // генерация новых токенов
         const userId = command.userId;
