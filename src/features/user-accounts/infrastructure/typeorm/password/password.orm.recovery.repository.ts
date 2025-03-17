@@ -10,7 +10,7 @@ export class PasswordRecoveryRepositoryOrm {
         const result = await this.recPassRepositoryTypeOrm
             .createQueryBuilder('recovery_password_to_user')
             .where('recovery_password_to_user.recovery_code = :code', { code })
-            .getOne();
+            .getRawOne();
         if (!result) {
             return void 0;
         }
