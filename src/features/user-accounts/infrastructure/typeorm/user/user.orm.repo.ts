@@ -16,6 +16,7 @@ export class UserRepositoryOrm {
         @InjectEntityManager() private readonly entityManager: EntityManager,
     ) {}
     async save(entity: User) {
+        console.log(entity);
         const result = await this.userRepositoryTypeOrm.save(entity);
         return result.id.toString();
     }

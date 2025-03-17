@@ -18,7 +18,17 @@ export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {
 
     @OneToOne(() => User, user => user.emailConfirmation)
     @JoinColumn({ name: 'user_id' })
+    // добавили внешний ключ!
     user: User;
 
-    //TODO: Это не тупая сущность, к ней мы тоже можем обращаться!
+    public updateEmailConfirmation(confirmationCode: string, isConfirmed: boolean) {
+        this.confirmationCode = confirmationCode;
+        this.isConfirmed = isConfirmed;
+    }
+
+    public updateUserToCodeAndDate(generateCode: string, newExpirationDate: Date, isConfirmed: boolean) {
+        this.confirmationCode = generateCode;
+        this.expirationDate = newExpirationDate;
+        this.isConfirmed = isConfirmed;
+    }
 }

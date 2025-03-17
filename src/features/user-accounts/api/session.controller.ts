@@ -5,7 +5,6 @@ import { UserJwtPayloadDto } from '../strategies/refresh.strategy';
 import { ExtractAnyUserFromRequest } from '../../../core/decorators/param/validate.user.decorators';
 import { DeleteSessionsCommand } from '../application/device/usecases/delete-sessions.usecase';
 import { Controller, Delete, Get, HttpCode, HttpStatus, Param, UseGuards } from '@nestjs/common';
-import { SessionQueryPgRepository } from '../infrastructure/postgres/sessions/query/sessions.pg.query.repository';
 import { ValidateUUIDPipe } from '../../../core/pipes/validation.input.uuid';
 import { SETTINGS } from '../../../core/settings';
 import { SessionQueryRepositoryOrm } from '../infrastructure/typeorm/sessions/query/sessions.orm.query.repository';

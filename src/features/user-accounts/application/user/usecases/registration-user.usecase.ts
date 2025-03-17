@@ -18,6 +18,7 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
         private readonly mailer: EmailService,
     ) {}
     async execute(command: RegistrationUserCommand) {
+        // проверяю существует ли юзер, даже если он удален!
         const existingUser = await this.userRepository.findCheckExistUser(command.payload.login, command.payload.email);
 
         if (existingUser) {
@@ -27,6 +28,7 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
             );
         }
 
+        // создаю юзера
         const userId = await this.commandBus.execute<CommonCreateUserCommand, string>(new CommonCreateUserCommand(command.payload));
 
         const user = await this.userRepository.findUserById(userId);

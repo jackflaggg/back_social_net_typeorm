@@ -50,7 +50,7 @@ export class RegistrationConfirmationUserUseCase implements ICommandHandler<Regi
         const confirmationCode = '+';
         const isConfirmed = true;
 
-        userEntity.updateEmailConfirmation(confirmationCode, isConfirmed);
+        //userEntity.updateEmailConfirmation(confirmationCode, isConfirmed);
         return await this.usersRepository.save(userEntity);
     }
 }

@@ -21,8 +21,6 @@ export class User extends BaseEntity {
     @Column({ name: 'password_hash', type: 'varchar', length: passwordHashConstraints.maxLength })
     passwordHash: string;
 
-    // паттерн состояния
-    // пока ниче сущ-го не произошло, оно в null!
     @CreateDateColumn({ name: 'updated_business_logic', type: 'timestamptz', default: null })
     updatedBusLogic: Date | null;
 
@@ -38,12 +36,7 @@ export class User extends BaseEntity {
     @OneToMany(() => SecurityDeviceToUser, securityDevice => securityDevice.user)
     securityDevices: SecurityDeviceToUser[];
 
-    // создаю emailConf прям тут, чтоб покрывать агрегейшен рут,
-    // если делать в разных сущностях, то это уже не агрегат ddd ?
-    // User может рассматриваться как агрегатный корень, а EmailConfirmation — как часть этого агрегата.
-    // Важно, чтобы доступ к EmailConfirmation происходил только через User, чтобы сохранить инкапсуляцию.
     static buildInstance(dto: any): User {
-        // служит в качестве фабрики для создания экземпляров User.
         const user = new this();
         user.login = dto.login;
         user.email = dto.email;
@@ -56,7 +49,6 @@ export class User extends BaseEntity {
     }
 
     private createEmailConfirmation(dto: any): void {
-        // инкапсуляция
         this.emailConfirmation = new EmailConfirmationToUser();
 
         this.emailConfirmation.confirmationCode = dto.confirmationCode;
@@ -65,7 +57,6 @@ export class User extends BaseEntity {
     }
 
     public markDeleted() {
-        // метод обертка!
         if (!isNull(this.deletedAt)) throw new Error('Данный объект уже был помечен на удаление');
 
         this.deletedAt = new Date();
@@ -75,17 +66,5 @@ export class User extends BaseEntity {
     public updatePassword(newPassword: string) {
         this.passwordHash = newPassword;
         this.updatedBusLogic = new Date();
-    }
-
-    public updateEmailConfirmation(confirmationCode: string, isConfirmed: boolean) {
-        this.emailConfirmation.confirmationCode = confirmationCode;
-        this.emailConfirmation.isConfirmed = isConfirmed;
-        this.updatedBusLogic = new Date();
-    }
-
-    public updateUserToCodeAndDate(generateCode: string, newExpirationDate: Date, isConfirmed: boolean) {
-        this.emailConfirmation.confirmationCode = generateCode;
-        this.emailConfirmation.expirationDate = newExpirationDate;
-        this.emailConfirmation.isConfirmed = isConfirmed;
     }
 }
