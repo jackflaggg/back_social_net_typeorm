@@ -81,6 +81,7 @@ export class UserRepositoryOrm {
         }
         return result;
     }
+    // email-confirmation!
     async findEmailConfirmation(userId: string) {
         const result = await this.emailConfirmationRepositoryTypeOrm
             .createQueryBuilder('em')
