@@ -18,4 +18,9 @@ export class RecoveryPasswordToUser {
     @OneToOne(() => User, user => user.recoveryConfirmation)
     @JoinColumn({ name: 'user_id' })
     user: User;
+
+    static buildInstance(dto: any) {}
+    public updateStatus() {
+        this.used = true;
+    }
 }

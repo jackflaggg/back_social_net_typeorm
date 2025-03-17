@@ -53,7 +53,7 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
 
             const codeExpirationDate = add(new Date(), { hours: 1, minutes: 30 });
 
-            await this.passwordRepository.createPasswordRecovery(String(userId), confirmationCode, codeExpirationDate);
+            // await this.passwordRepository.createPasswordRecovery(String(userId), confirmationCode, codeExpirationDate);
 
             this.mailer.sendPasswordRecoveryMessage(command.email, newUser.emailConfirmation.confirmationCode).catch((err: unknown) => {
                 console.log(String(err));
@@ -72,7 +72,7 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
             findUser.updateUserToCodeAndDate(generateCode, newExpirationDate, newIsConfirmed);
             await this.usersRepository.save(findUser);
 
-            await this.passwordRepository.createPasswordRecovery(findUser.id, generateCode, newExpirationDate);
+            // await this.passwordRepository.createPasswordRecovery(findUser.id, generateCode, newExpirationDate);
 
             this.mailer.sendPasswordRecoveryMessage(command.email, findUser.confirmationCode).catch((err: unknown) => {
                 console.log(String(err));
