@@ -12,5 +12,5 @@ export const typeOrmDb = (coreConfig: AppConfig) =>
         entities: [],
         synchronize: true,
         autoLoadEntities: true,
-        logging: true,
+        logging: false,
     }) as TypeOrmModuleAsyncOptions;

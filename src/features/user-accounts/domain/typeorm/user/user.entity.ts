@@ -27,7 +27,7 @@ export class User extends BaseEntity {
     @Column({ name: 'sent_email_registration', type: 'boolean', default: false })
     sentEmailRegistration: boolean;
 
-    @OneToOne(() => EmailConfirmationToUser, emailConfirmation => emailConfirmation.user)
+    @OneToOne(() => EmailConfirmationToUser, emailConfirmation => emailConfirmation.user, { cascade: true })
     emailConfirmation: EmailConfirmationToUser;
 
     @OneToOne(() => RecoveryPasswordToUser, recoveryConfirmation => recoveryConfirmation.user)
@@ -43,17 +43,7 @@ export class User extends BaseEntity {
         user.passwordHash = dto.password;
         user.sentEmailRegistration = dto.sentEmailRegistration;
 
-        user.createEmailConfirmation(dto.emailConfirmation);
-
         return user as User;
-    }
-
-    private createEmailConfirmation(dto: any): void {
-        this.emailConfirmation = new EmailConfirmationToUser();
-
-        this.emailConfirmation.confirmationCode = dto.confirmationCode;
-        this.emailConfirmation.expirationDate = dto.expirationDate;
-        this.emailConfirmation.isConfirmed = dto.isConfirmed;
     }
 
     public markDeleted() {
@@ -66,5 +56,9 @@ export class User extends BaseEntity {
     public updatePassword(newPassword: string) {
         this.passwordHash = newPassword;
         this.updatedBusLogic = new Date();
+    }
+
+    public confirmedSendEmailRegistration() {
+        this.sentEmailRegistration = true;
     }
 }

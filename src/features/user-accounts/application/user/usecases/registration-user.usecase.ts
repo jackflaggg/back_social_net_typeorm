@@ -17,7 +17,7 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
         private readonly commandBus: CommandBus,
         private readonly mailer: EmailService,
     ) {}
-    async execute(command: RegistrationUserCommand) {
+    async execute(command: RegistrationUserCommand): Promise<void> {
         // проверяю существует ли юзер, даже если он удален!
         const existingUser = await this.userRepository.findCheckExistUser(command.payload.login, command.payload.email);
 
@@ -29,13 +29,20 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
         }
 
         // создаю юзера
-        const userId = await this.commandBus.execute<CommonCreateUserCommand, string>(new CommonCreateUserCommand(command.payload));
+        const emailConfirmation = await this.commandBus.execute<CommonCreateUserCommand, { userId: number; confirmationCode: string }>(
+            new CommonCreateUserCommand(command.payload),
+        );
 
-        const user = await this.userRepository.findUserById(userId);
+        const user = await this.userRepository.findUserById(String(emailConfirmation.userId));
 
-        this.mailer.sendEmailRecoveryMessage(command.payload.email, user.emailConfirmation.confirmationCode).catch((err: unknown) => {
-            // здесь нужно будет обновлять поле sentEmailRegistration!
-            console.log(err);
-        });
+        this.mailer
+            .sendEmailRecoveryMessage(command.payload.email, emailConfirmation.confirmationCode)
+            .then(() => {
+                user.confirmedSendEmailRegistration();
+                this.userRepository.save(user);
+            })
+            .catch((err: unknown) => {
+                console.log(err);
+            });
     }
 }

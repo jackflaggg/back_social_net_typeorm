@@ -8,7 +8,6 @@ import { CustomLoggerModule } from './features/logger/logger.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './features/user-accounts/user-accounts.module';
 import { TestingModule } from './features/testing/testing.module';
-import { BloggersPlatformModule } from './features/bloggers-platform/bloggers-platform.module';
 import { throttlerConfig } from './core/config/throttler.config';
 import { typeOrmDb } from './core/config/typeorm.config';
 import { AppConfig } from './core/config/app.config';

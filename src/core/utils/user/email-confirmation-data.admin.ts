@@ -30,10 +30,8 @@ export function emailConfirmationDataAdmin() {
 export function emailConfirmationData() {
     const code = randomUUID();
     return {
-        emailConfirmation: {
-            confirmationCode: code,
-            expirationDate: add(new Date(), { hours: 1, minutes: 30, seconds: 10 }),
-            isConfirmed: false,
-        },
+        confirmationCode: code,
+        expirationDate: add(new Date(), { hours: 1, minutes: 30, seconds: 10 }),
+        isConfirmed: false,
     };
 }

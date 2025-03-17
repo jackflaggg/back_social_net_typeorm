@@ -21,6 +21,17 @@ export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {
     // добавили внешний ключ!
     user: User;
 
+    static buildInstance(dto: any, userId: number) {
+        const result = new EmailConfirmationToUser();
+
+        result.confirmationCode = dto.confirmationCode;
+        result.expirationDate = dto.expirationDate;
+        result.isConfirmed = dto.isConfirmed;
+        // Устанавливаем userId для связанной сущности
+        result.userId = userId;
+        return result as EmailConfirmationToUser;
+    }
+
     public updateEmailConfirmation(confirmationCode: string, isConfirmed: boolean) {
         this.confirmationCode = confirmationCode;
         this.isConfirmed = isConfirmed;

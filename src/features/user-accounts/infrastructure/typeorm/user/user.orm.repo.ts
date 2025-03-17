@@ -16,9 +16,16 @@ export class UserRepositoryOrm {
         @InjectEntityManager() private readonly entityManager: EntityManager,
     ) {}
     async save(entity: User) {
-        console.log(entity);
         const result = await this.userRepositoryTypeOrm.save(entity);
-        return result.id.toString();
+        return result.id;
+    }
+    async saveEmailConfirmation(entity: EmailConfirmationToUser) {
+        const result = await this.emailConfirmationRepositoryTypeOrm.save(entity);
+        // TODO: Переделать на функцию маппер!
+        return {
+            userId: result.userId,
+            confirmationCode: result.confirmationCode,
+        };
     }
     async findUsersWithUnsentEmails() {
         return [];

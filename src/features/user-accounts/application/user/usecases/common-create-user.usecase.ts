@@ -5,6 +5,7 @@ import { Inject } from '@nestjs/common';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
 import { emailConfirmationData } from '../../../../../core/utils/user/email-confirmation-data.admin';
 import { User } from '../../../domain/typeorm/user/user.entity';
+import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 
 export class CommonCreateUserCommand {
     constructor(public readonly payload: UserCreateDtoService) {}
@@ -20,22 +21,21 @@ export class CommonCreateUserUseCase implements ICommandHandler<CommonCreateUser
     async execute(command: CommonCreateUserCommand) {
         const hashPassword = await this.bcryptService.hashPassword(command.payload.password);
 
-        const emailConfirmationUser = emailConfirmationData();
-
         const userDto = {
             login: command.payload.login,
             email: command.payload.email,
             password: hashPassword,
             sentEmailRegistration: false,
-            emailConfirmation: {
-                confirmationCode: emailConfirmationUser.emailConfirmation.confirmationCode,
-                expirationDate: emailConfirmationUser.emailConfirmation.expirationDate,
-                isConfirmed: emailConfirmationUser.emailConfirmation.isConfirmed,
-            },
         };
 
         const userAggregationRoot = User.buildInstance(userDto);
 
-        return await this.userRepository.save(userAggregationRoot);
+        const userId = await this.userRepository.save(userAggregationRoot);
+
+        const emailConfirmDto = emailConfirmationData();
+
+        const emailConfirmationEntity = EmailConfirmationToUser.buildInstance(emailConfirmDto, userId);
+
+        return await this.userRepository.saveEmailConfirmation(emailConfirmationEntity);
     }
 }
