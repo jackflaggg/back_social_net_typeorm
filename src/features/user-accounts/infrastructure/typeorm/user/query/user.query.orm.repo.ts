@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../../../domain/typeorm/user/user.entity';
-import { EntityManager, Repository, SortDirection } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { EmailConfirmationToUser } from '../../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 import { GetUsersQueryParams } from '../../../../dto/api/get-users-query-params.input-dto';
 import { getUsersQuery } from '../../../../../../core/utils/user/query.insert.get';
 import { MeUserIntInterface, UserViewDto } from '../../../../dto/api/user-view.dto';
 import { PaginatedBlogViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { sortDirectionOrm, sortDirectionOrmByEnum, UsersSortByValues } from '../../../../../../libs/contracts/enums/sort.direction';
 
 @Injectable()
 export class UserQueryRepositoryOrm {

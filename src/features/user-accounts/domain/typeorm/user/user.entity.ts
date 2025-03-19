@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { EmailConfirmationToUser } from '../email-confirmation/email.confirmation.entity';
 import { SecurityDeviceToUser } from '../device/device.entity';
 import { BaseEntity } from '../../../../../core/domain/base.entity';
@@ -33,13 +33,15 @@ export class User extends BaseEntity {
     @OneToMany(() => SecurityDeviceToUser, securityDevice => securityDevice.user)
     securityDevices: SecurityDeviceToUser[];
 
-    static buildInstance(dto: any): User {
+    static buildInstance(dto: { login: string; email: string; password: string; sentEmailRegistration: boolean }): User {
         const user = new this();
         user.login = dto.login;
         user.email = dto.email;
         user.passwordHash = dto.password;
         user.sentEmailRegistration = dto.sentEmailRegistration;
 
+        // TODO: Переведи на агрегейшен рут
+        //user.emailConfirmation = new EmailConfirmationToUser();
         return user as User;
     }
 

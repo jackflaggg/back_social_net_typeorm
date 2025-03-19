@@ -93,10 +93,11 @@ export class UserRepositoryOrm {
         return result;
     }
     async findCodeToEmailRegistration(code: string) {
-        const result = await this.userRepositoryTypeOrm
+        const result = await this.emailConfirmationRepositoryTypeOrm
             .createQueryBuilder('em')
+            //.select(['em.confirmation_code AS confirmationCode, em.expiration_date AS expirationDate, em.is_confirmed AS isConfirmed'])
             .where('em.confirmation_code = :code', { code })
-            .getRawOne();
+            .getOne();
         if (!result) {
             return void 0;
         }

@@ -3,6 +3,7 @@ import { Inject } from '@nestjs/common';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
 import { PasswordRecoveryRepositoryOrm } from '../../../infrastructure/typeorm/password/password.orm.recovery.repository';
+import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 
 export class RegistrationConfirmationUserCommand {
     constructor(public readonly code: string) {}
@@ -24,8 +25,9 @@ export class RegistrationConfirmationUserUseCase implements ICommandHandler<Regi
         // 2. ищу код в email_confirmation
         const findCode = await this.usersRepository.findCodeToEmailRegistration(command.code);
 
+        console.log(findCode);
         // P.S. Специфичная обработка ошибки для тестов!
-        if (!findCode || command.code !== findCode.confirmationCode) {
+        if (!findCode || command.code !== findCode.confirmationCode || !(findCode instanceof EmailConfirmationToUser)) {
             throw BadRequestDomainException.create('код не найден', 'code');
         }
 
@@ -45,12 +47,12 @@ export class RegistrationConfirmationUserUseCase implements ICommandHandler<Regi
         }
 
         // 5. обновляю
-        const userEntity = await this.usersRepository.findUserById(findCode);
-
         const confirmationCode = '+';
+
         const isConfirmed = true;
 
-        //userEntity.updateEmailConfirmation(confirmationCode, isConfirmed);
-        return await this.usersRepository.save(userEntity);
+        findCode.updateEmailConfirmation(confirmationCode, isConfirmed);
+
+        return await this.usersRepository.saveEmailConfirmation(findCode);
     }
 }
