@@ -16,6 +16,8 @@ export const envModule = ConfigModule.forRoot({
         join(__dirname, `./env/.env.${process.env.NODE_ENV}`),
         // низкий приоритет
         join(__dirname, './env/.env.production'),
+        // низкий приоритет
+        join(__dirname, './env/.env.testing'),
     ],
     isGlobal: true,
 });
