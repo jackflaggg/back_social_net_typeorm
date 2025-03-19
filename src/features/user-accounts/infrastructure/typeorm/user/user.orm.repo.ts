@@ -7,12 +7,14 @@ import {
     NotFoundDomainException,
     UnauthorizedDomainException,
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { RecoveryPasswordToUser } from '../../../domain/typeorm/password-recovery/pass-rec.entity';
 
 @Injectable()
 export class UserRepositoryOrm {
     constructor(
         @InjectRepository(User) private userRepositoryTypeOrm: Repository<User>,
         @InjectRepository(EmailConfirmationToUser) private emailConfirmationRepositoryTypeOrm: Repository<EmailConfirmationToUser>,
+        @InjectRepository(RecoveryPasswordToUser) private recoveryPasswordRepositoryTypeOrm: Repository<RecoveryPasswordToUser>,
         @InjectEntityManager() private readonly entityManager: EntityManager,
     ) {}
     async save(entity: User) {
@@ -53,6 +55,17 @@ export class UserRepositoryOrm {
             .where('(u.login = :loginOrEmail OR u.email = :loginOrEmail)', { loginOrEmail })
             .andWhere('u.deleted_at IS NULL')
             .getRawOne();
+        if (!result) {
+            return void 0;
+        }
+        return result;
+    }
+    async findUserByEmail(email: string) {
+        const result = await this.userRepositoryTypeOrm
+            .createQueryBuilder('u')
+            .innerJoinAndSelect('email_confirmation_to_user', 'em', 'u.id = em.user_id')
+            .where('u.email = :email AND u.deleted_at IS NULL', { email })
+            .getOne();
         if (!result) {
             return void 0;
         }
@@ -110,5 +123,9 @@ export class UserRepositoryOrm {
             userId: result.userId,
             confirmationCode: result.confirmationCode,
         };
+    }
+
+    async saveRecoveryPassword(entity: RecoveryPasswordToUser) {
+        await this.recoveryPasswordRepositoryTypeOrm.save(entity);
     }
 }

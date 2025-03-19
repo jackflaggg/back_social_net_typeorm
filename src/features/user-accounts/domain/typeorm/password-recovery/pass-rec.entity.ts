@@ -19,7 +19,13 @@ export class RecoveryPasswordToUser {
     @JoinColumn({ name: 'user_id' })
     user: User;
 
-    static buildInstance(dto: any) {}
+    static buildInstance(dto: any, userId: number) {
+        const result = new RecoveryPasswordToUser();
+        result.recoveryCode = dto.recoveryCode;
+        result.recoveryExpirationDate = dto.recoveryExpirationDate;
+        result.userId = userId;
+        return result;
+    }
     public updateStatus() {
         this.used = true;
     }

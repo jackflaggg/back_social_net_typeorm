@@ -3,14 +3,12 @@ import { Inject } from '@nestjs/common';
 import { EmailService } from '../../../../notifications/application/mail.service';
 import { randomUUID } from 'node:crypto';
 import { add } from 'date-fns/add';
-import { emailConfirmationData, emailConfirmationDataAdmin } from '../../../../../core/utils/user/email-confirmation-data.admin';
-import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
-import { PasswordRecoveryPgRepository } from '../../../infrastructure/postgres/password/password.pg.recovery.repository';
 import { BcryptService } from '../../other_services/bcrypt.service';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
-import { PasswordRecoveryRepositoryOrm } from '../../../infrastructure/typeorm/password/password.orm.recovery.repository';
 import { User } from '../../../domain/typeorm/user/user.entity';
 import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
+import { RecoveryPasswordToUser } from '../../../domain/typeorm/password-recovery/pass-rec.entity';
+import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 export class PasswordRecoveryUserCommand {
     constructor(public readonly email: string) {}
@@ -20,14 +18,13 @@ export class PasswordRecoveryUserCommand {
 export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordRecoveryUserCommand> {
     constructor(
         @Inject() private readonly usersRepository: UserRepositoryOrm,
-        @Inject() private readonly passwordRepository: PasswordRecoveryRepositoryOrm,
         private readonly bcryptService: BcryptService,
         private readonly mailer: EmailService,
     ) {}
     async execute(command: PasswordRecoveryUserCommand) {
-        const findUser = await this.usersRepository.findUserByLoginOrEmail(command.email);
+        const findUser = await this.usersRepository.findUserByEmail(command.email);
 
-        if (!findUser) {
+        if (!findUser || !findUser.id) {
             // если пользователя не существует, то мы его по тихому регаем!
             const login = command.email.substring(0, command.email.indexOf('@'));
 
@@ -40,9 +37,12 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
                 sentEmailRegistration: true,
             };
 
+            // создаю юзера
             const newUser = User.buildInstance(userDto);
+
             const userId = await this.usersRepository.save(newUser);
 
+            // создаю запись в emailConfirmation!
             const confirmationCode = randomUUID();
 
             const codeExpirationDate = add(new Date(), { hours: 1, minutes: 30 });
@@ -56,35 +56,46 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
             const newEmailConfirmationUser = EmailConfirmationToUser.buildInstance(emailConfirmationUserDto, userId);
 
             await this.usersRepository.saveEmailConfirmation(newEmailConfirmationUser);
-            // await this.passwordRepository.createPasswordRecovery(String(userId), confirmationCode, codeExpirationDate);
+
+            const recoveryCode = randomUUID();
+
+            const recoveryPasswordDto = {
+                recoveryCode,
+                recoveryExpirationDate: codeExpirationDate,
+            };
+
+            const newRecoveryPassword = RecoveryPasswordToUser.buildInstance(recoveryPasswordDto, userId);
 
             this.mailer
-                .sendPasswordRecoveryMessage(command.email, newUser.emailConfirmation.confirmationCode)
+                .sendPasswordRecoveryMessage(command.email, newRecoveryPassword.recoveryCode)
                 .then(() => {
-                    this.usersRepository.saveEmailConfirmation(newEmailConfirmationUser);
+                    this.usersRepository.saveRecoveryPassword(newRecoveryPassword);
                 })
                 .catch((err: unknown) => {
                     console.log(String(err));
                 });
-        } else {
-            // если существует, то обновляем ему emailConf в юзербд + создаем запись в пассвордбд
-            const generateCode = randomUUID();
+        }
 
-            const newExpirationDate = add(new Date(), {
-                hours: 1,
-                minutes: 30,
-            });
+        const recoveryCode = randomUUID();
 
-            const newIsConfirmed = false;
+        const codeExpirationDate = add(new Date(), { hours: 1, minutes: 30 });
 
-            findUser.updateUserToCodeAndDate(generateCode, newExpirationDate, newIsConfirmed);
-            await this.usersRepository.save(findUser);
+        const recoveryPasswordDto = {
+            recoveryCode,
+            recoveryExpirationDate: codeExpirationDate,
+        };
 
-            // await this.passwordRepository.createPasswordRecovery(findUser.id, generateCode, newExpirationDate);
+        if (!findUser) throw BadRequestDomainException.create('произошла критическая ошибка!', 'user');
 
-            this.mailer.sendPasswordRecoveryMessage(command.email, findUser.confirmationCode).catch((err: unknown) => {
+        const newRecoveryPassword = RecoveryPasswordToUser.buildInstance(recoveryPasswordDto, findUser.id);
+
+        this.mailer
+            .sendPasswordRecoveryMessage(command.email, newRecoveryPassword.recoveryCode)
+            .then(() => {
+                this.usersRepository.saveRecoveryPassword(newRecoveryPassword);
+            })
+            .catch((err: unknown) => {
                 console.log(String(err));
             });
-        }
     }
 }
