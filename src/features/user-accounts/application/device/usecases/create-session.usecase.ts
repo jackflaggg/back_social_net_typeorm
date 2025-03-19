@@ -25,7 +25,7 @@ export class CreateSessionUseCase implements ICommandHandler<CreateSessionComman
             userId: command.userId,
             createdAt: command.dateDevice,
         };
-        const session = SecurityDeviceToUser.buildInstance(sessionDate);
-        return await this.sessionRepository.save(session);
+        const session = SecurityDeviceToUser.buildInstance(sessionDate, +command.userId);
+        await this.sessionRepository.save(session);
     }
 }

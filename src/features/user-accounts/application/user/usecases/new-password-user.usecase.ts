@@ -30,7 +30,7 @@ export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCo
             throw BadRequestDomainException.create('данный код был уже использован!', 'code');
         }
 
-        const user = await this.usersRepository.getPasswordUserEntity(findCode['user_id']);
+        const user = await this.usersRepository.getPasswordUser(findCode['user_id']);
 
         const newPasswordHash = await this.bcryptService.hashPassword(user.passwordHash);
 
@@ -38,6 +38,8 @@ export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCo
 
         await this.usersRepository.save(user);
 
-        //await this.passwordRepository.updateStatus(findCode.id);
+        findCode.updateStatus();
+
+        await this.usersRepository.saveRecoveryPassword(findCode);
     }
 }

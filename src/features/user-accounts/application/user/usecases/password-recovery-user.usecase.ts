@@ -24,7 +24,7 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
     async execute(command: PasswordRecoveryUserCommand) {
         const findUser = await this.usersRepository.findUserByEmail(command.email);
 
-        if (!findUser || !findUser.id) {
+        if (!findUser) {
             // если пользователя не существует, то мы его по тихому регаем!
             const login = command.email.substring(0, command.email.indexOf('@'));
 

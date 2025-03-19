@@ -26,7 +26,7 @@ export class SecurityDeviceToUser {
     @JoinColumn({ name: 'user_id' })
     user: User;
 
-    static buildInstance(dto: any) {
+    static buildInstance(dto: any, userId: number) {
         const session = new SecurityDeviceToUser();
 
         session.deviceId = dto.deviceId;
@@ -34,6 +34,8 @@ export class SecurityDeviceToUser {
         session.deviceName = dto.userAgent;
         session.userId = dto.userId;
         session.issuedAt = dto.createdAt;
+
+        session.userId = userId;
 
         return session as SecurityDeviceToUser;
     }

@@ -16,7 +16,7 @@ export class RegistrationEmailResendUserUseCase implements ICommandHandler<Regis
         private readonly mailer: EmailService,
     ) {}
     async execute(command: RegistrationEmailResendUserCommand) {
-        const user = await this.usersRepository.findUserByLoginOrEmail(command.email);
+        const user = await this.usersRepository.findUserByEmailRaw(command.email);
 
         if (!user) {
             throw BadRequestDomainException.create('юзера не существует', 'email');
@@ -35,11 +35,11 @@ export class RegistrationEmailResendUserUseCase implements ICommandHandler<Regis
 
         emailConfirmation.updateUserToCodeAndDate(emailConfirmDto);
 
-        await this.usersRepository.saveEmailConfirmation(emailConfirmation);
-
         this.mailer
             .sendEmailRecoveryMessage(user.email, emailConfirmDto.confirmationCode)
-            .then(() => {})
+            .then(() => {
+                this.usersRepository.saveEmailConfirmation(emailConfirmation);
+            })
             .catch(async (err: unknown) => {
                 console.log(String(err));
             });

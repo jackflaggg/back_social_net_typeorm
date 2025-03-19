@@ -8,6 +8,7 @@ import {
     UnauthorizedDomainException,
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { RecoveryPasswordToUser } from '../../../domain/typeorm/password-recovery/pass-rec.entity';
+import { userEmailMapper } from '../../../../../core/utils/user/find.user.by.email.mapper';
 
 @Injectable()
 export class UserRepositoryOrm {
@@ -58,7 +59,7 @@ export class UserRepositoryOrm {
         if (!result) {
             return void 0;
         }
-        return result;
+        return userEmailMapper(result);
     }
     async findUserByEmail(email: string) {
         const result = await this.userRepositoryTypeOrm
@@ -70,6 +71,24 @@ export class UserRepositoryOrm {
             return void 0;
         }
         return result;
+    }
+    async findUserByEmailRaw(email: string) {
+        const result = await this.userRepositoryTypeOrm
+            .createQueryBuilder('u')
+            .select([
+                'u.id AS id',
+                'u.email AS email',
+                'u.password_hash AS password',
+                'em.is_confirmed AS isConfirmed',
+                'em.confirmation_code AS confirmationCode',
+            ])
+            .innerJoin('email_confirmation_to_user', 'em', 'u.id = em.user_id')
+            .where('u.email = :loginOrEmail AND u.deleted_at IS NULL', { email })
+            .getRawOne();
+        if (!result) {
+            return void 0;
+        }
+        return userEmailMapper(result);
     }
     async findUserAuth(userId: string) {
         const result = await this.userRepositoryTypeOrm
@@ -83,10 +102,9 @@ export class UserRepositoryOrm {
         }
         return result;
     }
-    async getPasswordUserEntity(userId: string) {
+    async getPasswordUser(userId: string) {
         const result = await this.userRepositoryTypeOrm
             .createQueryBuilder('u')
-            .select('u.id as id, u.password_hash AS password')
             .where('u.deleted_at IS NULL AND u.id = :userId', { userId })
             .getOne();
         if (!result) {
