@@ -52,6 +52,6 @@ export class RegistrationConfirmationUserUseCase implements ICommandHandler<Regi
 
         findCode.updateEmailConfirmation(confirmationCode, isConfirmed);
 
-        return await this.usersRepository.saveEmailConfirmation(findCode);
+        await this.usersRepository.saveEmailConfirmation(findCode);
     }
 }
