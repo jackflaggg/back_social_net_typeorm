@@ -10,6 +10,7 @@ import { BcryptService } from '../../other_services/bcrypt.service';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
 import { PasswordRecoveryRepositoryOrm } from '../../../infrastructure/typeorm/password/password.orm.recovery.repository';
 import { User } from '../../../domain/typeorm/user/user.entity';
+import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 
 export class PasswordRecoveryUserCommand {
     constructor(public readonly email: string) {}
@@ -32,18 +33,11 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
 
             const newPasswordHash = await this.bcryptService.hashPassword('');
 
-            const emailConfirmationData = emailConfirmationDataAdmin();
-
             const userDto = {
                 login: login,
                 email: command.email,
                 password: newPasswordHash,
                 sentEmailRegistration: true,
-                emailConfirmation: {
-                    confirmationCode: emailConfirmationData.emailConfirmation.confirmationCode,
-                    expirationDate: emailConfirmationData.emailConfirmation.expirationDate,
-                    isConfirmed: emailConfirmationData.emailConfirmation.isConfirmed,
-                },
             };
 
             const newUser = User.buildInstance(userDto);
@@ -53,11 +47,25 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
 
             const codeExpirationDate = add(new Date(), { hours: 1, minutes: 30 });
 
+            const emailConfirmationUserDto = {
+                confirmationCode,
+                expirationDate: codeExpirationDate,
+                isConfirmed: false,
+            };
+
+            const newEmailConfirmationUser = EmailConfirmationToUser.buildInstance(emailConfirmationUserDto, userId);
+
+            await this.usersRepository.saveEmailConfirmation(newEmailConfirmationUser);
             // await this.passwordRepository.createPasswordRecovery(String(userId), confirmationCode, codeExpirationDate);
 
-            this.mailer.sendPasswordRecoveryMessage(command.email, newUser.emailConfirmation.confirmationCode).catch((err: unknown) => {
-                console.log(String(err));
-            });
+            this.mailer
+                .sendPasswordRecoveryMessage(command.email, newUser.emailConfirmation.confirmationCode)
+                .then(() => {
+                    this.usersRepository.saveEmailConfirmation(newEmailConfirmationUser);
+                })
+                .catch((err: unknown) => {
+                    console.log(String(err));
+                });
         } else {
             // если существует, то обновляем ему emailConf в юзербд + создаем запись в пассвордбд
             const generateCode = randomUUID();
