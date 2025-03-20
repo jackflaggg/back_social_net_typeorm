@@ -56,6 +56,7 @@ export class UserRepositoryOrm {
             .where('(u.login = :loginOrEmail OR u.email = :loginOrEmail)', { loginOrEmail })
             .andWhere('u.deleted_at IS NULL')
             .getRawOne();
+        console.log(result);
         if (!result) {
             return void 0;
         }
@@ -83,7 +84,7 @@ export class UserRepositoryOrm {
                 'em.confirmation_code AS confirmationCode',
             ])
             .innerJoin('email_confirmation_to_user', 'em', 'u.id = em.user_id')
-            .where('u.email = :loginOrEmail AND u.deleted_at IS NULL', { email })
+            .where('u.email = :email AND u.deleted_at IS NULL', { email })
             .getRawOne();
         if (!result) {
             return void 0;
@@ -100,7 +101,9 @@ export class UserRepositoryOrm {
         if (!result) {
             throw UnauthorizedDomainException.create();
         }
-        return result;
+        return {
+            userId: result.userid,
+        };
     }
     async getPasswordUser(userId: string) {
         const result = await this.userRepositoryTypeOrm

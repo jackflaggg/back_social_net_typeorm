@@ -20,14 +20,16 @@ import { DeletePostToBlogCommand } from '../application/usecases/delete-post-to-
 import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optional-auth.guard';
 import { ExtractAnyUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
 import { UserJwtPayloadDto } from '../../../user-accounts/strategies/refresh.strategy';
+import { BlogsQueryRepositoryOrm } from '../infrastructure/typeorm/query/blogs.pg.query.repository';
+import { PostsQueryRepositoryOrm } from '../../posts/infrastructure/typeorm/query/posts.pg.query.repository';
 
 @Controller(SETTINGS.PATH.SA_BLOGS)
 @UseGuards(BasicAuthGuard)
 export class BlogsSaController {
     constructor(
         private readonly commandBus: CommandBus,
-        private readonly blogsQueryRepository: BlogsPgQueryRepository,
-        private readonly postsQueryRepository: PostsPgQueryRepository,
+        private readonly blogsQueryRepository: BlogsQueryRepositoryOrm,
+        private readonly postsQueryRepository: PostsQueryRepositoryOrm,
     ) {}
 
     @Get()

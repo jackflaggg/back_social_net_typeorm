@@ -26,6 +26,7 @@ export class UserQueryRepositoryOrm {
         const cteToCountUsers =
             '(SELECT COUNT(*) FROM users WHERE deleted_at IS NULL AND (login ILIKE :login OR email ILIKE :email)) AS totalCount';
 
+        console.log(sortDirection);
         const resultUsers = await this.userRepositoryTypeOrm
             .createQueryBuilder('u')
             .select(['u.id as id', 'u.login as login', 'u.email as email', 'u.created_at AS createdAt', cteToCountUsers])
@@ -68,10 +69,11 @@ export class UserQueryRepositoryOrm {
     async getMe(userId: string) {
         const result = await this.userRepositoryTypeOrm
             .createQueryBuilder('u')
-            .select('u.id AS userId, u.login as login, u.email as email')
+            .select('u.id, u.login AS login, u.email AS email')
             .where('u.id = :userId AND u.deleted_at IS NULL', { userId })
             .getRawOne();
         if (!result) {
+            console.log(userId);
             throw NotFoundDomainException.create('юзер не найден', 'userId');
         }
 

@@ -20,7 +20,7 @@ export interface QueryUsersOutputInterface {
 
 export const getUsersQuery = (queryUser: QueryUsers): QueryUsersOutputInterface => ({
     sortBy: queryUser.sortBy ?? 'createdAt',
-    sortDirection: queryUser.sortDirection === SortDirection.Asc ? SortDirection.Asc : SortDirection.Desc,
+    sortDirection: queryUser.sortDirection?.toUpperCase() === SortDirection.Asc ? SortDirection.Asc : SortDirection.Desc,
     pageNumber: queryUser.pageNumber ?? 1,
     pageSize: queryUser.pageSize ?? 10,
     searchLoginTerm: queryUser.searchLoginTerm ?? '',

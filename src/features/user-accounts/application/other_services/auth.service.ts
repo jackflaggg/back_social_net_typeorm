@@ -10,6 +10,7 @@ export class AuthService {
 
     async validateUser(userName: string, password: string): Promise<findUserByLoginOrEmailInterface> {
         const user = await this.usersRepository.findUserByLoginOrEmail(userName);
+
         if (!user) {
             throw UnauthorizedDomainException.create();
         }

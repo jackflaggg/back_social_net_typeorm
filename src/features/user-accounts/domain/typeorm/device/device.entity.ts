@@ -13,9 +13,6 @@ export class SecurityDeviceToUser {
     @Column({ name: 'ip', type: 'varchar', default: '255.255.255.255' })
     ip: string;
 
-    @Column({ name: 'user_id' })
-    userId: number;
-
     @CreateDateColumn({ name: 'issued_at', type: 'timestamptz' })
     issuedAt: Date;
 
@@ -26,21 +23,20 @@ export class SecurityDeviceToUser {
     @JoinColumn({ name: 'user_id' })
     user: User;
 
-    static buildInstance(dto: any, userId: number) {
+    static buildInstance(dto: any, user: User) {
         const session = new SecurityDeviceToUser();
 
         session.deviceId = dto.deviceId;
         session.ip = dto.ip;
         session.deviceName = dto.userAgent;
-        session.userId = dto.userId;
         session.issuedAt = dto.createdAt;
 
-        session.userId = userId;
+        session.user = user;
 
         return session as SecurityDeviceToUser;
     }
 
-    private markDeleted() {
+    public markDeleted() {
         // метод обертка!
         if (!isNull(this.deletedAt)) throw new Error('Данный объект уже был помечен на удаление');
 

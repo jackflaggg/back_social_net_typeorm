@@ -10,7 +10,7 @@ import { ParentTypes } from '../../../../../../libs/contracts/enums/parent.type.
 import { StatusLike } from '../../../../../../libs/contracts/enums/status.like';
 
 @Injectable()
-export class PostsPgQueryRepository {
+export class PostsQueryRepositoryOrm {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
     async getAllPosts(queryData: GetPostsQueryParams, userId: string | null, blogId?: string) {
         const updateQueryBlogId = blogId ? `AND p."blog_id" = ${blogId}` : ``;

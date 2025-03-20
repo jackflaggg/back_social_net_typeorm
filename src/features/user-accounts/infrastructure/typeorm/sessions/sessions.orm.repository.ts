@@ -14,6 +14,8 @@ export class SessionsRepositoryOrm {
     async findSessionByDeviceId(deviceId: string) {
         const result = await this.sessionsRepositoryTypeOrm
             .createQueryBuilder('s')
+            .leftJoinAndSelect('s.user', 'user') // Добавляем это для загрузки пользователя
+            .select(['s.deviceId', 's.deviceName', 's.ip', 's.issuedAt', 's.deletedAt', 'user.id'])
             .where('s.deleted_at IS NULL AND s.device_id = :deviceId', { deviceId })
             .getOne();
         if (!result) {
@@ -24,10 +26,11 @@ export class SessionsRepositoryOrm {
 
     async deleteAllSessions(userId: string, deviceId: string) {
         const issuedAt = new Date().toISOString();
-        const query = `
-            UPDATE "security_device"
-            SET "deleted_at" = $1
-            WHERE "device_id" <> $2 AND "user_id" = $3;`;
-        return await this.sessionsRepositoryTypeOrm.query(query, [issuedAt, deviceId, userId]);
+        await this.sessionsRepositoryTypeOrm
+            .createQueryBuilder()
+            .update(SecurityDeviceToUser)
+            .set({ deletedAt: issuedAt })
+            .where('device_id <> :deviceId AND user_id = :userId', { deviceId, userId })
+            .execute();
     }
 }

@@ -13,4 +13,6 @@ export const typeOrmDb = (coreConfig: AppConfig) =>
         synchronize: true,
         autoLoadEntities: true,
         logging: false,
+        seeds: ['src/seed/seeds/**/*{.ts,.js}'],
+        factories: ['src/seed/factory/**/*{.ts,.js}'],
     }) as TypeOrmModuleAsyncOptions;

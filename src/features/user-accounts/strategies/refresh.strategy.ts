@@ -3,8 +3,6 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { UnauthorizedDomainException } from '../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { AppConfig } from '../../../core/config/app.config';
-import { UserPgRepository } from '../infrastructure/postgres/user/user.pg.repository';
-import { SessionsPgRepository } from '../infrastructure/postgres/sessions/sessions.pg.repository';
 import { UserRepositoryOrm } from '../infrastructure/typeorm/user/user.orm.repo';
 import { SessionsRepositoryOrm } from '../infrastructure/typeorm/sessions/sessions.orm.repository';
 
@@ -40,14 +38,17 @@ export class JwtRefreshAuthPassportStrategy extends PassportStrategy(Strategy, '
         const device = await this.securityDevicesRepository.findSessionByDeviceId(payload.deviceId);
 
         if (!device) {
+            console.log('возможно тут логоут и скидывает!');
             throw UnauthorizedDomainException.create();
         }
 
         const unixTimestamp = Math.floor(device.issuedAt.getTime() / 1000);
 
         if (unixTimestamp !== payload.iat) {
+            console.log('сессия истекла');
             throw UnauthorizedDomainException.create();
         }
+
         return payload;
     }
 }

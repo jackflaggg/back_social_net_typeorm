@@ -9,13 +9,15 @@ import { SETTINGS } from '../../../../core/settings';
 import { BlogsPgQueryRepository } from '../infrastructure/postgres/query/blogs.pg.query.repository';
 import { PostsPgQueryRepository } from '../../posts/infrastructure/postgres/query/posts.pg.query.repository';
 import { ValidateSerialPipe } from '../../../../core/pipes/validation.input.serial';
+import { BlogsQueryRepositoryOrm } from '../infrastructure/typeorm/query/blogs.pg.query.repository';
+import { PostsQueryRepositoryOrm } from '../../posts/infrastructure/typeorm/query/posts.pg.query.repository';
 
 @Controller(SETTINGS.PATH.BLOGS)
 export class BlogsController {
     constructor(
         private readonly commandBus: CommandBus,
-        private readonly blogsQueryRepository: BlogsPgQueryRepository,
-        private readonly postsQueryRepository: PostsPgQueryRepository,
+        private readonly blogsQueryRepository: BlogsQueryRepositoryOrm,
+        private readonly postsQueryRepository: PostsQueryRepositoryOrm,
     ) {}
 
     // мне нужно, чтоб эта ручка была чисто по blogs, а остальные по /sa/blogs

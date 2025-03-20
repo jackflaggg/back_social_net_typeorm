@@ -23,18 +23,15 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
         private readonly coreConfig: AppConfig,
     ) {}
     async execute(command: RefreshTokenUserCommand) {
-        if (!command.userId) {
-            throw UnauthorizedDomainException.create();
-        }
-        // таким образом я удаляю старую сессию при обновлении!
         const session = await this.sessionRepository.findSessionByDeviceId(command.deviceId);
 
         if (!session) {
             throw UnauthorizedDomainException.create('возможно это удаленная сессия!', 'sessionRepository');
         }
 
-        // TODO: Верно ли удалять по идентификатору записи или нужно по девайсАйди
-        // await this.sessionRepository.removeOldSession(session.id);
+        // я не удаляю сессию, я лишь ее обновляю!
+        session.issuedAt = new Date();
+        await this.sessionRepository.save(session);
 
         // генерация новых токенов
         const userId = command.userId;

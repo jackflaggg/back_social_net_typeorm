@@ -19,11 +19,9 @@ export interface emailConfirmationData {
 
 export function emailConfirmationDataAdmin() {
     return {
-        emailConfirmation: {
-            confirmationCode: '+',
-            expirationDate: new Date(),
-            isConfirmed: true,
-        },
+        confirmationCode: '+',
+        expirationDate: new Date(),
+        isConfirmed: true,
     };
 }
 

@@ -5,6 +5,7 @@ import { BcryptService } from '../../other_services/bcrypt.service';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
 import { User } from '../../../domain/typeorm/user/user.entity';
+import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 
 export class CreateUserCommand {
     constructor(public readonly payload: UserCreateDtoService) {}
@@ -28,22 +29,21 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
 
         const hashPassword = await this.bcryptService.hashPassword(command.payload.password);
 
-        const emailConfirmationData = emailConfirmationDataAdmin();
-
         const userDto = {
             login: command.payload.login,
             email: command.payload.email,
             password: hashPassword,
             sentEmailRegistration: true,
-            emailConfirmation: {
-                confirmationCode: emailConfirmationData.emailConfirmation.confirmationCode,
-                expirationDate: emailConfirmationData.emailConfirmation.expirationDate,
-                isConfirmed: emailConfirmationData.emailConfirmation.isConfirmed,
-            },
         };
 
         const userAggregationRoot = User.buildInstance(userDto);
 
-        return await this.userRepository.save(userAggregationRoot);
+        const emailConfirmationDto = emailConfirmationDataAdmin();
+
+        const userId = await this.userRepository.save(userAggregationRoot);
+
+        const emailConfirmationRoot = EmailConfirmationToUser.buildInstance(emailConfirmationDto, userId);
+        await this.userRepository.saveEmailConfirmation(emailConfirmationRoot);
+        return userId;
     }
 }

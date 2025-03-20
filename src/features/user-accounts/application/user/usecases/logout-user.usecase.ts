@@ -19,12 +19,13 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
             throw NotFoundDomainException.create('девайс не найден!');
         }
 
-        // const isOwner = currentDevice.userId === command.dtoUser.userId;
-        //
-        // if (!isOwner) {
-        //     throw ForbiddenDomainException.create('этот девайс не ваш!');
-        // }
-        //
-        // await this.sessionRepository.removeOldSession(currentDevice.id);
+        const isOwner = currentDevice.user.id === Number(command.dtoUser.userId);
+
+        if (!isOwner) {
+            throw ForbiddenDomainException.create('этот девайс не ваш!');
+        }
+
+        currentDevice.markDeleted();
+        await this.sessionRepository.save(currentDevice);
     }
 }

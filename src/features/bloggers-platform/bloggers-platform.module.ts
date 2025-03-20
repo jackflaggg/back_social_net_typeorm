@@ -34,32 +34,28 @@ import { StatusPgRepository } from './likes/infrastructure/postgres/status.pg.re
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Blog } from './blogs/domain/typeorm/blog.entity';
 import { Post } from './posts/domain/typeorm/post.entity';
+import { BlogsRepositoryOrm } from './blogs/infrastructure/typeorm/blogs.pg.repository';
+import { BlogsQueryRepositoryOrm } from './blogs/infrastructure/typeorm/query/blogs.pg.query.repository';
+import { PostsRepositoryOrm } from './posts/infrastructure/typeorm/posts.pg.repository';
+import { PostsQueryRepositoryOrm } from './posts/infrastructure/typeorm/query/posts.pg.query.repository';
 
-const repositoriesPostgres = [
-    BlogsPgQueryRepository,
-    BlogsPgRepository,
-    PostsPgRepository,
-    PostsPgQueryRepository,
-    CommentsPgQueryRepository,
-    CommentsPgRepository,
-    StatusPgRepository,
-];
+const repositories = [BlogsRepositoryOrm, BlogsQueryRepositoryOrm, PostsRepositoryOrm, PostsQueryRepositoryOrm];
 const useCases = [
     CreateBlogUseCase,
     DeleteBlogUseCase,
     UpdateBlogUseCase,
-    CreatePostToBlogUseCase,
-    CreateCommentUseCase,
-    CreatePostUseCase,
-    DeletePostUseCase,
-    UpdatePostUseCase,
-    UpdatePostToBlogUseCase,
-    DeletePostToBlogUseCase,
-    LikePostUseCase,
-    DeleteCommentUseCase,
-    CheckUserCommentUseCase,
-    UpdateStatusCommentUseCase,
-    UpdateContentCommentUseCase,
+    // CreatePostToBlogUseCase,
+    // CreateCommentUseCase,
+    // CreatePostUseCase,
+    // DeletePostUseCase,
+    // UpdatePostUseCase,
+    // UpdatePostToBlogUseCase,
+    // DeletePostToBlogUseCase,
+    // LikePostUseCase,
+    // DeleteCommentUseCase,
+    // CheckUserCommentUseCase,
+    // UpdateStatusCommentUseCase,
+    // UpdateContentCommentUseCase,
 ];
 
 @Module({
@@ -80,7 +76,7 @@ const useCases = [
         CqrsModule,
         UsersModule,
     ],
-    controllers: [BlogsController, BlogsSaController, PostsController, CommentController],
-    providers: [...repositoriesPostgres, ...useCases],
+    controllers: [BlogsController, BlogsSaController /*, PostsController, CommentController*/],
+    providers: [...repositories, ...useCases],
 })
 export class BloggersPlatformModule {}

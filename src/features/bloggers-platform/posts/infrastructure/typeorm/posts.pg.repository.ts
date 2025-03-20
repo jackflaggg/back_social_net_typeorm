@@ -5,7 +5,7 @@ import { PostToBlogCreateDtoApi } from '../../../blogs/dto/api/blog.to.post.crea
 import { PostUpdateDtoApi } from '../../dto/api/post.update.dto';
 
 @Injectable()
-export class PostsPgRepository {
+export class PostsRepositoryOrm {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
 
     async createPost(dto: PostToBlogCreateDtoApi, blogId: string) {

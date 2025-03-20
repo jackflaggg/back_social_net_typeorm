@@ -1,7 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SessionsRepositoryOrm } from '../../../infrastructure/typeorm/sessions/sessions.orm.repository';
 import { SecurityDeviceToUser } from '../../../domain/typeorm/device/device.entity';
-import { randomUUID } from 'node:crypto';
+import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
+import { User } from '../../../domain/typeorm/user/user.entity';
 
 export class CreateSessionCommand {
     constructor(
@@ -15,17 +16,23 @@ export class CreateSessionCommand {
 
 @CommandHandler(CreateSessionCommand)
 export class CreateSessionUseCase implements ICommandHandler<CreateSessionCommand> {
-    constructor(private readonly sessionRepository: SessionsRepositoryOrm) {}
-    async execute(command: CreateSessionCommand) {
-        const deviceSessionId = randomUUID();
+    constructor(
+        private readonly sessionRepository: SessionsRepositoryOrm,
+        private readonly userRepository: UserRepositoryOrm,
+    ) {}
+    async execute(command: CreateSessionCommand): Promise<void> {
         const sessionDate = {
-            deviceId: deviceSessionId,
+            deviceId: command.deviceId,
             ip: command.ip,
             userAgent: command.userAgent,
             userId: command.userId,
             createdAt: command.dateDevice,
         };
-        const session = SecurityDeviceToUser.buildInstance(sessionDate, +command.userId);
+
+        const findUser: User = await this.userRepository.findUserById(sessionDate.userId);
+
+        const session: SecurityDeviceToUser = SecurityDeviceToUser.buildInstance(sessionDate, findUser);
+
         await this.sessionRepository.save(session);
     }
 }

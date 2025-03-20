@@ -6,7 +6,7 @@ import { NotFoundDomainException } from '../../../../../core/exceptions/incubato
 import { Blog } from '../../domain/typeorm/blog.entity';
 
 @Injectable()
-export class BlogsPgRepository {
+export class BlogsRepositoryOrm {
     constructor(@InjectRepository(Blog) private blogsRepositoryTypeOrm: Repository<Blog>) {}
 
     async findBlogById(blogId: string): Promise<string> {

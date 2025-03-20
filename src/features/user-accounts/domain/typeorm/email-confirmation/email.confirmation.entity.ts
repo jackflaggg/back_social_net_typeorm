@@ -7,7 +7,7 @@ export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {
     @PrimaryColumn({ name: 'user_id' })
     userId: number;
 
-    @Column({ name: 'confirmation_code', type: 'varchar', length: 255, unique: true })
+    @Column({ name: 'confirmation_code', type: 'varchar', length: 255 })
     confirmationCode: string;
 
     @Column({ name: 'expiration_date', type: 'timestamptz', nullable: true })

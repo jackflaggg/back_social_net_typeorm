@@ -1,6 +1,7 @@
 import { BlogCreateDtoService } from '../../dto/service/blog.create.dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogsPgRepository } from '../../infrastructure/postgres/blogs.pg.repository';
+import { BlogsRepositoryOrm } from '../../infrastructure/typeorm/blogs.pg.repository';
 
 export interface BlogCreateRepositoryDto extends BlogCreateDtoService {
     createdAt: string;
@@ -11,7 +12,7 @@ export class CreateBlogCommand {
 
 @CommandHandler(CreateBlogCommand)
 export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
-    constructor(private readonly blogRepository: BlogsPgRepository) {}
+    constructor(private readonly blogRepository: BlogsRepositoryOrm) {}
     async execute(command: CreateBlogCommand) {
         const dto: BlogCreateRepositoryDto = {
             ...command.payload,
