@@ -1,6 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { StatusPgRepository } from '../../../likes/infrastructure/postgres/status.pg.repository';
 import { PostsPgRepository } from '../../infrastructure/postgres/posts.pg.repository';
+import { PostsRepositoryOrm } from '../../infrastructure/typeorm/posts.pg.repository';
+import { StatusRepositoryOrm } from '../../../likes/infrastructure/typeorm/statusRepositoryOrm';
 
 export class LikePostCommand {
     constructor(
@@ -13,8 +15,8 @@ export class LikePostCommand {
 @CommandHandler(LikePostCommand)
 export class LikePostUseCase implements ICommandHandler<LikePostCommand> {
     constructor(
-        private readonly statusRepository: StatusPgRepository,
-        private readonly postsRepository: PostsPgRepository,
+        private readonly statusRepository: StatusRepositoryOrm,
+        private readonly postsRepository: PostsRepositoryOrm,
     ) {}
 
     async execute(command: LikePostCommand) {

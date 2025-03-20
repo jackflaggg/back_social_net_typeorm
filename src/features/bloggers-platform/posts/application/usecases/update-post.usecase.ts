@@ -3,6 +3,8 @@ import { PostUpdateDtoService } from '../../dto/service/post.update.dto';
 import { BlogsPgRepository } from '../../../blogs/infrastructure/postgres/blogs.pg.repository';
 import { PostsPgRepository } from '../../infrastructure/postgres/posts.pg.repository';
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { BlogsRepositoryOrm } from '../../../blogs/infrastructure/typeorm/blogs.pg.repository';
+import { PostsRepositoryOrm } from '../../infrastructure/typeorm/posts.pg.repository';
 
 export class UpdatePostCommand {
     constructor(
@@ -14,8 +16,8 @@ export class UpdatePostCommand {
 @CommandHandler(UpdatePostCommand)
 export class UpdatePostUseCase implements ICommandHandler<UpdatePostCommand> {
     constructor(
-        private readonly blogsRepository: BlogsPgRepository,
-        private readonly postsRepository: PostsPgRepository,
+        private readonly blogsRepository: BlogsRepositoryOrm,
+        private readonly postsRepository: PostsRepositoryOrm,
     ) {}
 
     async execute(command: UpdatePostCommand) {

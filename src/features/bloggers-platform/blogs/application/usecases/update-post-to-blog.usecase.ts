@@ -3,6 +3,8 @@ import { BlogsPgRepository } from '../../infrastructure/postgres/blogs.pg.reposi
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { PostUpdateDtoApi } from '../../../posts/dto/api/post.update.dto';
 import { PostsPgRepository } from '../../../posts/infrastructure/postgres/posts.pg.repository';
+import { BlogsRepositoryOrm } from '../../infrastructure/typeorm/blogs.pg.repository';
+import { PostsRepositoryOrm } from '../../../posts/infrastructure/typeorm/posts.pg.repository';
 
 export class UpdatePostToBlogCommand {
     constructor(
@@ -15,8 +17,8 @@ export class UpdatePostToBlogCommand {
 @CommandHandler(UpdatePostToBlogCommand)
 export class UpdatePostToBlogUseCase implements ICommandHandler<UpdatePostToBlogCommand> {
     constructor(
-        private readonly blogRepository: BlogsPgRepository,
-        private readonly postRepository: PostsPgRepository,
+        private readonly blogRepository: BlogsRepositoryOrm,
+        private readonly postRepository: PostsRepositoryOrm,
     ) {}
     async execute(command: UpdatePostToBlogCommand) {
         const blog = await this.blogRepository.findBlogById(command.blogId);

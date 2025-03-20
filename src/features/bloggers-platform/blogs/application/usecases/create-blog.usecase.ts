@@ -1,10 +1,10 @@
 import { BlogCreateDtoService } from '../../dto/service/blog.create.dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BlogsPgRepository } from '../../infrastructure/postgres/blogs.pg.repository';
 import { BlogsRepositoryOrm } from '../../infrastructure/typeorm/blogs.pg.repository';
+import { Blog } from '../../domain/typeorm/blog.entity';
 
 export interface BlogCreateRepositoryDto extends BlogCreateDtoService {
-    createdAt: string;
+    createdAt: Date;
 }
 export class CreateBlogCommand {
     constructor(public readonly payload: BlogCreateDtoService) {}
@@ -16,8 +16,9 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
     async execute(command: CreateBlogCommand) {
         const dto: BlogCreateRepositoryDto = {
             ...command.payload,
-            createdAt: new Date().toISOString(),
+            createdAt: new Date(),
         };
-        return await this.blogRepository.createBlog(dto);
+        const blogEntity = Blog.buildInstance(dto);
+        return await this.blogRepository.save(blogEntity);
     }
 }

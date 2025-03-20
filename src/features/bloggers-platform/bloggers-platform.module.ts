@@ -38,29 +38,40 @@ import { BlogsRepositoryOrm } from './blogs/infrastructure/typeorm/blogs.pg.repo
 import { BlogsQueryRepositoryOrm } from './blogs/infrastructure/typeorm/query/blogs.pg.query.repository';
 import { PostsRepositoryOrm } from './posts/infrastructure/typeorm/posts.pg.repository';
 import { PostsQueryRepositoryOrm } from './posts/infrastructure/typeorm/query/posts.pg.query.repository';
+import { CommentsOrmQueryRepository } from './comments/infrastructure/typeorm/query/comments.orm.query.repository';
+import { CommentsRepositoryOrm } from './comments/infrastructure/typeorm/commentsRepositoryOrm';
+import { StatusRepositoryOrm } from './likes/infrastructure/typeorm/statusRepositoryOrm';
+import { CommentToUser } from './comments/domain/typeorm/comment.entity';
 
-const repositories = [BlogsRepositoryOrm, BlogsQueryRepositoryOrm, PostsRepositoryOrm, PostsQueryRepositoryOrm];
+const repositories = [
+    BlogsRepositoryOrm,
+    BlogsQueryRepositoryOrm,
+    PostsRepositoryOrm,
+    PostsQueryRepositoryOrm,
+    CommentsOrmQueryRepository,
+    CommentsRepositoryOrm,
+    StatusRepositoryOrm,
+];
 const useCases = [
     CreateBlogUseCase,
     DeleteBlogUseCase,
     UpdateBlogUseCase,
-    // CreatePostToBlogUseCase,
-    // CreateCommentUseCase,
-    // CreatePostUseCase,
-    // DeletePostUseCase,
-    // UpdatePostUseCase,
-    // UpdatePostToBlogUseCase,
-    // DeletePostToBlogUseCase,
-    // LikePostUseCase,
-    // DeleteCommentUseCase,
-    // CheckUserCommentUseCase,
-    // UpdateStatusCommentUseCase,
-    // UpdateContentCommentUseCase,
+    CreatePostToBlogUseCase,
+    CreateCommentUseCase,
+    CreatePostUseCase,
+    DeletePostUseCase,
+    UpdatePostUseCase,
+    UpdatePostToBlogUseCase,
+    DeletePostToBlogUseCase,
+    LikePostUseCase,
+    DeleteCommentUseCase,
+    CheckUserCommentUseCase,
+    UpdateStatusCommentUseCase,
+    UpdateContentCommentUseCase,
 ];
 
 @Module({
     imports: [
-        // Вы можете игнорировать expiresIn: '5m' в JwtModule.register(), так как в вашей логике этот параметр переопределяется.
         JwtModule.registerAsync({
             imports: [ConfigModule],
             // Указывает, какие зависимости нужно "внедрить" в фабричную функцию useFactory.
@@ -71,12 +82,12 @@ const useCases = [
                 signOptions: { expiresIn: coreConfig.accessTokenExpirationTime },
             }),
         }),
-        TypeOrmModule.forFeature([Blog, Post]),
+        TypeOrmModule.forFeature([Blog, Post, CommentToUser]),
         PassportModule,
         CqrsModule,
         UsersModule,
     ],
-    controllers: [BlogsController, BlogsSaController /*, PostsController, CommentController*/],
+    controllers: [BlogsController, BlogsSaController, PostsController, CommentController],
     providers: [...repositories, ...useCases],
 })
 export class BloggersPlatformModule {}

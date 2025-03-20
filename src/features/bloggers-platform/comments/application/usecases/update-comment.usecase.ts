@@ -1,6 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ForbiddenDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { CommentsPgRepository } from '../../infrastructure/postgres/comments.pg.repository';
+import { CommentsRepositoryOrm } from '../../infrastructure/typeorm/commentsRepositoryOrm';
 
 export class UpdateContentCommentCommand {
     constructor(
@@ -16,7 +17,7 @@ export class UpdateContentCommentCommand {
 // Это позволяет отделить команду от логики обработки
 @CommandHandler(UpdateContentCommentCommand)
 export class UpdateContentCommentUseCase implements ICommandHandler<UpdateContentCommentCommand> {
-    constructor(private readonly commentsRepository: CommentsPgRepository) {}
+    constructor(private readonly commentsRepository: CommentsRepositoryOrm) {}
     async execute(command: UpdateContentCommentCommand) {
         const comment = await this.commentsRepository.findCommentById(command.commentId);
         if (!comment) {

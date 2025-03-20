@@ -20,13 +20,15 @@ import { PostLikeStatusApi } from '../dto/api/like-status.dto';
 import { LikePostCommand } from '../application/usecases/like-post.usecase';
 import { GetCommentsQueryParams } from '../../comments/dto/repository/query/query-parans-comments';
 import { ValidateSerialPipe } from '../../../../core/pipes/validation.input.serial';
+import { PostsQueryRepositoryOrm } from '../infrastructure/typeorm/query/posts.pg.query.repository';
+import { CommentsOrmQueryRepository } from '../../comments/infrastructure/typeorm/query/comments.orm.query.repository';
 
 @Controller(SETTINGS.PATH.POSTS)
 export class PostsController {
     constructor(
         private readonly commandBus: CommandBus,
-        private readonly postsQueryRepository: PostsPgQueryRepository,
-        private readonly commentQueryRepository: CommentsPgQueryRepository,
+        private readonly postsQueryRepository: PostsQueryRepositoryOrm,
+        private readonly commentQueryRepository: CommentsOrmQueryRepository,
     ) {}
 
     @UseGuards(JwtOptionalAuthGuard)

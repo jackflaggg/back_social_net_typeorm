@@ -4,6 +4,9 @@ import { UserPgRepository } from '../../../../user-accounts/infrastructure/postg
 import { PostsPgRepository } from '../../../posts/infrastructure/postgres/posts.pg.repository';
 import { CommentsPgRepository } from '../../infrastructure/postgres/comments.pg.repository';
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { UserRepositoryOrm } from '../../../../user-accounts/infrastructure/typeorm/user/user.orm.repo';
+import { PostsRepositoryOrm } from '../../../posts/infrastructure/typeorm/posts.pg.repository';
+import { CommentsRepositoryOrm } from '../../infrastructure/typeorm/commentsRepositoryOrm';
 
 // класс для создания комментария
 export class CreateCommentCommand {
@@ -21,9 +24,9 @@ export class CreateCommentCommand {
 @CommandHandler(CreateCommentCommand)
 export class CreateCommentUseCase implements ICommandHandler<CreateCommentCommand> {
     constructor(
-        private readonly postsRepository: PostsPgRepository,
-        private readonly usersRepository: UserPgRepository,
-        private readonly commentsRepository: CommentsPgRepository,
+        private readonly postsRepository: PostsRepositoryOrm,
+        private readonly usersRepository: UserRepositoryOrm,
+        private readonly commentsRepository: CommentsRepositoryOrm,
     ) {}
     async execute(command: CreateCommentCommand) {
         const post = await this.postsRepository.findPostById(command.postId);
@@ -32,7 +35,7 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
         }
         const user = await this.usersRepository.findUserById(command.userId);
 
-        const comment = await this.commentsRepository.createComment(command.payload.content, post.id, user.id);
-        return comment[0].id;
+        // const comment = await this.commentsRepository.createComment(command.payload.content, post.id, user.id);
+        // return comment[0].id;
     }
 }

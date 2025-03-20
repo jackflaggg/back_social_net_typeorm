@@ -12,11 +12,12 @@ import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optio
 import { CommentsPgQueryRepository } from '../infrastructure/postgres/query/comments.pg.query.repository';
 import { SETTINGS } from '../../../../core/settings';
 import { ValidateSerialPipe } from '../../../../core/pipes/validation.input.serial';
+import { CommentsOrmQueryRepository } from '../infrastructure/typeorm/query/comments.orm.query.repository';
 
 @Controller(SETTINGS.PATH.COMMENTS)
 export class CommentController {
     constructor(
-        private readonly commentsQueryRepository: CommentsPgQueryRepository,
+        private readonly commentsQueryRepository: CommentsOrmQueryRepository,
         private readonly commandBus: CommandBus,
     ) {}
     @UseGuards(JwtOptionalAuthGuard)

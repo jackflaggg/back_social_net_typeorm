@@ -1,9 +1,10 @@
 import { BlogCreateDtoApi } from '../../dto/api/blog.create.dto';
 import { BlogUpdateDtoApi } from '../../dto/api/blog.update.dto';
 import { nameConstraints } from '../../../../../libs/contracts/constants/blog/blog-property.constraints';
-import { Column, CreateDateColumn, Entity } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { BaseEntity } from '../../../../../core/domain/base.entity';
 import { isNull } from '../../../../../core/utils/user/is.null';
+import { BlogCreateRepositoryDto } from '../../application/usecases/create-blog.usecase';
 
 @Entity('blogs')
 export class Blog extends BaseEntity {
@@ -19,11 +20,12 @@ export class Blog extends BaseEntity {
     @Column({ name: 'is_membership', type: Boolean, default: false })
     isMembership: boolean;
 
-    public static buildInstance(dto: BlogCreateDtoApi) {
+    public static buildInstance(dto: BlogCreateRepositoryDto) {
         const blog = new this();
         blog.name = dto.name;
         blog.description = dto.description;
         blog.websiteUrl = dto.websiteUrl;
+        blog.createdAt = dto.createdAt;
         return blog;
     }
 

@@ -22,6 +22,9 @@ import { ExtractAnyUserFromRequest } from '../../../../core/decorators/param/val
 import { UserJwtPayloadDto } from '../../../user-accounts/strategies/refresh.strategy';
 import { BlogsQueryRepositoryOrm } from '../infrastructure/typeorm/query/blogs.pg.query.repository';
 import { PostsQueryRepositoryOrm } from '../../posts/infrastructure/typeorm/query/posts.pg.query.repository';
+import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
+import { BlogOutInterface, BlogViewDto } from '../dto/repository/query/blog-view.dto';
+import { postOutInterface, PostViewDto } from '../../posts/dto/repository/post-view';
 
 @Controller(SETTINGS.PATH.SA_BLOGS)
 @UseGuards(BasicAuthGuard)
@@ -33,13 +36,13 @@ export class BlogsSaController {
     ) {}
 
     @Get()
-    async getBlogs(@Query() query: GetBlogsQueryParams) {
+    async getBlogs(@Query() query: GetBlogsQueryParams): Promise<PaginatedViewDto<BlogViewDto[]>> {
         return this.blogsQueryRepository.getAllBlogs(query);
     }
 
     @HttpCode(HttpStatus.CREATED)
     @Post()
-    async createBlog(@Body() dto: BlogCreateDtoApi) {
+    async createBlog(@Body() dto: BlogCreateDtoApi): Promise<BlogOutInterface> {
         const blogId = await this.commandBus.execute(new CreateBlogCommand(dto));
         return this.blogsQueryRepository.getBlog(blogId);
     }
@@ -63,7 +66,7 @@ export class BlogsSaController {
         @Param('blogId', ValidateSerialPipe) blogId: string,
         @Body() dto: PostToBlogCreateDtoApi,
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
-    ) {
+    ): Promise<postOutInterface> {
         const userId = dtoUser ? dtoUser.userId : null;
         const postId = await this.commandBus.execute(new CreatePostToBlogCommand(blogId, dto));
         return this.postsQueryRepository.getPost(postId[0].id, userId);
@@ -75,7 +78,7 @@ export class BlogsSaController {
         @Param('blogId', ValidateSerialPipe) blogId: string,
         @Query() query: GetPostsQueryParams,
         @ExtractAnyUserFromRequest() user: UserJwtPayloadDto,
-    ) {
+    ): Promise<PaginatedViewDto<PostViewDto[]>> {
         const userId = user ? user.userId : null;
         const blog = await this.blogsQueryRepository.getBlog(blogId);
         return this.postsQueryRepository.getAllPosts(query, userId, blog.id);

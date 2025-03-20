@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { BlogIntInterface, BlogOutInterface, BlogViewDto } from '../../../dto/repository/query/blog-view.dto';
 import { GetBlogsQueryParams } from '../../../dto/repository/query/get-blogs-query-params.input-dto';
 import { getBlogsQuery } from '../../../../../../core/utils/blog/query.insert.blog';
@@ -46,14 +46,19 @@ export class BlogsQueryRepositoryOrm {
         });
     }
     async getBlog(blogId: string): Promise<BlogOutInterface> {
-        const query = `SELECT "id", "name", "description", "website_url" AS "websiteUrl", "created_at" AS "createdAt", "is_membership" AS "isMembership" FROM "blogs" WHERE id = $1 AND "deleted_at" IS NULL`;
+        const result = await this.blogsQueryRepositoryTypeOrm
+            .createQueryBuilder('b')
+            .select([
+                'b.id AS id, b.name AS name, b.description AS description, b.website_url AS websiteUrl, b.is_membership AS isMembership, b.created_at as createdAt',
+            ])
+            .where('b.deleted_at IS NULL')
+            .andWhere('b.id = :blogId', { blogId })
+            .getRawOne();
 
-        const result = await this.blogsQueryRepositoryTypeOrm.query(query, [Number(blogId)]);
-
-        if (!result || result.length === 0) {
+        if (!result) {
             throw NotFoundDomainException.create('блог не найден', 'blogId');
         }
 
-        return BlogViewDto.mapToView(result[0]);
+        return BlogViewDto.mapToView(result);
     }
 }

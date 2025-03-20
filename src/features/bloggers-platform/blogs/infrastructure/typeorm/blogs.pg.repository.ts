@@ -11,11 +11,11 @@ export class BlogsRepositoryOrm {
 
     async findBlogById(blogId: string): Promise<string> {
         const query = `SELECT "id", "name" FROM "blogs" WHERE id = $1 AND "deleted_at" IS NULL`;
-        const result = await this.blogsRepositoryTypeOrm.query(query, [blogId]);
-        if (!result || result.length === 0) {
+        const result = await this.blogsRepositoryTypeOrm;
+        if (!result) {
             throw NotFoundDomainException.create('блог не найден', 'blogId');
         }
-        return result[0].id.toString();
+        return result;
     }
 
     async deleteBlog(blogId: string): Promise<void> {
@@ -37,5 +37,9 @@ export class BlogsRepositoryOrm {
         }
 
         return result[0].id.toString();
+    }
+    async save(entity: Blog) {
+        const result = await this.blogsRepositoryTypeOrm.save(entity);
+        return result.id;
     }
 }

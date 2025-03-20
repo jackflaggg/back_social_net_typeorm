@@ -1,6 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CommentsPgRepository } from '../../infrastructure/postgres/comments.pg.repository';
 import { StatusPgRepository } from '../../../likes/infrastructure/postgres/status.pg.repository';
+import { CommentsRepositoryOrm } from '../../infrastructure/typeorm/commentsRepositoryOrm';
+import { StatusRepositoryOrm } from '../../../likes/infrastructure/typeorm/statusRepositoryOrm';
 
 export class UpdateStatusCommentCommand {
     constructor(
@@ -17,8 +19,8 @@ export class UpdateStatusCommentCommand {
 @CommandHandler(UpdateStatusCommentCommand)
 export class UpdateStatusCommentUseCase implements ICommandHandler<UpdateStatusCommentCommand> {
     constructor(
-        private readonly commentsRepository: CommentsPgRepository,
-        private readonly statusRepository: StatusPgRepository,
+        private readonly commentsRepository: CommentsRepositoryOrm,
+        private readonly statusRepository: StatusRepositoryOrm,
     ) {}
     async execute(command: UpdateStatusCommentCommand) {
         const comment = await this.commentsRepository.findCommentById(command.commentId);
