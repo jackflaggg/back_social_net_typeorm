@@ -19,9 +19,6 @@ export class Blog extends BaseEntity {
     @Column({ name: 'is_membership', type: Boolean, default: false })
     isMembership: boolean;
 
-    @CreateDateColumn({ name: 'updated_business_logic', type: 'timestamptz', default: null })
-    updatedBusLogic: Date | null;
-
     public static buildInstance(dto: BlogCreateDtoApi) {
         const blog = new this();
         blog.name = dto.name;
@@ -34,7 +31,6 @@ export class Blog extends BaseEntity {
         if (!isNull(this.deletedAt)) throw new Error('Entity already deleted');
 
         this.deletedAt = new Date();
-        this.updatedBusLogic = new Date();
     }
 
     update(dto: BlogUpdateDtoApi) {

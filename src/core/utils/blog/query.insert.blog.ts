@@ -19,7 +19,7 @@ export interface BlogSortInterface {
 export const getBlogsQuery = (view: QueryBlogInputInterface): BlogSortInterface => ({
     searchNameTerm: view.searchNameTerm ?? '',
     sortBy: view.sortBy ?? 'createdAt',
-    sortDirection: view.sortDirection ?? SortDirection.Desc,
+    sortDirection: view.sortDirection?.toUpperCase() === SortDirection.Desc ? SortDirection.Desc : SortDirection.Asc,
     pageNumber: view.pageNumber ?? 1,
     pageSize: view.pageSize ?? 10,
 });

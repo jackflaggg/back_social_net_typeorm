@@ -19,19 +19,22 @@ export class BlogsQueryRepositoryOrm {
 
         const offset = (pageNumber - 1) * pageSize;
 
-        const queryBlogs = `
-            SELECT "id", "name", "description", "website_url" AS "websiteUrl", "created_at" AS "createdAt", "is_membership" AS "isMembership" FROM "blogs" WHERE "deleted_at" IS NULL AND ("name" ILIKE '%' || $1 || '%')
-            ORDER BY ("${updatedSortBy}") ${sortDirection.toUpperCase()}
-            LIMIT $2
-            OFFSET $3
-            `;
+        const cteToCountBlogs = '(SELECT COUNT(*) FROM blogs WHERE deleted_at IS NULL AND (title ILIKE :title)) AS totalCount';
 
-        const resultBlogs = await this.blogsQueryRepositoryTypeOrm.query(queryBlogs, [searchNameTerm, Number(pageSize), Number(offset)]);
+        const resultBlogs = await this.blogsQueryRepositoryTypeOrm
+            .createQueryBuilder('b')
+            .select([
+                'b.id AS id, b.name AS name, b.description AS description, b.website_url AS websiteUrl, b.is_membership AS isMembership, b.created_at as createdAt',
+                cteToCountBlogs,
+            ])
+            .where('b.deleted_at IS NULL')
+            .andWhere('b.title ILIKE :title', { title: `%${searchNameTerm}%` })
+            .orderBy(`b.${updatedSortBy}`, sortDirection)
+            .skip(offset)
+            .take(pageSize)
+            .getRawMany();
 
-        const queryCount = `
-            SELECT COUNT(*) AS "totalCount" FROM "blogs" WHERE "deleted_at" IS NULL AND ("name" ILIKE '%' || $1 || '%')
-        `;
-        const resultTotal = await this.blogsQueryRepositoryTypeOrm.query(queryCount, [searchNameTerm]);
+        const totalCount = resultBlogs.length > 0 ? Number(resultBlogs[0].totalcount) : 0;
 
         const blogsView = resultBlogs.map((blog: BlogIntInterface) => BlogViewDto.mapToView(blog));
 
@@ -39,7 +42,7 @@ export class BlogsQueryRepositoryOrm {
             items: blogsView,
             page: pageNumber,
             size: pageSize,
-            totalCount: +resultTotal[0].totalCount,
+            totalCount: totalCount,
         });
     }
     async getBlog(blogId: string): Promise<BlogOutInterface> {

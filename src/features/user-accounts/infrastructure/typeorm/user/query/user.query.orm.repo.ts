@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../../../domain/typeorm/user/user.entity';
-import { EntityManager, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { EmailConfirmationToUser } from '../../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 import { GetUsersQueryParams } from '../../../../dto/api/get-users-query-params.input-dto';
 import { getUsersQuery } from '../../../../../../core/utils/user/query.insert.get';
@@ -14,7 +14,6 @@ export class UserQueryRepositoryOrm {
     constructor(
         @InjectRepository(User) private userRepositoryTypeOrm: Repository<User>,
         @InjectRepository(EmailConfirmationToUser) private emailConfirmationRepositoryTypeOrm: Repository<EmailConfirmationToUser>,
-        @InjectEntityManager() private readonly entityManager: EntityManager,
     ) {}
     async getAllUsers(queryData: GetUsersQueryParams) {
         const { sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm } = getUsersQuery(queryData);
@@ -26,7 +25,6 @@ export class UserQueryRepositoryOrm {
         const cteToCountUsers =
             '(SELECT COUNT(*) FROM users WHERE deleted_at IS NULL AND (login ILIKE :login OR email ILIKE :email)) AS totalCount';
 
-        console.log(sortDirection);
         const resultUsers = await this.userRepositoryTypeOrm
             .createQueryBuilder('u')
             .select(['u.id as id', 'u.login as login', 'u.email as email', 'u.created_at AS createdAt', cteToCountUsers])
