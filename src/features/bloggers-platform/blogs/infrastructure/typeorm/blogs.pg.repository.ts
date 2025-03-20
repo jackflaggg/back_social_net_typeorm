@@ -9,9 +9,11 @@ import { Blog } from '../../domain/typeorm/blog.entity';
 export class BlogsRepositoryOrm {
     constructor(@InjectRepository(Blog) private blogsRepositoryTypeOrm: Repository<Blog>) {}
 
-    async findBlogById(blogId: string): Promise<string> {
-        const query = `SELECT "id", "name" FROM "blogs" WHERE id = $1 AND "deleted_at" IS NULL`;
-        const result = await this.blogsRepositoryTypeOrm;
+    async findBlogById(blogId: string): Promise<Blog> {
+        const result = await this.blogsRepositoryTypeOrm
+            .createQueryBuilder('b')
+            .where('b.deleted_at IS NULL AND b.id = :blogId', { blogId })
+            .getOne();
         if (!result) {
             throw NotFoundDomainException.create('блог не найден', 'blogId');
         }

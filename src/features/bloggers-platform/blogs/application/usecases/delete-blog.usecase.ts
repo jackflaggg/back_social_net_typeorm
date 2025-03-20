@@ -17,6 +17,6 @@ export class DeleteBlogUseCase implements ICommandHandler<DeleteBlogCommand> {
             throw NotFoundDomainException.create('блог не найден', 'blogId');
         }
 
-        await this.blogRepository.deleteBlog(blog);
+        // await this.blogRepository.deleteBlog(blog);
     }
 }

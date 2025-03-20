@@ -13,10 +13,10 @@ export class TestingController {
     async deleteAll(): Promise<void> {
         const dataTables = [
             TablesEnum.enum['users'],
-            // TablesEnum.enum['blogs'],
-            // TablesEnum.enum['posts'],
-            //TablesEnum.enum['comments'],
-            //TablesEnum.enum['likes'],
+            TablesEnum.enum['blogs'],
+            TablesEnum.enum['posts'],
+            TablesEnum.enum['comments'],
+            // TablesEnum.enum['likes'],
         ];
 
         for (const table of dataTables) {
