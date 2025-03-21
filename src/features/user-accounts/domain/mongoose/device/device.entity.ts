@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/deletion-status.enum';
+import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/app/deletion-status.enum';
 
 @Schema({ timestamps: false })
 export class DeviceEntity {

@@ -31,16 +31,16 @@ export class BlogsRepositoryOrm {
         await this.blogsRepositoryTypeOrm.query(query, [name, description, websiteUrl, blogId]);
     }
 
-    async createBlog(dto: BlogCreateRepositoryDto): Promise<string> {
-        const query = `INSERT INTO "blogs" (name, description, website_url, created_at) VALUES ($1, $2, $3, $4) RETURNING "id"`;
-        const result = await this.blogsRepositoryTypeOrm.query(query, [dto.name, dto.description, dto.websiteUrl, dto.createdAt]);
-        if (!result || result.length === 0) {
-            throw NotFoundDomainException.create('блог не найден', 'blogId');
-        }
-
-        return result[0].id.toString();
-    }
-    async save(entity: Blog) {
+    // async createBlog(dto: BlogCreateRepositoryDto): Promise<string> {
+    //     const query = `INSERT INTO "blogs" (name, description, website_url, created_at) VALUES ($1, $2, $3, $4) RETURNING "id"`;
+    //     const result = await this.blogsRepositoryTypeOrm.query(query, [dto.name, dto.description, dto.websiteUrl, dto.createdAt]);
+    //     if (!result || result.length === 0) {
+    //         throw NotFoundDomainException.create('блог не найден', 'blogId');
+    //     }
+    //
+    //     return result[0].id.toString();
+    // }
+    async save(entity: Blog): Promise<number> {
         const result = await this.blogsRepositoryTypeOrm.save(entity);
         return result.id;
     }

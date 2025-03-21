@@ -1,4 +1,4 @@
-import { StatusLike } from '../../../../../libs/contracts/enums/status.like';
+import { StatusLike } from '../../../../../libs/contracts/enums/status/status.like';
 
 export interface postOutInterface {
     id: string;

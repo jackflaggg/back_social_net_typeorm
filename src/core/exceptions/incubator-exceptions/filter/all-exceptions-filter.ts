@@ -18,13 +18,13 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
 
         const isProduction = this.coreConfig.env === 'production';
 
-        this.logger.log(`Error occurred: ${exception.message || exception}`); // Логируем сообщение об ошибке
+        this.logger.log(`Ошибка: ${exception.message || exception}`);
 
         if (isProduction && status === HttpStatus.INTERNAL_SERVER_ERROR) {
             response.status(status).json({
                 ...this.getDefaultHttpBody(request.url, exception),
                 path: null,
-                message: 'Some error occurred',
+                message: 'Че то пошло не так',
             });
 
             return;

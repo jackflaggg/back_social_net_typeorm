@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { ParentTypes } from '../../../../../libs/contracts/enums/parent.type.likes';
+import { ParentTypes } from '../../../../../libs/contracts/enums/status/parent.type.likes';
 
 @Injectable()
 export class StatusRepositoryOrm {

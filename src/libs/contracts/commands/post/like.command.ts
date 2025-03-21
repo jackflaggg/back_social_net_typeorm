@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { StatusLike } from '../../enums/status.like';
+import { StatusLike } from '../../enums/status/status.like';
 
 const PostLikeRequestSchema = z.object({
     likeStatus: StatusLike,

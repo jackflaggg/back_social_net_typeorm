@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ZodEnvironments } from '../../libs/contracts/enums/enviroments';
+import { ZodEnvironments } from '../../libs/contracts/enums/app/enviroments';
 
 export const configSchema = z.object({
     port: z.string().transform(val => {

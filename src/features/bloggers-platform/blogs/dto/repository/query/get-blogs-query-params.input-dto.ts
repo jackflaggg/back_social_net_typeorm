@@ -1,6 +1,6 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { BaseSortablePaginationParams } from '../../../../../../core/dto/base.query-params.input-dto';
-import { BlogSortByEnum, BlogSortByValues } from '../../../../../../libs/contracts/enums/blog.sort.by.enum';
+import { BlogSortByEnum, BlogSortByValues } from '../../../../../../libs/contracts/enums/blog/blog.sort.by.enum';
 
 export class GetBlogsQueryParams extends BaseSortablePaginationParams<BlogSortByEnum> {
     @IsEnum(BlogSortByValues)

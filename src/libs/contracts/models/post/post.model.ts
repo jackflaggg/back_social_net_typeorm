@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { StatusLike } from '../../enums/status.like';
+import { StatusLike } from '../../enums/status/status.like';
 import { contentConstraints, shortDescriptionConstraints, titleConstraints } from '../../constants/post/post-property.constraints';
 
 export const trimString = (str: string) => str.trim();

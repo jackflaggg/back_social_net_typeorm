@@ -1,4 +1,4 @@
-import { StatusLike, StatusLikeType } from '../../../../libs/contracts/enums/status.like';
+import { StatusLike, StatusLikeType } from '../../../../libs/contracts/enums/status/status.like';
 
 export interface commentOutInterface {
     id: number;

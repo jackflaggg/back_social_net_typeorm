@@ -6,8 +6,8 @@ import { NotFoundDomainException } from '../../../../../../core/exceptions/incub
 import { GetPostsQueryParams } from '../../../dto/api/get-posts-query-params.input.dto';
 import { getPostsQuery } from '../../../../../../core/utils/post/query.insert.get';
 import { PostViewDto } from '../../../dto/repository/post-view';
-import { ParentTypes } from '../../../../../../libs/contracts/enums/parent.type.likes';
-import { StatusLike } from '../../../../../../libs/contracts/enums/status.like';
+import { ParentTypes } from '../../../../../../libs/contracts/enums/status/parent.type.likes';
+import { StatusLike } from '../../../../../../libs/contracts/enums/status/status.like';
 
 @Injectable()
 export class PostsQueryRepositoryOrm {

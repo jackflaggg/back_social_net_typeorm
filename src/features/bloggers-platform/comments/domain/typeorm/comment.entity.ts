@@ -1,4 +1,4 @@
-import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/deletion-status.enum';
+import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/app/deletion-status.enum';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../../../../core/domain/base.entity';
 import { User } from '../../../../user-accounts/domain/typeorm/user/user.entity';

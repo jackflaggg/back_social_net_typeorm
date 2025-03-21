@@ -7,7 +7,7 @@ import {
     nameConstraints,
     websiteUrlConstraints,
 } from '../../../../../libs/contracts/constants/blog/blog-property.constraints';
-import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/deletion-status.enum';
+import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/app/deletion-status.enum';
 
 @Schema({ timestamps: true })
 export class BlogEntity {

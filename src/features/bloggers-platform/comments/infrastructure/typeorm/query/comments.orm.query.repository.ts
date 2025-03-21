@@ -9,8 +9,8 @@ import {
 } from '../../../../../../core/utils/comments/mapping/transform.comment.map';
 import { getCommentQuery } from '../../../../../../core/utils/comments/query.insert.get.comments';
 import { GetCommentsQueryParams } from '../../../dto/repository/query/query-parans-comments';
-import { ParentTypes } from '../../../../../../libs/contracts/enums/parent.type.likes';
-import { StatusLike } from '../../../../../../libs/contracts/enums/status.like';
+import { ParentTypes } from '../../../../../../libs/contracts/enums/status/parent.type.likes';
+import { StatusLike } from '../../../../../../libs/contracts/enums/status/status.like';
 
 @Injectable()
 export class CommentsOrmQueryRepository {

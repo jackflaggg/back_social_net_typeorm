@@ -8,7 +8,7 @@ import {
     shortDescriptionConstraints,
     titleConstraints,
 } from '../../../../../libs/contracts/constants/post/post-property.constraints';
-import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/deletion-status.enum';
+import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/app/deletion-status.enum';
 import { defaultLike } from '../../../../../libs/contracts/constants/post/default.like.schema';
 
 @Schema({ timestamps: true })

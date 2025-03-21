@@ -2,7 +2,7 @@ import { Controller, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { SETTINGS } from '../../../core/settings';
-import { TablesEnum } from '../../../libs/contracts/enums/tables.enum';
+import { TablesEnum } from '../../../libs/contracts/enums/app/tables.enum';
 
 @Controller(SETTINGS.PATH.TESTING)
 export class TestingController {

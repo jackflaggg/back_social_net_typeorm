@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { NewestLikesEntity, NewestLikesSchema } from './last.three.likes.entity';
-import { StatusLike } from '../../../../../libs/contracts/enums/status.like';
+import { StatusLike } from '../../../../../libs/contracts/enums/status/status.like';
 
 @Schema({ _id: false })
 export class ExtendedLikesEntity {

@@ -8,7 +8,6 @@ export abstract class BaseEntity {
     @CreateDateColumn({ name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })
     public createdAt: Date;
 
-    // TODO: Нужно ли тут ставить дефолтное значение или же можно оставить так?
     @UpdateDateColumn({ name: 'updated_at' })
     public updatedAt: Date;
 
@@ -16,7 +15,6 @@ export abstract class BaseEntity {
     deletedAt: Date | null;
 }
 
-// Новый базовый класс без deletedAt
 export abstract class BaseEntityWithoutDeletedAt {
     @PrimaryGeneratedColumn()
     public id: number;

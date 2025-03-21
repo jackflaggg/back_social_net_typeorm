@@ -3,6 +3,7 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from '@nestjs/commo
 import { DomainExceptionCode } from '../domain-exception-codes';
 import { DomainException, ErrorExtension } from '../domain-exceptions';
 import { ZodValidationException } from 'nestjs-zod';
+
 export type HttpResponseBody = {
     timestamp: string;
     path: string | null;
@@ -31,38 +32,48 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
         }
 
         if (exception instanceof ZodValidationException) {
+            const activeErrors = Array.from({ length: (exception as any).response.errors.length }, (_, index) => {
+                const error = (exception as any).response.errors[index];
+                console.log(typeof exception);
+                return {
+                    message: error.message,
+                    field: error.path[0],
+                };
+            });
+
             return {
-                errorsMessages: [
-                    {
-                        message: (exception as any).response.errors[0].message,
-                        field: (exception as any).response.errors[0].path[0],
-                    },
-                    (exception as any).response.errors[1]
-                        ? {
-                              message: (exception as any).response.errors[1].message,
-                              field: (exception as any).response.errors[1].path[0],
-                          }
-                        : null,
-                    (exception as any).response.errors[2]
-                        ? {
-                              message: (exception as any).response.errors[2].message,
-                              field: (exception as any).response.errors[2].path[0],
-                          }
-                        : null,
-                    (exception as any).response.errors[3]
-                        ? {
-                              message: (exception as any).response.errors[3].message,
-                              field: (exception as any).response.errors[3].path[0],
-                          }
-                        : null,
-                ].filter(Boolean),
+                errorsMessages: activeErrors,
+                //     [
+                //     {
+                //         message: (exception as any).response.errors[0].message,
+                //         field: (exception as any).response.errors[0].path[0],
+                //     },
+                //     (exception as any).response.errors[1]
+                //         ? {
+                //               message: (exception as any).response.errors[1].message,
+                //               field: (exception as any).response.errors[1].path[0],
+                //           }
+                //         : null,
+                //     (exception as any).response.errors[2]
+                //         ? {
+                //               message: (exception as any).response.errors[2].message,
+                //               field: (exception as any).response.errors[2].path[0],
+                //           }
+                //         : null,
+                //     (exception as any).response.errors[3]
+                //         ? {
+                //               message: (exception as any).response.errors[3].message,
+                //               field: (exception as any).response.errors[3].path[0],
+                //           }
+                //         : null,
+                // ].filter(Boolean),
             };
         }
 
         return {
             timestamp: new Date().getTime().toString(),
             path: url,
-            message: (exception as any).message || 'Internal server error',
+            message: (exception as any).message || 'Сервер упал!',
             code: exception instanceof DomainException ? exception.code.toString() : null,
         };
     }

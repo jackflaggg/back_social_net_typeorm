@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { DeletionStatus } from '../../enums/deletion-status.enum';
+import { DeletionStatus } from '../../enums/app/deletion-status.enum';
 import { nameConstraints } from '../../constants/blog/blog-property.constraints';
 import { trimString } from '../post/post.model';
 

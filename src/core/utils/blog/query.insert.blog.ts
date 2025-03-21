@@ -1,4 +1,5 @@
 import { SortDirection } from '../../dto/base.query-params.input-dto';
+import { blogSortBy } from '../../../libs/contracts/enums/blog/blog.sort.by.enum';
 
 export interface QueryBlogInputInterface {
     searchNameTerm?: string | null;
@@ -18,7 +19,7 @@ export interface BlogSortInterface {
 
 export const getBlogsQuery = (view: QueryBlogInputInterface): BlogSortInterface => ({
     searchNameTerm: view.searchNameTerm ?? '',
-    sortBy: view.sortBy ?? 'createdAt',
+    sortBy: view.sortBy ?? blogSortBy.enum['createdAt'],
     sortDirection: view.sortDirection?.toUpperCase() === SortDirection.Desc ? SortDirection.Desc : SortDirection.Asc,
     pageNumber: view.pageNumber ?? 1,
     pageSize: view.pageSize ?? 10,

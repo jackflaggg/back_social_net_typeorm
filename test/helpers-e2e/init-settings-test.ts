@@ -2,7 +2,7 @@ import { AppModule } from '../../src/app.module';
 import { Test, TestingModuleBuilder } from '@nestjs/testing';
 import { UsersTestManager } from './users-test-helper';
 import { deleteAllData } from './delete-all-data-test';
-import { fullConfigApp } from '../../src/setup/config.setup';
+import { fullConfigApp } from '../../src/core/setup/config.setup';
 
 export const initSettings = async (
     //передаем callback, который получает ModuleBuilder, если хотим изменить настройку тестового модуля

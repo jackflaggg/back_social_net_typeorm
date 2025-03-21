@@ -1,7 +1,7 @@
 import { ArgumentsHost, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 
 export class SimpleExceptionFilter implements ExceptionFilter {
-    catch(exception: HttpException, host: ArgumentsHost) {
+    catch(exception: HttpException, host: ArgumentsHost): void {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
         const request = ctx.getRequest();
@@ -10,7 +10,7 @@ export class SimpleExceptionFilter implements ExceptionFilter {
         const getField = (str: string) => {
             return str.split(' ')[0];
         };
-        if (status === 400) {
+        if (status === HttpStatus.BAD_REQUEST) {
             const errors: any[] = [];
 
             const responseBody: any = exception.getResponse();
@@ -22,15 +22,14 @@ export class SimpleExceptionFilter implements ExceptionFilter {
             response.status(status).json({
                 statusCode: status,
                 path: request.url,
-                message: (exception as any).message || 'Internal server error',
+                message: (exception as any).message || 'Сервер упал',
                 errors: errors,
             });
-        } else {
-            response.status(status).json({
-                statusCode: status,
-                path: request.url,
-                message: (exception as any).message || 'Internal server error',
-            });
         }
+        response.status(status).json({
+            statusCode: status,
+            path: request.url,
+            message: (exception as any).message || 'Сервер упал',
+        });
     }
 }
