@@ -3,9 +3,9 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { BlogIntInterface, BlogOutInterface, BlogViewDto } from '../../../dto/repository/query/blog-view.dto';
 import { GetBlogsQueryParams } from '../../../dto/repository/query/get-blogs-query-params.input-dto';
-import { getBlogsQuery } from '../../../../../../core/utils/blog/query.insert.blog';
 import { PaginatedBlogViewDto, PaginatedViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { getBlogsQuery } from '../../../utils/blog/query.insert.blog';
 
 @Injectable()
 export class BlogsPgQueryRepository {

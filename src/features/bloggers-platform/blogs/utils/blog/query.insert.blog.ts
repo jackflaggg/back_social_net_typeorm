@@ -1,5 +1,5 @@
-import { SortDirection } from '../../dto/base.query-params.input-dto';
-import { blogSortBy } from '../../../libs/contracts/enums/blog/blog.sort.by.enum';
+import { SortDirection } from '../../../../../core/dto/base.query-params.input-dto';
+import { blogSortBy } from '../../../../../libs/contracts/enums/blog/blog.sort.by.enum';
 
 export interface QueryBlogInputInterface {
     searchNameTerm?: string | null;

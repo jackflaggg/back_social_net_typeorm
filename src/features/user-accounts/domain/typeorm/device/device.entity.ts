@@ -1,7 +1,6 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../user/user.entity';
-import { isNull } from '../../../../../core/utils/user/is.null';
-import { PostUpdateDtoApi } from '../../../../bloggers-platform/posts/dto/api/post.update.dto';
+import { isNull } from '../../../utils/user/is.null';
 
 @Entity('security_device_to_user')
 export class SecurityDeviceToUser {

@@ -2,15 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import {
-    commentIntInterface,
-    commentOutInterface,
-    transformComment,
-} from '../../../../../../core/utils/comments/mapping/transform.comment.map';
-import { getCommentQuery } from '../../../../../../core/utils/comments/query.insert.get.comments';
 import { GetCommentsQueryParams } from '../../../dto/repository/query/query-parans-comments';
 import { ParentTypes } from '../../../../../../libs/contracts/enums/status/parent.type.likes';
 import { StatusLike } from '../../../../../../libs/contracts/enums/status/status.like';
+import { commentIntInterface, commentOutInterface, transformComment } from '../../../utils/comments/mapping/transform.comment.map';
+import { getCommentQuery } from '../../../utils/comments/query.insert.get.comments';
 
 @Injectable()
 export class CommentsOrmQueryRepository {

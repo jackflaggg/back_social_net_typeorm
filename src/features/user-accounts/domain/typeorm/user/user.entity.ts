@@ -3,12 +3,12 @@ import { EmailConfirmationToUser } from '../email-confirmation/email.confirmatio
 import { SecurityDeviceToUser } from '../device/device.entity';
 import { BaseEntity } from '../../../../../core/domain/base.entity';
 import { RecoveryPasswordToUser } from '../password-recovery/pass-rec.entity';
-import { isNull } from '../../../../../core/utils/user/is.null';
 import {
     emailConstraints,
     loginConstraints,
     passwordHashConstraints,
 } from '../../../../../libs/contracts/constants/user/user-property.constraints';
+import { isNull } from '../../../utils/user/is.null';
 
 @Entity('users')
 export class User extends BaseEntity {

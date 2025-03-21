@@ -1,4 +1,4 @@
-import { SortDirection } from '../../dto/base.query-params.input-dto';
+import { SortDirection } from '../../../../core/dto/base.query-params.input-dto';
 
 export interface QueryUsers {
     sortBy?: string;

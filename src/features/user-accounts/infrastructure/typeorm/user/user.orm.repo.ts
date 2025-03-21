@@ -8,7 +8,7 @@ import {
     UnauthorizedDomainException,
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { RecoveryPasswordToUser } from '../../../domain/typeorm/password-recovery/pass-rec.entity';
-import { userEmailMapper } from '../../../../../core/utils/user/find.user.by.email.mapper';
+import { userEmailMapper } from '../../../utils/user/find.user.by.email.mapper';
 
 @Injectable()
 export class UserRepositoryOrm {

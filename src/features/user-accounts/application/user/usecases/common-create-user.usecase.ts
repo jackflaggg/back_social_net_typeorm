@@ -3,9 +3,9 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BcryptService } from '../../other_services/bcrypt.service';
 import { Inject } from '@nestjs/common';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
-import { emailConfirmationData } from '../../../../../core/utils/user/email-confirmation-data.admin';
 import { User } from '../../../domain/typeorm/user/user.entity';
 import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
+import { emailConfirmationData } from '../../../utils/user/email-confirmation-data.admin';
 
 export class CommonCreateUserCommand {
     constructor(public readonly payload: UserCreateDtoService) {}

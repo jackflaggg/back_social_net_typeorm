@@ -3,9 +3,9 @@ import { DataSource } from 'typeorm';
 import { GetUsersQueryParams } from '../../../../dto/api/get-users-query-params.input-dto';
 import { PaginatedBlogViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
 import { UserViewDto } from '../../../../dto/api/user-view.dto';
-import { getUsersQuery } from '../../../../../../core/utils/user/query.insert.get';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { getUsersQuery } from '../../../../utils/user/query.insert.get';
 
 @Injectable()
 export class UserPgQueryRepository {

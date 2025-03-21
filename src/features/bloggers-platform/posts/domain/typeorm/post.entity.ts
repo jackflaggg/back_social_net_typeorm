@@ -2,13 +2,13 @@ import { PostUpdateDtoService } from '../../dto/service/post.update.dto';
 import { PostToBlogCreateDtoApi } from '../../../blogs/dto/api/blog.to.post.create.dto';
 import { BaseEntity } from '../../../../../core/domain/base.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { isNull } from '../../../../../core/utils/user/is.null';
 import { Blog } from '../../../blogs/domain/typeorm/blog.entity';
 import {
     contentConstraints,
     shortDescriptionConstraints,
     titleConstraints,
 } from '../../../../../libs/contracts/constants/post/post-property.constraints';
+import { isNull } from '../../../../user-accounts/utils/user/is.null';
 
 @Entity('posts')
 export class Post extends BaseEntity {

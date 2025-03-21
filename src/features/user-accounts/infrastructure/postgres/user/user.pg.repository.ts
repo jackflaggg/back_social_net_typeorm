@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { emailConfirmAdminInterface } from '../../../../../core/utils/user/email-confirmation-data.admin';
 import {
     BadRequestDomainException,
     NotFoundDomainException,
@@ -9,6 +8,7 @@ import {
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { UserCreateDtoRepo } from '../../../dto/repository/user.create.dto';
 import { findUserByLoginOrEmailInterface } from '../../../dto/api/user.in.jwt.find.dto';
+import { emailConfirmAdminInterface } from '../../../utils/user/email-confirmation-data.admin';
 
 @Injectable()
 export class UserPgRepository {

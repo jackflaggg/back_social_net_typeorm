@@ -4,10 +4,10 @@ import { DataSource } from 'typeorm';
 import { PaginatedBlogViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { GetPostsQueryParams } from '../../../dto/api/get-posts-query-params.input.dto';
-import { getPostsQuery } from '../../../../../../core/utils/post/query.insert.get';
 import { PostViewDto } from '../../../dto/repository/post-view';
 import { ParentTypes } from '../../../../../../libs/contracts/enums/status/parent.type.likes';
 import { StatusLike } from '../../../../../../libs/contracts/enums/status/status.like';
+import { getPostsQuery } from '../../../utils/post/query.insert.get';
 
 @Injectable()
 export class PostsQueryRepositoryOrm {

@@ -3,7 +3,7 @@ import { Inject } from '@nestjs/common';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { EmailService } from '../../../../notifications/application/mail.service';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
-import { emailConfirmationData } from '../../../../../core/utils/user/email-confirmation-data.admin';
+import { emailConfirmationData } from '../../../utils/user/email-confirmation-data.admin';
 
 export class RegistrationEmailResendUserCommand {
     constructor(public readonly email: string) {}

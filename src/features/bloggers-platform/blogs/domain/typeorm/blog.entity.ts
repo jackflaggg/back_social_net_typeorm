@@ -6,9 +6,9 @@ import {
 } from '../../../../../libs/contracts/constants/blog/blog-property.constraints';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from '../../../../../core/domain/base.entity';
-import { isNull } from '../../../../../core/utils/user/is.null';
 import { BlogCreateRepositoryDto } from '../../application/usecases/create-blog.usecase';
 import { Post } from '../../../posts/domain/typeorm/post.entity';
+import { isNull } from '../../../../user-accounts/utils/user/is.null';
 
 @Entity('blogs')
 export class Blog extends BaseEntity {

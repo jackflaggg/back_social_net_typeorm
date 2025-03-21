@@ -1,21 +1,21 @@
-import { SortDirection } from '../../dto/base.query-params.input-dto';
+import { SortDirection } from '../../../../../core/dto/base.query-params.input-dto';
 
-export interface CommentSortInterface {
+export interface PostSortInterface {
     pageNumber: number;
     pageSize: number;
     sortBy: string;
     sortDirection: SortDirection.Desc | SortDirection.Asc;
 }
 
-export interface QueryCommentInputInterface {
+export interface QueryPostInputInterface {
     pageNumber?: number;
     pageSize?: number;
     sortBy?: string;
     sortDirection?: SortDirection.Desc | SortDirection.Asc;
 }
-export const getCommentQuery = (queryPost: QueryCommentInputInterface): CommentSortInterface => ({
+export const getPostsQuery = (queryPost: QueryPostInputInterface): PostSortInterface => ({
     pageNumber: queryPost.pageNumber ?? 1,
     pageSize: queryPost.pageSize ?? 10,
-    sortBy: queryPost.sortBy ?? 'c.created_at',
+    sortBy: queryPost.sortBy ?? 'created_at',
     sortDirection: queryPost.sortDirection ?? SortDirection.Desc,
 });
