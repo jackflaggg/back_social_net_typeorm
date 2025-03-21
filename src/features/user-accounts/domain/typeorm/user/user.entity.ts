@@ -9,6 +9,7 @@ import {
     passwordHashConstraints,
 } from '../../../../../libs/contracts/constants/user/user-property.constraints';
 import { isNull } from '../../../utils/user/is.null';
+import { CommentToUser } from '../../../../bloggers-platform/comments/domain/typeorm/comment.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -32,6 +33,9 @@ export class User extends BaseEntity {
 
     @OneToMany(() => SecurityDeviceToUser, securityDevice => securityDevice.user)
     securityDevices: SecurityDeviceToUser[];
+
+    @OneToMany(() => CommentToUser, comment => comment.user)
+    comments: CommentToUser[];
 
     static buildInstance(dto: { login: string; email: string; password: string; sentEmailRegistration: boolean }): User {
         const user = new this();

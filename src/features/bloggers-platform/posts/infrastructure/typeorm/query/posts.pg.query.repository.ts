@@ -1,26 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { PaginatedBlogViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
+import { PaginatedBlogViewDto, PaginatedViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { GetPostsQueryParams } from '../../../dto/api/get-posts-query-params.input.dto';
 import { PostViewDto } from '../../../dto/repository/post-view';
 import { ParentTypes } from '../../../../../../libs/contracts/enums/status/parent.type.likes';
 import { StatusLike } from '../../../../../../libs/contracts/enums/status/status.like';
 import { getPostsQuery } from '../../../utils/post/query.insert.get';
+import { convertCamelCaseToSnakeCase } from '../../../utils/post/caml.case.to.snake.case';
 
 @Injectable()
 export class PostsQueryRepositoryOrm {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
-    async getAllPosts(queryData: GetPostsQueryParams, userId: string | null, blogId?: string) {
+    async getAllPosts(queryData: GetPostsQueryParams, userId: string | null, blogId?: string): Promise<PaginatedViewDto<PostViewDto[]>> {
         const updateQueryBlogId = blogId ? `AND p."blog_id" = ${blogId}` : ``;
         const { pageSize, pageNumber, sortBy, sortDirection } = getPostsQuery(queryData);
-
-        function convertCamelCaseToSnakeCase(str: string) {
-            const hardValueSortByTest = ['createdAt', 'shortDescription'];
-            if (hardValueSortByTest.includes(sortBy)) return str.replace(/([A-Z])/g, '_\$1').toLowerCase();
-            return str.toLowerCase();
-        }
 
         // Проверяем, является ли sortBy допустимым значением
         const updatedSortBy = sortBy === 'blogName' ? `"${sortBy}"` : `p."${convertCamelCaseToSnakeCase(sortBy)}"`;
@@ -140,9 +135,9 @@ export class PostsQueryRepositoryOrm {
             StatusLike.enum['Like'],
             postId,
         ]);
-        if (!resultPost || resultPost.length === 0) {
+        if (!resultPost) {
             throw NotFoundDomainException.create('Пост не найден', 'postId');
         }
-        return PostViewDto.mapToView(resultPost[0]);
+        return PostViewDto.mapToView(resultPost);
     }
 }

@@ -1,38 +1,23 @@
-import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/app/deletion-status.enum';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../../../../core/domain/base.entity';
 import { User } from '../../../../user-accounts/domain/typeorm/user/user.entity';
-
-export interface CommentatorInfoInterface {
-    userId: string;
-    userLogin: string;
-}
-
-export interface likesInfoInterface {
-    likesCount: number;
-    dislikesCount: number;
-}
+import { CommentatorInfoInterface } from '../../types/commentator.info';
+import { contentConstraints } from '../../../../../libs/contracts/constants/comment/comment-property.constraints';
+import { isNull } from '../../../../user-accounts/utils/user/is.null';
+import { Post } from '../../../posts/domain/typeorm/post.entity';
 
 @Entity('comments')
 export class CommentToUser extends BaseEntity {
-    @Column({ type: 'varchar', length: 255 })
+    @Column({ type: 'varchar', length: contentConstraints.maxLength })
     content: string;
 
-    // @Column({ type: { userId: 'varchar', userLogin: 'varchar' } })
-    // commentatorInfo: CommentatorInfoInterface;
+    @ManyToOne(() => User, user => user.comments)
+    @JoinColumn({ name: 'commentator_id' })
+    user: User;
 
-    @Column({ type: 'varchar' })
-    postId: string;
-
-    // @Column({ type: ExtendedLikesSchema.omit(['newestLikes', 'myStatus']), default: defaultLike })
-    // likesInfo: likesInfoInterface;
-
-    @Column({ type: 'varchar', default: DeletionStatus.enum['not-deleted'] })
-    deletionStatus: DeletionStatusType;
-
-    // @ManyToOne(() => User, user => user.comments)
-    // @JoinColumn({ name: 'commentatorId' })
-    // user: User;
+    @ManyToOne(() => Post, post => post.comments)
+    @JoinColumn({ name: 'post_id' })
+    post: Post;
 
     public static buildInstance(content: string, commentatorInfo: CommentatorInfoInterface, postId: string) {
         const comment = new this();
@@ -41,21 +26,18 @@ export class CommentToUser extends BaseEntity {
         //     userId: commentatorInfo.userId,
         //     userLogin: commentatorInfo.userLogin,
         // };
-        comment.postId = postId;
+        // comment.postId = postId;
         // comment.likesInfo.dislikesCount = 0;
         // comment.likesInfo.likesCount = 0;
         return comment;
     }
 
-    makeDeleted() {
-        this.deletionStatus = DeletionStatus.enum['permanent-deleted'];
+    makeDeleted(): void {
+        if (!isNull(this.deletedAt)) throw new Error('Коммент уже был помечен на удаление!');
+        this.deletedAt = new Date();
     }
 
-    updateContent(content: string) {
+    updateContent(content: string): void {
         this.content = content;
-    }
-    updateStatus(likesCount: number, dislikesCount: number) {
-        // this.likesInfo.likesCount = likesCount;
-        // this.likesInfo.dislikesCount = dislikesCount;
     }
 }

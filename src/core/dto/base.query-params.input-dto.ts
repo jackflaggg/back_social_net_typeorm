@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 
 export class PaginationParams {
-    //для трансформации в number
     @Type(() => Number)
     pageNumber: number = 1;
 

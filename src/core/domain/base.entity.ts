@@ -25,3 +25,14 @@ export abstract class BaseEntityWithoutDeletedAt {
     @UpdateDateColumn({ name: 'updated_at' })
     public updatedAt: Date;
 }
+
+export abstract class BaseEntityWithoutDeletedAtAndCreatedAt {
+    @PrimaryGeneratedColumn()
+    public id: number;
+
+    @CreateDateColumn({ name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })
+    public createdAt: Date;
+
+    @UpdateDateColumn({ name: 'updated_at' })
+    public updatedAt: Date;
+}

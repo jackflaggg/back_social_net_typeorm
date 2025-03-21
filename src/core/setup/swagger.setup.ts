@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import fs from 'fs';
 
-export function swaggerSetup(app: INestApplication) {
+export function swaggerSetup(app: INestApplication): void {
     const config = new DocumentBuilder()
         .setTitle('Social Network API')
         .setDescription('The Social Network API description')

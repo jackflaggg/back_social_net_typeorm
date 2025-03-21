@@ -1,10 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BlogsPgRepository } from '../../infrastructure/postgres/blogs.pg.repository';
-import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { PostUpdateDtoApi } from '../../../posts/dto/api/post.update.dto';
-import { PostsPgRepository } from '../../../posts/infrastructure/postgres/posts.pg.repository';
 import { BlogsRepositoryOrm } from '../../infrastructure/typeorm/blogs.pg.repository';
 import { PostsRepositoryOrm } from '../../../posts/infrastructure/typeorm/posts.pg.repository';
+import { Blog } from '../../domain/typeorm/blog.entity';
+import { Post } from '../../../posts/domain/typeorm/post.entity';
 
 export class UpdatePostToBlogCommand {
     constructor(
@@ -20,19 +19,13 @@ export class UpdatePostToBlogUseCase implements ICommandHandler<UpdatePostToBlog
         private readonly blogRepository: BlogsRepositoryOrm,
         private readonly postRepository: PostsRepositoryOrm,
     ) {}
-    async execute(command: UpdatePostToBlogCommand) {
-        const blog = await this.blogRepository.findBlogById(command.blogId);
+    async execute(command: UpdatePostToBlogCommand): Promise<void> {
+        const blog: Blog = await this.blogRepository.findBlogById(command.blogId);
 
-        if (!blog) {
-            throw NotFoundDomainException.create('блог не найден', 'blogId');
-        }
+        const post: Post = await this.postRepository.findPostById(command.postId);
 
-        const postId = await this.postRepository.findPostById(command.postId);
+        post.update(command.dto);
 
-        if (!postId) {
-            throw NotFoundDomainException.create('пост не найден', 'postId');
-        }
-
-        await this.postRepository.updatePost(command.dto, postId.id);
+        await this.postRepository.save(post);
     }
 }

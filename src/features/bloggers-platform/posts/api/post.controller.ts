@@ -1,7 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { PostsPgQueryRepository } from '../infrastructure/postgres/query/posts.pg.query.repository';
-import { CommentsPgQueryRepository } from '../../comments/infrastructure/postgres/query/comments.pg.query.repository';
 import { SETTINGS } from '../../../../core/settings';
 import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optional-auth.guard';
 import { GetPostsQueryParams } from '../dto/api/get-posts-query-params.input.dto';
@@ -22,6 +20,9 @@ import { GetCommentsQueryParams } from '../../comments/dto/repository/query/quer
 import { ValidateSerialPipe } from '../../../../core/pipes/validation.input.serial';
 import { PostsQueryRepositoryOrm } from '../infrastructure/typeorm/query/posts.pg.query.repository';
 import { CommentsOrmQueryRepository } from '../../comments/infrastructure/typeorm/query/comments.orm.query.repository';
+import { postOutInterface, PostViewDto } from '../dto/repository/post-view';
+import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
+import { commentIntInterface } from '../../comments/utils/comments/mapping/transform.comment.map';
 
 @Controller(SETTINGS.PATH.POSTS)
 export class PostsController {
@@ -37,36 +38,39 @@ export class PostsController {
         @Query() query: GetPostsQueryParams,
         @Param('blogId', ValidateSerialPipe) blogId: string,
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
-    ) {
-        const userId = dtoUser ? dtoUser.userId : null;
+    ): Promise<PaginatedViewDto<PostViewDto[]>> {
+        const userId: string | null = dtoUser ? dtoUser.userId : null;
         return await this.postsQueryRepository.getAllPosts(query, userId, blogId);
     }
 
     @UseGuards(JwtOptionalAuthGuard)
     @Get(':postId')
-    async getPost(@Param('postId', ValidateSerialPipe) postId: string, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto) {
-        const userId = dtoUser ? dtoUser.userId : null;
+    async getPost(
+        @Param('postId', ValidateSerialPipe) postId: string,
+        @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
+    ): Promise<postOutInterface> {
+        const userId: string | null = dtoUser ? dtoUser.userId : null;
         return this.postsQueryRepository.getPost(postId, userId);
     }
 
     @HttpCode(HttpStatus.CREATED)
     @UseGuards(BasicAuthGuard)
     @Post()
-    async createPost(@Body() dto: PostCreateDtoApi) {
+    async createPost(@Body() dto: PostCreateDtoApi): Promise<postOutInterface> {
         const userId = null;
-        const postId = await this.commandBus.execute(new CreatePostCommand(dto));
+        const postId: string = await this.commandBus.execute(new CreatePostCommand(dto));
         return this.postsQueryRepository.getPost(postId, userId);
     }
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(BasicAuthGuard)
     @Put(':postId')
-    async updatePost(@Param('postId', ValidateSerialPipe) postId: string, @Body() dto: PostUpdateDtoApi) {
+    async updatePost(@Param('postId', ValidateSerialPipe) postId: string, @Body() dto: PostUpdateDtoApi): Promise<void> {
         return this.commandBus.execute(new UpdatePostCommand(postId, dto));
     }
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(BasicAuthGuard)
     @Delete(':postId')
-    async deletePost(@Param('postId', ValidateSerialPipe) postId: string) {
+    async deletePost(@Param('postId', ValidateSerialPipe) postId: string): Promise<void> {
         return this.commandBus.execute(new DeletePostCommand(postId));
     }
 
@@ -76,7 +80,7 @@ export class PostsController {
         @Param('postId', ValidateSerialPipe) id: string,
         @Body() dto: CommentCreateToPostApi,
         @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
-    ) {
+    ): Promise<commentIntInterface> {
         const commentId = await this.commandBus.execute(new CreateCommentCommand(dto, id, dtoUser.userId));
         return this.commentQueryRepository.getComment(commentId, dtoUser.userId);
     }

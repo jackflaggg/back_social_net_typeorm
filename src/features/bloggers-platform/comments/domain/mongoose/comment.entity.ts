@@ -3,16 +3,8 @@ import { HydratedDocument, Model } from 'mongoose';
 import { ExtendedLikesSchema } from '../../../posts/domain/mongoose/extended.like.entity';
 import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/app/deletion-status.enum';
 import { defaultLike } from '../../../../../libs/contracts/constants/post/default.like.schema';
-
-export interface CommentatorInfoInterface {
-    userId: string;
-    userLogin: string;
-}
-
-export interface likesInfoInterface {
-    likesCount: number;
-    dislikesCount: number;
-}
+import { CommentatorInfoInterface } from '../../types/commentator.info';
+import { likesInfoInterface } from '../../types/likes.info';
 
 @Schema({ timestamps: true })
 export class CommentEntity {

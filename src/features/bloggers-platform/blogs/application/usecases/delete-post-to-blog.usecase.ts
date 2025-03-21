@@ -1,9 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BlogsPgRepository } from '../../infrastructure/postgres/blogs.pg.repository';
-import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { PostsPgRepository } from '../../../posts/infrastructure/postgres/posts.pg.repository';
 import { BlogsRepositoryOrm } from '../../infrastructure/typeorm/blogs.pg.repository';
 import { PostsRepositoryOrm } from '../../../posts/infrastructure/typeorm/posts.pg.repository';
+import { Blog } from '../../domain/typeorm/blog.entity';
+import { Post } from '../../../posts/domain/typeorm/post.entity';
 
 export class DeletePostToBlogCommand {
     constructor(
@@ -19,18 +18,11 @@ export class DeletePostToBlogUseCase implements ICommandHandler<DeletePostToBlog
         private readonly postRepository: PostsRepositoryOrm,
     ) {}
     async execute(command: DeletePostToBlogCommand): Promise<void> {
-        const blog = await this.blogRepository.findBlogById(command.blogId);
+        const blog: Blog = await this.blogRepository.findBlogById(command.blogId);
 
-        if (!blog) {
-            throw NotFoundDomainException.create('блог не найден', 'blogId');
-        }
+        const post: Post = await this.postRepository.findPostById(command.postId);
 
-        const post = await this.postRepository.findPostById(command.postId);
-
-        if (!post) {
-            throw NotFoundDomainException.create('пост не найден', 'postId');
-        }
-
-        await this.postRepository.deletePost(post.id);
+        post.markDeleted();
+        await this.postRepository.save(post);
     }
 }

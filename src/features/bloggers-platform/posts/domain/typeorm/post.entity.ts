@@ -1,7 +1,7 @@
 import { PostUpdateDtoService } from '../../dto/service/post.update.dto';
 import { PostToBlogCreateDtoApi } from '../../../blogs/dto/api/blog.to.post.create.dto';
 import { BaseEntity } from '../../../../../core/domain/base.entity';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Blog } from '../../../blogs/domain/typeorm/blog.entity';
 import {
     contentConstraints,
@@ -9,6 +9,7 @@ import {
     titleConstraints,
 } from '../../../../../libs/contracts/constants/post/post-property.constraints';
 import { isNull } from '../../../../user-accounts/utils/user/is.null';
+import { CommentToUser } from '../../../comments/domain/typeorm/comment.entity';
 
 @Entity('posts')
 export class Post extends BaseEntity {
@@ -24,6 +25,10 @@ export class Post extends BaseEntity {
     @ManyToOne((): typeof Blog => Blog, blog => blog.posts)
     @JoinColumn({ name: 'blog_id' })
     blog: Blog;
+
+    @OneToMany((): typeof CommentToUser => CommentToUser, comment => comment.post)
+    @JoinColumn({ name: 'comment_id' })
+    comments: CommentToUser[];
 
     static buildInstance(dto: PostToBlogCreateDtoApi, blog: Blog): Post {
         const post = new this();

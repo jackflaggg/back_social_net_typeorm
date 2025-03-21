@@ -1,13 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 import { StatusLike } from '../../../../../libs/contracts/enums/status/status.like';
-
-export interface likeViewModel {
-    userId: string;
-    userLogin: string;
-    parentId: string;
-    status: string;
-}
+import { likeViewModel } from '../../types/like.view';
 
 @Schema({ timestamps: true, optimisticConcurrency: true }) // Добавлено optimisticConcurrency
 export class StatusEntity {
