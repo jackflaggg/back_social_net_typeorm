@@ -10,5 +10,5 @@ export const descriptionConstraints = {
 
 export const websiteUrlConstraints = {
     minLength: 1,
-    maxLength: 100,
+    maxLength: 120,
 };

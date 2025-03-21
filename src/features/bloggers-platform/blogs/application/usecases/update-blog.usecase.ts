@@ -16,6 +16,5 @@ export class UpdateBlogUseCase implements ICommandHandler<UpdateBlogCommand> {
         const blog = await this.blogRepository.findBlogById(command.blogId);
         blog.update(command.payload);
         await this.blogRepository.save(blog);
-        // await this.blogRepository.updateBlog(blogId, command.payload.name, command.payload.description, command.payload.websiteUrl);
     }
 }

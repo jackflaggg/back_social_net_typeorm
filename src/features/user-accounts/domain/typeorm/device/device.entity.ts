@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../user/user.entity';
 import { isNull } from '../../../../../core/utils/user/is.null';
+import { PostUpdateDtoApi } from '../../../../bloggers-platform/posts/dto/api/post.update.dto';
 
 @Entity('security_device_to_user')
 export class SecurityDeviceToUser {
@@ -23,7 +24,7 @@ export class SecurityDeviceToUser {
     @JoinColumn({ name: 'user_id' })
     user: User;
 
-    static buildInstance(dto: any, user: User) {
+    static buildInstance(dto: any, user: User): SecurityDeviceToUser {
         const session = new SecurityDeviceToUser();
 
         session.deviceId = dto.deviceId;
@@ -36,8 +37,7 @@ export class SecurityDeviceToUser {
         return session as SecurityDeviceToUser;
     }
 
-    public markDeleted() {
-        // метод обертка!
+    public markDeleted(): void {
         if (!isNull(this.deletedAt)) throw new Error('Данный объект уже был помечен на удаление');
 
         this.deletedAt = new Date();

@@ -1,35 +1,39 @@
 import { PostUpdateDtoService } from '../../dto/service/post.update.dto';
 import { PostToBlogCreateDtoApi } from '../../../blogs/dto/api/blog.to.post.create.dto';
 import { BaseEntity } from '../../../../../core/domain/base.entity';
-import { Column, CreateDateColumn, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { isNull } from '../../../../../core/utils/user/is.null';
+import { Blog } from '../../../blogs/domain/typeorm/blog.entity';
+import {
+    contentConstraints,
+    shortDescriptionConstraints,
+    titleConstraints,
+} from '../../../../../libs/contracts/constants/post/post-property.constraints';
 
 @Entity('posts')
 export class Post extends BaseEntity {
-    @Column({ name: 'title', type: 'varchar', length: '30', collation: 'C' })
+    @Column({ name: 'title', type: 'varchar', length: titleConstraints.maxLength, collation: 'C' })
     title: string;
 
-    @Column({ name: 'short_description', type: 'varchar', length: '255', collation: 'C' })
+    @Column({ name: 'short_description', type: 'varchar', length: shortDescriptionConstraints.maxLength, collation: 'C' })
     shortDescription: string;
 
-    @Column({ name: 'content', type: 'varchar', length: '255', collation: 'C' })
+    @Column({ name: 'content', type: 'varchar', length: contentConstraints.maxLength, collation: 'C' })
     content: string;
 
-    @Column({ name: 'blog_id', type: 'varchar' })
-    blogId: string;
+    @ManyToOne((): typeof Blog => Blog, blog => blog.posts)
+    @JoinColumn({ name: 'blog_id' })
+    blog: Blog;
 
-    @CreateDateColumn({ name: 'updated_business_logic', type: 'timestamptz', default: null })
-    updatedBusLogic: Date | null;
-
-    static buildInstance(dto: PostToBlogCreateDtoApi, blogId: string, blogName: string) {
+    static buildInstance(dto: PostToBlogCreateDtoApi, blog: Blog): Post {
         const post = new this();
 
         post.title = dto.title;
         post.shortDescription = dto.shortDescription;
         post.content = dto.content;
-        post.blogId = blogId;
+        post.blog = blog;
 
-        return post;
+        return post as Post;
     }
 
     update(dto: PostUpdateDtoService): void {
@@ -39,8 +43,7 @@ export class Post extends BaseEntity {
     }
 
     markDeleted(): void {
-        if (!isNull(this.deletedAt)) throw new Error('Entity already deleted');
+        if (!isNull(this.deletedAt)) throw new Error('Данный объект уже был помечен на удаление');
         this.deletedAt = new Date();
-        this.updatedBusLogic = new Date();
     }
 }
