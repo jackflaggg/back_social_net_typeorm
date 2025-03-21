@@ -29,7 +29,6 @@ import { DeleteSessionsUseCase } from './application/device/usecases/delete-sess
 import { AppConfig } from '../../core/config/app.config';
 import { ConfigModule } from '@nestjs/config';
 import { EmailAdapter } from '../notifications/adapter/email.adapter';
-import { UserPgRepository } from './infrastructure/postgres/user/user.pg.repository';
 import { BcryptService } from './application/other_services/bcrypt.service';
 import { LogUserInformationWhenUserLoggedInEventHandler } from './application/user/event-handlers/logUserInformationWhenUserLoggedInEventHandler';
 import { SecurityDeviceToUser } from './domain/typeorm/device/device.entity';

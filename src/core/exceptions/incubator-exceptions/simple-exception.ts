@@ -5,7 +5,7 @@ export class SimpleExceptionFilter implements ExceptionFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
         const request = ctx.getRequest();
-        const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+        const status = exception.getStatus() ?? HttpStatus.INTERNAL_SERVER_ERROR;
 
         const getField = (str: string) => {
             return str.split(' ')[0];

@@ -1,7 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserJwtPayloadDto } from '../../../strategies/refresh.strategy';
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { SessionsPgRepository } from '../../../infrastructure/postgres/sessions/sessions.pg.repository';
 import { SessionsRepositoryOrm } from '../../../infrastructure/typeorm/sessions/sessions.orm.repository';
 
 export class UpdateSessionCommand {

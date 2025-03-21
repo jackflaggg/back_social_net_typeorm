@@ -1,6 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { LoginDtoService } from '../../../dto/service/login.dto';
-import { UserPgRepository } from '../../../infrastructure/postgres/user/user.pg.repository';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
 
 export class ValidateUserCommand {

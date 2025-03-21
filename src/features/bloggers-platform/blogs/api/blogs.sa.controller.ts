@@ -1,8 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { SETTINGS } from '../../../../core/settings';
 import { CommandBus } from '@nestjs/cqrs';
-import { BlogsPgQueryRepository } from '../infrastructure/postgres/query/blogs.pg.query.repository';
-import { PostsPgQueryRepository } from '../../posts/infrastructure/postgres/query/posts.pg.query.repository';
 import { GetBlogsQueryParams } from '../dto/repository/query/get-blogs-query-params.input-dto';
 import { ValidateSerialPipe } from '../../../../core/pipes/validation.input.serial';
 import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';

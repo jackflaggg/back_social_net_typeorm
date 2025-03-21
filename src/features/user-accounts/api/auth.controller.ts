@@ -41,6 +41,7 @@ export class AuthController {
         const ipDefault = req.ip ?? this.appConfig.ip;
         const userAgentDefault = req.headers['user-agent'] ?? this.appConfig.userAgent;
 
+        console.log(dto);
         const { jwt, refresh } = await this.commandBus.execute(
             new LoginUserCommand(ipDefault, userAgentDefault, req.user as findUserByLoginOrEmailInterface),
         );
