@@ -8,7 +8,7 @@ import { CommentsStatus } from '../../../likes/domain/typeorm/comments/comments.
 
 @Entity('comments')
 export class CommentToUser extends BaseEntity {
-    @Column({ type: 'varchar', length: contentConstraints.maxLength })
+    @Column({ type: 'varchar', length: contentConstraints.maxLength, collation: 'C' })
     content: string;
 
     @Column({ type: 'uuid' })

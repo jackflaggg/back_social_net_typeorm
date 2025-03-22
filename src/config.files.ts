@@ -21,5 +21,3 @@ export const envModule = ConfigModule.forRoot({
     ],
     isGlobal: true,
 });
-
-console.log(process.env.ENV_FILE_PATH);
