@@ -18,8 +18,8 @@
     "test:cov": "cross-env NODE_ENV=testing jest --coverage",
     "test:debug": "cross-env NODE_ENV=testing node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "cross-env NODE_ENV=testing jest --config ./test/jest-e2e.json",
-    "run-migrations": "yarn typeorm-ts-node-commonjs migration:run -- -d 'путь конфига'",
-    "revert-migrations": "yarn typeorm-ts-node-commonjs migration:revert -- -d 'путь конфига'",
+    "run-migrations": "yarn typeorm-ts-node-commonjs migration:run -- -d ./src/db/data-source.ts",
+    "revert-migrations": "yarn typeorm-ts-node-commonjs migration:revert -- -d ./src/db/data-source.ts",
     "generate-migration": "yarn typeorm-ts-node-commonjs migration:generate ./src/db/migrations/init_migrations -d ./src/db/data-source.ts"
   },
   "dependencies": {
