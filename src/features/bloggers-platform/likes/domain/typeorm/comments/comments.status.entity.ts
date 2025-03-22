@@ -1,29 +1,32 @@
 import { StatusLike, StatusLikeType } from '../../../../../../libs/contracts/enums/status/status.like';
-import { likeViewModel } from '../../../types/like.view';
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseEntityWithoutDeletedAtAndCreatedAt } from '../../../../../../core/domain/base.entity';
 import { User } from '../../../../../user-accounts/domain/typeorm/user/user.entity';
 import { CommentToUser } from '../../../../comments/domain/typeorm/comment.entity';
 
 @Entity('statuses_comments')
 export class CommentsStatus extends BaseEntityWithoutDeletedAtAndCreatedAt {
-    @OneToOne((): typeof User => User, user => user.likesComments)
-    @JoinColumn({ name: 'user_id' })
+    @ManyToOne((): typeof User => User, user => user.likesComments)
     user: User;
 
-    @OneToOne((): typeof CommentToUser => CommentToUser, comment => comment)
-    @JoinColumn({ name: 'comment_id' })
+    @ManyToOne((): typeof CommentToUser => CommentToUser, comment => comment.likesComments)
     comment: CommentToUser;
 
     @Column({ type: 'enum', enum: StatusLike.enum, default: StatusLike.enum['None'] })
     status: StatusLikeType;
 
-    public static buildInstance(dto: likeViewModel, user: User, comment: CommentToUser): CommentsStatus {
+    @Column()
+    userId: string;
+
+    @Column()
+    commentId: string;
+
+    public static buildInstance(statusComment: StatusLikeType, user: User, comment: CommentToUser): CommentsStatus {
         const status = new this();
 
         status.user = user;
         status.comment = comment;
-        status.status = dto.status || StatusLike.enum['None'];
+        status.status = statusComment || StatusLike.enum['None'];
         return status as CommentsStatus;
     }
 

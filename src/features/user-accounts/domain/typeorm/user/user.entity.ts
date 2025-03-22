@@ -12,6 +12,7 @@ import { isNull } from '../../../utils/user/is.null';
 import { CommentToUser } from '../../../../bloggers-platform/comments/domain/typeorm/comment.entity';
 import { PostStatus } from '../../../../bloggers-platform/likes/domain/typeorm/posts/post.status.entity';
 import { CommentsStatus } from '../../../../bloggers-platform/likes/domain/typeorm/comments/comments.status.entity';
+import { UserCreateDtoRepo } from '../../../dto/repository/user.create.dto';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -36,16 +37,16 @@ export class User extends BaseEntity {
     @OneToMany((): typeof CommentToUser => CommentToUser, comment => comment.user)
     comments: CommentToUser[];
 
-    @OneToOne(() => EmailConfirmationToUser, emailConfirmation => emailConfirmation.user, { cascade: true })
+    @OneToOne((): typeof EmailConfirmationToUser => EmailConfirmationToUser, emailConfirmation => emailConfirmation.user, { cascade: true })
     emailConfirmation: EmailConfirmationToUser;
 
-    @OneToOne(() => RecoveryPasswordToUser, recoveryConfirmation => recoveryConfirmation.user)
+    @OneToOne((): typeof RecoveryPasswordToUser => RecoveryPasswordToUser, recoveryConfirmation => recoveryConfirmation.user)
     recoveryConfirmation: RecoveryPasswordToUser;
 
-    @OneToMany(() => SecurityDeviceToUser, securityDevice => securityDevice.user)
+    @OneToMany((): typeof SecurityDeviceToUser => SecurityDeviceToUser, securityDevice => securityDevice.user)
     securityDevices: SecurityDeviceToUser[];
 
-    static buildInstance(dto: { login: string; email: string; password: string; sentEmailRegistration: boolean }): User {
+    static buildInstance(dto: UserCreateDtoRepo): User {
         const user = new this();
         user.login = dto.login;
         user.email = dto.email;
@@ -57,17 +58,17 @@ export class User extends BaseEntity {
         return user as User;
     }
 
-    public markDeleted() {
+    public markDeleted(): void {
         if (!isNull(this.deletedAt)) throw new Error('Данный объект уже был помечен на удаление');
 
         this.deletedAt = new Date();
     }
 
-    public updatePassword(newPassword: string) {
+    public updatePassword(newPassword: string): void {
         this.passwordHash = newPassword;
     }
 
-    public confirmedSendEmailRegistration() {
+    public confirmedSendEmailRegistration(): void {
         this.sentEmailRegistration = true;
     }
 }

@@ -3,7 +3,7 @@ import { HydratedDocument, Model } from 'mongoose';
 import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/app/deletion-status.enum';
 
 @Schema({ timestamps: false })
-export class DeviceEntity {
+export class DeviceEntityMongoose {
     @Prop({
         type: String,
         required: true,
@@ -45,10 +45,10 @@ export class DeviceEntity {
     }
 }
 
-export const DeviceSchema = SchemaFactory.createForClass(DeviceEntity);
+export const DeviceSchema = SchemaFactory.createForClass(DeviceEntityMongoose);
 
-DeviceSchema.loadClass(DeviceEntity);
+DeviceSchema.loadClass(DeviceEntityMongoose);
 
-export type DeviceDocument = HydratedDocument<DeviceEntity>;
+export type DeviceDocument = HydratedDocument<DeviceEntityMongoose>;
 
-export type DeviceModelType = Model<DeviceDocument> & typeof DeviceEntity;
+export type DeviceModelType = Model<DeviceDocument> & typeof DeviceSchema;

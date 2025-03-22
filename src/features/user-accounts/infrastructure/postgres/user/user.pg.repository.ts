@@ -102,7 +102,7 @@ export class UserPgRepository {
             const result = await this.dataSource.query(queryUsers, [
                 newUser.login,
                 newUser.email,
-                newUser.createdAt.toISOString(),
+                new Date().toISOString(),
                 newUser.password,
             ]);
 

@@ -10,7 +10,7 @@ import {
 import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/app/deletion-status.enum';
 
 @Schema({ timestamps: true })
-export class BlogEntity {
+export class BlogEntityMongoose {
     @Prop({ type: String, required: true, ...nameConstraints })
     name: string;
 
@@ -48,14 +48,14 @@ export class BlogEntity {
     }
 }
 // Создает схему для сущности блога и загружает её в базу данных
-export const BlogSchema = SchemaFactory.createForClass(BlogEntity);
+export const BlogSchema = SchemaFactory.createForClass(BlogEntityMongoose);
 
-// Загружает методы из класса BlogEntity в схему
-BlogSchema.loadClass(BlogEntity);
+// Загружает методы из класса BlogSchema в схему
+BlogSchema.loadClass(BlogEntityMongoose);
 
 // Определяет тип для документа блога, который будет содержать
 // свойства и методы из Mongoose, а также будет типизирован.
-export type BlogDocument = HydratedDocument<BlogEntity>;
+export type BlogDocument = HydratedDocument<BlogEntityMongoose>;
 
 // тип модели, которая включает в себя все методы и свойства класса
-export type BlogModelType = Model<BlogDocument> & typeof BlogEntity;
+export type BlogModelType = Model<BlogDocument> & typeof BlogSchema;

@@ -7,7 +7,7 @@ import { CommentatorInfoInterface } from '../../types/commentator.info';
 import { likesInfoInterface } from '../../types/likes.info';
 
 @Schema({ timestamps: true })
-export class CommentEntity {
+export class CommentEntityMongoose {
     @Prop({ type: String, required: true })
     content: string;
 
@@ -53,14 +53,14 @@ export class CommentEntity {
 }
 
 // Создает схему для сущности коммента и загружает её в базу данных
-export const CommentSchema = SchemaFactory.createForClass(CommentEntity);
+export const CommentSchema = SchemaFactory.createForClass(CommentEntityMongoose);
 
-// Загружает методы из класса CommentEntity в схему
-CommentSchema.loadClass(CommentEntity);
+// Загружает методы из класса CommentSchema в схему
+CommentSchema.loadClass(CommentEntityMongoose);
 
 // Определяет тип для документа коммента, который будет содержать
 // свойства и методы из Mongoose, а также будет типизирован
-export type CommentDocument = HydratedDocument<CommentEntity>;
+export type CommentDocument = HydratedDocument<CommentEntityMongoose>;
 
 // тип модели, которая включает в себя все методы и свойства класса
-export type CommentModelType = Model<CommentDocument> & typeof CommentEntity;
+export type CommentModelType = Model<CommentDocument> & typeof CommentSchema;

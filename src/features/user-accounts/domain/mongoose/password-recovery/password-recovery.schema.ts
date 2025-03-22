@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 
 @Schema()
-export class PasswordRecoveryEntity {
+export class PasswordRecoveryEntityMongoose {
     @Prop({ type: String, required: true })
     userId: string;
 
@@ -16,10 +16,10 @@ export class PasswordRecoveryEntity {
     used: boolean;
 }
 
-export const PasswordRecoverySchema = SchemaFactory.createForClass(PasswordRecoveryEntity);
+export const PasswordRecoverySchema = SchemaFactory.createForClass(PasswordRecoveryEntityMongoose);
 
-PasswordRecoverySchema.loadClass(PasswordRecoveryEntity);
+PasswordRecoverySchema.loadClass(PasswordRecoveryEntityMongoose);
 
-export type PasswordRecoveryDocument = HydratedDocument<PasswordRecoveryEntity>;
+export type PasswordRecoveryDocument = HydratedDocument<PasswordRecoveryEntityMongoose>;
 
-export type PasswordRecoveryModelType = Model<PasswordRecoveryDocument> & typeof PasswordRecoveryEntity;
+export type PasswordRecoveryModelType = Model<PasswordRecoveryDocument> & typeof PasswordRecoverySchema;

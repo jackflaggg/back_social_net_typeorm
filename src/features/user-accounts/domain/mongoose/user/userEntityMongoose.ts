@@ -7,7 +7,7 @@ import { loginConstraints } from '../../../../../libs/contracts/constants/user/u
 import { DeletionStatus, DeletionStatusType } from '../../../../../libs/contracts/enums/app/deletion-status.enum';
 
 @Schema({ timestamps: true })
-export class UserEntity {
+export class UserEntityMongoose {
     @Prop({ type: String, required: true, unique: true, ...loginConstraints })
     login: string;
 
@@ -59,14 +59,14 @@ export class UserEntity {
 }
 
 // Создает схему для сущности юзера и загружает её в базу данных
-export const UserSchema = SchemaFactory.createForClass(UserEntity);
+export const UserSchema = SchemaFactory.createForClass(UserEntityMongoose);
 
-// Загружает методы из класса UserEntity в схему
-UserSchema.loadClass(UserEntity);
+// Загружает методы из класса UserSchema в схему
+UserSchema.loadClass(UserEntityMongoose);
 
 // Определяет тип для документа юзера, который будет содержать
 // свойства и методы из Mongoose, а также будет типизирован
-export type UserDocument = HydratedDocument<UserEntity>;
+export type UserDocument = HydratedDocument<UserEntityMongoose>;
 
 // тип модели, которая включает в себя все методы и свойства класса
-export type UserModelType = Model<UserDocument> & typeof UserEntity;
+export type UserModelType = Model<UserDocument> & typeof UserSchema;

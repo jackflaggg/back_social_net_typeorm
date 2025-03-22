@@ -4,7 +4,7 @@ import { StatusLike } from '../../../../../libs/contracts/enums/status/status.li
 import { likeViewModel } from '../../types/like.view';
 
 @Schema({ timestamps: true, optimisticConcurrency: true }) // Добавлено optimisticConcurrency
-export class StatusEntity {
+export class StatusEntityMongoose {
     @Prop({ type: String, required: true, index: true })
     userId: string;
 
@@ -30,10 +30,10 @@ export class StatusEntity {
     }
 }
 
-export const StatusSchema = SchemaFactory.createForClass(StatusEntity);
+export const StatusSchema = SchemaFactory.createForClass(StatusEntityMongoose);
 
-StatusSchema.loadClass(StatusEntity);
+StatusSchema.loadClass(StatusEntityMongoose);
 
-export type StatusDocument = HydratedDocument<StatusEntity>;
+export type StatusDocument = HydratedDocument<StatusEntityMongoose>;
 
-export type StatusModelType = Model<StatusDocument> & typeof StatusEntity;
+export type StatusModelType = Model<StatusDocument> & typeof StatusSchema;
