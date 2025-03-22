@@ -129,7 +129,6 @@ export class UserRepositoryOrm {
     async findCodeToEmailRegistration(code: string) {
         const result = await this.emailConfirmationRepositoryTypeOrm
             .createQueryBuilder('em')
-            //.select(['em.confirmation_code AS confirmationCode, em.expiration_date AS expirationDate, em.is_confirmed AS isConfirmed'])
             .where('em.confirmation_code = :code', { code })
             .getOne();
         if (!result) {
@@ -139,7 +138,6 @@ export class UserRepositoryOrm {
     }
     async saveEmailConfirmation(entity: EmailConfirmationToUser) {
         const result = await this.emailConfirmationRepositoryTypeOrm.save(entity);
-        // TODO: Переделать на функцию маппер!
         return {
             userId: result.userId,
             confirmationCode: result.confirmationCode,

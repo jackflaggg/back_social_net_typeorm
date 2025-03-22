@@ -38,17 +38,14 @@ export class PostsController {
         @Query() query: GetPostsQueryParams,
         @Param('blogId', ValidateSerialPipe) blogId: string,
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
-    ): Promise<PaginatedViewDto<PostViewDto[]>> {
+    ) {
         const userId: string | null = dtoUser ? dtoUser.userId : null;
         return await this.postsQueryRepository.getAllPosts(query, userId, blogId);
     }
 
     @UseGuards(JwtOptionalAuthGuard)
     @Get(':postId')
-    async getPost(
-        @Param('postId', ValidateSerialPipe) postId: string,
-        @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
-    ): Promise<postOutInterface> {
+    async getPost(@Param('postId', ValidateSerialPipe) postId: string, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto) {
         const userId: string | null = dtoUser ? dtoUser.userId : null;
         return this.postsQueryRepository.getPost(postId, userId);
     }
@@ -56,7 +53,7 @@ export class PostsController {
     @HttpCode(HttpStatus.CREATED)
     @UseGuards(BasicAuthGuard)
     @Post()
-    async createPost(@Body() dto: PostCreateDtoApi): Promise<postOutInterface> {
+    async createPost(@Body() dto: PostCreateDtoApi) {
         const userId = null;
         const postId: string = await this.commandBus.execute(new CreatePostCommand(dto));
         return this.postsQueryRepository.getPost(postId, userId);
@@ -94,7 +91,7 @@ export class PostsController {
         @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
         const checkPost = await this.postsQueryRepository.getPost(postId, dtoUser.userId);
-        return this.commandBus.execute(new LikePostCommand(dto.likeStatus, checkPost.id, dtoUser.userId));
+        //return this.commandBus.execute(new LikePostCommand(dto.likeStatus, checkPost.id, dtoUser.userId));
     }
 
     @UseGuards(JwtOptionalAuthGuard)
@@ -106,6 +103,6 @@ export class PostsController {
     ) {
         const userId = dtoUser ? dtoUser.userId : null;
         const post = await this.postsQueryRepository.getPost(postId, userId);
-        return this.commentQueryRepository.getAllComments(post.id, query, userId);
+        //return this.commentQueryRepository.getAllComments(post.id, query, userId);
     }
 }

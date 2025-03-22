@@ -23,8 +23,6 @@ import { PostsQueryRepositoryOrm } from '../../posts/infrastructure/typeorm/quer
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { BlogOutInterface, BlogViewDto } from '../dto/repository/query/blog-view.dto';
 import { postOutInterface, PostViewDto } from '../../posts/dto/repository/post-view';
-import { BlogCreateCommand } from '../../../../libs/contracts/commands/blog/create.command';
-import { BadRequestDomainException } from '../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 @Controller(SETTINGS.PATH.SA_BLOGS)
 @UseGuards(BasicAuthGuard)
@@ -43,8 +41,6 @@ export class BlogsSaController {
     @HttpCode(HttpStatus.CREATED)
     @Post()
     async createBlog(@Body() dto: BlogCreateDtoApi): Promise<BlogOutInterface> {
-        // const parsedData = BlogCreateCommand.RequestSchema.safeParse(dto);
-        // if (parsedData.error) throw BadRequestDomainException.create('ошибка', 'zod');
         const blogId = await this.commandBus.execute(new CreateBlogCommand(dto));
         return this.blogsQueryRepository.getBlog(blogId);
     }
@@ -68,7 +64,7 @@ export class BlogsSaController {
         @Param('blogId', ValidateSerialPipe) blogId: string,
         @Body() dto: PostToBlogCreateDtoApi,
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
-    ): Promise<postOutInterface> {
+    ) {
         const userId: string | null = dtoUser ? dtoUser.userId : null;
         const postId: string = await this.commandBus.execute(new CreatePostToBlogCommand(blogId, dto));
         return this.postsQueryRepository.getPost(postId, userId);
@@ -80,7 +76,7 @@ export class BlogsSaController {
         @Param('blogId', ValidateSerialPipe) blogId: string,
         @Query() query: GetPostsQueryParams,
         @ExtractAnyUserFromRequest() user: UserJwtPayloadDto,
-    ): Promise<PaginatedViewDto<PostViewDto[]>> {
+    ) {
         const userId: string | null = user ? user.userId : null;
         const blog: BlogOutInterface = await this.blogsQueryRepository.getBlog(blogId);
         return this.postsQueryRepository.getAllPosts(query, userId, blog.id);

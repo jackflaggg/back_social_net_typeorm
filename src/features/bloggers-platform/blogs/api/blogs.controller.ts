@@ -30,7 +30,7 @@ export class BlogsController {
         @Param('blogId', ValidateSerialPipe) blogId: string,
         @Query() query: GetPostsQueryParams,
         @ExtractAnyUserFromRequest() user: UserJwtPayloadDto,
-    ): Promise<PaginatedViewDto<PostViewDto[]>> {
+    ) {
         const userId = user ? user.userId : null;
         const blog = await this.blogsQueryRepository.getBlog(blogId);
         return this.postsQueryRepository.getAllPosts(query, userId, blog.id);

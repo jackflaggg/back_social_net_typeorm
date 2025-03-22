@@ -25,7 +25,7 @@ export class RegistrationEmailResendUserUseCase implements ICommandHandler<Regis
         if (user.isConfirmed) {
             throw BadRequestDomainException.create('аккаунт уже был активирован', 'email');
         }
-        console.log(2);
+
         const emailConfirmation = await this.usersRepository.findEmailConfirmation(user.id);
 
         if (!emailConfirmation) {
