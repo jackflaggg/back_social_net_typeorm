@@ -1,12 +1,16 @@
 import { DataSourceOptions } from 'typeorm';
+import { configDotenv } from 'dotenv';
+import process from 'node:process';
+configDotenv();
 
 export const typeOrmConfigOptions: DataSourceOptions = {
     type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username: 'postgres',
-    password: '230900',
-    database: 'social_network_typeorm',
+    host: process.env.HOST_SQL,
+    port: Number(process.env.PORT_SQL) || 5432,
+    username: process.env.USERNAME_SQL,
+    password: process.env.PASSWORD_SQL,
+    database: process.env.DATABASE_NAME_SQL,
     synchronize: false,
+    migrationsRun: false,
     logging: true,
 };

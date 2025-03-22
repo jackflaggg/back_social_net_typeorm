@@ -1,5 +1,5 @@
 import { StatusLike, StatusLikeType } from '../../../../../../libs/contracts/enums/status/status.like';
-import { BaseEntityWithoutDeletedAtAndCreatedAt } from '../../../../../../core/domain/base.entity';
+import { BaseEntityWithoutDeletedAtAndCreatedAt } from '../../../../../../core/domain/base';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { User } from '../../../../../user-accounts/domain/typeorm/user/user.entity';
 import { Post } from '../../../../posts/domain/typeorm/post.entity';

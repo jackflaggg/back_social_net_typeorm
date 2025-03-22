@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../user/user.entity';
-import { BaseEntityWithoutDeletedAt } from '../../../../../core/domain/base.entity';
+import { BaseEntityWithoutDeletedAt } from '../../../../../core/domain/base';
 
 @Entity('email_confirmation_to_user')
 export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {

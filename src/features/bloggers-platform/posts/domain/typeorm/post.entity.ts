@@ -1,6 +1,6 @@
 import { PostUpdateDtoService } from '../../dto/service/post.update.dto';
 import { PostToBlogCreateDtoApi } from '../../../blogs/dto/api/blog.to.post.create.dto';
-import { BaseEntity } from '../../../../../core/domain/base.entity';
+import { Base } from '../../../../../core/domain/base';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Blog } from '../../../blogs/domain/typeorm/blog.entity';
 import {
@@ -13,7 +13,7 @@ import { CommentToUser } from '../../../comments/domain/typeorm/comment.entity';
 import { PostStatus } from '../../../likes/domain/typeorm/posts/post.status.entity';
 
 @Entity('posts')
-export class Post extends BaseEntity {
+export class Post extends Base {
     @Column({ name: 'title', type: 'varchar', length: titleConstraints.maxLength, collation: 'C' })
     title: string;
 

@@ -5,13 +5,13 @@ import {
     websiteUrlConstraints,
 } from '../../../../../libs/contracts/constants/blog/blog-property.constraints';
 import { Column, Entity, OneToMany } from 'typeorm';
-import { BaseEntity } from '../../../../../core/domain/base.entity';
+import { Base } from '../../../../../core/domain/base';
 import { BlogCreateRepositoryDto } from '../../application/usecases/create-blog.usecase';
 import { Post } from '../../../posts/domain/typeorm/post.entity';
 import { isNull } from '../../../../user-accounts/utils/user/is.null';
 
 @Entity('blogs')
-export class Blog extends BaseEntity {
+export class Blog extends Base {
     @Column({ name: 'title', type: 'varchar', length: nameConstraints.maxLength, collation: 'C' })
     name: string;
 
@@ -21,7 +21,10 @@ export class Blog extends BaseEntity {
     @Column({ name: 'website_url', type: 'varchar', length: websiteUrlConstraints.maxLength, collation: 'C' })
     websiteUrl: string;
 
-    @Column({ name: 'is_membership', type: Boolean, default: false })
+    @Column({ name: 'is_mock', type: Boolean, default: false })
+    isMock: boolean;
+
+    @Column({ name: 'is_membership', type: Boolean, default: true })
     isMembership: boolean;
 
     @OneToMany((): typeof Post => Post, post => post.blog)

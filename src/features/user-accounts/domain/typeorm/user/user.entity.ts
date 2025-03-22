@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { EmailConfirmationToUser } from '../email-confirmation/email.confirmation.entity';
 import { SecurityDeviceToUser } from '../device/device.entity';
-import { BaseEntity } from '../../../../../core/domain/base.entity';
+import { Base } from '../../../../../core/domain/base';
 import { RecoveryPasswordToUser } from '../password-recovery/pass-rec.entity';
 import {
     emailConstraints,
@@ -15,7 +15,7 @@ import { CommentsStatus } from '../../../../bloggers-platform/likes/domain/typeo
 import { UserCreateDtoRepo } from '../../../dto/repository/user.create.dto';
 
 @Entity('users')
-export class User extends BaseEntity {
+export class User extends Base {
     @Column({ type: 'varchar', length: loginConstraints.maxLength, unique: true, collation: 'C' })
     login: string;
 

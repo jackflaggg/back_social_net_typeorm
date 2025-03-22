@@ -10,7 +10,6 @@ import { BlogsQueryRepositoryOrm } from '../infrastructure/typeorm/query/blogs.p
 import { PostsQueryRepositoryOrm } from '../../posts/infrastructure/typeorm/query/posts.pg.query.repository';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { BlogOutInterface, BlogViewDto } from '../dto/repository/query/blog-view.dto';
-import { PostViewDto } from '../../posts/dto/repository/post-view';
 
 @Controller(SETTINGS.PATH.BLOGS)
 export class BlogsController {

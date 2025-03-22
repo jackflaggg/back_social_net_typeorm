@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { BaseEntity } from '../../../../../core/domain/base.entity';
+import { Base } from '../../../../../core/domain/base';
 import { User } from '../../../../user-accounts/domain/typeorm/user/user.entity';
 import { contentConstraints } from '../../../../../libs/contracts/constants/comment/comment-property.constraints';
 import { isNull } from '../../../../user-accounts/utils/user/is.null';
@@ -7,7 +7,7 @@ import { Post } from '../../../posts/domain/typeorm/post.entity';
 import { CommentsStatus } from '../../../likes/domain/typeorm/comments/comments.status.entity';
 
 @Entity('comments')
-export class CommentToUser extends BaseEntity {
+export class CommentToUser extends Base {
     @Column({ type: 'varchar', length: contentConstraints.maxLength, collation: 'C' })
     content: string;
 

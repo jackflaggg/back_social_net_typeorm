@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { UUID } from 'typeorm/driver/mongodb/bson.typings';
 
-export abstract class BaseEntity {
+export abstract class Base {
     @PrimaryGeneratedColumn('uuid')
     public id: string;
 
@@ -16,8 +17,8 @@ export abstract class BaseEntity {
 }
 
 export abstract class BaseEntityWithoutDeletedAt {
-    @PrimaryGeneratedColumn()
-    public id: number;
+    @PrimaryGeneratedColumn('uuid')
+    public id: string;
 
     @CreateDateColumn({ name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })
     public createdAt: Date;
@@ -27,8 +28,8 @@ export abstract class BaseEntityWithoutDeletedAt {
 }
 
 export abstract class BaseEntityWithoutDeletedAtAndCreatedAt {
-    @PrimaryGeneratedColumn()
-    public id: number;
+    @PrimaryGeneratedColumn('uuid')
+    public id: string;
 
     @CreateDateColumn({ name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })
     public createdAt: Date;
