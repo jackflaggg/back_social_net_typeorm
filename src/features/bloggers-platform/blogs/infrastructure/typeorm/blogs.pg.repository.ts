@@ -19,7 +19,7 @@ export class BlogsRepositoryOrm {
         return result;
     }
 
-    async save(entity: Blog): Promise<number> {
+    async save(entity: Blog): Promise<string> {
         const result = await this.blogsRepositoryTypeOrm.save(entity);
         return result.id;
     }

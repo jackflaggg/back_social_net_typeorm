@@ -13,7 +13,7 @@ export class CreateBlogCommand {
 @CommandHandler(CreateBlogCommand)
 export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
     constructor(private readonly blogRepository: BlogsRepositoryOrm) {}
-    async execute(command: CreateBlogCommand): Promise<number> {
+    async execute(command: CreateBlogCommand): Promise<string> {
         const dto: BlogCreateRepositoryDto = {
             ...command.payload,
             createdAt: new Date(),

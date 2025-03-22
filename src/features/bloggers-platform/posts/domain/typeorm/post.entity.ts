@@ -1,7 +1,7 @@
 import { PostUpdateDtoService } from '../../dto/service/post.update.dto';
 import { PostToBlogCreateDtoApi } from '../../../blogs/dto/api/blog.to.post.create.dto';
 import { BaseEntity } from '../../../../../core/domain/base.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { Blog } from '../../../blogs/domain/typeorm/blog.entity';
 import {
     contentConstraints,

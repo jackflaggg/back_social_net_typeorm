@@ -2,7 +2,7 @@ import { Controller, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { SETTINGS } from '../../../core/settings';
-import { TablesEnum } from '../../../libs/contracts/enums/app/tables.enum';
+import { TablesEnum, TablesEnumType } from '../../../libs/contracts/enums/app/tables.enum';
 
 @Controller(SETTINGS.PATH.TESTING)
 export class TestingController {
@@ -11,12 +11,11 @@ export class TestingController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete('all-data')
     async deleteAll(): Promise<void> {
-        const dataTables = [
+        const dataTables: Exclude<TablesEnumType, 'likes'>[] = [
             TablesEnum.enum['users'],
             TablesEnum.enum['blogs'],
             TablesEnum.enum['posts'],
             TablesEnum.enum['comments'],
-            // TablesEnum.enum['likes'],
         ];
 
         for (const table of dataTables) {

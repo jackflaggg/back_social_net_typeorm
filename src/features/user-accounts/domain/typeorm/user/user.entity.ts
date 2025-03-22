@@ -10,6 +10,8 @@ import {
 } from '../../../../../libs/contracts/constants/user/user-property.constraints';
 import { isNull } from '../../../utils/user/is.null';
 import { CommentToUser } from '../../../../bloggers-platform/comments/domain/typeorm/comment.entity';
+import { PostStatus } from '../../../../bloggers-platform/likes/domain/typeorm/posts/post.status.entity';
+import { CommentsStatus } from '../../../../bloggers-platform/likes/domain/typeorm/comments/comments.status.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -25,6 +27,15 @@ export class User extends BaseEntity {
     @Column({ name: 'sent_email_registration', type: 'boolean', default: false })
     sentEmailRegistration: boolean;
 
+    @OneToMany((): typeof PostStatus => PostStatus, postStatus => postStatus.status, { cascade: false })
+    likesPosts: PostStatus[];
+
+    @OneToMany((): typeof CommentsStatus => CommentsStatus, commentsStatus => commentsStatus.user, { cascade: false })
+    likesComments: CommentsStatus[];
+
+    @OneToMany((): typeof CommentToUser => CommentToUser, comment => comment.user)
+    comments: CommentToUser[];
+
     @OneToOne(() => EmailConfirmationToUser, emailConfirmation => emailConfirmation.user, { cascade: true })
     emailConfirmation: EmailConfirmationToUser;
 
@@ -33,9 +44,6 @@ export class User extends BaseEntity {
 
     @OneToMany(() => SecurityDeviceToUser, securityDevice => securityDevice.user)
     securityDevices: SecurityDeviceToUser[];
-
-    @OneToMany(() => CommentToUser, comment => comment.user)
-    comments: CommentToUser[];
 
     static buildInstance(dto: { login: string; email: string; password: string; sentEmailRegistration: boolean }): User {
         const user = new this();

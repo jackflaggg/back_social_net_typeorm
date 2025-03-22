@@ -35,6 +35,8 @@ import { CommentsOrmQueryRepository } from './comments/infrastructure/typeorm/qu
 import { CommentsRepositoryOrm } from './comments/infrastructure/typeorm/commentsRepositoryOrm';
 import { StatusRepositoryOrm } from './likes/infrastructure/typeorm/statusRepositoryOrm';
 import { CommentToUser } from './comments/domain/typeorm/comment.entity';
+import { PostStatus } from './likes/domain/typeorm/posts/post.status.entity';
+import { CommentsStatus } from './likes/domain/typeorm/comments/comments.status.entity';
 
 const repositories = [
     BlogsRepositoryOrm,
@@ -75,7 +77,7 @@ const useCases = [
                 signOptions: { expiresIn: coreConfig.accessTokenExpirationTime },
             }),
         }),
-        TypeOrmModule.forFeature([Blog, Post, CommentToUser]),
+        TypeOrmModule.forFeature([Blog, Post, CommentToUser, PostStatus, CommentsStatus]),
         PassportModule,
         CqrsModule,
         UsersModule,

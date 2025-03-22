@@ -5,7 +5,7 @@ import { BaseEntityWithoutDeletedAt } from '../../../../../core/domain/base.enti
 @Entity('email_confirmation_to_user')
 export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {
     @PrimaryColumn({ name: 'user_id' })
-    userId: number;
+    userId: string;
 
     @Column({ name: 'confirmation_code', type: 'varchar', length: 255 })
     confirmationCode: string;
@@ -21,7 +21,7 @@ export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {
     // добавили внешний ключ!
     user: User;
 
-    static buildInstance(dto: any, userId: number) {
+    static buildInstance(dto: any, userId: string) {
         const result = new EmailConfirmationToUser();
 
         result.confirmationCode = dto.confirmationCode;

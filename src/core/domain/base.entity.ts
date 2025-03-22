@@ -1,8 +1,8 @@
 import { Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export abstract class BaseEntity {
-    @PrimaryGeneratedColumn()
-    public id: number;
+    @PrimaryGeneratedColumn('uuid')
+    public id: string;
 
     // https://typeorm.io/entities#special-columns
     @CreateDateColumn({ name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })
