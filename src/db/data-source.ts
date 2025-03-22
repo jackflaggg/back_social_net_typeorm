@@ -6,3 +6,5 @@ export default new DataSource({
     entities: ['src/features/**/domain/typeorm/*.entity.ts'],
     migrations: [__dirname + `/migrations/*.ts`],
 });
+
+console.log('new date!');
