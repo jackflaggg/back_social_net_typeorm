@@ -9,26 +9,26 @@ import { Blog } from '../../src/features/bloggers-platform/blogs/domain/typeorm/
 import { EmailConfirmationToUser } from '../../src/features/user-accounts/domain/typeorm/email-confirmation/email.confirmation.entity';
 import { SecurityDeviceToUser } from '../../src/features/user-accounts/domain/typeorm/device/device.entity';
 import { RecoveryPasswordToUser } from '../../src/features/user-accounts/domain/typeorm/password-recovery/pass-rec.entity';
-import { resolve } from 'path';
+import { resolve, join } from 'path';
 /*
     упрощает импорт, подчеркивает уникальность экземпляра,
     улучшает ясность назначения файла, предоставляет единую точку конфигурации
     и обеспечивает совместимость с TypeORM.
  */
-
+console.log(join(__dirname, '../data/*.ts'));
 export default new DataSource({
     ...typeOrmConfigOptions,
     entities: [
-        '/dist/**/*.entity.js',
-        // User,
-        // CommentToUser,
-        // Post,
-        // Blog,
-        // PostStatus,
-        // CommentsStatus,
-        // EmailConfirmationToUser,
-        // SecurityDeviceToUser,
-        // RecoveryPasswordToUser,
+        // 'src/**/*.entity.ts',
+        User,
+        CommentToUser,
+        Post,
+        Blog,
+        PostStatus,
+        CommentsStatus,
+        EmailConfirmationToUser,
+        SecurityDeviceToUser,
+        RecoveryPasswordToUser,
     ],
-    migrations: [__dirname + '/dist/migrations/data/**/*{.js}'],
+    migrations: [join(__dirname, '../data/*.ts')],
 });

@@ -23,7 +23,6 @@ export class Post extends Base {
     @Column({ name: 'content', type: 'varchar', length: contentConstraints.maxLength, collation: 'C' })
     content: string;
 
-    // TODO: Верно ли так писать?
     @ManyToOne((): typeof Blog => Blog, blog => blog.posts)
     @JoinColumn({ name: 'blog_id' })
     blog: Blog;

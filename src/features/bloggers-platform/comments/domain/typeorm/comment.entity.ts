@@ -14,9 +14,6 @@ export class CommentToUser extends Base {
     @Column({ type: 'uuid' })
     commentatorId: string;
 
-    @Column({ type: 'uuid' })
-    postId: string;
-
     @ManyToOne((): typeof User => User, user => user.comments)
     @JoinColumn({ name: 'commentator_id' })
     user: User;
@@ -27,6 +24,8 @@ export class CommentToUser extends Base {
     @ManyToOne((): typeof Post => Post, post => post.comments)
     @JoinColumn({ name: 'post_id' })
     post: Post;
+    @Column({ name: 'post_id' })
+    postId: string;
 
     public static buildInstance(content: string, userId: string, postId: string): CommentToUser {
         const comment = new this();

@@ -24,7 +24,7 @@ export class BlogsQueryRepositoryOrm {
         const resultBlogs = await this.blogsQueryRepositoryTypeOrm
             .createQueryBuilder('b')
             .select([
-                'b.id AS id, b.name AS name, b.description AS description, b.website_url AS websiteUrl, b.is_membership AS isMembership, b.created_at as createdAt',
+                'b.id AS id, b.name AS name, b.description AS description, b.website_url AS "websiteUrl", b.is_membership AS "isMembership", b.created_at as "createdAt"',
                 subqueryToCountBlogs,
             ])
             .where('b.deleted_at IS NULL')
@@ -49,7 +49,7 @@ export class BlogsQueryRepositoryOrm {
         const result = await this.blogsQueryRepositoryTypeOrm
             .createQueryBuilder('b')
             .select([
-                'b.id AS id, b.name AS name, b.description AS description, b.website_url AS websiteUrl, b.is_membership AS isMembership, b.created_at as createdAt',
+                'b.id AS id, b.name AS name, b.description AS description, b.website_url AS "websiteUrl", b.is_membership AS "isMembership", b.created_at as "createdAt"',
             ])
             .where('b.deleted_at IS NULL')
             .andWhere('b.id = :blogId', { blogId })

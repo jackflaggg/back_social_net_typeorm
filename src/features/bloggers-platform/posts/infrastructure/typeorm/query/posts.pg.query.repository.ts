@@ -25,7 +25,7 @@ export class PostsQueryRepositoryOrm {
             .select([
                 'p.id AS id, p.title AS title, p.short_description AS shortDescription, p.content AS content, p.created_at AS createdAt, p.blog_id AS blogId, b.name AS blogName',
             ])
-            .leftJoin('b', 'blogs', 'p.blog_id = b.id')
+            .leftJoin(Blog, 'b', 'p.blog_id = b.id')
             .where(`p.deleted_at IS NULL ${checkBlogId}`)
             .orderBy(`p.${updatedSort}`, sortDirection)
             .skip(offset)

@@ -2,9 +2,9 @@ export interface BlogIntInterface {
     id: string | number;
     name: string;
     description: string;
-    websiteurl: string;
-    ismembership: boolean;
-    createdat: Date;
+    websiteUrl: string;
+    isMembership: boolean;
+    createdAt: Date;
 }
 
 export interface BlogOutInterface {
@@ -28,9 +28,9 @@ export class BlogViewDto {
         this.id = String(model.id);
         this.name = model.name;
         this.description = model.description;
-        this.websiteUrl = model.websiteurl;
-        this.createdAt = model.createdat;
-        this.isMembership = model.ismembership;
+        this.websiteUrl = model.websiteUrl;
+        this.createdAt = model.createdAt;
+        this.isMembership = model.isMembership;
     }
 
     static mapToView(blog: BlogIntInterface): BlogOutInterface {

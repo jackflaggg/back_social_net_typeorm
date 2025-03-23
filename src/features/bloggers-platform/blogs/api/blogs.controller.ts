@@ -5,7 +5,6 @@ import { ExtractAnyUserFromRequest } from '../../../../core/decorators/param/val
 import { UserJwtPayloadDto } from '../../../user-accounts/strategies/refresh.strategy';
 import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optional-auth.guard';
 import { SETTINGS } from '../../../../core/settings';
-import { ValidateSerialPipe } from '../../../../core/pipes/validation.input.serial';
 import { BlogsQueryRepositoryOrm } from '../infrastructure/typeorm/query/blogs.pg.query.repository';
 import { PostsQueryRepositoryOrm } from '../../posts/infrastructure/typeorm/query/posts.pg.query.repository';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
