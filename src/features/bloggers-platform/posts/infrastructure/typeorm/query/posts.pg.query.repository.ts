@@ -14,11 +14,18 @@ export class PostsQueryRepositoryOrm {
     constructor(@InjectRepository(Post) protected postRepositoryOrm: Repository<Post>) {}
     async getAllPosts(queryData: GetPostsQueryParams, userId: string | null, blogId?: string) {
         const { pageSize, pageNumber, sortBy, sortDirection } = getPostsQuery(queryData);
+
         const updatedSort = sortBy === 'createdAt' ? 'created_at' : sortBy.toLowerCase();
+
         const offset = (pageNumber - 1) * pageSize;
+        const checkBlogId = blogId ? `AND p.'blog_id' = ${blogId}` : ``;
         const queryBuilderToPosts = await this.postRepositoryOrm
             .createQueryBuilder('p')
-            .where('p.deleted_at IS NULL')
+            .select([
+                'p.id AS id, p.title AS title, p.short_description AS shortDescription, p.content AS content, p.created_at AS createdAt, p.blog_id AS blogId, b.name AS blogName',
+            ])
+            .leftJoin('b', 'blogs', 'p.blog_id = b.id')
+            .where(`p.deleted_at IS NULL ${checkBlogId}`)
             .orderBy(`p.${updatedSort}`, sortDirection)
             .skip(offset)
             .take(pageSize)

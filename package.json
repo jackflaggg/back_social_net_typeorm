@@ -20,7 +20,7 @@
     "test:e2e": "cross-env NODE_ENV=testing jest --config ./test/jest-e2e.json",
     "run-migrations": "yarn typeorm-ts-node-commonjs migration:run -- -d ./migrations/db/data-source.ts",
     "revert-migrations": "yarn typeorm-ts-node-commonjs migration:revert -- -d ./migrations/db/data-source.ts",
-    "generate-migration": "yarn typeorm-ts-node-commonjs migration:generate ./migrations/data/init_migrations -d ./migrations/db/data-source.ts"
+    "generate-migration": "yarn build && yarn typeorm-ts-node-commonjs migration:generate ./migrations/data/init_migrations -d ./migrations/db/data-source.ts"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",
