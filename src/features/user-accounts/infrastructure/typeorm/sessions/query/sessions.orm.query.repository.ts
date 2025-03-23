@@ -11,7 +11,7 @@ export class SessionQueryRepositoryOrm {
     async getSessions(userId: string): Promise<DeviceViewDto[] | void> {
         const result = await this.sessionsRepositoryTypeOrm
             .createQueryBuilder('s')
-            .select('device_id AS deviceId, device_name AS deviceName, ip, issued_at AS issuedAt')
+            .select('s.device_id AS "deviceId", s.device_name AS "deviceName", s.ip AS ip, s.issued_at AS "issuedAt"')
             .where('deleted_at IS NULL AND user_id = :userId', { userId })
             .getRawMany();
         return result ? result.map((elem: deviceIntInterface) => DeviceViewDto.mapToView(elem)) : [];

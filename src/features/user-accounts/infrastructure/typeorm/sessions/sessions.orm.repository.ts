@@ -6,12 +6,12 @@ import { SecurityDeviceToUser } from '../../../domain/typeorm/device/device.enti
 @Injectable()
 export class SessionsRepositoryOrm {
     constructor(@InjectRepository(SecurityDeviceToUser) private sessionsRepositoryTypeOrm: Repository<SecurityDeviceToUser>) {}
-    async save(entity: SecurityDeviceToUser) {
+    async save(entity: SecurityDeviceToUser): Promise<string> {
         const result = await this.sessionsRepositoryTypeOrm.save(entity);
         return result.deviceId;
     }
 
-    async findSessionByDeviceId(deviceId: string) {
+    async findSessionByDeviceId(deviceId: string): Promise<SecurityDeviceToUser | void> {
         const result = await this.sessionsRepositoryTypeOrm
             .createQueryBuilder('s')
             .leftJoinAndSelect('s.user', 'user') // Добавляем это для загрузки пользователя
@@ -24,7 +24,7 @@ export class SessionsRepositoryOrm {
         return result;
     }
 
-    async deleteAllSessions(userId: string, deviceId: string) {
+    async deleteAllSessions(userId: string, deviceId: string): Promise<void> {
         const issuedAt = new Date().toISOString();
         await this.sessionsRepositoryTypeOrm
             .createQueryBuilder()

@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { EmailConfirmationToUser } from '../../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 import { GetUsersQueryParams } from '../../../../dto/api/get-users-query-params.input-dto';
 import { MeUserIntInterface, UserViewDto } from '../../../../dto/api/user-view.dto';
-import { PaginatedBlogViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
+import { PaginatedBlogViewDto, PaginatedViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { getUsersQuery } from '../../../../utils/user/query.insert.get';
 
@@ -15,7 +15,7 @@ export class UserQueryRepositoryOrm {
         @InjectRepository(User) private userRepositoryTypeOrm: Repository<User>,
         @InjectRepository(EmailConfirmationToUser) private emailConfirmationRepositoryTypeOrm: Repository<EmailConfirmationToUser>,
     ) {}
-    async getAllUsers(queryData: GetUsersQueryParams) {
+    async getAllUsers(queryData: GetUsersQueryParams): Promise<PaginatedViewDto<UserViewDto[]>> {
         const { sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm } = getUsersQuery(queryData);
 
         const updatedSortBy = sortBy === 'createdAt' ? 'created_at' : sortBy.toLowerCase();
@@ -50,7 +50,7 @@ export class UserQueryRepositoryOrm {
         });
     }
 
-    async getUser(userId: string) {
+    async getUser(userId: string): Promise<UserViewDto> {
         const result = await this.userRepositoryTypeOrm
             .createQueryBuilder('u')
             .select('u.id as id, u.login as login, u.email as email, u.created_at as createdAt')
@@ -64,24 +64,16 @@ export class UserQueryRepositoryOrm {
         return UserViewDto.mapToView(result);
     }
 
-    async getMe(userId: string) {
+    async getMe(userId: string): Promise<MeUserIntInterface> {
         const result = await this.userRepositoryTypeOrm
             .createQueryBuilder('u')
-            .select('u.id, u.login AS login, u.email AS email')
+            .select('u.id as "userId", u.login AS login, u.email AS email')
             .where('u.id = :userId AND u.deleted_at IS NULL', { userId })
             .getRawOne();
         if (!result) {
-            console.log(userId);
             throw NotFoundDomainException.create('юзер не найден', 'userId');
         }
 
-        // Преобразуем результат в нужный формат
-        const meData: MeUserIntInterface = {
-            login: result.login,
-            userId: String(result.id), // Приводим id к строке
-            email: result.email,
-        };
-
-        return UserViewDto.meUser(meData);
+        return UserViewDto.meUser(result);
     }
 }

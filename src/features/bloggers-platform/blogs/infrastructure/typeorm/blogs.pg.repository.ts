@@ -3,9 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { Blog } from '../../domain/typeorm/blog.entity';
-import { PostToBlogCreateDtoApi } from '../../dto/api/blog.to.post.create.dto';
-import { Post } from '../../../posts/domain/typeorm/post.entity';
-import { PostUpdateDtoApi } from '../../../posts/dto/api/post.update.dto';
 import { BlogCreateRepositoryDto } from '../../application/usecases/create-blog.usecase';
 import { BlogUpdateDtoApi } from '../../dto/api/blog.update.dto';
 

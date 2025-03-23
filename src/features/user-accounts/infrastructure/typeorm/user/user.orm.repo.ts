@@ -18,11 +18,11 @@ export class UserRepositoryOrm {
         @InjectRepository(RecoveryPasswordToUser) private recoveryPasswordRepositoryTypeOrm: Repository<RecoveryPasswordToUser>,
         @InjectEntityManager() private readonly entityManager: EntityManager,
     ) {}
-    async save(entity: User) {
+    async save(entity: User): Promise<string> {
         const result = await this.userRepositoryTypeOrm.save(entity);
         return result.id;
     }
-    async findUserById(userId: string) {
+    async findUserById(userId: string): Promise<User> {
         const result = await this.userRepositoryTypeOrm
             .createQueryBuilder('u')
             .where('u.id = :userId AND u.deleted_at IS NULL', { userId })
@@ -32,7 +32,7 @@ export class UserRepositoryOrm {
         }
         return result;
     }
-    async findCheckExistUser(login: string, email: string) {
+    async findCheckExistUser(login: string, email: string): Promise<User | void> {
         const result = await this.userRepositoryTypeOrm
             .createQueryBuilder('u')
             .where('u.email = :email OR u.login = :login', { email, login })
@@ -56,13 +56,12 @@ export class UserRepositoryOrm {
             .where('(u.login = :loginOrEmail OR u.email = :loginOrEmail)', { loginOrEmail })
             .andWhere('u.deleted_at IS NULL')
             .getRawOne();
-        console.log(result);
         if (!result) {
             return void 0;
         }
         return userEmailMapper(result);
     }
-    async findUserByEmail(email: string) {
+    async findUserByEmail(email: string): Promise<User | void> {
         const result = await this.userRepositoryTypeOrm
             .createQueryBuilder('u')
             .innerJoinAndSelect('email_confirmation_to_user', 'em', 'u.id = em.user_id')

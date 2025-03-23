@@ -1,8 +1,8 @@
 export interface deviceIntInterface {
     ip: string;
-    devicename: string;
-    deviceid: string;
-    issuedat: Date;
+    deviceName: string;
+    deviceId: string;
+    issuedAt: Date;
 }
 
 export class DeviceViewDto {
@@ -13,9 +13,9 @@ export class DeviceViewDto {
 
     constructor(model: deviceIntInterface) {
         this.ip = model.ip;
-        this.title = model.devicename;
-        this.lastActiveDate = model.issuedat;
-        this.deviceId = model.deviceid;
+        this.title = model.deviceName;
+        this.lastActiveDate = model.issuedAt;
+        this.deviceId = model.deviceId;
     }
 
     static mapToView(device: deviceIntInterface): DeviceViewDto {
