@@ -5,7 +5,6 @@ import { NotFoundDomainException } from '../exceptions/incubator-exceptions/doma
 @Injectable()
 export class ValidateUUIDPipe implements PipeTransform<string> {
     transform(value: string): string {
-        console.log(validate(value));
         if (!validate(value)) {
             throw NotFoundDomainException.create('неверный формат uuid', 'id');
         }

@@ -21,9 +21,6 @@ export class Blog extends Base {
     @Column({ name: 'website_url', type: 'varchar', length: websiteUrlConstraints.maxLength, collation: 'C' })
     websiteUrl: string;
 
-    @Column({ name: 'is_mock', type: Boolean, default: false })
-    isMock: boolean;
-
     @Column({ name: 'is_membership', type: Boolean, default: true })
     isMembership: boolean;
 

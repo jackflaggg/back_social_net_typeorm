@@ -10,6 +10,7 @@ import { BlogsQueryRepositoryOrm } from '../infrastructure/typeorm/query/blogs.p
 import { PostsQueryRepositoryOrm } from '../../posts/infrastructure/typeorm/query/posts.pg.query.repository';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { BlogOutInterface, BlogViewDto } from '../dto/repository/query/blog-view.dto';
+import { ValidateUUIDPipe } from '../../../../core/pipes/validation.input.uuid';
 
 @Controller(SETTINGS.PATH.BLOGS)
 export class BlogsController {
@@ -36,7 +37,7 @@ export class BlogsController {
     }
 
     @Get(':blogId')
-    async getBlog(@Param('blogId', ValidateSerialPipe) blogId: string): Promise<BlogOutInterface> {
+    async getBlog(@Param('blogId', ValidateUUIDPipe) blogId: string): Promise<BlogOutInterface> {
         return this.blogsQueryRepository.getBlog(blogId);
     }
 }

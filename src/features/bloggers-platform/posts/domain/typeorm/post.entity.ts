@@ -31,19 +31,16 @@ export class Post extends Base {
     @OneToMany(() => PostStatus, postStatus => postStatus.post)
     statusesPost: PostStatus[];
 
-    @Column({ type: 'uuid' })
-    blogId: string;
-
     @OneToMany((): typeof CommentToUser => CommentToUser, comment => comment.post)
     comments: CommentToUser[];
 
-    static buildInstance(dto: PostToBlogCreateDtoApi, blogId: string): Post {
+    static buildInstance(dto: PostToBlogCreateDtoApi, blog: Blog): Post {
         const post = new this();
 
         post.title = dto.title;
         post.shortDescription = dto.shortDescription;
         post.content = dto.content;
-        post.blogId = blogId;
+        post.blog = blog;
 
         return post as Post;
     }

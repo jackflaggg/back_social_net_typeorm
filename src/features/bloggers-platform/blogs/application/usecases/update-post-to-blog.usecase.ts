@@ -24,8 +24,6 @@ export class UpdatePostToBlogUseCase implements ICommandHandler<UpdatePostToBlog
 
         const post: Post = await this.postRepository.findPostById(command.postId);
 
-        post.update(command.dto);
-
-        await this.postRepository.save(post);
+        await this.postRepository.updatePost(command.dto, post);
     }
 }

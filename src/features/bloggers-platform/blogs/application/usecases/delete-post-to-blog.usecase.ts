@@ -22,7 +22,6 @@ export class DeletePostToBlogUseCase implements ICommandHandler<DeletePostToBlog
 
         const post: Post = await this.postRepository.findPostById(command.postId);
 
-        post.markDeleted();
-        await this.postRepository.save(post);
+        await this.postRepository.deletePost(post);
     }
 }

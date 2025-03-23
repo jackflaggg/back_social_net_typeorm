@@ -5,9 +5,9 @@ import { BasicAuthGuard } from '../../../core/guards/passport/guards/basic.auth.
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../application/user/usecases/create-user.usecase';
 import { DeleteUserCommand } from '../application/user/usecases/delete-user.usecase';
-import { ValidateSerialPipe } from '../../../core/pipes/validation.input.serial';
 import { SETTINGS } from '../../../core/settings';
 import { UserQueryRepositoryOrm } from '../infrastructure/typeorm/user/query/user.query.orm.repo';
+import { ValidateUUIDPipe } from '../../../core/pipes/validation.input.uuid';
 
 @UseGuards(BasicAuthGuard)
 @Controller(SETTINGS.PATH.SA_USERS)
@@ -25,7 +25,7 @@ export class UserSaController {
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete(':id')
-    async deleteUser(@Param('id', ValidateSerialPipe) id: string) {
+    async deleteUser(@Param('id', ValidateUUIDPipe) id: string) {
         return this.commandBus.execute(new DeleteUserCommand(id));
     }
 

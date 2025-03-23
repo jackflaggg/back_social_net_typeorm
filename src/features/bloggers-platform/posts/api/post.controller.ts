@@ -23,6 +23,7 @@ import { CommentsOrmQueryRepository } from '../../comments/infrastructure/typeor
 import { postOutInterface, PostViewDto } from '../dto/repository/post-view';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { commentIntInterface } from '../../comments/utils/comments/mapping/transform.comment.map';
+import { ValidateUUIDPipe } from '../../../../core/pipes/validation.input.uuid';
 
 @Controller(SETTINGS.PATH.POSTS)
 export class PostsController {
@@ -36,7 +37,7 @@ export class PostsController {
     @Get()
     async getPosts(
         @Query() query: GetPostsQueryParams,
-        @Param('blogId', ValidateSerialPipe) blogId: string,
+        @Param('blogId', ValidateUUIDPipe) blogId: string,
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
         const userId: string | null = dtoUser ? dtoUser.userId : null;
@@ -45,7 +46,7 @@ export class PostsController {
 
     @UseGuards(JwtOptionalAuthGuard)
     @Get(':postId')
-    async getPost(@Param('postId', ValidateSerialPipe) postId: string, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto) {
+    async getPost(@Param('postId', ValidateUUIDPipe) postId: string, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto) {
         const userId: string | null = dtoUser ? dtoUser.userId : null;
         return this.postsQueryRepository.getPost(postId, userId);
     }
@@ -61,20 +62,20 @@ export class PostsController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(BasicAuthGuard)
     @Put(':postId')
-    async updatePost(@Param('postId', ValidateSerialPipe) postId: string, @Body() dto: PostUpdateDtoApi): Promise<void> {
+    async updatePost(@Param('postId', ValidateUUIDPipe) postId: string, @Body() dto: PostUpdateDtoApi): Promise<void> {
         return this.commandBus.execute(new UpdatePostCommand(postId, dto));
     }
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(BasicAuthGuard)
     @Delete(':postId')
-    async deletePost(@Param('postId', ValidateSerialPipe) postId: string): Promise<void> {
+    async deletePost(@Param('postId', ValidateUUIDPipe) postId: string): Promise<void> {
         return this.commandBus.execute(new DeletePostCommand(postId));
     }
 
     @UseGuards(JwtAuthGuard)
     @Post(':postId/comments')
     async createCommentToPost(
-        @Param('postId', ValidateSerialPipe) id: string,
+        @Param('postId', ValidateUUIDPipe) id: string,
         @Body() dto: CommentCreateToPostApi,
         @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
     ): Promise<commentIntInterface> {
@@ -86,7 +87,7 @@ export class PostsController {
     @UseGuards(JwtAuthGuard)
     @Put(':postId/like-status')
     async likePost(
-        @Param('postId', ValidateSerialPipe) postId: string,
+        @Param('postId', ValidateUUIDPipe) postId: string,
         @Body() dto: PostLikeStatusApi,
         @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
@@ -97,7 +98,7 @@ export class PostsController {
     @UseGuards(JwtOptionalAuthGuard)
     @Get(':postId/comments')
     async getComments(
-        @Param('postId', ValidateSerialPipe) postId: string,
+        @Param('postId', ValidateUUIDPipe) postId: string,
         @Query() query: GetCommentsQueryParams,
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto | null,
     ) {

@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostToBlogCreateDtoApi } from '../../dto/api/blog.to.post.create.dto';
 import { BlogsRepositoryOrm } from '../../infrastructure/typeorm/blogs.pg.repository';
 import { PostsRepositoryOrm } from '../../../posts/infrastructure/typeorm/posts.pg.repository';
-import { Post } from '../../../posts/domain/typeorm/post.entity';
+import { Blog } from '../../domain/typeorm/blog.entity';
 
 export class CreatePostToBlogCommand {
     constructor(
@@ -18,9 +18,7 @@ export class CreatePostToBlogUseCase implements ICommandHandler<CreatePostToBlog
         private readonly postRepository: PostsRepositoryOrm,
     ) {}
     async execute(command: CreatePostToBlogCommand): Promise<string> {
-        const blog = await this.blogRepository.findBlogById(command.blogId);
-
-        const post = Post.buildInstance(command.payload, blog.id);
-        return await this.postRepository.save(post);
+        const blog: Blog = await this.blogRepository.findBlogById(command.blogId);
+        return await this.postRepository.createPost(command.payload, blog);
     }
 }

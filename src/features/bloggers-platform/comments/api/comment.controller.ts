@@ -13,6 +13,7 @@ import { CommentsPgQueryRepository } from '../infrastructure/postgres/query/comm
 import { SETTINGS } from '../../../../core/settings';
 import { ValidateSerialPipe } from '../../../../core/pipes/validation.input.serial';
 import { CommentsOrmQueryRepository } from '../infrastructure/typeorm/query/comments.orm.query.repository';
+import { ValidateUUIDPipe } from '../../../../core/pipes/validation.input.uuid';
 
 @Controller(SETTINGS.PATH.COMMENTS)
 export class CommentController {
@@ -22,7 +23,7 @@ export class CommentController {
     ) {}
     @UseGuards(JwtOptionalAuthGuard)
     @Get('/:commentId')
-    async getComment(@Param('commentId', ValidateSerialPipe) id: string, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto) {
+    async getComment(@Param('commentId', ValidateUUIDPipe) id: string, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto) {
         const userId = dtoUser ? dtoUser.userId : null;
         return this.commentsQueryRepository.getComment(id, userId);
     }
@@ -31,7 +32,7 @@ export class CommentController {
     @UseGuards(JwtAuthGuard)
     @Put('/:commentId')
     async updateComment(
-        @Param('commentId', ValidateSerialPipe) id: string,
+        @Param('commentId', ValidateUUIDPipe) id: string,
         @Body() dto: UpdateCommentApiDto,
         @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
@@ -42,7 +43,7 @@ export class CommentController {
     @UseGuards(JwtAuthGuard)
     @Put('/:commentId/like-status')
     async likeComment(
-        @Param('commentId', ValidateSerialPipe) commentId: string,
+        @Param('commentId', ValidateUUIDPipe) commentId: string,
         @Body() dto: UpdateCommentCommandApiDto,
         @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
@@ -52,7 +53,7 @@ export class CommentController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(JwtAuthGuard)
     @Delete('/:commentId')
-    async deleteComment(@Param('commentId', ValidateSerialPipe) id: string, @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto) {
+    async deleteComment(@Param('commentId', ValidateUUIDPipe) id: string, @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto) {
         return this.commandBus.execute(new DeleteCommentCommand(id, dtoUser.userId));
     }
 }

@@ -22,6 +22,7 @@ import { BlogsQueryRepositoryOrm } from '../infrastructure/typeorm/query/blogs.p
 import { PostsQueryRepositoryOrm } from '../../posts/infrastructure/typeorm/query/posts.pg.query.repository';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { BlogOutInterface, BlogViewDto } from '../dto/repository/query/blog-view.dto';
+import { ValidateUUIDPipe } from '../../../../core/pipes/validation.input.uuid';
 
 @Controller(SETTINGS.PATH.SA_BLOGS)
 @UseGuards(BasicAuthGuard)
@@ -46,13 +47,13 @@ export class BlogsSaController {
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @Put(':blogId')
-    async updateBlog(@Param('blogId', ValidateSerialPipe) blogId: string, @Body() dto: BlogUpdateDtoApi) {
+    async updateBlog(@Param('blogId', ValidateUUIDPipe) blogId: string, @Body() dto: BlogUpdateDtoApi) {
         return this.commandBus.execute(new UpdateBlogCommand(blogId, dto));
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete(':blogId')
-    async deleteBlog(@Param('blogId', ValidateSerialPipe) blogId: string) {
+    async deleteBlog(@Param('blogId', ValidateUUIDPipe) blogId: string) {
         return this.commandBus.execute(new DeleteBlogCommand(blogId));
     }
 
@@ -60,7 +61,7 @@ export class BlogsSaController {
     @HttpCode(HttpStatus.CREATED)
     @Post(':blogId/posts')
     async createPostToBlog(
-        @Param('blogId', ValidateSerialPipe) blogId: string,
+        @Param('blogId', ValidateUUIDPipe) blogId: string,
         @Body() dto: PostToBlogCreateDtoApi,
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
@@ -72,7 +73,7 @@ export class BlogsSaController {
     @UseGuards(JwtOptionalAuthGuard)
     @Get(':blogId/posts')
     async getPosts(
-        @Param('blogId', ValidateSerialPipe) blogId: string,
+        @Param('blogId', ValidateUUIDPipe) blogId: string,
         @Query() query: GetPostsQueryParams,
         @ExtractAnyUserFromRequest() user: UserJwtPayloadDto,
     ) {
@@ -84,8 +85,8 @@ export class BlogsSaController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @Put(':blogId/posts/:postId')
     async updatePostToBlog(
-        @Param('blogId', ValidateSerialPipe) blogId: string,
-        @Param('postId', ValidateSerialPipe) postId: string,
+        @Param('blogId', ValidateUUIDPipe) blogId: string,
+        @Param('postId', ValidateUUIDPipe) postId: string,
         @Body() dto: PostUpdateDtoApi,
     ): Promise<void> {
         return this.commandBus.execute(new UpdatePostToBlogCommand(blogId, postId, dto));
@@ -93,7 +94,7 @@ export class BlogsSaController {
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete(':blogId/posts/:postId')
-    async deletePostToBlog(@Param('blogId', ValidateSerialPipe) blogId: string, @Param('postId', ValidateSerialPipe) postId: string) {
+    async deletePostToBlog(@Param('blogId', ValidateUUIDPipe) blogId: string, @Param('postId', ValidateSerialPipe) postId: string) {
         return this.commandBus.execute(new DeletePostToBlogCommand(blogId, postId));
     }
 }

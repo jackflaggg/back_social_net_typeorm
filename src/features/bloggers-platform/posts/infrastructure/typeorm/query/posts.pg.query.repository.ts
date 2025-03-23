@@ -8,6 +8,7 @@ import { getBlogsQuery } from '../../../../blogs/utils/blog/query.insert.blog';
 import { getPostsQuery } from '../../../utils/post/query.insert.get';
 import { Post } from '../../../domain/typeorm/post.entity';
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { Blog } from '../../../../blogs/domain/typeorm/blog.entity';
 
 @Injectable()
 export class PostsQueryRepositoryOrm {
@@ -36,11 +37,15 @@ export class PostsQueryRepositoryOrm {
     async getPost(postId: string, userId: string | null) {
         const result = await this.postRepositoryOrm
             .createQueryBuilder('p')
-            .where('p.deleted_at IS NULL AND p.id := postId', { postId })
-            .getRawMany();
+            .select([
+                'p.id AS id, p.title AS title, p.short_description AS shortDescription, p.content AS content, p.created_at AS createdAt, p.blog_id AS blogId, b.name AS blogName',
+            ])
+            .leftJoin(Blog, 'b', 'b.id = p.blog_id')
+            .where('p.deleted_at IS NULL AND p.id = :postId', { postId })
+            .getRawOne();
         if (!result) {
             throw NotFoundDomainException.create('пост не найден', 'postId');
         }
-        return result;
+        return PostViewDto.mapToView(result);
     }
 }
