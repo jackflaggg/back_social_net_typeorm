@@ -21,7 +21,7 @@ export class Blog extends Base {
     @Column({ name: 'website_url', type: 'varchar', length: websiteUrlConstraints.maxLength, collation: 'C' })
     websiteUrl: string;
 
-    @Column({ name: 'is_membership', type: Boolean, default: true })
+    @Column({ name: 'is_membership', type: Boolean, default: false })
     isMembership: boolean;
 
     @OneToMany((): typeof Post => Post, post => post.blog)
