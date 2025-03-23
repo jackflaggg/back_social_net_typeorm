@@ -1,6 +1,4 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { StatusPgRepository } from '../../../likes/infrastructure/postgres/status.pg.repository';
-import { PostsPgRepository } from '../../infrastructure/postgres/posts.pg.repository';
 import { PostsRepositoryOrm } from '../../infrastructure/typeorm/posts.pg.repository';
 import { StatusRepositoryOrm } from '../../../likes/infrastructure/typeorm/statusRepositoryOrm';
 

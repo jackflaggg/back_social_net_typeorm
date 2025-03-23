@@ -27,7 +27,7 @@ export class UserQueryRepositoryOrm {
 
         const resultUsers = await this.userRepositoryTypeOrm
             .createQueryBuilder('u')
-            .select(['u.id as id', 'u.login as login', 'u.email as email', 'u.created_at AS createdAt', cteToCountUsers])
+            .select(['u.id as id', 'u.login as login', 'u.email as email', 'u.created_at AS "createdAt"', cteToCountUsers])
             .where('u.deleted_at IS NULL')
             .andWhere('(u.login ILIKE :login OR u.email ILIKE :email)', {
                 login: `%${searchLoginTerm}%`,
@@ -53,7 +53,7 @@ export class UserQueryRepositoryOrm {
     async getUser(userId: string): Promise<UserViewDto> {
         const result = await this.userRepositoryTypeOrm
             .createQueryBuilder('u')
-            .select('u.id as id, u.login as login, u.email as email, u.created_at as createdAt')
+            .select('u.id as id, u.login as login, u.email as email, u.created_at as "createdAt"')
             .where('u.deleted_at IS NULL AND u.id = :userId', { userId })
             .getRawOne();
 

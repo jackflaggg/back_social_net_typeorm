@@ -1,8 +1,8 @@
 export interface UserIntInterface {
-    id: number | string;
+    id: string;
     login: string;
     email: string;
-    createdat: Date;
+    createdAt: Date;
 }
 
 export interface MeUserIntInterface {
@@ -12,16 +12,16 @@ export interface MeUserIntInterface {
 }
 
 export class UserViewDto {
-    id: number | string;
+    id: string;
     login: string;
     email: string;
     createdAt: Date;
 
     constructor(model: UserIntInterface) {
-        this.id = String(model.id);
+        this.id = model.id;
         this.login = model.login;
         this.email = model.email;
-        this.createdAt = model.createdat;
+        this.createdAt = model.createdAt;
     }
 
     static mapToView(user: UserIntInterface) {
@@ -32,7 +32,7 @@ export class UserViewDto {
         return {
             email: user.email,
             login: user.login,
-            userId: String(user.userId),
+            userId: user.userId,
         };
     }
 }

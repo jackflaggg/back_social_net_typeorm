@@ -9,9 +9,7 @@ import { UpdateCommentCommandApiDto } from '../dto/api/update.statuses.comment.d
 import { UpdateContentCommentCommand } from '../application/usecases/update-comment.usecase';
 import { UpdateStatusCommentCommand } from '../application/usecases/like-comment.usecase';
 import { JwtOptionalAuthGuard } from '../../../../core/guards/optional/jwt-optional-auth.guard';
-import { CommentsPgQueryRepository } from '../infrastructure/postgres/query/comments.pg.query.repository';
 import { SETTINGS } from '../../../../core/settings';
-import { ValidateSerialPipe } from '../../../../core/pipes/validation.input.serial';
 import { CommentsOrmQueryRepository } from '../infrastructure/typeorm/query/comments.orm.query.repository';
 import { ValidateUUIDPipe } from '../../../../core/pipes/validation.input.uuid';
 

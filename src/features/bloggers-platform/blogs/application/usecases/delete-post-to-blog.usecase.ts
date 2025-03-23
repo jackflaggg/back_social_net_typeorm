@@ -18,7 +18,7 @@ export class DeletePostToBlogUseCase implements ICommandHandler<DeletePostToBlog
         private readonly postRepository: PostsRepositoryOrm,
     ) {}
     async execute(command: DeletePostToBlogCommand): Promise<void> {
-        const blog: Blog = await this.blogRepository.findBlogById(command.blogId);
+        await this.blogRepository.findBlogById(command.blogId);
 
         const post: Post = await this.postRepository.findPostById(command.postId);
 

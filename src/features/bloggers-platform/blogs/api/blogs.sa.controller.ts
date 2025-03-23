@@ -2,7 +2,6 @@ import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, 
 import { SETTINGS } from '../../../../core/settings';
 import { CommandBus } from '@nestjs/cqrs';
 import { GetBlogsQueryParams } from '../dto/repository/query/get-blogs-query-params.input-dto';
-import { ValidateSerialPipe } from '../../../../core/pipes/validation.input.serial';
 import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
 import { BlogCreateDtoApi } from '../dto/api/blog.create.dto';
 import { CreateBlogCommand } from '../application/usecases/create-blog.usecase';

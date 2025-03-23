@@ -1,6 +1,5 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CheckUserCommentCommand } from './check-user-comment.usecase';
-import { CommentsPgRepository } from '../../infrastructure/postgres/comments.pg.repository';
 import { CommentsRepositoryOrm } from '../../infrastructure/typeorm/commentsRepositoryOrm';
 
 export class DeleteCommentCommand {

@@ -15,13 +15,9 @@ import { ExtractAnyUserFromRequest, ExtractUserFromRequest } from '../../../../c
 import { UserJwtPayloadDto } from '../../../user-accounts/strategies/refresh.strategy';
 import { CreateCommentCommand } from '../../comments/application/usecases/create-comment.usecase';
 import { PostLikeStatusApi } from '../dto/api/like-status.dto';
-import { LikePostCommand } from '../application/usecases/like-post.usecase';
 import { GetCommentsQueryParams } from '../../comments/dto/repository/query/query-parans-comments';
-import { ValidateSerialPipe } from '../../../../core/pipes/validation.input.serial';
 import { PostsQueryRepositoryOrm } from '../infrastructure/typeorm/query/posts.pg.query.repository';
 import { CommentsOrmQueryRepository } from '../../comments/infrastructure/typeorm/query/comments.orm.query.repository';
-import { postOutInterface, PostViewDto } from '../dto/repository/post-view';
-import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { commentIntInterface } from '../../comments/utils/comments/mapping/transform.comment.map';
 import { ValidateUUIDPipe } from '../../../../core/pipes/validation.input.uuid';
 
@@ -91,7 +87,7 @@ export class PostsController {
         @Body() dto: PostLikeStatusApi,
         @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
-        const checkPost = await this.postsQueryRepository.getPost(postId, dtoUser.userId);
+        // const checkPost = await this.postsQueryRepository.getPost(postId, dtoUser.userId);
         //return this.commandBus.execute(new LikePostCommand(dto.likeStatus, checkPost.id, dtoUser.userId));
     }
 
@@ -102,8 +98,8 @@ export class PostsController {
         @Query() query: GetCommentsQueryParams,
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto | null,
     ) {
-        const userId = dtoUser ? dtoUser.userId : null;
-        const post = await this.postsQueryRepository.getPost(postId, userId);
+        // const userId = dtoUser ? dtoUser.userId : null;
+        // const post = await this.postsQueryRepository.getPost(postId, userId);
         //return this.commentQueryRepository.getAllComments(post.id, query, userId);
     }
 }

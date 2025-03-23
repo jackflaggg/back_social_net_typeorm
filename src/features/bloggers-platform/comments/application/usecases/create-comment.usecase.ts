@@ -1,14 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CommentCreateToPostApi } from '../../../posts/dto/api/comment.create.to.post';
-import { UserPgRepository } from '../../../../user-accounts/infrastructure/postgres/user/user.pg.repository';
-import { PostsPgRepository } from '../../../posts/infrastructure/postgres/posts.pg.repository';
-import { CommentsPgRepository } from '../../infrastructure/postgres/comments.pg.repository';
 import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { UserRepositoryOrm } from '../../../../user-accounts/infrastructure/typeorm/user/user.orm.repo';
 import { PostsRepositoryOrm } from '../../../posts/infrastructure/typeorm/posts.pg.repository';
 import { CommentsRepositoryOrm } from '../../infrastructure/typeorm/commentsRepositoryOrm';
 
-// класс для создания комментария
 export class CreateCommentCommand {
     constructor(
         public readonly payload: CommentCreateToPostApi,
@@ -33,7 +29,7 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
         if (!post) {
             throw NotFoundDomainException.create('пост не найден', 'postId');
         }
-        const user = await this.usersRepository.findUserById(command.userId);
+        await this.usersRepository.findUserById(command.userId);
 
         // const comment = await this.commentsRepository.createComment(command.payload.content, post.id, user.id);
         // return comment[0].id;

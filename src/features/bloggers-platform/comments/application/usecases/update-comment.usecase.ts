@@ -1,6 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ForbiddenDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { CommentsPgRepository } from '../../infrastructure/postgres/comments.pg.repository';
 import { CommentsRepositoryOrm } from '../../infrastructure/typeorm/commentsRepositoryOrm';
 
 export class UpdateContentCommentCommand {

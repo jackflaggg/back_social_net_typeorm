@@ -20,7 +20,7 @@ export class UpdatePostToBlogUseCase implements ICommandHandler<UpdatePostToBlog
         private readonly postRepository: PostsRepositoryOrm,
     ) {}
     async execute(command: UpdatePostToBlogCommand): Promise<void> {
-        const blog: Blog = await this.blogRepository.findBlogById(command.blogId);
+        await this.blogRepository.findBlogById(command.blogId);
 
         const post: Post = await this.postRepository.findPostById(command.postId);
 

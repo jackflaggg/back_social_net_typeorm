@@ -1,5 +1,4 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CommentsPgRepository } from '../../infrastructure/postgres/comments.pg.repository';
 import { ForbiddenDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { CommentsRepositoryOrm } from '../../infrastructure/typeorm/commentsRepositoryOrm';
 

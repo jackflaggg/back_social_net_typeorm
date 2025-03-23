@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
-import { PaginatedViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { GetPostsQueryParams } from '../../../dto/api/get-posts-query-params.input.dto';
 import { PostViewDto } from '../../../dto/repository/post-view';
-import { getBlogsQuery } from '../../../../blogs/utils/blog/query.insert.blog';
 import { getPostsQuery } from '../../../utils/post/query.insert.get';
 import { Post } from '../../../domain/typeorm/post.entity';
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
