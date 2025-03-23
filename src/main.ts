@@ -22,4 +22,4 @@ async function bootstrap() {
     });
 }
 
-bootstrap();
+bootstrap().then();

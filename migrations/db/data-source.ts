@@ -9,7 +9,7 @@ import { Blog } from '../../src/features/bloggers-platform/blogs/domain/typeorm/
 import { EmailConfirmationToUser } from '../../src/features/user-accounts/domain/typeorm/email-confirmation/email.confirmation.entity';
 import { SecurityDeviceToUser } from '../../src/features/user-accounts/domain/typeorm/device/device.entity';
 import { RecoveryPasswordToUser } from '../../src/features/user-accounts/domain/typeorm/password-recovery/pass-rec.entity';
-import { resolve, join } from 'path';
+import { join } from 'path';
 /*
     упрощает импорт, подчеркивает уникальность экземпляра,
     улучшает ясность назначения файла, предоставляет единую точку конфигурации
