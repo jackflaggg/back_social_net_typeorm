@@ -27,7 +27,7 @@ export class BlogsController {
     @UseGuards(JwtOptionalAuthGuard)
     @Get(':blogId/posts')
     async getPosts(
-        @Param('blogId', ValidateSerialPipe) blogId: string,
+        @Param('blogId', ValidateUUIDPipe) blogId: string,
         @Query() query: GetPostsQueryParams,
         @ExtractAnyUserFromRequest() user: UserJwtPayloadDto,
     ) {

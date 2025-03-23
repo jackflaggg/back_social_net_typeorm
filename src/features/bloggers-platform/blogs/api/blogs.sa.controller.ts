@@ -94,7 +94,7 @@ export class BlogsSaController {
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete(':blogId/posts/:postId')
-    async deletePostToBlog(@Param('blogId', ValidateUUIDPipe) blogId: string, @Param('postId', ValidateSerialPipe) postId: string) {
+    async deletePostToBlog(@Param('blogId', ValidateUUIDPipe) blogId: string, @Param('postId', ValidateUUIDPipe) postId: string) {
         return this.commandBus.execute(new DeletePostToBlogCommand(blogId, postId));
     }
 }
