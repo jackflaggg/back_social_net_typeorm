@@ -28,9 +28,8 @@ export class DeleteSessionUseCase implements ICommandHandler<DeleteSessionComman
         const isOwner = device.user.id === command.userId;
 
         if (!isOwner) {
-            throw ForbiddenDomainException.create('Access forbidden');
+            throw ForbiddenDomainException.create('Это не твой девайс!');
         }
-        device.markDeleted();
-        await this.sessionRepository.save(device);
+        await this.sessionRepository.deleteSession(device);
     }
 }

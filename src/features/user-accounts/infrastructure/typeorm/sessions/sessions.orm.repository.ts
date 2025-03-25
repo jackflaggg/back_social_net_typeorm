@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SecurityDeviceToUser } from '../../../domain/typeorm/device/device.entity';
+import { User } from '../../../domain/typeorm/user/user.entity';
+import { DeviceCreateDto } from '../../../dto/repository/device.create.dto';
 
 @Injectable()
 export class SessionsRepositoryOrm {
     constructor(@InjectRepository(SecurityDeviceToUser) private sessionsRepositoryTypeOrm: Repository<SecurityDeviceToUser>) {}
-    async save(entity: SecurityDeviceToUser): Promise<string> {
+    private async save(entity: SecurityDeviceToUser): Promise<string> {
         const result = await this.sessionsRepositoryTypeOrm.save(entity);
         return result.deviceId;
     }
@@ -32,5 +34,18 @@ export class SessionsRepositoryOrm {
             .set({ deletedAt: issuedAt })
             .where('device_id <> :deviceId AND user_id = :userId', { deviceId, userId })
             .execute();
+    }
+    async createSession(dto: DeviceCreateDto, user: User) {
+        const result = SecurityDeviceToUser.buildInstance(dto, user);
+        await this.save(result);
+    }
+
+    async deleteSession(session: SecurityDeviceToUser) {
+        session.markDeleted();
+        await this.save(session);
+    }
+    async updateSession(session: SecurityDeviceToUser) {
+        session.updateIssuedAt();
+        await this.save(session);
     }
 }

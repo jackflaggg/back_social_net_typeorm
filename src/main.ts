@@ -6,9 +6,7 @@ import { fullConfigApp } from './core/setup/config.setup';
 
 async function bootstrap() {
     const appContext = await NestFactory.createApplicationContext(AppModule);
-
     const coreConfig = appContext.get<AppConfig>(AppConfig);
-
     await appContext.close();
 
     const app = await NestFactory.create(AppModule);

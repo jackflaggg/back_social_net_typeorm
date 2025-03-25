@@ -25,7 +25,6 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
             throw ForbiddenDomainException.create('этот девайс не ваш!');
         }
 
-        currentDevice.markDeleted();
-        await this.sessionRepository.save(currentDevice);
+        await this.sessionRepository.deleteSession(currentDevice);
     }
 }

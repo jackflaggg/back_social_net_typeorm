@@ -5,7 +5,7 @@ export class LoggerService {
     private context: string;
 
     constructor() {
-        console.log('LoggerService создам');
+        console.log('LoggerService создан');
     }
 
     setContext(context: string): string {

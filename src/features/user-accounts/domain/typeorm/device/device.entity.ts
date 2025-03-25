@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../user/user.entity';
 import { isNull } from '../../../utils/user/is.null';
+import { DeviceCreateDto } from '../../../dto/repository/device.create.dto';
 
 @Entity('security_device_to_user')
 export class SecurityDeviceToUser {
@@ -23,7 +24,7 @@ export class SecurityDeviceToUser {
     @JoinColumn({ name: 'user_id' })
     user: User;
 
-    static buildInstance(dto: any, user: User): SecurityDeviceToUser {
+    static buildInstance(dto: DeviceCreateDto, user: User): SecurityDeviceToUser {
         const session = new SecurityDeviceToUser();
 
         session.deviceId = dto.deviceId;
@@ -40,5 +41,8 @@ export class SecurityDeviceToUser {
         if (!isNull(this.deletedAt)) throw new Error('Данный объект уже был помечен на удаление');
 
         this.deletedAt = new Date();
+    }
+    public updateIssuedAt(): void {
+        this.issuedAt = new Date();
     }
 }

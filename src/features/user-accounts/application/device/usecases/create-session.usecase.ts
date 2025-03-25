@@ -1,6 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SessionsRepositoryOrm } from '../../../infrastructure/typeorm/sessions/sessions.orm.repository';
-import { SecurityDeviceToUser } from '../../../domain/typeorm/device/device.entity';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
 import { User } from '../../../domain/typeorm/user/user.entity';
 
@@ -31,8 +30,6 @@ export class CreateSessionUseCase implements ICommandHandler<CreateSessionComman
 
         const findUser: User = await this.userRepository.findUserById(sessionDate.userId);
 
-        const session: SecurityDeviceToUser = SecurityDeviceToUser.buildInstance(sessionDate, findUser);
-
-        await this.sessionRepository.save(session);
+        await this.sessionRepository.createSession(sessionDate, findUser);
     }
 }

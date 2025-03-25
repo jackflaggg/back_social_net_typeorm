@@ -30,8 +30,7 @@ export class RefreshTokenUserUseCase implements ICommandHandler<RefreshTokenUser
         }
 
         // я не удаляю сессию, я лишь ее обновляю!
-        session.issuedAt = new Date();
-        await this.sessionRepository.save(session);
+        await this.sessionRepository.updateSession(session);
 
         // генерация новых токенов
         const userId = command.userId;
