@@ -1,5 +1,4 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
 import { BadRequestDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { BcryptService } from '../../other_services/bcrypt.service';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
@@ -30,7 +29,7 @@ export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCo
             throw BadRequestDomainException.create('данный код был уже использован!', 'code');
         }
 
-        const user = await this.usersRepository.getPasswordUser(findCode['user_id']);
+        const user = await this.usersRepository.findUserById(findCode['user_id']);
 
         const newPasswordHash = await this.bcryptService.hashPassword(user.passwordHash);
 

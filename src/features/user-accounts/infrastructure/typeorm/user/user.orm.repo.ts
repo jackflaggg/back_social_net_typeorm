@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../../domain/typeorm/user/user.entity';
-import { EntityManager, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 import {
     NotFoundDomainException,
     UnauthorizedDomainException,
 } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { RecoveryPasswordToUser } from '../../../domain/typeorm/password-recovery/pass-rec.entity';
 import { userEmailMapper } from '../../../utils/user/find.user.by.email.mapper';
 import { UserCreateDtoRepo } from '../../../dto/repository/user.create.dto';
-import { emailConfirmationCreateDto } from '../../../dto/repository/em-conf.create.dto';
 
 @Injectable()
 export class UserRepositoryOrm {
@@ -36,6 +34,11 @@ export class UserRepositoryOrm {
         return this.saveUser(entity);
     }
 
+    async updateUserConfirmedSendEmail(entity: User) {
+        entity.confirmedSendEmailRegistration();
+        return this.saveUser(entity);
+    }
+
     async findUserById(userId: string): Promise<User> {
         const result = await this.userRepositoryTypeOrm
             .createQueryBuilder('u')
@@ -46,7 +49,7 @@ export class UserRepositoryOrm {
         }
         return result;
     }
-    async findCheckExistUser(login: string, email: string): Promise<User | void> {
+    async findCheckExistUserEntity(login: string, email: string): Promise<User | void> {
         const result = await this.userRepositoryTypeOrm
             .createQueryBuilder('u')
             .where('u.email = :email OR u.login = :login', { email, login })
@@ -117,19 +120,5 @@ export class UserRepositoryOrm {
         return {
             userId: result.userId,
         };
-    }
-    async getPasswordUser(userId: string) {
-        const result = await this.userRepositoryTypeOrm
-            .createQueryBuilder('u')
-            .where('u.deleted_at IS NULL AND u.id = :userId', { userId })
-            .getOne();
-        if (!result) {
-            throw NotFoundDomainException.create('юзер не найден', 'userId');
-        }
-        return result;
-    }
-    async updateUserConfirmedSendEmail(entity: User) {
-        entity.confirmedSendEmailRegistration();
-        return this.saveUser(entity);
     }
 }

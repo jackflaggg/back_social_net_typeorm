@@ -1,5 +1,4 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
 import { PasswordRecoveryRepositoryOrm } from '../../../infrastructure/typeorm/password/password.orm.recovery.repository';

@@ -1,7 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogsRepositoryOrm } from '../../infrastructure/typeorm/blogs.pg.repository';
 import { PostsRepositoryOrm } from '../../../posts/infrastructure/typeorm/posts.pg.repository';
-import { Blog } from '../../domain/typeorm/blog.entity';
 import { Post } from '../../../posts/domain/typeorm/post.entity';
 
 export class DeletePostToBlogCommand {

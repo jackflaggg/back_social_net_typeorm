@@ -20,7 +20,7 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
     ) {}
     async execute(command: RegistrationUserCommand): Promise<void> {
         // проверяю существует ли юзер, даже если он удален!
-        const existingUser = await this.userRepository.findCheckExistUser(command.payload.login, command.payload.email);
+        const existingUser = await this.userRepository.findCheckExistUserEntity(command.payload.login, command.payload.email);
 
         if (existingUser) {
             throw BadRequestDomainException.create(
