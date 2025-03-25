@@ -34,7 +34,6 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
         if (exception instanceof ZodValidationException) {
             const activeErrors = Array.from({ length: (exception as any).response.errors.length }, (_, index) => {
                 const error = (exception as any).response.errors[index];
-                console.log(typeof exception);
                 return {
                     message: error.message,
                     field: error.path[0],

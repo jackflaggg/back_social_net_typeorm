@@ -1,12 +1,15 @@
 import { UnauthorizedDomainException } from '../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { Inject, Injectable } from '@nestjs/common';
-import { compare } from 'bcrypt';
+import { Injectable } from '@nestjs/common';
 import { findUserByLoginOrEmailInterface } from '../../dto/api/user.in.jwt.find.dto';
 import { UserRepositoryOrm } from '../../infrastructure/typeorm/user/user.orm.repo';
+import { BcryptService } from './bcrypt.service';
 
 @Injectable()
 export class AuthService {
-    constructor(@Inject() private readonly usersRepository: UserRepositoryOrm) {}
+    constructor(
+        private readonly usersRepository: UserRepositoryOrm,
+        private bcryptService: BcryptService,
+    ) {}
 
     async validateUser(userName: string, password: string): Promise<findUserByLoginOrEmailInterface> {
         const user = await this.usersRepository.findUserByLoginOrEmail(userName);
@@ -15,7 +18,7 @@ export class AuthService {
             throw UnauthorizedDomainException.create();
         }
 
-        const comparePassword: boolean = await compare(password, user.password);
+        const comparePassword: boolean = await this.bcryptService.comparePassword(password, user.password);
 
         if (!comparePassword) {
             throw UnauthorizedDomainException.create();
