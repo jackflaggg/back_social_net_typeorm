@@ -36,13 +36,10 @@ export class RegistrationEmailResendUserUseCase implements ICommandHandler<Regis
 
         emailConfirmation.updateUserToCodeAndDate(emailConfirmDto);
 
-        this.mailer
-            .sendEmailRecoveryMessage(user.email, emailConfirmDto.confirmationCode)
-            .then(() => {
-                this.usersRepository.saveEmailConfirmation(emailConfirmation);
-            })
-            .catch(async (err: unknown) => {
-                console.log(String(err));
-            });
+        await this.usersRepository.saveEmailConfirmation(emailConfirmation);
+
+        this.mailer.sendEmailRecoveryMessage(user.email, emailConfirmDto.confirmationCode).catch(async (err: unknown) => {
+            console.log(String(err));
+        });
     }
 }

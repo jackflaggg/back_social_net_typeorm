@@ -6,18 +6,16 @@ import { Post } from '../../../../posts/domain/typeorm/post.entity';
 
 @Entity('statuses_posts')
 export class PostStatus extends BaseEntityWithoutDeletedAtAndCreatedAt {
-    @Column({ type: 'enum', enum: StatusLike.enum, default: StatusLike.enum['None'] }) // Использование enum
+    @Column({ type: 'enum', enum: StatusLike.enum, default: StatusLike.enum['None'] })
     status: StatusLikeType;
 
     @ManyToOne((): typeof User => User, user => user.likesPosts)
     user: User;
-
-    @ManyToOne((): typeof Post => Post, post => post.statusesPost)
-    post: Post;
-
     @Column()
     userId: string;
 
+    @ManyToOne((): typeof Post => Post, post => post.statusesPost)
+    post: Post;
     @Column()
     postId: string;
 
@@ -29,7 +27,8 @@ export class PostStatus extends BaseEntityWithoutDeletedAtAndCreatedAt {
         status.status = statusPost || StatusLike.enum['None'];
         return status as PostStatus;
     }
-    public updateStatus(status: StatusLikeType) {
+
+    public updateStatus(status: StatusLikeType): void {
         this.status = status;
     }
 }

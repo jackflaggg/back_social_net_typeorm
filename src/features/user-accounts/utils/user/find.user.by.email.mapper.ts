@@ -3,7 +3,7 @@ export const userEmailMapper = (dto: any) => {
         id: dto.id,
         email: dto.email,
         password: dto.password,
-        isConfirmed: dto.isconfirmed,
-        confirmationCode: dto.confirmationcode,
+        isConfirmed: dto.isConfirmed,
+        confirmationCode: dto.confirmationCode,
     };
 };

@@ -11,12 +11,11 @@ export class CommentToUser extends Base {
     @Column({ type: 'varchar', length: contentConstraints.maxLength, collation: 'C' })
     content: string;
 
-    @Column({ type: 'uuid' })
-    commentatorId: string;
-
     @ManyToOne((): typeof User => User, user => user.comments)
     @JoinColumn({ name: 'commentator_id' })
     user: User;
+    @Column({ name: 'commentator_id' })
+    commentatorId: string;
 
     @OneToMany(() => CommentsStatus, commentsStatus => commentsStatus.comment)
     likesComments: CommentsStatus[];

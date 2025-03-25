@@ -79,10 +79,10 @@ export class UserRepositoryOrm {
                 'u.id AS id',
                 'u.email AS email',
                 'u.password_hash AS password',
-                'em.is_confirmed AS isConfirmed',
-                'em.confirmation_code AS confirmationCode',
+                'em.is_confirmed AS "isConfirmed"',
+                'em.confirmation_code AS "confirmationCode"',
             ])
-            .innerJoin('email_confirmation_to_user', 'em', 'u.id = em.user_id')
+            .innerJoin(EmailConfirmationToUser, 'em', 'u.id = em.user_id')
             .where('u.email = :email AND u.deleted_at IS NULL', { email })
             .getRawOne();
         if (!result) {
