@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../user/user.entity';
 import { BaseEntityWithoutDeletedAt } from '../../../../../core/domain/base';
 import { emailConfirmationCreateDto } from '../../../dto/repository/em-conf.create.dto';
+import { EmailConfirmationUpdateDto } from '../../../dto/repository/em-conf.update.dto';
 
 @Entity('email_confirmation_to_user')
 export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {
@@ -38,7 +39,7 @@ export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {
         this.isConfirmed = isConfirmed;
     }
 
-    public updateUserToCodeAndDate(dto: any) {
+    public updateUserToCodeAndDate(dto: EmailConfirmationUpdateDto) {
         this.confirmationCode = dto.confirmationCode;
         this.expirationDate = dto.expirationDate;
         this.isConfirmed = dto.isConfirmed;

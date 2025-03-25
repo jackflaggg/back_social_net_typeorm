@@ -4,6 +4,7 @@ import { BcryptService } from '../../other_services/bcrypt.service';
 import { Inject } from '@nestjs/common';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
 import { emailConfirmationData } from '../../../utils/user/email-confirmation-data.admin';
+import { EmailConfirmationRepositoryOrm } from '../../../infrastructure/typeorm/email-conf/email.orm.conf.repository';
 
 export class CommonCreateUserCommand {
     constructor(public readonly payload: UserCreateDtoService) {}
@@ -13,6 +14,7 @@ export class CommonCreateUserCommand {
 export class CommonCreateUserUseCase implements ICommandHandler<CommonCreateUserCommand> {
     constructor(
         @Inject() private readonly userRepository: UserRepositoryOrm,
+        @Inject() private readonly emailConfirmationRepository: EmailConfirmationRepositoryOrm,
         private readonly bcryptService: BcryptService,
     ) {}
 
@@ -30,6 +32,6 @@ export class CommonCreateUserUseCase implements ICommandHandler<CommonCreateUser
 
         const emailConfirmDto = emailConfirmationData();
 
-        return await this.userRepository.createEmailConfirmationToUser(emailConfirmDto, userId);
+        return await this.emailConfirmationRepository.createEmailConfirmationToUser(emailConfirmDto, userId);
     }
 }

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 import { emailConfirmationCreateDto } from '../../../dto/repository/em-conf.create.dto';
+import { EmailConfirmationUpdateDto } from '../../../dto/repository/em-conf.update.dto';
 
 @Injectable()
 export class EmailConfirmationRepositoryOrm {
@@ -12,6 +13,10 @@ export class EmailConfirmationRepositoryOrm {
     async createEmailConfirmationToUser(dto: emailConfirmationCreateDto, userId: string) {
         const result = EmailConfirmationToUser.buildInstance(dto, userId);
         return this.saveEmailConfirmation(result);
+    }
+    async updateToCodeAndDate(dto: EmailConfirmationUpdateDto, entity: EmailConfirmationToUser) {
+        entity.updateUserToCodeAndDate(dto);
+        return this.saveEmailConfirmation(entity);
     }
     async findEmailConfirmation(userId: string) {
         const result = await this.emailConfirmationRepositoryTypeOrm
