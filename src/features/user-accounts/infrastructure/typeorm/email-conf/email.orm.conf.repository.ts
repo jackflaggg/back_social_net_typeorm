@@ -18,6 +18,10 @@ export class EmailConfirmationRepositoryOrm {
         entity.updateUserToCodeAndDate(dto);
         return this.saveEmailConfirmation(entity);
     }
+    async updateCodeAndIsConfirmed(confirmationCode: string, isConfirmed: boolean, entity: EmailConfirmationToUser) {
+        entity.updateCodeAndConfirmed(confirmationCode, isConfirmed);
+        return this.saveEmailConfirmation(entity);
+    }
     async findEmailConfirmation(userId: string) {
         const result = await this.emailConfirmationRepositoryTypeOrm
             .createQueryBuilder('em')

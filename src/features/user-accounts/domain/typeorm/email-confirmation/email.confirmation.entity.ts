@@ -34,7 +34,7 @@ export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {
         return result as EmailConfirmationToUser;
     }
 
-    public updateEmailConfirmation(confirmationCode: string, isConfirmed: boolean): void {
+    public updateCodeAndConfirmed(confirmationCode: string, isConfirmed: boolean): void {
         this.confirmationCode = confirmationCode;
         this.isConfirmed = isConfirmed;
     }
