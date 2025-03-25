@@ -19,7 +19,7 @@ export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCo
         @Inject() private readonly passwordRepository: PasswordRecoveryRepositoryOrm,
         private readonly bcryptService: BcryptService,
     ) {}
-    async execute(command: NewPasswordUserCommand) {
+    async execute(command: NewPasswordUserCommand): Promise<void> {
         const findCode = await this.passwordRepository.findCode(command.recoveryCode);
 
         if (!findCode) {
@@ -34,12 +34,8 @@ export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCo
 
         const newPasswordHash = await this.bcryptService.hashPassword(user.passwordHash);
 
-        user.updatePassword(newPasswordHash);
+        await this.usersRepository.updateUserPassword(user, newPasswordHash);
 
-        await this.usersRepository.save(user);
-
-        findCode.updateStatus();
-
-        await this.usersRepository.saveRecoveryPassword(findCode);
+        await this.usersRepository.updateRecoveryPassword(findCode);
     }
 }

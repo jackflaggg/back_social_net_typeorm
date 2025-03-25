@@ -5,10 +5,9 @@ import { randomUUID } from 'node:crypto';
 import { add } from 'date-fns/add';
 import { BcryptService } from '../../other_services/bcrypt.service';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
-import { User } from '../../../domain/typeorm/user/user.entity';
-import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 import { RecoveryPasswordToUser } from '../../../domain/typeorm/password-recovery/pass-rec.entity';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { PasswordRecoveryRepositoryOrm } from '../../../infrastructure/typeorm/password/password.orm.recovery.repository';
 
 export class PasswordRecoveryUserCommand {
     constructor(public readonly email: string) {}
@@ -18,6 +17,7 @@ export class PasswordRecoveryUserCommand {
 export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordRecoveryUserCommand> {
     constructor(
         @Inject() private readonly usersRepository: UserRepositoryOrm,
+        @Inject() private readonly recPassRepository: PasswordRecoveryRepositoryOrm,
         private readonly bcryptService: BcryptService,
         private readonly mailer: EmailService,
     ) {}
@@ -38,9 +38,7 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
             };
 
             // создаю юзера
-            const newUser = User.buildInstance(userDto);
-
-            const userId = await this.usersRepository.save(newUser);
+            const userId = await this.usersRepository.createUser(userDto);
 
             // создаю запись в emailConfirmation!
             const confirmationCode = randomUUID();
@@ -53,9 +51,7 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
                 isConfirmed: false,
             };
 
-            const newEmailConfirmationUser = EmailConfirmationToUser.buildInstance(emailConfirmationUserDto, userId);
-
-            await this.usersRepository.saveEmailConfirmation(newEmailConfirmationUser);
+            await this.usersRepository.createEmailConfirmationToUser(emailConfirmationUserDto, userId);
 
             const recoveryCode = randomUUID();
 
@@ -69,7 +65,7 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
             this.mailer
                 .sendPasswordRecoveryMessage(command.email, newRecoveryPassword.recoveryCode)
                 .then(() => {
-                    this.usersRepository.saveRecoveryPassword(newRecoveryPassword);
+                    this.recPassRepository.saveRecoveryPassword(newRecoveryPassword);
                 })
                 .catch((err: unknown) => {
                     console.log(String(err));
@@ -92,7 +88,7 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
         this.mailer
             .sendPasswordRecoveryMessage(command.email, newRecoveryPassword.recoveryCode)
             .then(() => {
-                this.usersRepository.saveRecoveryPassword(newRecoveryPassword);
+                this.recPassRepository.saveRecoveryPassword(newRecoveryPassword);
             })
             .catch((err: unknown) => {
                 console.log(String(err));

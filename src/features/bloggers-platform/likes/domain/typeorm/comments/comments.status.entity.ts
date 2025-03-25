@@ -15,10 +15,10 @@ export class CommentsStatus extends BaseEntityWithoutDeletedAtAndCreatedAt {
     @Column({ type: 'enum', enum: StatusLike.enum, default: StatusLike.enum['None'] })
     status: StatusLikeType;
 
-    @Column()
+    @Column({ nullable: false })
     userId: string;
 
-    @Column()
+    @Column({ nullable: false })
     commentId: string;
 
     public static buildInstance(statusComment: StatusLikeType, user: User, comment: CommentToUser): CommentsStatus {

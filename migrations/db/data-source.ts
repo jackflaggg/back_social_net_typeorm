@@ -15,7 +15,7 @@ import { join } from 'path';
     улучшает ясность назначения файла, предоставляет единую точку конфигурации
     и обеспечивает совместимость с TypeORM.
  */
-console.log(join(__dirname, '../data/*.ts'));
+
 export default new DataSource({
     ...typeOrmConfigOptions,
     entities: [

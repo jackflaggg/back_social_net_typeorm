@@ -23,6 +23,8 @@ export class SecurityDeviceToUser {
     @ManyToOne(() => User, user => user.securityDevices)
     @JoinColumn({ name: 'user_id' })
     user: User;
+    @Column({ name: 'user_id' })
+    userId: string;
 
     static buildInstance(dto: DeviceCreateDto, user: User): SecurityDeviceToUser {
         const session = new SecurityDeviceToUser();

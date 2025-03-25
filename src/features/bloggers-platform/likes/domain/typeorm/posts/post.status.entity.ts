@@ -11,12 +11,12 @@ export class PostStatus extends BaseEntityWithoutDeletedAtAndCreatedAt {
 
     @ManyToOne((): typeof User => User, user => user.likesPosts)
     user: User;
-    @Column()
+    @Column({ nullable: false })
     userId: string;
 
     @ManyToOne((): typeof Post => Post, post => post.statusesPost)
     post: Post;
-    @Column()
+    @Column({ nullable: false })
     postId: string;
 
     public static buildInstance(statusPost: StatusLikeType, user: User, post: Post): PostStatus {

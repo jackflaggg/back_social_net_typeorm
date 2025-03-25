@@ -5,6 +5,7 @@ import { CommonCreateUserCommand } from './common-create-user.usecase';
 import { AuthRegistrationDtoApi } from '../../../dto/api/auth.registration.dto';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
+import { User } from '../../../domain/typeorm/user/user.entity';
 
 export class RegistrationUserCommand {
     constructor(public readonly payload: AuthRegistrationDtoApi) {}
@@ -33,13 +34,12 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
             new CommonCreateUserCommand(command.payload),
         );
 
-        const user = await this.userRepository.findUserById(String(emailConfirmation.userId));
+        const user: User = await this.userRepository.findUserById(String(emailConfirmation.userId));
 
         this.mailer
             .sendEmailRecoveryMessage(command.payload.email, emailConfirmation.confirmationCode)
             .then(() => {
-                user.confirmedSendEmailRegistration();
-                this.userRepository.save(user);
+                this.userRepository.updateUserConfirmedSendEmail(user);
             })
             .catch((err: unknown) => {
                 console.log(err);

@@ -3,8 +3,6 @@ import { UserCreateDtoService } from '../../../dto/service/user.create.dto';
 import { BcryptService } from '../../other_services/bcrypt.service';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
-import { User } from '../../../domain/typeorm/user/user.entity';
-import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 import { emailConfirmationDataAdmin } from '../../../utils/user/email-confirmation-data.admin';
 
 export class CreateUserCommand {
@@ -36,14 +34,11 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
             sentEmailRegistration: true,
         };
 
-        const userAggregationRoot = User.buildInstance(userDto);
+        const userId = await this.userRepository.createUser(userDto);
 
         const emailConfirmationDto = emailConfirmationDataAdmin();
 
-        const userId = await this.userRepository.save(userAggregationRoot);
-
-        const emailConfirmationRoot = EmailConfirmationToUser.buildInstance(emailConfirmationDto, userId);
-        await this.userRepository.saveEmailConfirmation(emailConfirmationRoot);
+        await this.userRepository.createEmailConfirmationToUser(emailConfirmationDto, userId);
         return userId;
     }
 }

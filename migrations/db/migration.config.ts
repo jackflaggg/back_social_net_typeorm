@@ -10,7 +10,7 @@ export const typeOrmConfigOptions: DataSourceOptions = {
     username: process.env.USERNAME_SQL,
     password: process.env.PASSWORD_SQL,
     database: process.env.DATABASE_NAME_SQL,
-    synchronize: false,
+    synchronize: true,
     migrationsRun: false,
-    logging: true,
+    logging: ['error'],
 };

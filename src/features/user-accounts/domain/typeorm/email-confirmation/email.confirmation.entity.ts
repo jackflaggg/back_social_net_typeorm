@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../user/user.entity';
 import { BaseEntityWithoutDeletedAt } from '../../../../../core/domain/base';
+import { emailConfirmationCreateDto } from '../../../dto/repository/em-conf.create.dto';
 
 @Entity('email_confirmation_to_user')
 export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {
@@ -21,7 +22,7 @@ export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {
     // добавили внешний ключ!
     user: User;
 
-    static buildInstance(dto: any, userId: string) {
+    static buildInstance(dto: emailConfirmationCreateDto, userId: string): EmailConfirmationToUser {
         const result = new EmailConfirmationToUser();
 
         result.confirmationCode = dto.confirmationCode;
@@ -32,7 +33,7 @@ export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {
         return result as EmailConfirmationToUser;
     }
 
-    public updateEmailConfirmation(confirmationCode: string, isConfirmed: boolean) {
+    public updateEmailConfirmation(confirmationCode: string, isConfirmed: boolean): void {
         this.confirmationCode = confirmationCode;
         this.isConfirmed = isConfirmed;
     }

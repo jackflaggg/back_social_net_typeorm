@@ -43,6 +43,7 @@ import { UserQueryRepositoryOrm } from './infrastructure/typeorm/user/query/user
 import { SessionsRepositoryOrm } from './infrastructure/typeorm/sessions/sessions.orm.repository';
 import { SessionQueryRepositoryOrm } from './infrastructure/typeorm/sessions/query/sessions.orm.query.repository';
 import { PasswordRecoveryRepositoryOrm } from './infrastructure/typeorm/password/password.orm.recovery.repository';
+import { EmailConfirmationRepositoryOrm } from './infrastructure/typeorm/email-conf/email.orm.conf.repository';
 
 const useCases = [
     CreateSessionUseCase,
@@ -68,6 +69,7 @@ const repositories = [
     SessionsRepositoryOrm,
     SessionQueryRepositoryOrm,
     PasswordRecoveryRepositoryOrm,
+    EmailConfirmationRepositoryOrm,
 ];
 
 const strategies = [BasicStrategy, LocalStrategy, AccessTokenStrategy, JwtRefreshAuthPassportStrategy];
@@ -88,10 +90,9 @@ const handlers = [LogUserInformationWhenUserLoggedInEventHandler];
         }),
         TypeOrmModule.forFeature([User, EmailConfirmationToUser, SecurityDeviceToUser, RecoveryPasswordToUser]),
         PassportModule,
-        //если в системе несколько токенов (например, access и refresh) с разными опциями (время жизни, секрет)
+        //если в системе несколько токенов (например, access и refresh) с разными опциями
         //можно переопределить опции при вызове метода jwt.service.sign
         //или написать свой tokens сервис (адаптер), где эти опции будут уже учтены
-        // и тд!
         CqrsModule,
     ],
     exports: [UserRepositoryOrm],

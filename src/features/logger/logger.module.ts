@@ -13,5 +13,6 @@ import { AppConfig } from '../../core/config/app.config';
         LoggerService,
         AppConfig,
     ],
+    exports: [LoggerService],
 })
 export class CustomLoggerModule {}

@@ -10,7 +10,7 @@ export const typeOrmDb = (coreConfig: AppConfig) =>
         password: coreConfig.passwordSql,
         database: coreConfig.databaseNameSql,
         entities: [],
-        synchronize: false,
+        synchronize: true,
         autoLoadEntities: true,
         logging: false,
     }) as TypeOrmModuleAsyncOptions;

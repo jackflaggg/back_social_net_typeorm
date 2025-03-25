@@ -3,8 +3,6 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BcryptService } from '../../other_services/bcrypt.service';
 import { Inject } from '@nestjs/common';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
-import { User } from '../../../domain/typeorm/user/user.entity';
-import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 import { emailConfirmationData } from '../../../utils/user/email-confirmation-data.admin';
 
 export class CommonCreateUserCommand {
@@ -28,14 +26,10 @@ export class CommonCreateUserUseCase implements ICommandHandler<CommonCreateUser
             sentEmailRegistration: false,
         };
 
-        const user = User.buildInstance(userDto);
-
-        const userId = await this.userRepository.save(user);
+        const userId = await this.userRepository.createUser(userDto);
 
         const emailConfirmDto = emailConfirmationData();
 
-        const emailConfirmationEntity = EmailConfirmationToUser.buildInstance(emailConfirmDto, userId);
-
-        return await this.userRepository.saveEmailConfirmation(emailConfirmationEntity);
+        return await this.userRepository.createEmailConfirmationToUser(emailConfirmDto, userId);
     }
 }
