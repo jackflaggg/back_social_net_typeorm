@@ -1,13 +1,12 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
 import { EmailService } from '../../../../notifications/application/mail.service';
 import { randomUUID } from 'node:crypto';
 import { add } from 'date-fns/add';
 import { BcryptService } from '../../other_services/bcrypt.service';
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
-import { RecoveryPasswordToUser } from '../../../domain/typeorm/password-recovery/pass-rec.entity';
 import { BadRequestDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { PasswordRecoveryRepositoryOrm } from '../../../infrastructure/typeorm/password/password.orm.recovery.repository';
+import { EmailConfirmationRepositoryOrm } from '../../../infrastructure/typeorm/email-conf/email.orm.conf.repository';
 
 export class PasswordRecoveryUserCommand {
     constructor(public readonly email: string) {}
@@ -16,8 +15,9 @@ export class PasswordRecoveryUserCommand {
 @CommandHandler(PasswordRecoveryUserCommand)
 export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordRecoveryUserCommand> {
     constructor(
-        @Inject() private readonly usersRepository: UserRepositoryOrm,
-        @Inject() private readonly recPassRepository: PasswordRecoveryRepositoryOrm,
+        private readonly usersRepository: UserRepositoryOrm,
+        private readonly emailConfirmationRepository: EmailConfirmationRepositoryOrm,
+        private readonly recPassRepository: PasswordRecoveryRepositoryOrm,
         private readonly bcryptService: BcryptService,
         private readonly mailer: EmailService,
     ) {}
@@ -51,7 +51,7 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
                 isConfirmed: false,
             };
 
-            await this.usersRepository.createEmailConfirmationToUser(emailConfirmationUserDto, userId);
+            await this.emailConfirmationRepository.createEmailConfirmationToUser(emailConfirmationUserDto, userId);
 
             const recoveryCode = randomUUID();
 
@@ -60,12 +60,10 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
                 recoveryExpirationDate: codeExpirationDate,
             };
 
-            const newRecoveryPassword = RecoveryPasswordToUser.buildInstance(recoveryPasswordDto, userId);
-
             this.mailer
-                .sendPasswordRecoveryMessage(command.email, newRecoveryPassword.recoveryCode)
+                .sendPasswordRecoveryMessage(command.email, recoveryPasswordDto.recoveryCode)
                 .then(() => {
-                    this.recPassRepository.saveRecoveryPassword(newRecoveryPassword);
+                    this.recPassRepository.createRecoveryPassword(recoveryPasswordDto, userId);
                 })
                 .catch((err: unknown) => {
                     console.log(String(err));
@@ -83,12 +81,10 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
 
         if (!findUser) throw BadRequestDomainException.create('произошла критическая ошибка!', 'user');
 
-        const newRecoveryPassword = RecoveryPasswordToUser.buildInstance(recoveryPasswordDto, findUser.id);
-
         this.mailer
-            .sendPasswordRecoveryMessage(command.email, newRecoveryPassword.recoveryCode)
+            .sendPasswordRecoveryMessage(command.email, recoveryPasswordDto.recoveryCode)
             .then(() => {
-                this.recPassRepository.saveRecoveryPassword(newRecoveryPassword);
+                this.recPassRepository.createRecoveryPassword(recoveryPasswordDto, findUser.id);
             })
             .catch((err: unknown) => {
                 console.log(String(err));
