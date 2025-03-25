@@ -4,6 +4,7 @@ import { BadRequestDomainException } from '../../../../../core/exceptions/incuba
 import { UserRepositoryOrm } from '../../../infrastructure/typeorm/user/user.orm.repo';
 import { PasswordRecoveryRepositoryOrm } from '../../../infrastructure/typeorm/password/password.orm.recovery.repository';
 import { EmailConfirmationToUser } from '../../../domain/typeorm/email-confirmation/email.confirmation.entity';
+import { EmailConfirmationRepositoryOrm } from '../../../infrastructure/typeorm/email-conf/email.orm.conf.repository';
 
 export class RegistrationConfirmationUserCommand {
     constructor(public readonly code: string) {}
@@ -12,8 +13,9 @@ export class RegistrationConfirmationUserCommand {
 @CommandHandler(RegistrationConfirmationUserCommand)
 export class RegistrationConfirmationUserUseCase implements ICommandHandler<RegistrationConfirmationUserCommand> {
     constructor(
-        @Inject() private readonly usersRepository: UserRepositoryOrm,
-        @Inject() private readonly passwordRepository: PasswordRecoveryRepositoryOrm,
+        private readonly usersRepository: UserRepositoryOrm,
+        private readonly emailConfirmationRepository: EmailConfirmationRepositoryOrm,
+        private readonly passwordRepository: PasswordRecoveryRepositoryOrm,
     ) {}
     async execute(command: RegistrationConfirmationUserCommand) {
         // 1. если я нашел код в другой табличке, значит, ошибка!
@@ -23,7 +25,7 @@ export class RegistrationConfirmationUserUseCase implements ICommandHandler<Regi
             throw BadRequestDomainException.create('этот код предназначен для new-password', 'RegistrationConfirmationUserUseCase');
         }
         // 2. ищу код в email_confirmation
-        const findCode = await this.usersRepository.findCodeToEmailRegistration(command.code);
+        const findCode = await this.emailConfirmationRepository.findCodeToEmailRegistration(command.code);
 
         // P.S. Специфичная обработка ошибки для тестов!
         if (!findCode || command.code !== findCode.confirmationCode || !(findCode instanceof EmailConfirmationToUser)) {
@@ -52,6 +54,6 @@ export class RegistrationConfirmationUserUseCase implements ICommandHandler<Regi
 
         findCode.updateEmailConfirmation(confirmationCode, isConfirmed);
 
-        await this.usersRepository.saveEmailConfirmation(findCode);
+        await this.emailConfirmationRepository.saveEmailConfirmation(findCode);
     }
 }

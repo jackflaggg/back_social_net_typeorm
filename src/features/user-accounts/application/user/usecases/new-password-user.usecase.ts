@@ -15,8 +15,8 @@ export class NewPasswordUserCommand {
 @CommandHandler(NewPasswordUserCommand)
 export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCommand> {
     constructor(
-        @Inject() private readonly usersRepository: UserRepositoryOrm,
-        @Inject() private readonly passwordRepository: PasswordRecoveryRepositoryOrm,
+        private readonly usersRepository: UserRepositoryOrm,
+        private readonly passwordRepository: PasswordRecoveryRepositoryOrm,
         private readonly bcryptService: BcryptService,
     ) {}
     async execute(command: NewPasswordUserCommand): Promise<void> {
@@ -36,6 +36,6 @@ export class NewPasswordUserUseCase implements ICommandHandler<NewPasswordUserCo
 
         await this.usersRepository.updateUserPassword(user, newPasswordHash);
 
-        await this.usersRepository.updateRecoveryPassword(findCode);
+        await this.passwordRepository.updateRecoveryPassword(findCode);
     }
 }
