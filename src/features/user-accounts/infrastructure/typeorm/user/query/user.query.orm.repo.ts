@@ -1,26 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../../../domain/typeorm/user/user.entity';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { EmailConfirmationToUser } from '../../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 import { GetUsersQueryParams } from '../../../../dto/api/get-users-query-params.input-dto';
 import { MeUserIntInterface, UserViewDto } from '../../../../dto/api/user-view.dto';
-import { PaginatedBlogViewDto, PaginatedViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
+import { PaginatedBlogViewDto, PaginatedUserViewDto, PaginatedViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { getUsersQuery } from '../../../../utils/user/query.insert.get';
+import { PaginationParams } from '../../../../../../core/dto/base.query-params.input-dto';
 
 @Injectable()
 export class UserQueryRepositoryOrm {
-    constructor(
-        @InjectRepository(User) private userRepositoryTypeOrm: Repository<User>,
-        @InjectRepository(EmailConfirmationToUser) private emailConfirmationRepositoryTypeOrm: Repository<EmailConfirmationToUser>,
-    ) {}
+    constructor(@InjectRepository(User) private userRepositoryTypeOrm: Repository<User>) {}
     async getAllUsers(queryData: GetUsersQueryParams): Promise<PaginatedViewDto<UserViewDto[]>> {
         const { sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm } = getUsersQuery(queryData);
 
         const updatedSortBy = sortBy === 'createdAt' ? 'created_at' : sortBy.toLowerCase();
 
-        const offset = (pageNumber - 1) * pageSize;
+        const offset = PaginationParams.calculateSkip({ pageNumber, pageSize });
 
         const cteToCountUsers =
             '(SELECT COUNT(*) FROM users WHERE deleted_at IS NULL AND (login ILIKE :login OR email ILIKE :email)) AS totalCount';
@@ -29,10 +27,13 @@ export class UserQueryRepositoryOrm {
             .createQueryBuilder('u')
             .select(['u.id as id', 'u.login as login', 'u.email as email', 'u.created_at AS "createdAt"', cteToCountUsers])
             .where('u.deleted_at IS NULL')
-            .andWhere('(u.login ILIKE :login OR u.email ILIKE :email)', {
-                login: `%${searchLoginTerm}%`,
-                email: `%${searchEmailTerm}%`,
-            })
+            .andWhere(
+                new Brackets(qb =>
+                    qb
+                        .where('u.login ILIKE :login', { login: `%${searchLoginTerm}%` })
+                        .orWhere('u.email ILIKE :email', { email: `%${searchEmailTerm}%` }),
+                ),
+            )
             .orderBy(`u.${updatedSortBy}`, `${sortDirection}`)
             .skip(offset)
             .take(pageSize)
@@ -42,7 +43,7 @@ export class UserQueryRepositoryOrm {
 
         const usersView = resultUsers.map(user => UserViewDto.mapToView(user));
 
-        return PaginatedBlogViewDto.mapToView<UserViewDto[]>({
+        return PaginatedUserViewDto.mapToView<UserViewDto[]>({
             items: usersView,
             page: pageNumber,
             size: pageSize,

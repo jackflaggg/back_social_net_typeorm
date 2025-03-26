@@ -1,5 +1,6 @@
 import { BlogViewDto } from '../../features/bloggers-platform/blogs/dto/repository/query/blog-view.dto';
 import { PostViewDto } from '../../features/bloggers-platform/posts/dto/repository/post-view';
+import { UserViewDto } from '../../features/user-accounts/dto/api/user-view.dto';
 
 export abstract class PaginatedViewDto<T> {
     abstract items: T;
@@ -25,4 +26,8 @@ export abstract class PaginatedBlogViewDto extends PaginatedViewDto<BlogViewDto[
 
 export abstract class PaginatedPostViewDto extends PaginatedViewDto<PostViewDto[]> {
     items: PostViewDto[];
+}
+
+export abstract class PaginatedUserViewDto extends PaginatedViewDto<UserViewDto[]> {
+    items: UserViewDto[];
 }

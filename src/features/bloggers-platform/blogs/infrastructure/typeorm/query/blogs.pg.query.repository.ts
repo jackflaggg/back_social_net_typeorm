@@ -7,6 +7,7 @@ import { PaginatedBlogViewDto, PaginatedViewDto } from '../../../../../../core/d
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { Blog } from '../../../domain/typeorm/blog.entity';
 import { getBlogsQuery } from '../../../utils/blog/query.insert.blog';
+import { PaginationParams } from '../../../../../../core/dto/base.query-params.input-dto';
 
 @Injectable()
 export class BlogsQueryRepositoryOrm {
@@ -17,7 +18,7 @@ export class BlogsQueryRepositoryOrm {
 
         const updatedSortBy = sortBy === 'createdAt' ? 'created_at' : sortBy.toLowerCase();
 
-        const offset = (pageNumber - 1) * pageSize;
+        const offset = PaginationParams.calculateSkip({ pageNumber, pageSize });
 
         const subqueryToCountBlogs = '(SELECT COUNT(*) FROM blogs WHERE deleted_at IS NULL AND (name ILIKE :name)) AS totalCount';
 
