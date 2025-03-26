@@ -1,5 +1,5 @@
 import { StatusLike, StatusLikeType } from '../../../../../../libs/contracts/enums/status/status.like';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
 import { BaseEntityWithoutDeletedAtAndCreatedAt } from '../../../../../../core/domain/base';
 import { User } from '../../../../../user-accounts/domain/typeorm/user/user.entity';
 import { CommentToUser } from '../../../../comments/domain/typeorm/comment.entity';
@@ -8,9 +8,13 @@ import { CommentToUser } from '../../../../comments/domain/typeorm/comment.entit
 export class CommentsStatus extends BaseEntityWithoutDeletedAtAndCreatedAt {
     @ManyToOne((): typeof User => User, user => user.likesComments)
     user: User;
+    @PrimaryColumn({ nullable: false })
+    userId: string;
 
     @ManyToOne((): typeof CommentToUser => CommentToUser, comment => comment.likesComments)
     comment: CommentToUser;
+    @PrimaryColumn({ nullable: false })
+    commentId: string;
 
     @Column({ type: 'enum', enum: StatusLike.enum, default: StatusLike.enum['None'] })
     status: StatusLikeType;
@@ -19,11 +23,6 @@ export class CommentsStatus extends BaseEntityWithoutDeletedAtAndCreatedAt {
     TypeORM автоматически создаст соответствующие внешние ключи
     на основе указанных связей
     */
-    // @Column({ nullable: false })
-    // userId: string;
-    //
-    // @Column({ nullable: false })
-    // commentId: string;
 
     public static buildInstance(statusComment: StatusLikeType, user: User, comment: CommentToUser): CommentsStatus {
         const status = new this();

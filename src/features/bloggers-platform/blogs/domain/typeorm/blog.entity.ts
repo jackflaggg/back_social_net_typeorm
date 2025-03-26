@@ -12,7 +12,7 @@ import { isNull } from '../../../../user-accounts/utils/user/is.null';
 
 @Entity('blogs')
 export class Blog extends Base {
-    @Column({ name: 'title', type: 'varchar', length: nameConstraints.maxLength, collation: 'C' })
+    @Column({ name: 'name', type: 'varchar', length: nameConstraints.maxLength, collation: 'C' })
     name: string;
 
     @Column({ name: 'description', type: 'varchar', length: descriptionConstraints.maxLength, collation: 'C' })

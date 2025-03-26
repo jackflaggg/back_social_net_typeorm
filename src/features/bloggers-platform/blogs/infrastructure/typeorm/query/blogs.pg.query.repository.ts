@@ -19,7 +19,7 @@ export class BlogsQueryRepositoryOrm {
 
         const offset = (pageNumber - 1) * pageSize;
 
-        const subqueryToCountBlogs = '(SELECT COUNT(*) FROM blogs WHERE deleted_at IS NULL AND (title ILIKE :title)) AS totalCount';
+        const subqueryToCountBlogs = '(SELECT COUNT(*) FROM blogs WHERE deleted_at IS NULL AND (name ILIKE :name)) AS totalCount';
 
         const resultBlogs = await this.blogsQueryRepositoryTypeOrm
             .createQueryBuilder('b')
@@ -28,7 +28,7 @@ export class BlogsQueryRepositoryOrm {
                 subqueryToCountBlogs,
             ])
             .where('b.deleted_at IS NULL')
-            .andWhere('b.title ILIKE :title', { title: `%${searchNameTerm}%` })
+            .andWhere('b.name ILIKE :name', { name: `%${searchNameTerm}%` })
             .orderBy(`b.${updatedSortBy}`, sortDirection)
             .skip(offset)
             .take(pageSize)

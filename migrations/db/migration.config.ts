@@ -12,5 +12,6 @@ export const typeOrmConfigOptions: DataSourceOptions = {
     database: process.env.DATABASE_NAME_SQL,
     synchronize: true,
     migrationsRun: false,
-    logging: ['error'],
+    logging: ['error', 'warn'],
+    migrationsTableName: 'custom_migration_table',
 };

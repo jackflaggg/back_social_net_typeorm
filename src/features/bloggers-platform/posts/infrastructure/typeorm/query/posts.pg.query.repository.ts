@@ -15,35 +15,47 @@ import { PaginationParams } from '../../../../../../core/dto/base.query-params.i
 export class PostsQueryRepositoryOrm {
     constructor(@InjectRepository(Post) protected postRepositoryOrm: Repository<Post>) {}
 
-    async getAllPosts(queryData: GetPostsQueryParams, userId: string | null, blogId?: string): Promise<PaginatedViewDto<PostViewDto[]>> {
+    async getAllPosts(
+        queryData: GetPostsQueryParams,
+        userId: string | null,
+        blogId?: string,
+    ) /*: Promise<PaginatedViewDto<PostViewDto[]>>*/ {
         const { pageSize, pageNumber, sortBy, sortDirection } = getPostsQuery(queryData);
 
-        const countPosts = await this.postRepositoryOrm.countBy({ deletedAt: IsNull() });
+        console.log('Page Size:', pageSize);
+        console.log('Page Number:', pageNumber);
 
+        const countPosts = await this.postRepositoryOrm.countBy({ deletedAt: IsNull() });
+        console.log('Count Posts:', countPosts);
+        const offset = PaginationParams.calculateSkip({ pageNumber, pageSize });
+        console.log('Offset:', offset);
         const updatedSortBy = sortBy === 'blogName' ? `"${sortBy}"` : `p."${convertCamelCaseToSnakeCase(sortBy)}"`;
 
         const checkBlogId = blogId ? `AND p.blog_id = :blogId` : '';
 
         const resultPosts = await this.postRepositoryOrm
             .createQueryBuilder('p')
-            .select([
-                'p.id AS id, p.title AS title, p.short_description AS "shortDescription", p.content AS content, p.created_at AS "createdAt", p.blog_id AS "blogId", b.name AS "blogName"',
-            ])
-            .leftJoin(Blog, 'b', 'p.blog_id = b.id')
-            .where(`p.deleted_at IS NULL ${checkBlogId}`, { blogId })
+            // .select([
+            //     'p.id AS id, p.title AS title, p.short_description AS "shortDescription", p.content AS content, p.created_at AS "createdAt", p.blog_id AS "blogId", b.name AS "blogName"',
+            // ])
+            //.leftJoin(Blog, 'b', 'b.id = p.blog_id')
+            .where(`p.deleted_at IS NULL`)
+            /* 
+${checkBlogId}`, { blogId })
+ */
             .orderBy(updatedSortBy, sortDirection)
-            .skip(PaginationParams.calculateSkip({ pageNumber, pageSize }))
+            .skip(offset)
             .take(pageSize)
-            .getRawMany();
-
-        const postsView: postOutInterface[] = resultPosts.map(post => PostViewDto.mapToView(post));
-
-        return PaginatedPostViewDto.mapToView<PostViewDto[]>({
-            items: postsView,
-            page: pageNumber,
-            size: pageSize,
-            totalCount: countPosts,
-        });
+            .getMany();
+        console.log('Result Posts:', resultPosts.length);
+        // const postsView: postOutInterface[] = resultPosts.map(post => PostViewDto.mapToView(post));
+        //
+        // return PaginatedPostViewDto.mapToView<PostViewDto[]>({
+        //     items: postsView,
+        //     page: pageNumber,
+        //     size: pageSize,
+        //     totalCount: countPosts,
+        // });
     }
 
     async getPost(postId: string, userId: string | null) {

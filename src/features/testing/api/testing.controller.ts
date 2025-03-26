@@ -1,14 +1,15 @@
 import { Controller, Delete, HttpCode, HttpStatus } from '@nestjs/common';
-import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 import { SETTINGS } from '../../../core/settings';
 import { TablesEnum, TablesEnumType } from '../../../libs/contracts/enums/app/tables.enum';
 import { LoggerService } from '../../logger/application/logger.service';
+import dataSource from '../../../../migrations/db/data-source';
 
 @Controller(SETTINGS.PATH.TESTING)
 export class TestingController {
     constructor(
-        @InjectEntityManager() protected entityManager: EntityManager,
+        @InjectDataSource() protected dataSource: DataSource,
         private loggerService: LoggerService,
     ) {
         this.loggerService.setContext(TestingController.name);
@@ -17,11 +18,29 @@ export class TestingController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete('all-data')
     async deleteAll(): Promise<void> {
-        const dataTables: TablesEnumType[] = TablesEnum.options;
+        const init = await dataSource.initialize();
+        const queryRunner = init.createQueryRunner();
 
-        for (const table of dataTables) {
-            await this.entityManager.query(`TRUNCATE TABLE ${table} RESTART IDENTITY CASCADE`);
+        try {
+            await queryRunner.connect();
+
+            await queryRunner.startTransaction();
+            const dataTables: TablesEnumType[] = TablesEnum.options;
+
+            for (const table of dataTables) {
+                await queryRunner.query(`TRUNCATE TABLE ${table} CASCADE`);
+            }
+
+            await queryRunner.commitTransaction();
+
+            this.loggerService.log('база была очищена!');
+        } catch (e: unknown) {
+            if (queryRunner.isTransactionActive) {
+                await queryRunner.rollbackTransaction();
+            }
+            this.loggerService.log('что то пошло не так: ' + String(e));
+        } finally {
+            await queryRunner.release();
         }
-        this.loggerService.log('база была очищена!');
     }
 }
