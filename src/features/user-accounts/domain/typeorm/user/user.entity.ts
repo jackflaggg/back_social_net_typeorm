@@ -53,8 +53,6 @@ export class User extends Base {
         user.passwordHash = dto.password;
         user.sentEmailRegistration = dto.sentEmailRegistration;
 
-        // TODO: Переведи на агрегейшен рут
-        //user.emailConfirmation = new EmailConfirmationToUser();
         return user as User;
     }
 

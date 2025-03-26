@@ -33,11 +33,11 @@ export class PostsController {
     @Get()
     async getPosts(
         @Query() query: GetPostsQueryParams,
-        @Param('blogId', ValidateUUIDPipe) blogId: string,
+        //@Param('blogId', ValidateUUIDPipe) blogId: string,
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
         const userId: string | null = dtoUser ? dtoUser.userId : null;
-        return await this.postsQueryRepository.getAllPosts(query, userId, blogId);
+        return await this.postsQueryRepository.getAllPosts(query, userId /*, blogId*/);
     }
 
     @UseGuards(JwtOptionalAuthGuard)

@@ -12,16 +12,22 @@ import { PaginatedViewDto } from '../../../../../../core/dto/base.paginated.view
 @Injectable()
 export class PostsQueryRepositoryOrm {
     constructor(@InjectRepository(Post) protected postRepositoryOrm: Repository<Post>) {}
+
     async getAllPosts(queryData: GetPostsQueryParams, userId: string | null, blogId?: string) {
         const { pageSize, pageNumber, sortBy, sortDirection } = getPostsQuery(queryData);
 
         const updatedSort = sortBy === 'createdAt' ? 'created_at' : sortBy.toLowerCase();
-
         const offset = (pageNumber - 1) * pageSize;
 
-        const checkBlogId = blogId ? `AND p.blog_id = '${blogId}'` : '';
+        const checkBlogId = blogId ? `AND p.blog_id = :blogId` : '';
 
         const subQueryToCountPosts = `(SELECT COUNT(*) FROM posts WHERE deleted_at IS NULL ${blogId ? `AND blog_id = :blogId` : ''}) AS totalCount`;
+
+        const countQuery = this.postRepositoryOrm
+            .createQueryBuilder('p')
+            .leftJoin(Blog, 'b', 'p.blog_id = b.id')
+            .where(`p.deleted_at IS NULL ${checkBlogId}`, { blogId })
+            .getCount(); // Получить общее количество постов
 
         const resultPosts = await this.postRepositoryOrm
             .createQueryBuilder('p')
@@ -31,13 +37,16 @@ export class PostsQueryRepositoryOrm {
             ])
             .leftJoin(Blog, 'b', 'p.blog_id = b.id')
             .where(`p.deleted_at IS NULL ${checkBlogId}`)
-            .setParameter('blogId', blogId)
             .orderBy(`p.${updatedSort}`, sortDirection)
             .skip(offset)
-            .take(pageSize)
+            .take(10)
             .getRawMany();
+
+        const tot = await countQuery;
+        console.log(tot, resultPosts.length);
         const totalCount = resultPosts.length > 0 ? Number(resultPosts[0].totalcount) : 0;
         const postsView = resultPosts.map(post => PostViewDto.mapToView(post));
+
         return PaginatedViewDto.mapToView<PostViewDto[]>({
             items: postsView,
             page: pageNumber,
