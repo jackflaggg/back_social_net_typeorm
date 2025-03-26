@@ -19,11 +19,11 @@ export interface postOutInterface {
 export interface postIntInterface {
     id: string | number;
     title: string;
-    shortdescription: string;
+    shortDescription: string;
     content: string;
-    blogid: string;
-    blogname: string;
-    createdat: Date;
+    blogId: string;
+    blogName: string;
+    createdAt: Date;
     likesCount: string;
     dislikesCount: string;
     myStatus: string;
@@ -47,11 +47,11 @@ export class PostViewDto {
     constructor(model: postIntInterface) {
         this.id = String(model.id);
         this.title = model.title;
-        this.shortDescription = model.shortdescription;
+        this.shortDescription = model.shortDescription;
         this.content = model.content;
-        this.blogId = String(model.blogid);
-        this.blogName = model.blogname;
-        this.createdAt = model.createdat;
+        this.blogId = String(model.blogId);
+        this.blogName = model.blogName;
+        this.createdAt = model.createdAt;
         this.extendedLikesInfo = {
             likesCount: +model.likesCount || 0,
             dislikesCount: +model.dislikesCount || 0,
