@@ -30,7 +30,7 @@ export class PostsQueryRepositoryOrm {
                 'p.id AS id, p.title AS title, p.short_description AS "shortDescription", p.content AS content, p.created_at AS "createdAt", p.blog_id AS "blogId", b.name AS "blogName"',
             ])
             .leftJoin(Blog, 'b', 'p.blog_id = b.id')
-            .where(`p.deleted_at IS NULL ${checkBlogId}`)
+            .where(`p.deleted_at IS NULL ${checkBlogId}`, { blogId })
             .orderBy(updatedSortBy, sortDirection)
             .skip(PaginationParams.calculateSkip({ pageNumber, pageSize }))
             .take(pageSize)
@@ -50,7 +50,7 @@ export class PostsQueryRepositoryOrm {
         const result = await this.postRepositoryOrm
             .createQueryBuilder('p')
             .select([
-                'p.id AS id, p.title AS title, p.short_description AS shortDescription, p.content AS content, p.created_at AS createdAt, p.blog_id AS blogId, b.name AS blogName',
+                'p.id AS id, p.title AS title, p.short_description AS "shortDescription", p.content AS content, p.created_at AS "createdAt", p.blog_id AS "blogId", b.name AS "blogName"',
             ])
             .leftJoin(Blog, 'b', 'b.id = p.blog_id')
             .where('p.deleted_at IS NULL AND p.id = :postId', { postId })
