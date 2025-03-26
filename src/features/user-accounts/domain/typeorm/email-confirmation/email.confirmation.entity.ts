@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { User } from '../user/user.entity';
 import { BaseEntityWithoutDeletedAt } from '../../../../../core/domain/base';
 import { emailConfirmationCreateDto } from '../../../dto/repository/em-conf.create.dto';
@@ -6,9 +6,6 @@ import { EmailConfirmationUpdateDto } from '../../../dto/repository/em-conf.upda
 
 @Entity('email_confirmation_to_user')
 export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {
-    @PrimaryColumn({ name: 'user_id' })
-    userId: string;
-
     @Column({ name: 'confirmation_code', type: 'varchar', length: 255 })
     confirmationCode: string;
 
@@ -20,8 +17,9 @@ export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {
 
     @OneToOne(() => User, user => user.emailConfirmation)
     @JoinColumn({ name: 'user_id' })
-    // добавили внешний ключ!
     user: User;
+    @Column({ name: 'user_id' })
+    userId: string;
 
     static buildInstance(dto: emailConfirmationCreateDto, userId: string): EmailConfirmationToUser {
         const result = new EmailConfirmationToUser();

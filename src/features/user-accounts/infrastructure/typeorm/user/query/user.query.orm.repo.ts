@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../../../domain/typeorm/user/user.entity';
-import { Brackets, Repository } from 'typeorm';
+import { Brackets, QueryBuilder, Repository } from 'typeorm';
 import { EmailConfirmationToUser } from '../../../../domain/typeorm/email-confirmation/email.confirmation.entity';
 import { GetUsersQueryParams } from '../../../../dto/api/get-users-query-params.input-dto';
 import { MeUserIntInterface, UserViewDto } from '../../../../dto/api/user-view.dto';
@@ -16,30 +16,28 @@ export class UserQueryRepositoryOrm {
     async getAllUsers(queryData: GetUsersQueryParams): Promise<PaginatedViewDto<UserViewDto[]>> {
         const { sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm } = getUsersQuery(queryData);
 
-        const updatedSortBy = sortBy === 'createdAt' ? 'created_at' : sortBy.toLowerCase();
-
         const offset = PaginationParams.calculateSkip({ pageNumber, pageSize });
 
-        const cteToCountUsers =
-            '(SELECT COUNT(*) FROM users WHERE deleted_at IS NULL AND (login ILIKE :login OR email ILIKE :email)) AS totalCount';
+        const queryBuilder = this.userRepositoryTypeOrm.createQueryBuilder('u').where('u.deleted_at IS NULL');
 
-        const resultUsers = await this.userRepositoryTypeOrm
-            .createQueryBuilder('u')
-            .select(['u.id as id', 'u.login as login', 'u.email as email', 'u.created_at AS "createdAt"', cteToCountUsers])
-            .where('u.deleted_at IS NULL')
-            .andWhere(
+        if (searchEmailTerm || searchLoginTerm) {
+            queryBuilder.andWhere(
                 new Brackets(qb =>
                     qb
                         .where('u.login ILIKE :login', { login: `%${searchLoginTerm}%` })
                         .orWhere('u.email ILIKE :email', { email: `%${searchEmailTerm}%` }),
                 ),
-            )
-            .orderBy(`u.${updatedSortBy}`, `${sortDirection}`)
+            );
+        }
+        const resultUsers = await queryBuilder
+            .select(['u.id AS id, u.login AS login, u.email AS email, u.created_at AS "createdAt"'])
+            .orderBy(`u.${sortBy}`, `${sortDirection}`)
             .skip(offset)
             .take(pageSize)
             .getRawMany();
 
-        const totalCount = resultUsers.length > 0 ? Number(resultUsers[0].totalcount) : 0;
+        console.log(resultUsers);
+        const totalCount = await queryBuilder.getCount();
 
         const usersView = resultUsers.map(user => UserViewDto.mapToView(user));
 

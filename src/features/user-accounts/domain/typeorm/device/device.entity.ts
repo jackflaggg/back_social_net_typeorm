@@ -21,7 +21,7 @@ export class SecurityDeviceToUser {
     deletedAt: Date | null;
 
     @ManyToOne(() => User, user => user.securityDevices)
-    @JoinColumn({ name: 'user_id' })
+    @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
     user: User;
     @Column({ name: 'user_id' })
     userId: string;

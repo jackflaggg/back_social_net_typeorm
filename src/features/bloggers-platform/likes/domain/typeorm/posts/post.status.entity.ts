@@ -1,32 +1,33 @@
 import { StatusLike, StatusLikeType } from '../../../../../../libs/contracts/enums/status/status.like';
-import { BaseEntityWithoutDeletedAtAndCreatedAt } from '../../../../../../core/domain/base';
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../../../../../user-accounts/domain/typeorm/user/user.entity';
 import { Post } from '../../../../posts/domain/typeorm/post.entity';
 
 @Entity('statuses_posts')
-export class PostStatus extends BaseEntityWithoutDeletedAtAndCreatedAt {
-    @Column({ type: 'enum', enum: StatusLike.enum, default: StatusLike.enum['None'] })
-    status: StatusLikeType;
-    /*
-    TypeORM автоматически создаст соответствующие внешние ключи
-    на основе указанных связей
-    */
+export class PostStatus {
     @ManyToOne((): typeof User => User, user => user.likesPosts)
+    @JoinColumn({ name: 'user_id' })
     user: User;
-    @PrimaryColumn({ nullable: false })
+    @PrimaryColumn({ name: 'user_id', nullable: false })
     userId: string;
 
     @ManyToOne((): typeof Post => Post, post => post.statusesPost)
+    @JoinColumn({ name: 'post_id' })
     post: Post;
-    @PrimaryColumn({ nullable: false })
+    @PrimaryColumn({ name: 'post_id', nullable: false })
     postId: string;
 
-    public static buildInstance(statusPost: StatusLikeType, user: User, post: Post): PostStatus {
+    @Column({ type: 'enum', enum: StatusLike.enum, default: StatusLike.enum['None'] })
+    status: StatusLikeType;
+
+    @CreateDateColumn({ name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
+
+    public static buildInstance(statusPost: StatusLikeType, userId: string, postId: string): PostStatus {
         const status = new this();
 
-        status.post = post;
-        status.user = user;
+        status.postId = postId;
+        status.userId = userId;
         status.status = statusPost || StatusLike.enum['None'];
         return status as PostStatus;
     }

@@ -18,29 +18,17 @@ export class TestingController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete('all-data')
     async deleteAll(): Promise<void> {
-        const init = await dataSource.initialize();
-        const queryRunner = init.createQueryRunner();
-
+        const dataTables: TablesEnumType[] = TablesEnum.options;
         try {
-            await queryRunner.connect();
+            await this.dataSource.transaction(async entityManager => {
+                for (const table of dataTables) {
+                    await entityManager.query(`TRUNCATE TABLE ${table} CASCADE`);
+                }
+            });
 
-            await queryRunner.startTransaction();
-            const dataTables: TablesEnumType[] = TablesEnum.options;
-
-            for (const table of dataTables) {
-                await queryRunner.query(`TRUNCATE TABLE ${table} CASCADE`);
-            }
-
-            await queryRunner.commitTransaction();
-
-            this.loggerService.log('база была очищена!');
+            this.loggerService.log('База была очищена!');
         } catch (e: unknown) {
-            if (queryRunner.isTransactionActive) {
-                await queryRunner.rollbackTransaction();
-            }
             this.loggerService.log('что то пошло не так: ' + String(e));
-        } finally {
-            await queryRunner.release();
         }
     }
 }

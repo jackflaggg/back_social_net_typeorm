@@ -1,6 +1,6 @@
-import { PostSortByEnum, PostSortByValues } from '../../../../../libs/contracts/enums/post/post.sort.by.enum';
+import { EntitiesSortByEnum, PostSortByValues } from '../../../../../libs/contracts/enums/post/entitiesSortByEnum';
 
-export const convertCamelCaseToSnakeCase = (sortBy: PostSortByEnum) => {
+export const convertCamelCaseToSnakeCase = (sortBy: EntitiesSortByEnum) => {
     if (PostSortByValues.includes(sortBy)) {
         return sortBy.replace(/([A-Z])/g, '_\$1').toLowerCase();
     }

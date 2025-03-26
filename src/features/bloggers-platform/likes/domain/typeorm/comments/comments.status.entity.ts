@@ -1,28 +1,27 @@
 import { StatusLike, StatusLikeType } from '../../../../../../libs/contracts/enums/status/status.like';
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
-import { BaseEntityWithoutDeletedAtAndCreatedAt } from '../../../../../../core/domain/base';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../../../../../user-accounts/domain/typeorm/user/user.entity';
 import { CommentToUser } from '../../../../comments/domain/typeorm/comment.entity';
 
 @Entity('statuses_comments')
-export class CommentsStatus extends BaseEntityWithoutDeletedAtAndCreatedAt {
+export class CommentsStatus {
     @ManyToOne((): typeof User => User, user => user.likesComments)
+    @JoinColumn({ name: 'user_id' })
     user: User;
-    @PrimaryColumn({ nullable: false })
+    @PrimaryColumn({ name: 'user_id', nullable: false })
     userId: string;
 
     @ManyToOne((): typeof CommentToUser => CommentToUser, comment => comment.likesComments)
+    @JoinColumn({ name: 'comment_id' })
     comment: CommentToUser;
-    @PrimaryColumn({ nullable: false })
+    @PrimaryColumn({ name: 'comment_id', nullable: false })
     commentId: string;
 
     @Column({ type: 'enum', enum: StatusLike.enum, default: StatusLike.enum['None'] })
     status: StatusLikeType;
 
-    /*
-    TypeORM автоматически создаст соответствующие внешние ключи
-    на основе указанных связей
-    */
+    @CreateDateColumn({ name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
 
     public static buildInstance(statusComment: StatusLikeType, user: User, comment: CommentToUser): CommentsStatus {
         const status = new this();
