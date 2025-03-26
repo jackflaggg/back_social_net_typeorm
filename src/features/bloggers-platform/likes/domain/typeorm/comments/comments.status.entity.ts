@@ -15,11 +15,15 @@ export class CommentsStatus extends BaseEntityWithoutDeletedAtAndCreatedAt {
     @Column({ type: 'enum', enum: StatusLike.enum, default: StatusLike.enum['None'] })
     status: StatusLikeType;
 
-    @Column({ nullable: false })
-    userId: string;
-
-    @Column({ nullable: false })
-    commentId: string;
+    /*
+    TypeORM автоматически создаст соответствующие внешние ключи
+    на основе указанных связей
+    */
+    // @Column({ nullable: false })
+    // userId: string;
+    //
+    // @Column({ nullable: false })
+    // commentId: string;
 
     public static buildInstance(statusComment: StatusLikeType, user: User, comment: CommentToUser): CommentsStatus {
         const status = new this();

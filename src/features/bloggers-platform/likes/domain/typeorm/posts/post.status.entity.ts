@@ -1,6 +1,6 @@
 import { StatusLike, StatusLikeType } from '../../../../../../libs/contracts/enums/status/status.like';
 import { BaseEntityWithoutDeletedAtAndCreatedAt } from '../../../../../../core/domain/base';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
 import { User } from '../../../../../user-accounts/domain/typeorm/user/user.entity';
 import { Post } from '../../../../posts/domain/typeorm/post.entity';
 
@@ -8,15 +8,18 @@ import { Post } from '../../../../posts/domain/typeorm/post.entity';
 export class PostStatus extends BaseEntityWithoutDeletedAtAndCreatedAt {
     @Column({ type: 'enum', enum: StatusLike.enum, default: StatusLike.enum['None'] })
     status: StatusLikeType;
-
+    /*
+    TypeORM автоматически создаст соответствующие внешние ключи
+    на основе указанных связей
+    */
     @ManyToOne((): typeof User => User, user => user.likesPosts)
     user: User;
-    @Column({ nullable: false })
+    @PrimaryColumn({ nullable: false })
     userId: string;
 
     @ManyToOne((): typeof Post => Post, post => post.statusesPost)
     post: Post;
-    @Column({ nullable: false })
+    @PrimaryColumn({ nullable: false })
     postId: string;
 
     public static buildInstance(statusPost: StatusLikeType, user: User, post: Post): PostStatus {
