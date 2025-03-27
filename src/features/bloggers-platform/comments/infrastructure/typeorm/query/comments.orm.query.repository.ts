@@ -99,10 +99,10 @@ export class CommentsOrmQueryRepository {
         if (!resultComment) {
             throw NotFoundDomainException.create('Непредвиденная ошибка, коммент не найден', 'commentId');
         }
-        console.log(resultComment);
 
         return transformComment(resultComment);
     }
+
     private getStatus(queryBuilder: SelectQueryBuilder<any>) {}
     private getLikesCount() {}
     private getDislikesCount() {}
