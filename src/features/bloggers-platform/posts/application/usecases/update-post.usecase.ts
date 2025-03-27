@@ -2,7 +2,6 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostUpdateDtoService } from '../../dto/service/post.update.dto';
 import { BlogsRepositoryOrm } from '../../../blogs/infrastructure/typeorm/blogs.pg.repository';
 import { PostsRepositoryOrm } from '../../infrastructure/typeorm/posts.pg.repository';
-import { Blog } from '../../../blogs/domain/typeorm/blog.entity';
 import { Post } from '../../domain/typeorm/post.entity';
 
 export class UpdatePostCommand {
