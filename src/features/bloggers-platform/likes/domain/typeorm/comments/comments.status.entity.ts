@@ -23,11 +23,11 @@ export class CommentsStatus {
     @CreateDateColumn({ name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;
 
-    public static buildInstance(statusComment: StatusLikeType, user: User, comment: CommentToUser): CommentsStatus {
+    public static buildInstance(statusComment: StatusLikeType, userId: string, commentId: string): CommentsStatus {
         const status = new this();
 
-        status.user = user;
-        status.comment = comment;
+        status.userId = userId;
+        status.commentId = commentId;
         status.status = statusComment || StatusLike.enum['None'];
         return status as CommentsStatus;
     }

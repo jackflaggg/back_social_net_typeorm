@@ -36,8 +36,8 @@ export function transformComment(valueOne: commentOutInterface): commentIntInter
         },
         createdAt: valueOne.createdAt || '',
         likesInfo: {
-            likesCount: +valueOne.likesCount,
-            dislikesCount: +valueOne.dislikesCount,
+            likesCount: +valueOne.likesCount || 0,
+            dislikesCount: +valueOne.dislikesCount || 0,
             myStatus: valueOne.myStatus || StatusLike.enum['None'],
         },
     };

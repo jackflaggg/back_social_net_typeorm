@@ -22,8 +22,7 @@ export class CommentController {
     @UseGuards(JwtOptionalAuthGuard)
     @Get('/:commentId')
     async getComment(@Param('commentId', ValidateUUIDPipe) id: string, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto) {
-        const userId = dtoUser ? dtoUser.userId : null;
-        return this.commentsQueryRepository.getComment(id, userId);
+        return this.commentsQueryRepository.getComment(id, dtoUser ? dtoUser.userId : '');
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
