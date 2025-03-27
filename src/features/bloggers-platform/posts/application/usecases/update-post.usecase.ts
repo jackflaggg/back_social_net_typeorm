@@ -20,7 +20,7 @@ export class UpdatePostUseCase implements ICommandHandler<UpdatePostCommand> {
     ) {}
 
     async execute(command: UpdatePostCommand) {
-        const blog: Blog = await this.blogsRepository.findBlogById(command.postId);
+        await this.blogsRepository.findBlogById(command.postId);
 
         const post: Post = await this.postsRepository.findPostById(command.postId);
 
