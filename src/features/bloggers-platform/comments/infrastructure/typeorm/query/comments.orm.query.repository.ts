@@ -102,8 +102,4 @@ export class CommentsOrmQueryRepository {
 
         return transformComment(resultComment);
     }
-
-    private getStatus(queryBuilder: SelectQueryBuilder<any>) {}
-    private getLikesCount() {}
-    private getDislikesCount() {}
 }

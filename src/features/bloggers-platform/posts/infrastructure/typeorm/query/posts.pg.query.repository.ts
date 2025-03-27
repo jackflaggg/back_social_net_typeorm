@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, IsNull, Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { GetPostsQueryParams } from '../../../dto/api/get-posts-query-params.input.dto';
-import { postOutInterface, PostViewDto } from '../../../dto/repository/post-view';
+import { PostViewDto } from '../../../dto/repository/post-view';
 import { getPostsQuery } from '../../../utils/post/query.insert.get';
 import { Post } from '../../../domain/typeorm/post.entity';
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { Blog } from '../../../../blogs/domain/typeorm/blog.entity';
-import { PaginatedPostViewDto, PaginatedUserViewDto, PaginatedViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
-import { convertCamelCaseToSnakeCase } from '../../../utils/post/caml.case.to.snake.case';
+import { PaginatedPostViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
 import { PaginationParams } from '../../../../../../core/dto/base.query-params.input-dto';
-import { UserViewDto } from '../../../../../user-accounts/dto/api/user-view.dto';
 
 @Injectable()
 export class PostsQueryRepositoryOrm {
