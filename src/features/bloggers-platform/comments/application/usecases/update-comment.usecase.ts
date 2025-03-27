@@ -22,9 +22,9 @@ export class UpdateContentCommentUseCase implements ICommandHandler<UpdateConten
         if (!comment) {
             throw NotFoundDomainException.create('комментарий не существует!', 'commentId');
         }
-        if (comment.userId !== command.userId) {
+        if (comment.commentatorId !== command.userId) {
             throw ForbiddenDomainException.create();
         }
-        await this.commentsRepository.updateComment(comment.id, command.content);
+        await this.commentsRepository.updateComment(comment, command.content);
     }
 }

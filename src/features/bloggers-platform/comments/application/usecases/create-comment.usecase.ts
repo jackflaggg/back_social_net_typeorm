@@ -13,10 +13,6 @@ export class CreateCommentCommand {
     ) {}
 }
 
-// Этот декоратор связывает команду с соответствующим обработчиком.
-// Когда команда CreateCommentCommand будет отправлена в систему,
-// она будет автоматически направлена в класс CreateCommentUseCase для обработки.
-// Это позволяет отделить команду от логики обработки
 @CommandHandler(CreateCommentCommand)
 export class CreateCommentUseCase implements ICommandHandler<CreateCommentCommand> {
     constructor(
@@ -26,12 +22,8 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
     ) {}
     async execute(command: CreateCommentCommand) {
         const post = await this.postsRepository.findPostById(command.postId);
-        if (!post) {
-            throw NotFoundDomainException.create('пост не найден', 'postId');
-        }
-        await this.usersRepository.findUserById(command.userId);
+        const user = await this.usersRepository.findUserById(command.userId);
 
-        // const comment = await this.commentsRepository.createComment(command.payload.content, post.id, user.id);
-        // return comment[0].id;
+        return await this.commentsRepository.createComment(command.payload.content, post.id, user.id);
     }
 }

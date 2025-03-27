@@ -1,6 +1,7 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CheckUserCommentCommand } from './check-user-comment.usecase';
 import { CommentsRepositoryOrm } from '../../infrastructure/typeorm/commentsRepositoryOrm';
+import { CommentToUser } from '../../domain/typeorm/comment.entity';
 
 export class DeleteCommentCommand {
     constructor(
@@ -20,8 +21,7 @@ export class DeleteCommentUseCase implements ICommandHandler<DeleteCommentComman
         private readonly commandBus: CommandBus,
     ) {}
     async execute(command: DeleteCommentCommand) {
-        const comment = await this.commandBus.execute(new CheckUserCommentCommand(command.commentId, command.userId));
-        const dateExpiredComment = new Date().toISOString();
-        await this.commentsRepository.deleteComment(dateExpiredComment, comment.id);
+        const comment: CommentToUser = await this.commandBus.execute(new CheckUserCommentCommand(command.commentId, command.userId));
+        await this.commentsRepository.deleteComment(comment);
     }
 }

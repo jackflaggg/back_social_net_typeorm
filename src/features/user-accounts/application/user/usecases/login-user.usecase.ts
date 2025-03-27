@@ -43,7 +43,6 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
 
         const issuedAtRefreshToken: Date = new Date(Number(decodedData.iat) * 1000);
 
-        console.log(decodedData);
         // 4. создаю сессию
         await this.commandBus.execute(
             new CreateSessionCommand(command.ip, command.userAgent, deviceId, command.user.id, issuedAtRefreshToken),
