@@ -1,10 +1,11 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostsRepositoryOrm } from '../../infrastructure/typeorm/posts.pg.repository';
 import { StatusPostRepositoryOrm } from '../../../likes/infrastructure/typeorm/statusPostRepositoryOrm';
+import { StatusLikeType } from '../../../../../libs/contracts/enums/status/status.like';
 
 export class LikePostCommand {
     constructor(
-        public status: string,
+        public status: StatusLikeType,
         public postId: string,
         public userId: string,
     ) {}
@@ -23,6 +24,6 @@ export class LikePostUseCase implements ICommandHandler<LikePostCommand> {
         if (!currenStatus) {
             await this.statusRepository.createLikeStatusPost(post.id, command.userId, command.status);
         }
-        await this.statusRepository.updateLikeStatusPost(post, command.userId, command.status);
+        await this.statusRepository.updateLikeStatusPost(currenStatus, command.userId, command.status);
     }
 }
