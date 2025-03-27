@@ -33,10 +33,11 @@ import { PostsRepositoryOrm } from './posts/infrastructure/typeorm/posts.pg.repo
 import { PostsQueryRepositoryOrm } from './posts/infrastructure/typeorm/query/posts.pg.query.repository';
 import { CommentsOrmQueryRepository } from './comments/infrastructure/typeorm/query/comments.orm.query.repository';
 import { CommentsRepositoryOrm } from './comments/infrastructure/typeorm/commentsRepositoryOrm';
-import { StatusRepositoryOrm } from './likes/infrastructure/typeorm/statusRepositoryOrm';
+import { StatusPostRepositoryOrm } from './likes/infrastructure/typeorm/statusPostRepositoryOrm';
 import { CommentToUser } from './comments/domain/typeorm/comment.entity';
 import { PostStatus } from './likes/domain/typeorm/posts/post.status.entity';
 import { CommentsStatus } from './likes/domain/typeorm/comments/comments.status.entity';
+import { StatusCommentRepositoryOrm } from './likes/infrastructure/typeorm/status.comment.orm.repositoriy';
 
 const repositories = [
     BlogsRepositoryOrm,
@@ -45,7 +46,8 @@ const repositories = [
     PostsQueryRepositoryOrm,
     CommentsOrmQueryRepository,
     CommentsRepositoryOrm,
-    StatusRepositoryOrm,
+    StatusPostRepositoryOrm,
+    StatusCommentRepositoryOrm,
 ];
 const useCases = [
     CreateBlogUseCase,

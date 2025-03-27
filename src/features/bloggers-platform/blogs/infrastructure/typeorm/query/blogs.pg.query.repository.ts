@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { BlogIntInterface, BlogOutInterface, BlogViewDto } from '../../../dto/repository/query/blog-view.dto';
 import { GetBlogsQueryParams } from '../../../dto/repository/query/get-blogs-query-params.input-dto';
 import { PaginatedBlogViewDto, PaginatedViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
@@ -16,26 +16,28 @@ export class BlogsQueryRepositoryOrm {
     async getAllBlogs(queryData: GetBlogsQueryParams): Promise<PaginatedViewDto<BlogViewDto[]>> {
         const { pageSize, pageNumber, searchNameTerm, sortBy, sortDirection } = getBlogsQuery(queryData);
 
-        const updatedSortBy = sortBy === 'createdAt' ? 'created_at' : sortBy.toLowerCase();
-
         const offset = PaginationParams.calculateSkip({ pageNumber, pageSize });
 
-        const subqueryToCountBlogs = '(SELECT COUNT(*) FROM blogs WHERE deleted_at IS NULL AND (name ILIKE :name)) AS totalCount';
+        const queryBuilder = this.blogsQueryRepositoryTypeOrm.createQueryBuilder('b').where('b.deleted_at IS NULL');
 
-        const resultBlogs = await this.blogsQueryRepositoryTypeOrm
-            .createQueryBuilder('b')
+        if (searchNameTerm) {
+            queryBuilder.andWhere(
+                new Brackets(qb => {
+                    qb.where('b.name ILIKE :name', { name: `%${searchNameTerm}%` });
+                }),
+            );
+        }
+
+        const resultBlogs = await queryBuilder
             .select([
                 'b.id AS id, b.name AS name, b.description AS description, b.website_url AS "websiteUrl", b.is_membership AS "isMembership", b.created_at as "createdAt"',
-                subqueryToCountBlogs,
             ])
-            .where('b.deleted_at IS NULL')
-            .andWhere('b.name ILIKE :name', { name: `%${searchNameTerm}%` })
-            .orderBy(`b.${updatedSortBy}`, sortDirection)
+            .orderBy(`b.${sortBy}`, sortDirection)
             .skip(offset)
             .take(pageSize)
             .getRawMany();
 
-        const totalCount = resultBlogs.length > 0 ? Number(resultBlogs[0].totalcount) : 0;
+        const totalCount = await queryBuilder.getCount();
 
         const blogsView = resultBlogs.map((blog: BlogIntInterface) => BlogViewDto.mapToView(blog));
 

@@ -20,6 +20,7 @@ import { PostsQueryRepositoryOrm } from '../infrastructure/typeorm/query/posts.p
 import { CommentsOrmQueryRepository } from '../../comments/infrastructure/typeorm/query/comments.orm.query.repository';
 import { commentIntInterface } from '../../comments/utils/comments/mapping/transform.comment.map';
 import { ValidateUUIDPipe } from '../../../../core/pipes/validation.input.uuid';
+import { LikePostCommand } from '../application/usecases/like-post.usecase';
 
 @Controller(SETTINGS.PATH.POSTS)
 export class PostsController {
@@ -56,6 +57,17 @@ export class PostsController {
         return this.postsQueryRepository.getPost(postId, userId);
     }
     @HttpCode(HttpStatus.NO_CONTENT)
+    @UseGuards(JwtAuthGuard)
+    @Put(':postId/like-status')
+    async likePost(
+        @Param('postId', ValidateUUIDPipe) postId: string,
+        @Body() dto: PostLikeStatusApi,
+        @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
+    ) {
+        const checkPost = await this.postsQueryRepository.getPost(postId, dtoUser.userId);
+        return this.commandBus.execute(new LikePostCommand(dto.likeStatus, checkPost.id, dtoUser.userId));
+    }
+    @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(BasicAuthGuard)
     @Put(':postId')
     async updatePost(@Param('postId', ValidateUUIDPipe) postId: string, @Body() dto: PostUpdateDtoApi): Promise<void> {
@@ -74,21 +86,9 @@ export class PostsController {
         @Param('postId', ValidateUUIDPipe) id: string,
         @Body() dto: CommentCreateToPostApi,
         @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
-    ): Promise<commentIntInterface> {
+    ) {
         const commentId = await this.commandBus.execute(new CreateCommentCommand(dto, id, dtoUser.userId));
         return this.commentQueryRepository.getComment(commentId, dtoUser.userId);
-    }
-
-    @HttpCode(HttpStatus.NO_CONTENT)
-    @UseGuards(JwtAuthGuard)
-    @Put(':postId/like-status')
-    async likePost(
-        @Param('postId', ValidateUUIDPipe) postId: string,
-        @Body() dto: PostLikeStatusApi,
-        @ExtractUserFromRequest() dtoUser: UserJwtPayloadDto,
-    ) {
-        // const checkPost = await this.postsQueryRepository.getPost(postId, dtoUser.userId);
-        //return this.commandBus.execute(new LikePostCommand(dto.likeStatus, checkPost.id, dtoUser.userId));
     }
 
     @UseGuards(JwtOptionalAuthGuard)

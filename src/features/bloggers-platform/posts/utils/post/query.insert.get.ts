@@ -1,10 +1,11 @@
 import { SortDirection } from '../../../../../core/dto/base.query-params.input-dto';
-import { entitiesSortBy, EntitiesSortByEnum } from '../../../../../libs/contracts/enums/post/entitiesSortByEnum';
+import { EntitiesSortByEnum } from '../../../../../libs/contracts/enums/post/entitiesSortByEnum';
+import { convertCamelCaseToSnakeCase } from './caml.case.to.snake.case';
 
 export interface PostSortInterface {
     pageNumber: number;
     pageSize: number;
-    sortBy: EntitiesSortByEnum;
+    sortBy: string;
     sortDirection: SortDirection.Desc | SortDirection.Asc;
 }
 
@@ -17,6 +18,7 @@ export interface QueryPostInputInterface {
 export const getPostsQuery = (queryPost: QueryPostInputInterface): PostSortInterface => ({
     pageNumber: queryPost.pageNumber ?? 1,
     pageSize: queryPost.pageSize ?? 10,
-    sortBy: queryPost.sortBy ?? entitiesSortBy.enum['createdAt'],
-    sortDirection: queryPost.sortDirection ?? SortDirection.Desc,
+    sortBy: convertCamelCaseToSnakeCase(queryPost.sortBy || 'createdAt') ?? 'created_at',
+    sortDirection:
+        (queryPost.sortDirection?.toUpperCase() === SortDirection.Asc ? SortDirection.Asc : SortDirection.Desc) ?? SortDirection.Desc,
 });
