@@ -46,6 +46,9 @@ export class User extends Base {
     @OneToMany((): typeof SecurityDeviceToUser => SecurityDeviceToUser, securityDevice => securityDevice.user)
     securityDevices: SecurityDeviceToUser[];
 
+    // @OneToMany((): typeof Player => Player, player => player.user)
+    // players: Player[];
+
     static buildInstance(dto: UserCreateDtoRepo): User {
         const user = new this();
         user.login = dto.login;

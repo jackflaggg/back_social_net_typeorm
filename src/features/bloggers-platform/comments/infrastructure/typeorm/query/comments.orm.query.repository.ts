@@ -75,26 +75,44 @@ export class CommentsOrmQueryRepository {
         // };
     }
     async getComment(commentId: string, userId?: string): Promise<commentIntInterface> {
-        const queryBuilder = this.commentsRepo.createQueryBuilder('c').where('c.deleted_at IS NULL AND c.id = :commentId', { commentId });
+        const queryBuilder = this.commentsRepo
+            .createQueryBuilder('c')
+            .select([
+                'c.id as id',
+                'c.content AS content',
+                'c.commentator_id AS "userId"',
+                'c.created_at AS "createdAt"',
+                'u.login AS "userLogin"',
+            ])
+            .where('c.deleted_at IS NULL AND c.id = :commentId', { commentId });
 
         if (userId) {
-            queryBuilder.andWhere(
-                new Brackets(qb => {
-                    qb.where('cs.user_id = :userId', { userId });
-                }),
-            );
-        }
-        const resultComment = await queryBuilder
-            .select(['c.id as id, c.content AS content, c.commentator_id AS "userId", c.created_at AS "createdAt", u.login AS "userLogin"'])
-            .addSelect((subQuery: SelectQueryBuilder<CommentsStatus>): SelectQueryBuilder<CommentsStatus> => {
+            queryBuilder.addSelect(subQuery => {
                 return subQuery
                     .select(`COALESCE(status, '${StatusLike.enum['None']}')`)
                     .from(CommentsStatus, 'cs')
-                    .where('c.id = cs.comment_id');
-            }, 'myStatus')
-            .leftJoin(CommentsStatus, 'cs', 'cs.user_id = c.commentator_id')
-            .leftJoin(User, 'u', 'u.id = c.commentator_id')
-            .getRawOne();
+                    .where('c.id = cs.comment_id')
+                    .andWhere('cs.user_id = :userId', { userId });
+            }, 'myStatus');
+        } else {
+            queryBuilder.addSelect(`'${StatusLike.enum['None']}'`, 'myStatus');
+        }
+
+        queryBuilder
+            .addSelect(qb => {
+                return qb
+                    .select('COUNT(status)')
+                    .from(CommentsStatus, 'cs')
+                    .where('cs.status = :likeStatuses', { likeStatuses: StatusLike.enum['Like'] });
+            }, 'likesCount')
+            .addSelect(qb => {
+                return qb
+                    .select('COUNT(status)')
+                    .from(CommentsStatus, 'cs')
+                    .where('cs.status = :dislikeStatuses', { dislikeStatuses: StatusLike.enum['Dislike'] });
+            }, 'dislikesCount');
+
+        const resultComment = await queryBuilder.leftJoin(User, 'u', 'u.id = c.commentator_id').getRawOne();
 
         if (!resultComment) {
             throw NotFoundDomainException.create('Непредвиденная ошибка, коммент не найден', 'commentId');
