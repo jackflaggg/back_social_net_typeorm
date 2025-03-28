@@ -70,7 +70,7 @@ export class PostsQueryRepositoryOrm {
                 return subQuery
                     .select(`COALESCE(status, '${StatusLike.enum['None']}')`)
                     .from(PostStatus, 'ps')
-                    .where('c.id = ps.post_id')
+                    .where('p.id = ps.post_id')
                     .andWhere('ps.user_id = :userId', { userId });
             }, 'myStatus');
         } else {

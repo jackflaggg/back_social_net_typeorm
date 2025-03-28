@@ -14,15 +14,15 @@ export class StatusPostRepositoryOrm {
         }
         return result;
     }
-    async createLikeStatusPost(postId: string, userId: string, status: StatusLikeType): Promise<void> {
+    async createLikeStatusPost(postId: string, userId: string, status: StatusLikeType) {
         const result = PostStatus.buildInstance(status, userId, postId);
-        await this.save(result);
+        return await this.save(result);
     }
-    async updateLikeStatusPost(statusPost: PostStatus, userId: string, status: StatusLikeType): Promise<void> {
+    async updateLikeStatusPost(statusPost: PostStatus, userId: string, status: StatusLikeType) {
         statusPost.updateStatus(status);
-        await this.save(statusPost);
+        return this.save(statusPost);
     }
     private async save(entity: PostStatus) {
-        await this.postStatusRepository.save(entity);
+        return await this.postStatusRepository.save(entity);
     }
 }

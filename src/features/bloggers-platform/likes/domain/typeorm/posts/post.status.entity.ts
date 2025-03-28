@@ -32,7 +32,7 @@ export class PostStatus {
         return status as PostStatus;
     }
 
-    public updateStatus(status: StatusLikeType): void {
+    updateStatus(status: StatusLikeType): void {
         this.status = status;
     }
 }
