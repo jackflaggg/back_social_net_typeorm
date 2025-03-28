@@ -98,8 +98,8 @@ export class PostsController {
         @Query() query: GetCommentsQueryParams,
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto | null,
     ) {
-        // const userId = dtoUser ? dtoUser.userId : null;
-        // const post = await this.postsQueryRepository.getPost(postId, userId);
-        //return this.commentQueryRepository.getAllComments(post.id, query, userId);
+        const userId = dtoUser ? dtoUser.userId : '';
+        const post = await this.postsQueryRepository.getPost(postId, userId);
+        return this.commentQueryRepository.getAllComments(post.id, query, userId);
     }
 }
