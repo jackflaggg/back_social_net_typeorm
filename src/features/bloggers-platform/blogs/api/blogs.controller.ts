@@ -30,7 +30,7 @@ export class BlogsController {
         @Query() query: GetPostsQueryParams,
         @ExtractAnyUserFromRequest() user: UserJwtPayloadDto,
     ) {
-        const userId = user ? user.userId : null;
+        const userId = user ? user.userId : '';
         const blog = await this.blogsQueryRepository.getBlog(blogId);
         return this.postsQueryRepository.getAllPosts(query, userId, blog.id);
     }

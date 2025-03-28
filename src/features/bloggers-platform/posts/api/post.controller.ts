@@ -37,14 +37,14 @@ export class PostsController {
         //@Param('blogId', ValidateUUIDPipe) blogId: string,
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
-        const userId: string | null = dtoUser ? dtoUser.userId : null;
+        const userId: string = dtoUser ? dtoUser.userId : '';
         return await this.postsQueryRepository.getAllPosts(query, userId /*, blogId*/);
     }
 
     @UseGuards(JwtOptionalAuthGuard)
     @Get(':postId')
     async getPost(@Param('postId', ValidateUUIDPipe) postId: string, @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto) {
-        const userId: string | null = dtoUser ? dtoUser.userId : null;
+        const userId: string = dtoUser ? dtoUser.userId : '';
         return this.postsQueryRepository.getPost(postId, userId);
     }
 
@@ -52,9 +52,8 @@ export class PostsController {
     @UseGuards(BasicAuthGuard)
     @Post()
     async createPost(@Body() dto: PostCreateDtoApi) {
-        const userId = null;
         const postId: string = await this.commandBus.execute(new CreatePostCommand(dto));
-        return this.postsQueryRepository.getPost(postId, userId);
+        return this.postsQueryRepository.getPost(postId);
     }
     @HttpCode(HttpStatus.NO_CONTENT)
     @UseGuards(JwtAuthGuard)

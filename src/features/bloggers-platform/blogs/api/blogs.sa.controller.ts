@@ -64,7 +64,7 @@ export class BlogsSaController {
         @Body() dto: PostToBlogCreateDtoApi,
         @ExtractAnyUserFromRequest() dtoUser: UserJwtPayloadDto,
     ) {
-        const userId: string | null = dtoUser ? dtoUser.userId : null;
+        const userId: string = dtoUser ? dtoUser.userId : '';
         const postId: string = await this.commandBus.execute(new CreatePostToBlogCommand(blogId, dto));
         return this.postsQueryRepository.getPost(postId, userId);
     }
@@ -76,7 +76,7 @@ export class BlogsSaController {
         @Query() query: GetPostsQueryParams,
         @ExtractAnyUserFromRequest() user: UserJwtPayloadDto,
     ) {
-        const userId: string | null = user ? user.userId : null;
+        const userId: string = user ? user.userId : '';
         const blog: BlogOutInterface = await this.blogsQueryRepository.getBlog(blogId);
         return this.postsQueryRepository.getAllPosts(query, userId, blog.id);
     }

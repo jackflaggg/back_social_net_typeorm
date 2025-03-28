@@ -14,11 +14,7 @@ import { PaginationParams } from '../../../../../../core/dto/base.query-params.i
 export class PostsQueryRepositoryOrm {
     constructor(@InjectRepository(Post) protected postRepositoryOrm: Repository<Post>) {}
 
-    async getAllPosts(
-        queryData: GetPostsQueryParams,
-        userId: string | null,
-        blogId?: string,
-    ) /*: Promise<PaginatedViewDto<PostViewDto[]>>*/ {
+    async getAllPosts(queryData: GetPostsQueryParams, userId?: string, blogId?: string) /*: Promise<PaginatedViewDto<PostViewDto[]>>*/ {
         const { pageSize, pageNumber, sortBy, sortDirection } = getPostsQuery(queryData);
 
         const offset = PaginationParams.calculateSkip({ pageNumber, pageSize });
@@ -57,7 +53,7 @@ export class PostsQueryRepositoryOrm {
         });
     }
 
-    async getPost(postId: string, userId: string | null) {
+    async getPost(postId: string, userId?: string) {
         const result = await this.postRepositoryOrm
             .createQueryBuilder('p')
             .select([
