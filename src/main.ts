@@ -4,9 +4,11 @@ import cookieParser from 'cookie-parser';
 import { AppConfig } from './core/config/app.config';
 import { fullConfigApp } from './core/setup/config.setup';
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
     const appContext = await NestFactory.createApplicationContext(AppModule);
+
     const coreConfig = appContext.get<AppConfig>(AppConfig);
+
     await appContext.close();
 
     const app = await NestFactory.create(AppModule);

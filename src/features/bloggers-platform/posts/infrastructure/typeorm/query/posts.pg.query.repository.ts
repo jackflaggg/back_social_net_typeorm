@@ -10,7 +10,6 @@ import { Blog } from '../../../../blogs/domain/typeorm/blog.entity';
 import { PaginatedPostViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
 import { PaginationParams } from '../../../../../../core/dto/base.query-params.input-dto';
 import { StatusLike } from '../../../../../../libs/contracts/enums/status/status.like';
-import { CommentsStatus } from '../../../../likes/domain/typeorm/comments/comments.status.entity';
 import { PostStatus } from '../../../../likes/domain/typeorm/posts/post.status.entity';
 
 @Injectable()
