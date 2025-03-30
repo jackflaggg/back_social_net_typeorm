@@ -16,9 +16,6 @@ export class EmailAdapter {
                     pass: this.coreConfig.adminEmailPassword,
                 },
                 secure: true,
-                // tls: {
-                //     rejectUnauthorized: false,
-                // },
             });
 
             return await transporter.sendMail({
@@ -42,9 +39,6 @@ export class EmailAdapter {
                     pass: this.coreConfig.adminEmailPassword,
                 },
                 secure: true,
-                // tls: {
-                //     rejectUnauthorized: false,
-                // },
             });
 
             return await transporter.sendMail({

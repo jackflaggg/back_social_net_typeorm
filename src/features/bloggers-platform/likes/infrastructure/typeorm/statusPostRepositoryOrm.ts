@@ -19,7 +19,7 @@ export class StatusPostRepositoryOrm {
         return await this.save(result);
     }
     async updateLikeStatusPost(statusPost: PostStatus, userId: string, status: StatusLikeType) {
-        statusPost.updateStatus(status);
+        statusPost.updateStatus(status, userId);
         return this.save(statusPost);
     }
     private async save(entity: PostStatus) {

@@ -32,7 +32,8 @@ export class PostStatus {
         return status as PostStatus;
     }
 
-    updateStatus(status: StatusLikeType): void {
+    updateStatus(status: StatusLikeType, userId: string): void {
         this.status = status;
+        this.userId = userId;
     }
 }
