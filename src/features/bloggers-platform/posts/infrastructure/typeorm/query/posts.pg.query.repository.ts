@@ -8,9 +8,10 @@ import { Post } from '../../../domain/typeorm/post.entity';
 import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 import { Blog } from '../../../../blogs/domain/typeorm/blog.entity';
 import { PaginatedPostViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
-import { PaginationParams } from '../../../../../../core/dto/base.query-params.input-dto';
+import { PaginationParams, SortDirection } from '../../../../../../core/dto/base.query-params.input-dto';
 import { StatusLike } from '../../../../../../libs/contracts/enums/status/status.like';
 import { PostStatus } from '../../../../likes/domain/typeorm/posts/post.status.entity';
+import { User } from '../../../../../user-accounts/domain/typeorm/user/user.entity';
 
 @Injectable()
 export class PostsQueryRepositoryOrm {
@@ -62,7 +63,8 @@ export class PostsQueryRepositoryOrm {
                 'p.id AS id, p.title AS title, p.short_description AS "shortDescription", p.content AS content, p.created_at AS "createdAt", p.blog_id AS "blogId", b.name AS "blogName"',
             ])
             .leftJoin(Blog, 'b', 'b.id = p.blog_id')
-            .where('p.deleted_at IS NULL AND p.id = :postId', { postId });
+            .where('p.deleted_at IS NULL AND p.id = :postId', { postId })
+            .groupBy('p.id, b.name');
 
         if (userId) {
             queryBuilder.addSelect(subQuery => {
@@ -81,14 +83,23 @@ export class PostsQueryRepositoryOrm {
                 return qb
                     .select('COUNT(status)')
                     .from(PostStatus, 'ps')
-                    .where('ps.status = :likeStatuses', { likeStatuses: StatusLike.enum['Like'] });
+                    .where('ps.status = :likeStatuses AND ps.post_id = p.id', { likeStatuses: StatusLike.enum['Like'] });
             }, 'likesCount')
             .addSelect(qb => {
                 return qb
                     .select('COUNT(status)')
                     .from(PostStatus, 'ps')
-                    .where('ps.status = :dislikeStatuses', { dislikeStatuses: StatusLike.enum['Dislike'] });
-            }, 'dislikesCount');
+                    .where('ps.status = :dislikeStatuses AND ps.post_id = p.id', { dislikeStatuses: StatusLike.enum['Dislike'] });
+            }, 'dislikesCount')
+            .addSelect(qb => {
+                return qb
+                    .select("json_agg(json_build_object('addedAt', ps.created_at, 'userId', ps.user_id, 'login', u.login))")
+                    .from(PostStatus, 'ps')
+                    .innerJoin(User, 'u', 'ps.user_id = u.id')
+                    .where(`ps.post_id = p.id AND ps.status = :likeStatus`, { likeStatus: StatusLike.enum['Like'] })
+                    .orderBy('ps.created_at', SortDirection.Desc)
+                    .limit(3);
+            }, 'newestLikes');
 
         const result = await queryBuilder.getRawOne();
 
