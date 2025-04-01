@@ -4,7 +4,6 @@ import { DataSource } from 'typeorm';
 import { SETTINGS } from '../../../core/settings';
 import { TablesEnum, TablesEnumType } from '../../../libs/contracts/enums/app/tables.enum';
 import { LoggerService } from '../../logger/application/logger.service';
-import dataSource from '../../../../migrations/db/data-source';
 
 @Controller(SETTINGS.PATH.TESTING)
 export class TestingController {
