@@ -19,16 +19,26 @@ export class BlogsPgQueryRepository {
         const offset = (pageNumber - 1) * pageSize;
 
         const queryBlogs = `
-            SELECT "id", "name", "description", "website_url" AS "websiteUrl", "created_at" AS "createdAt", "is_membership" AS "isMembership" FROM "blogs" WHERE "deleted_at" IS NULL AND ("name" ILIKE '%' || $1 || '%')
+            SELECT "id",
+                   "name",
+                   "description",
+                   "website_url"   AS "websiteUrl",
+                   "created_at"    AS "createdAt",
+                   "is_membership" AS "isMembership"
+            FROM "blogs"
+            WHERE "deleted_at" IS NULL
+              AND ("name" ILIKE '%' || $1 || '%')
             ORDER BY ("${updatedSortBy}") ${sortDirection.toUpperCase()}
-            LIMIT $2
-            OFFSET $3
-            `;
+            LIMIT $2 OFFSET $3
+        `;
 
         const resultBlogs = await this.dataSource.query(queryBlogs, [searchNameTerm, Number(pageSize), Number(offset)]);
 
         const queryCount = `
-            SELECT COUNT(*) AS "totalCount" FROM "blogs" WHERE "deleted_at" IS NULL AND ("name" ILIKE '%' || $1 || '%')
+            SELECT COUNT(*) AS "totalCount"
+            FROM "blogs"
+            WHERE "deleted_at" IS NULL
+              AND ("name" ILIKE '%' || $1 || '%')
         `;
         const resultTotal = await this.dataSource.query(queryCount, [searchNameTerm]);
 
@@ -42,7 +52,15 @@ export class BlogsPgQueryRepository {
         });
     }
     async getBlog(blogId: string): Promise<BlogOutInterface> {
-        const query = `SELECT "id", "name", "description", "website_url" AS "websiteUrl", "created_at" AS "createdAt", "is_membership" AS "isMembership" FROM "blogs" WHERE id = $1 AND "deleted_at" IS NULL`;
+        const query = `SELECT "id",
+                              "name",
+                              "description",
+                              "website_url"   AS "websiteUrl",
+                              "created_at"    AS "createdAt",
+                              "is_membership" AS "isMembership"
+                       FROM "blogs"
+                       WHERE id = $1
+                         AND "deleted_at" IS NULL`;
 
         const result = await this.dataSource.query(query, [Number(blogId)]);
 

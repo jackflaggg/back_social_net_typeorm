@@ -30,39 +30,35 @@ export class PostsPgQueryRepository {
         const offset = (pageNumber - 1) * pageSize;
 
         const query = `
-            SELECT
-                p."id",
-                p."title",
-                p."short_description" AS "shortDescription",
-                p."content",
-                p."blog_id" AS "blogId",
-                b."name" AS "blogName",
-                p."created_at" AS "createdAt",
-                COALESCE((SELECT status FROM likes WHERE parent_type = $1 AND post_id=p."id" AND user_id = $2), $3) AS "myStatus",
-                COUNT(*) FILTER (WHERE l."status" = $4 AND l."parent_type" = $5) AS "likesCount",
-                COUNT(*) FILTER (WHERE l."status" = $6 AND l."parent_type"= $7) AS "dislikesCount",
-                (
-                    SELECT json_agg(like_info)
-                    FROM (
-                             SELECT
-                                 l."updated_at" AS "addedAt",
+            SELECT p."id",
+                   p."title",
+                   p."short_description"                                            AS "shortDescription",
+                   p."content",
+                   p."blog_id"                                                      AS "blogId",
+                   b."name"                                                         AS "blogName",
+                   p."created_at"                                                   AS "createdAt",
+                   COALESCE((SELECT status FROM likes WHERE parent_type = $1 AND post_id = p."id" AND user_id = $2),
+                            $3)                                                     AS "myStatus",
+                   COUNT(*) FILTER (WHERE l."status" = $4 AND l."parent_type" = $5) AS "likesCount",
+                   COUNT(*) FILTER (WHERE l."status" = $6 AND l."parent_type" = $7) AS "dislikesCount",
+                   (SELECT json_agg(like_info)
+                    FROM (SELECT l."updated_at"   AS "addedAt",
                                  l."user_id"::INT AS "userId",
                                  u."login"
-                             FROM "likes" AS l
-                                      JOIN "users" AS u ON l."user_id" = u."id"
-                             WHERE l."post_id" = p."id" AND l."parent_type" = $8 AND l."status" = $9
-                             ORDER BY l."updated_at" DESC
-                             LIMIT 3
-                         ) AS like_info
-                ) AS "newestLikes"
+                          FROM "likes" AS l
+                                   JOIN "users" AS u ON l."user_id" = u."id"
+                          WHERE l."post_id" = p."id"
+                            AND l."parent_type" = $8
+                            AND l."status" = $9
+                          ORDER BY l."updated_at" DESC
+                          LIMIT 3) AS like_info)                                    AS "newestLikes"
             FROM "posts" AS p
                      LEFT JOIN "blogs" AS b ON b.id = p.blog_id
                      LEFT JOIN "likes" AS l ON p.id = l.post_id
             WHERE p."deleted_at" IS NULL ${updateQueryBlogId}
             GROUP BY p."id", b."name"
             ORDER BY ${orderBy}
-            LIMIT $10
-            OFFSET $11`;
+            LIMIT $10 OFFSET $11`;
 
         const resultPosts = await this.dataSource.query(query, [
             ParentTypes.enum['post'],
@@ -97,35 +93,33 @@ export class PostsPgQueryRepository {
 
     async getPost(postId: string, userId: string | null) {
         const query = `
-            SELECT
-                p."id",
-                p."title",
-                p."short_description" AS "shortDescription",
-                p."content",
-                p."blog_id" AS "blogId",
-                b."name" AS "blogName",
-                p."created_at" AS "createdAt",
-                COALESCE((SELECT status FROM likes WHERE parent_type = $1 AND post_id=p."id" AND user_id = $2), $3) AS "myStatus",
-                SUM(CASE WHEN status = $4 AND parent_type = $5 THEN 1 ELSE 0 END) AS "likesCount",
-                SUM(CASE WHEN status = $6 AND parent_type = $7 THEN 1 ELSE 0 END) AS "dislikesCount",
-                (
-                    SELECT json_agg(like_info)
-                    FROM (
-                             SELECT
-                                 l."updated_at" AS "addedAt",
-                                 l."user_id" AS "userId",
+            SELECT p."id",
+                   p."title",
+                   p."short_description"                                             AS "shortDescription",
+                   p."content",
+                   p."blog_id"                                                       AS "blogId",
+                   b."name"                                                          AS "blogName",
+                   p."created_at"                                                    AS "createdAt",
+                   COALESCE((SELECT status FROM likes WHERE parent_type = $1 AND post_id = p."id" AND user_id = $2),
+                            $3)                                                      AS "myStatus",
+                   SUM(CASE WHEN status = $4 AND parent_type = $5 THEN 1 ELSE 0 END) AS "likesCount",
+                   SUM(CASE WHEN status = $6 AND parent_type = $7 THEN 1 ELSE 0 END) AS "dislikesCount",
+                   (SELECT json_agg(like_info)
+                    FROM (SELECT l."updated_at" AS "addedAt",
+                                 l."user_id"    AS "userId",
                                  u."login"
-                             FROM "likes" AS l
-                                      JOIN "users" AS u ON l."user_id" = u."id"
-                             WHERE l."post_id" = p."id" AND l."parent_type" = $8 AND l."status" = $9
-                             ORDER BY l."updated_at" DESC
-                             LIMIT 3
-                         ) AS like_info
-                ) AS "newestLikes"
+                          FROM "likes" AS l
+                                   JOIN "users" AS u ON l."user_id" = u."id"
+                          WHERE l."post_id" = p."id"
+                            AND l."parent_type" = $8
+                            AND l."status" = $9
+                          ORDER BY l."updated_at" DESC
+                          LIMIT 3) AS like_info)                                     AS "newestLikes"
             FROM "posts" AS p
                      LEFT JOIN "blogs" AS b ON b.id = p.blog_id
                      LEFT JOIN "likes" AS l ON p.id = l.post_id
-            WHERE p."deleted_at" IS NULL AND p."id" = $10
+            WHERE p."deleted_at" IS NULL
+              AND p."id" = $10
             GROUP BY p."id", b."name"`;
 
         const resultPost = await this.dataSource.query(query, [
