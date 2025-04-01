@@ -39,8 +39,8 @@ export class PostsPgQueryRepository {
                 b."name" AS "blogName",
                 p."created_at" AS "createdAt",
                 COALESCE((SELECT status FROM likes WHERE parent_type = $1 AND post_id=p."id" AND user_id = $2), $3) AS "myStatus",
-                SUM(CASE WHEN status = $4 AND parent_type = $5 THEN 1 ELSE 0 END) AS "likesCount",
-                SUM(CASE WHEN status = $6 AND parent_type = $7 THEN 1 ELSE 0 END) AS "dislikesCount",
+                COUNT(*) FILTER (WHERE l."status" = $4 AND l."parent_type" = $5) AS "likesCount",
+                COUNT(*) FILTER (WHERE l."status" = $6 AND l."parent_type"= $7) AS "dislikesCount",
                 (
                     SELECT json_agg(like_info)
                     FROM (
