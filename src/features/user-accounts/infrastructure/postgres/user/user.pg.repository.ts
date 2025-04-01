@@ -16,7 +16,10 @@ export class UserPgRepository {
 
     async findUserByLoginAndEmail(login: string, email: string) {
         const query = `
-            SELECT "id" FROM "users" WHERE "deleted_at" IS NULL AND ("login" = $1 OR "email" = $2);
+            SELECT "id"
+            FROM "users"
+            WHERE "deleted_at" IS NULL
+              AND ("login" = $1 OR "email" = $2);
         `;
         const result = await this.dataSource.query(query, [login, email]);
         if (!result || result.length === 0) {
@@ -25,9 +28,18 @@ export class UserPgRepository {
 
         return result[0];
     }
+
     async findUserByLoginOrEmail(loginOrEmail: string): Promise<findUserByLoginOrEmailInterface | undefined> {
         const query = `
-            SELECT u."id", u."email", u."password_hash" AS "password", em."is_confirmed" AS "isConfirmed", em."confirmation_code" AS "confirmationCode" FROM "users" AS "u" JOIN "email_confirmation" AS "em" ON u.id = em.user_id WHERE u."deleted_at" IS NULL AND (u."login" = $1 OR u."email" = $1);
+            SELECT u."id",
+                   u."email",
+                   u."password_hash"      AS "password",
+                   em."is_confirmed"      AS "isConfirmed",
+                   em."confirmation_code" AS "confirmationCode"
+            FROM "users" AS "u"
+                     JOIN "email_confirmation" AS "em" ON u.id = em.user_id
+            WHERE u."deleted_at" IS NULL
+              AND (u."login" = $1 OR u."email" = $1);
         `;
         const result = await this.dataSource.query(query, [loginOrEmail]);
         if (!result || result.length === 0) {
@@ -36,9 +48,18 @@ export class UserPgRepository {
 
         return result[0];
     }
+
     async findUserLogin(login: string): Promise<findUserByLoginOrEmailInterface | undefined> {
         const query = `
-            SELECT u."id", u."email", u."password_hash" AS "password", em."is_confirmed" AS "isConfirmed", em."confirmation_code" AS "confirmationCode" FROM "users" AS "u" JOIN "email_confirmation" AS "em" ON u.id = em.user_id WHERE u."deleted_at" IS NULL AND (u."login" = $1);
+            SELECT u."id",
+                   u."email",
+                   u."password_hash"      AS "password",
+                   em."is_confirmed"      AS "isConfirmed",
+                   em."confirmation_code" AS "confirmationCode"
+            FROM "users" AS "u"
+                     JOIN "email_confirmation" AS "em" ON u.id = em.user_id
+            WHERE u."deleted_at" IS NULL
+              AND (u."login" = $1);
         `;
         const result = await this.dataSource.query(query, [login]);
         if (!result || result.length === 0) {
@@ -47,11 +68,14 @@ export class UserPgRepository {
 
         return result[0];
     }
+
     async findUserById(userId: string) {
         const query = `
-            SELECT u."id", ec."confirmation_code" AS "confirmationCode" FROM "users" AS "u" 
-            JOIN "email_confirmation" AS ec on u.id = ec.user_id
-            WHERE u."id" = $1 AND u."deleted_at" IS NULL
+            SELECT u."id", ec."confirmation_code" AS "confirmationCode"
+            FROM "users" AS "u"
+                     JOIN "email_confirmation" AS ec on u.id = ec.user_id
+            WHERE u."id" = $1
+              AND u."deleted_at" IS NULL
         `;
         const result = await this.dataSource.query(query, [userId]);
         if (!result || result.length === 0) {
@@ -59,11 +83,14 @@ export class UserPgRepository {
         }
         return result[0];
     }
+
     async findUserAuth(userId: string) {
         const query = `
-            SELECT u."id" AS "userId" FROM "users" AS "u" 
-            JOIN "email_confirmation" AS ec on u.id = ec.user_id
-            WHERE u."id" = $1 AND u."deleted_at" IS NULL
+            SELECT u."id" AS "userId"
+            FROM "users" AS "u"
+                     JOIN "email_confirmation" AS ec on u.id = ec.user_id
+            WHERE u."id" = $1
+              AND u."deleted_at" IS NULL
         `;
         const result = await this.dataSource.query(query, [userId]);
         if (!result || result.length === 0) {
@@ -71,9 +98,11 @@ export class UserPgRepository {
         }
         return result[0];
     }
+
     async getPass(userId: string) {
         const query = `
-            SELECT u."id", u."password_hash" AS "password" FROM "users" AS "u" 
+            SELECT u."id", u."password_hash" AS "password"
+            FROM "users" AS "u"
         `;
         const result = await this.dataSource.query(query, [userId]);
         if (!result || result.length === 0) {
@@ -84,7 +113,9 @@ export class UserPgRepository {
 
     async updatePassword(newPassword: string, userId: string) {
         const query = `
-            UPDATE "users" SET "password_hash" = $1 WHERE "id" = $2`;
+            UPDATE "users"
+            SET "password_hash" = $1
+            WHERE "id" = $2`;
         return await this.dataSource.query(query, [newPassword, userId]);
     }
 
@@ -94,10 +125,10 @@ export class UserPgRepository {
             await this.dataSource.query('BEGIN');
 
             const queryUsers = `
-            INSERT INTO "users" ("login", "email", "created_at", "password_hash")
-            VALUES ($1, $2, $3, $4)
-            RETURNING "id" as "id", login as "login", "email" as "email", "created_at" as "createdAt"
-        `;
+                INSERT INTO "users" ("login", "email", "created_at", "password_hash")
+                VALUES ($1, $2, $3, $4)
+                RETURNING "id" as "id", login as "login", "email" as "email", "created_at" as "createdAt"
+            `;
 
             const result = await this.dataSource.query(queryUsers, [
                 newUser.login,
@@ -113,8 +144,8 @@ export class UserPgRepository {
             const userId = result[0].id;
 
             const queryEmailConfirmation = `
-            INSERT INTO "email_confirmation" ("confirmation_code", "expiration_date", "is_confirmed", "user_id")
-            VALUES ($1, $2, $3, $4)`;
+                INSERT INTO "email_confirmation" ("confirmation_code", "expiration_date", "is_confirmed", "user_id")
+                VALUES ($1, $2, $3, $4)`;
 
             await this.dataSource.query(queryEmailConfirmation, [
                 emailConfirm.emailConfirmation.confirmationCode,
@@ -131,27 +162,35 @@ export class UserPgRepository {
             throw BadRequestDomainException.create('произошла ошибка во время создания юзера!', 'userId');
         }
     }
+
     async updateDeletedAt(userId: string) {
         const query = `
-        UPDATE "users" SET "deleted_at" = $1 WHERE id = $2
+            UPDATE "users"
+            SET "deleted_at" = $1
+            WHERE id = $2
         `;
         await this.dataSource.query(query, [new Date().toISOString(), userId]);
     }
+
     async updateUserToCodeAndDate(userId: string, generateCode: string, newExpirationDate: string) {
         const query = `
             UPDATE "email_confirmation"
             SET "confirmation_code" = $1,
-                "expiration_date" = $2,
-                "is_confirmed" = FALSE
+                "expiration_date"   = $2,
+                "is_confirmed"      = FALSE
             WHERE "user_id" = $3`;
         return await this.dataSource.query(query, [generateCode, newExpirationDate, userId]);
     }
+
     async findUserCode(code: string) {
         const query = `
-        SELECT u."id" AS "userId", em."is_confirmed" AS "isConfirmed", em.expiration_date AS "expirationDate", em.confirmation_code AS "confirmationCode" 
-        FROM "users" AS "u" 
-            JOIN "email_confirmation" AS "em" 
-                ON u.id = em.user_id 
+            SELECT u."id"               AS "userId",
+                   em."is_confirmed"    AS "isConfirmed",
+                   em.expiration_date   AS "expirationDate",
+                   em.confirmation_code AS "confirmationCode"
+            FROM "users" AS "u"
+                     JOIN "email_confirmation" AS "em"
+                          ON u.id = em.user_id
             WHERE confirmation_code = $1
         `;
         const result = await this.dataSource.query(query, [code]);
@@ -160,11 +199,12 @@ export class UserPgRepository {
         }
         return result[0];
     }
+
     async updateUserToEmailConf(userId: string) {
         const query = `
             UPDATE "email_confirmation"
             SET "confirmation_code" = $1,
-                "is_confirmed" = TRUE
+                "is_confirmed"      = TRUE
             WHERE "user_id" = $2`;
         return await this.dataSource.query(query, ['+', userId]);
     }

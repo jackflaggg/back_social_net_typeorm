@@ -9,7 +9,10 @@ export class SessionQueryPgRepository {
 
     async getSessions(userId: string): Promise<DeviceViewDto[] | void> {
         const query = `
-        SELECT "device_id" AS "deviceId", "device_name" AS "deviceName", "ip", "issued_at" AS "issuedAt" FROM "security_device" WHERE "deleted_at" IS NULL AND "user_id" = $1`;
+            SELECT "device_id" AS "deviceId", "device_name" AS "deviceName", "ip", "issued_at" AS "issuedAt"
+            FROM "security_device"
+            WHERE "deleted_at" IS NULL
+              AND "user_id" = $1`;
         const result = await this.dataSource.query(query, [userId]);
         return result ? result.map((elem: deviceIntInterface) => DeviceViewDto.mapToView(elem)) : [];
     }

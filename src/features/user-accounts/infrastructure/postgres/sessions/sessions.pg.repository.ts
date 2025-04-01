@@ -5,8 +5,11 @@ import { DataSource } from 'typeorm';
 @Injectable()
 export class SessionsPgRepository {
     constructor(@InjectDataSource() protected dataSource: DataSource) {}
+
     async createSession(ip: string, userAgent: string, deviceId: string, userId: string, issuedAtRefreshToken: Date) {
-        const query = `INSERT INTO "security_device" ("ip", "device_name", "user_id", "device_id", "issued_at") VALUES ($1, $2, $3, $4, $5) RETURNING *`;
+        const query = `INSERT INTO "security_device" ("ip", "device_name", "user_id", "device_id", "issued_at")
+                       VALUES ($1, $2, $3, $4, $5)
+                       RETURNING *`;
         const result = await this.dataSource.query(query, [ip, userAgent, +userId, deviceId, issuedAtRefreshToken.toISOString()]);
         if (!result || result.length === 0) {
             return void 0;
@@ -16,8 +19,10 @@ export class SessionsPgRepository {
 
     async findSessionByDeviceId(deviceId: string) {
         const query = `
-            SELECT "id", "device_id" as "deviceId", "issued_at" as "issuedAt", "user_id" AS "userId" FROM "security_device"  
-            WHERE "device_id" = $1 AND "deleted_at" IS NULL
+            SELECT "id", "device_id" as "deviceId", "issued_at" as "issuedAt", "user_id" AS "userId"
+            FROM "security_device"
+            WHERE "device_id" = $1
+              AND "deleted_at" IS NULL
         `;
         const result = await this.dataSource.query(query, [deviceId]);
         if (!result || result.length === 0) {
@@ -40,7 +45,8 @@ export class SessionsPgRepository {
         const query = `
             UPDATE "security_device"
             SET "deleted_at" = $1
-            WHERE "device_id" <> $2 AND "user_id" = $3;`;
+            WHERE "device_id" <> $2
+              AND "user_id" = $3;`;
         return await this.dataSource.query(query, [issuedAt, deviceId, userId]);
     }
 }
