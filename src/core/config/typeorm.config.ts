@@ -1,7 +1,7 @@
 import { AppConfig } from './app.config';
 import { TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 
-export const typeOrmDb = (coreConfig: AppConfig) =>
+export const typeOrmDb = (coreConfig: AppConfig): TypeOrmModuleAsyncOptions =>
     ({
         type: coreConfig.typeSql,
         host: coreConfig.hostSql,
@@ -14,5 +14,5 @@ export const typeOrmDb = (coreConfig: AppConfig) =>
         autoLoadEntities: true,
         logging: ['warn', 'error'],
         maxQueryExecutionTime: 1000,
-        logger: 'file',
+        logger: 'simple-console',
     }) as TypeOrmModuleAsyncOptions;
