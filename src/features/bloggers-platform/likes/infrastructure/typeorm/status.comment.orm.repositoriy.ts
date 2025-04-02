@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ParentTypes } from '../../../../../libs/contracts/enums/status/parent.type.likes';
 import { CommentsStatus } from '../../domain/typeorm/comments/comments.status.entity';
 import { StatusLikeType } from '../../../../../libs/contracts/enums/status/status.like';
 
