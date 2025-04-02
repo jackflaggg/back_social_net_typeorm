@@ -15,17 +15,22 @@ export class CommentsPgQueryRepository {
         const query = `
             SELECT c."id",
                    c."content",
-                   c."commentator_id" AS "userId",
-                   c."created_at" AS "createdAt",
-                   u."login" AS "userLogin",
-                   COALESCE((SELECT status FROM likes WHERE parent_type = $1 AND comment_id=c."id" AND user_id = $2), $3) AS "myStatus",
-                   SUM(CASE WHEN l.status = $4 AND l.parent_type = $5 AND c.id = l.comment_id THEN 1 ELSE 0 END) AS "likesCount",
-                   SUM(CASE WHEN l.status = $6 AND l.parent_type = $7 AND c.id = l.comment_id THEN 1 ELSE 0 END) AS "dislikesCount"
+                   c."commentator_id"                                                                            AS "userId",
+                   c."created_at"                                                                                AS "createdAt",
+                   u."login"                                                                                     AS "userLogin",
+                   COALESCE((SELECT status FROM likes WHERE parent_type = $1 AND comment_id = c."id" AND user_id = $2),
+                            $3)                                                                                  AS "myStatus",
+                   SUM(CASE
+                           WHEN l.status = $4 AND l.parent_type = $5 AND c.id = l.comment_id THEN 1
+                           ELSE 0 END)                                                                           AS "likesCount",
+                   SUM(CASE
+                           WHEN l.status = $6 AND l.parent_type = $7 AND c.id = l.comment_id THEN 1
+                           ELSE 0 END)                                                                           AS "dislikesCount"
             FROM "comments" c
-            LEFT JOIN "users" u ON u."id" = c."commentator_id"
-            LEFT JOIN "likes" l ON l."comment_id" = c."id"
+                     LEFT JOIN "users" u ON u."id" = c."commentator_id"
+                     LEFT JOIN "likes" l ON l."comment_id" = c."id"
             WHERE c."id" = $8
-            AND c."deleted_at" IS NULL
+              AND c."deleted_at" IS NULL
             GROUP BY c."id", u."login"`;
 
         const result = await this.dataSource.query(query, [
@@ -55,14 +60,17 @@ export class CommentsPgQueryRepository {
         const query = `
             SELECT c."id",
                    c."content",
-                   c."commentator_id" AS "userId",
-                   c."created_at" AS "createdAt",
-                   u."login" AS "userLogin",
-                   COALESCE((SELECT status FROM likes WHERE parent_type = $1 AND comment_id = c."id" AND user_id = $2), $3) AS "myStatus",
+                   c."commentator_id"  AS "userId",
+                   c."created_at"      AS "createdAt",
+                   u."login"           AS "userLogin",
+                   COALESCE((SELECT status FROM likes WHERE parent_type = $1 AND comment_id = c."id" AND user_id = $2),
+                            $3)        AS "myStatus",
                    SUM(CASE
-                           WHEN l.status = $4 AND l.parent_type = $5 AND c.id = l.comment_id THEN 1 ELSE 0 END) AS "likesCount",
+                           WHEN l.status = $4 AND l.parent_type = $5 AND c.id = l.comment_id THEN 1
+                           ELSE 0 END) AS "likesCount",
                    SUM(CASE
-                           WHEN l.status = $6 AND l.parent_type = $7 AND c.id = l.comment_id THEN 1 ELSE 0 END) AS "dislikesCount"
+                           WHEN l.status = $6 AND l.parent_type = $7 AND c.id = l.comment_id THEN 1
+                           ELSE 0 END) AS "dislikesCount"
             FROM "comments" c
                      LEFT JOIN "users" u ON u."id" = c."commentator_id"
                      LEFT JOIN "likes" l ON l."comment_id" = c."id" --AND l."user_id" = $8
@@ -70,8 +78,7 @@ export class CommentsPgQueryRepository {
               AND c."deleted_at" IS NULL
             GROUP BY c."id", u."login"
             ORDER BY ${orderBy}
-            LIMIT $9
-            OFFSET $10`;
+            LIMIT $9 OFFSET $10`;
 
         const resultComments = await this.dataSource.query(query, [
             ParentTypes.enum['comment'],
@@ -89,9 +96,10 @@ export class CommentsPgQueryRepository {
         const commentsView = resultComments.map((comment: commentOutInterface) => transformComment(comment));
 
         const queryCount = `
-            SELECT COUNT(*) AS "totalCount" 
-            FROM "comments" 
-            WHERE "post_id" = $1 AND "deleted_at" IS NULL`;
+            SELECT COUNT(*) AS "totalCount"
+            FROM "comments"
+            WHERE "post_id" = $1
+              AND "deleted_at" IS NULL`;
 
         const totalCountComments = await this.dataSource.query(queryCount, [postId]);
 
