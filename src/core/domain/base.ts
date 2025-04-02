@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Index, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export abstract class Base {
     @PrimaryGeneratedColumn('uuid')
@@ -11,6 +11,7 @@ export abstract class Base {
     public updatedAt: Date;
 
     @Column({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+    @Index()
     deletedAt: Date | null;
 }
 

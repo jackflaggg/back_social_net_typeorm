@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, Index, OneToMany, OneToOne } from 'typeorm';
 import { EmailConfirmationToUser } from '../email-confirmation/email.confirmation.entity';
 import { SecurityDeviceToUser } from '../device/device.entity';
 import { Base } from '../../../../../core/domain/base';
@@ -20,6 +20,7 @@ export class User extends Base {
     login: string;
 
     @Column({ type: 'varchar', length: emailConstraints.maxLength, unique: true, collation: 'C' })
+    @Index()
     email: string;
 
     @Column({ name: 'password_hash', type: 'varchar', length: passwordHashConstraints.maxLength })
