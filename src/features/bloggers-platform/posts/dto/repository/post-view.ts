@@ -12,7 +12,7 @@ export interface postOutInterface {
         likesCount: number;
         dislikesCount: number;
         myStatus: string;
-        newestLikes: { addedAt: Date; userId: number | string; login: string }[];
+        newestLikes: { addedAt: Date | string; userId: number | string; login: string }[];
     };
 }
 
@@ -42,7 +42,7 @@ export class PostViewDto {
         likesCount: number;
         dislikesCount: number;
         myStatus: string;
-        newestLikes: { addedAt: Date; userId: string | number; login: string }[];
+        newestLikes: { addedAt: Date | string; userId: string | number; login: string }[];
     };
     constructor(model: postIntInterface) {
         this.id = String(model.id);
@@ -57,7 +57,7 @@ export class PostViewDto {
             dislikesCount: +model.dislikesCount || 0,
             myStatus: model.myStatus || StatusLike.enum['None'],
             newestLikes: (model.newestLikes || []).map(like => ({
-                addedAt: like.addedAt,
+                addedAt: String(like.addedAt),
                 userId: String(like.userId), // Приведение к числу
                 login: like.login,
             })),

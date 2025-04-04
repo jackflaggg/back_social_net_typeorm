@@ -22,23 +22,29 @@ export class PostsQueryRepositoryOrm {
 
         const offset = PaginationParams.calculateSkip({ pageNumber, pageSize });
 
-        const updatedSortBy = sortBy === 'blog_name' ? `b.name` : `p.${sortBy}`;
+        const updatedSortBy = sortBy === 'blog_name' ? `"blogName"` : `p.${sortBy}`;
 
-        const queryBuilder = this.postRepositoryOrm.createQueryBuilder('p').where('p.deleted_at IS NULL');
+        const queryBuilder = this.postRepositoryOrm
+            .createQueryBuilder('p')
+            .select([
+                'p.id AS id, p.title AS title, p.short_description AS "shortDescription", p.content AS content, p.created_at AS "createdAt", p.blog_id AS "blogId"',
+            ])
+            .where('p.deleted_at IS NULL');
 
         if (blogId) {
             queryBuilder.andWhere(
                 new Brackets(qb => {
-                    qb.where('b.id = p.blog_id', { blogId });
+                    qb.where('p.blog_id = :blogId', { blogId });
                 }),
             );
         }
 
         const resultPosts = await queryBuilder
-            .select([
-                'p.id AS id, p.title AS title, p.short_description AS "shortDescription", p.content AS content, p.created_at AS "createdAt", p.blog_id AS "blogId", b.name AS "blogName"',
-            ])
-            .leftJoin(Blog, 'b', 'b.id = p.blog_id')
+            .addSelect(this.getBlogName, 'blogName')
+            .addSelect(this.getLikesCount, 'likesCount')
+            .addSelect(this.getDislikesCount, 'dislikesCount')
+            .addSelect(this.getMyStatus(userId), 'myStatus')
+            .addSelect(this.getNewestLikes, 'newestLikes')
             .orderBy(updatedSortBy, sortDirection)
             .limit(pageSize)
             .offset(offset)
@@ -46,7 +52,7 @@ export class PostsQueryRepositoryOrm {
 
         const totalCount = await queryBuilder.getCount();
 
-        const postsView = resultPosts.map(user => PostViewDto.mapToView(user));
+        const postsView = resultPosts.map(post => PostViewDto.mapToView(post));
 
         return PaginatedPostViewDto.mapToView<PostViewDto[]>({
             items: postsView,
@@ -68,7 +74,7 @@ export class PostsQueryRepositoryOrm {
             .addSelect(this.getBlogName, 'blogName')
             .addSelect(this.getLikesCount, 'likesCount')
             .addSelect(this.getDislikesCount, 'dislikesCount')
-            .addSelect(this.getMyStatus(userId, postId), 'myStatus')
+            .addSelect(this.getMyStatus(userId), 'myStatus')
             .addSelect(this.getNewestLikes, 'newestLikes')
             .getRawOne();
 
@@ -87,24 +93,25 @@ export class PostsQueryRepositoryOrm {
         return queryBuilder
             .select(`COUNT(status)::INT as "statusLike"`)
             .from(PostStatus, `ps`)
-            .where(`p.id = ps.post_id AND ps.status = '${StatusLike.enum['Like']}'`);
+            .where(`p.id = ps.post_id AND ps.status = :likeStatus`, { likeStatus: StatusLike.enum['Like'] });
     }
 
     private getDislikesCount(queryBuilder: SelectQueryBuilder<Post>) {
         return queryBuilder
             .select(`COUNT(status)::INT as "statusDislike"`)
             .from(PostStatus, `ps`)
-            .where(`p.id = ps.post_id AND ps.status = '${StatusLike.enum['Dislike']}'`);
+            .where(`p.id = ps.post_id AND ps.status = :dislikeStatus`, { dislikeStatus: StatusLike.enum['Dislike'] });
     }
 
-    private getMyStatus = (userId?: string, postId?: string) => (queryBuilder: SelectQueryBuilder<Post>) => {
+    private getMyStatus = (userId?: string) => (queryBuilder: SelectQueryBuilder<Post>) => {
         if (!userId) {
-            return queryBuilder.select(`'${StatusLike.enum['None']}' AS "statusUser"`).from(PostStatus, 'ps');
+            return queryBuilder.select(`'${StatusLike.enum['None']}' AS "statusUser"`).from(PostStatus, 'ps').limit(1);
         }
         return queryBuilder
             .select(`ps.status AS "statusUser"`)
             .from(PostStatus, 'ps')
-            .where(`ps.user_id = :userId AND ps.post_id = :postId`, { userId, postId });
+            .where(`ps.user_id = :userId AND ps.post_id = p.id`, { userId })
+            .limit(1);
     };
 
     private getNewestLikes(queryBuilder: SelectQueryBuilder<Post>) {
