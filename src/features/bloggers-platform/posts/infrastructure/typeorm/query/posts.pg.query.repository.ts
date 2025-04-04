@@ -44,9 +44,9 @@ export class PostsQueryRepositoryOrm {
         const resultPosts = await queryBuilder
             .addSelect(this.getBlogName, 'blogName')
             .addSelect(this.getLikesCount, 'likesCount')
+            .addSelect(this.getNewestLikes, 'newestLikes')
             .addSelect(this.getDislikesCount, 'dislikesCount')
             .addSelect(this.getMyStatus(userId), 'myStatus')
-            .addSelect(this.getNewestLikes, 'newestLikes')
             .orderBy(updatedSortBy, sortDirection)
             .getRawMany();
 
@@ -73,9 +73,9 @@ export class PostsQueryRepositoryOrm {
         const post = await queryBuilder
             .addSelect(this.getBlogName, 'blogName')
             .addSelect(this.getLikesCount, 'likesCount')
+            .addSelect(this.getNewestLikes, 'newestLikes')
             .addSelect(this.getDislikesCount, 'dislikesCount')
             .addSelect(this.getMyStatus(userId), 'myStatus')
-            .addSelect(this.getNewestLikes, 'newestLikes')
             .getRawOne();
 
         if (!post) {
