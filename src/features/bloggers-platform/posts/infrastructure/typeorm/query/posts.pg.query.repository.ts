@@ -90,8 +90,8 @@ export class PostsQueryRepositoryOrm {
                     .select('COUNT(status)')
                     .from(PostStatus, 'ps')
                     .where('ps.status = :dislikeStatuses AND ps.post_id = p.id', { dislikeStatuses: StatusLike.enum['Dislike'] });
-            }, 'dislikesCount')
-            .addSelect(qb => {
+            }, 'dislikesCount');
+        /*.addSelect(qb => {
                 return qb
                     .select("json_agg(json_build_object('addedAt', ps.created_at, 'userId', ps.user_id, 'login', u.login))")
                     .from(PostStatus, 'ps')
@@ -99,7 +99,7 @@ export class PostsQueryRepositoryOrm {
                     .where(`ps.post_id = p.id AND ps.status = :likeStatus`, { likeStatus: StatusLike.enum['Like'] })
                     .orderBy('ps.created_at', SortDirection.Desc)
                     .limit(3);
-            }, 'newestLikes');
+            }, 'newestLikes');*/
 
         const result = await queryBuilder.getRawOne();
 

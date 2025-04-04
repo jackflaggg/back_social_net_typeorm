@@ -11,7 +11,6 @@ import {
 import { isNull } from '../../../../user-accounts/utils/user/is.null';
 import { CommentToUser } from '../../../comments/domain/typeorm/comment.entity';
 import { PostStatus } from '../../../likes/domain/typeorm/posts/post.status.entity';
-import { string } from 'zod';
 
 @Entity('posts')
 export class Post extends Base {
