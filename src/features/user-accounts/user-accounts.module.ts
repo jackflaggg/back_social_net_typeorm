@@ -36,8 +36,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './domain/typeorm/user/user.entity';
 import { EmailConfirmationToUser } from './domain/typeorm/email-confirmation/email.confirmation.entity';
 import { RecoveryPasswordToUser } from './domain/typeorm/password-recovery/pass-rec.entity';
-import { EmailRetryService } from '../notifications/application/mail.retry.service';
-import { EmailScheduler } from '../notifications/scheduler/email.scheduler';
 import { UserRepositoryOrm } from './infrastructure/typeorm/user/user.orm.repo';
 import { UserQueryRepositoryOrm } from './infrastructure/typeorm/user/query/user.query.orm.repo';
 import { SessionsRepositoryOrm } from './infrastructure/typeorm/sessions/sessions.orm.repository';
@@ -73,7 +71,7 @@ const repositories = [
 ];
 
 const strategies = [BasicStrategy, LocalStrategy, AccessTokenStrategy, JwtRefreshAuthPassportStrategy];
-const services = [AuthService, JwtService, EmailService, EmailAdapter, BcryptService, EmailRetryService, EmailScheduler];
+const services = [AuthService, JwtService, EmailService, EmailAdapter, BcryptService];
 const handlers = [LogUserInformationWhenUserLoggedInEventHandler];
 
 @Module({

@@ -11,8 +11,6 @@ import { CommentsStatus } from '../../../../likes/domain/typeorm/comments/commen
 import { User } from '../../../../../user-accounts/domain/typeorm/user/user.entity';
 import { PaginationParams } from '../../../../../../core/dto/base.query-params.input-dto';
 import { PaginatedCommentViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
-import { Post } from '../../../../posts/domain/typeorm/post.entity';
-import { PostStatus } from '../../../../likes/domain/typeorm/posts/post.status.entity';
 
 @Injectable()
 export class CommentsOrmQueryRepository {

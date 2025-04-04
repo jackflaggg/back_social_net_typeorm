@@ -18,7 +18,6 @@ import { PostLikeStatusApi } from '../dto/api/like-status.dto';
 import { GetCommentsQueryParams } from '../../comments/dto/repository/query/query-parans-comments';
 import { PostsQueryRepositoryOrm } from '../infrastructure/typeorm/query/posts.pg.query.repository';
 import { CommentsOrmQueryRepository } from '../../comments/infrastructure/typeorm/query/comments.orm.query.repository';
-import { commentIntInterface } from '../../comments/utils/comments/mapping/transform.comment.map';
 import { ValidateUUIDPipe } from '../../../../core/pipes/validation.input.uuid';
 import { LikePostCommand } from '../application/usecases/like-post.usecase';
 

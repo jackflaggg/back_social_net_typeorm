@@ -38,6 +38,7 @@ export class AuthController {
     @UseGuards(ThrottlerGuard, LocalAuthGuard)
     @Post('login')
     async login(@Req() req: Request, @Res({ passthrough: true }) res: Response, @Body() dto: AuthLoginDtoApi) {
+        console.log(dto);
         const ipDefault = req.ip ?? this.appConfig.ip;
         const userAgentDefault = req.headers['user-agent'] ?? this.appConfig.userAgent;
 

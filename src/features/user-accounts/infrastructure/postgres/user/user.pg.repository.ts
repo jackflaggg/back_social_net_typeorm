@@ -37,7 +37,7 @@ export class UserPgRepository {
                    em."is_confirmed"      AS "isConfirmed",
                    em."confirmation_code" AS "confirmationCode"
             FROM "users" AS "u"
-                     JOIN "email_confirmation" AS "em" ON u.id = em.user_id
+                     JOIN "email_confirmation_to_user" AS "em" ON u.id = em.user_id
             WHERE u."deleted_at" IS NULL
               AND (u."login" = $1 OR u."email" = $1);
         `;
@@ -57,7 +57,7 @@ export class UserPgRepository {
                    em."is_confirmed"      AS "isConfirmed",
                    em."confirmation_code" AS "confirmationCode"
             FROM "users" AS "u"
-                     JOIN "email_confirmation" AS "em" ON u.id = em.user_id
+                     JOIN "email_confirmation_to_user" AS "em" ON u.id = em.user_id
             WHERE u."deleted_at" IS NULL
               AND (u."login" = $1);
         `;
@@ -73,7 +73,7 @@ export class UserPgRepository {
         const query = `
             SELECT u."id", ec."confirmation_code" AS "confirmationCode"
             FROM "users" AS "u"
-                     JOIN "email_confirmation" AS ec on u.id = ec.user_id
+                     JOIN "email_confirmation_to_user" AS ec on u.id = ec.user_id
             WHERE u."id" = $1
               AND u."deleted_at" IS NULL
         `;
@@ -88,7 +88,7 @@ export class UserPgRepository {
         const query = `
             SELECT u."id" AS "userId"
             FROM "users" AS "u"
-                     JOIN "email_confirmation" AS ec on u.id = ec.user_id
+                     JOIN "email_confirmation_to_user" AS ec on u.id = ec.user_id
             WHERE u."id" = $1
               AND u."deleted_at" IS NULL
         `;
@@ -138,13 +138,13 @@ export class UserPgRepository {
             ]);
 
             if (!result || result.length === 0) {
-                throw NotFoundDomainException.create('юзер не найден', 'userId');
+                return void 0;
             }
 
             const userId = result[0].id;
 
             const queryEmailConfirmation = `
-                INSERT INTO "email_confirmation" ("confirmation_code", "expiration_date", "is_confirmed", "user_id")
+                INSERT INTO "email_confirmation_to_user" ("confirmation_code", "expiration_date", "is_confirmed", "user_id")
                 VALUES ($1, $2, $3, $4)`;
 
             await this.dataSource.query(queryEmailConfirmation, [
@@ -174,7 +174,7 @@ export class UserPgRepository {
 
     async updateUserToCodeAndDate(userId: string, generateCode: string, newExpirationDate: string) {
         const query = `
-            UPDATE "email_confirmation"
+            UPDATE "email_confirmation_to_user"
             SET "confirmation_code" = $1,
                 "expiration_date"   = $2,
                 "is_confirmed"      = FALSE
@@ -189,7 +189,7 @@ export class UserPgRepository {
                    em.expiration_date   AS "expirationDate",
                    em.confirmation_code AS "confirmationCode"
             FROM "users" AS "u"
-                     JOIN "email_confirmation" AS "em"
+                     JOIN "email_confirmation_to_user" AS "em"
                           ON u.id = em.user_id
             WHERE confirmation_code = $1
         `;
@@ -202,7 +202,7 @@ export class UserPgRepository {
 
     async updateUserToEmailConf(userId: string) {
         const query = `
-            UPDATE "email_confirmation"
+            UPDATE "email_confirmation_to_user"
             SET "confirmation_code" = $1,
                 "is_confirmed"      = TRUE
             WHERE "user_id" = $2`;

@@ -1,5 +1,4 @@
 import { SortDirection } from '../../../../../core/dto/base.query-params.input-dto';
-import { blogSortBy } from '../../../../../libs/contracts/enums/blog/blog.sort.by.enum';
 import { EntitiesSortByEnum } from '../../../../../libs/contracts/enums/post/entitiesSortByEnum';
 import { convertCamelCaseToSnakeCase } from '../../../posts/utils/post/caml.case.to.snake.case';
 
