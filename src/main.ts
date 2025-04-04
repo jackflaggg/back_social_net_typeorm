@@ -9,13 +9,11 @@ async function bootstrap(): Promise<void> {
 
     const coreConfig = appContext.get<AppConfig>(AppConfig);
 
-    await appContext.close();
-
     const app = await NestFactory.create(AppModule);
 
     app.use(cookieParser());
 
-    fullConfigApp(app);
+    fullConfigApp(app, coreConfig);
 
     await app.listen(coreConfig.port, () => {
         console.log('Сервер запущен на порту: ' + coreConfig.port);

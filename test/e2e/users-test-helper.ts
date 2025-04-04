@@ -1,12 +1,12 @@
-import request from 'supertest';
 import { HttpStatus, INestApplication } from '@nestjs/common';
+import request from 'supertest';
 
 export class UsersTestManager {
     constructor(private app: INestApplication) {}
 
     async createUser(createModel: any, statusCode: number = HttpStatus.CREATED) {
         const response = await request(this.app.getHttpServer())
-            .post(`/users`)
+            .post(`/sa/users`)
             .send(createModel)
             .auth('admin', 'qwerty')
             .expect(statusCode);
