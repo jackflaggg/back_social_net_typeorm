@@ -25,6 +25,6 @@ export class UpdateStatusCommentUseCase implements ICommandHandler<UpdateStatusC
         if (!currentStatuses) {
             return await this.statusRepository.createLikeStatusComment(comment.id, command.userId, command.status);
         }
-        return await this.statusRepository.updateLikeStatusComment(currentStatuses, command.status);
+        return await this.statusRepository.updateLikeStatusComment(currentStatuses, command.userId, command.status);
     }
 }

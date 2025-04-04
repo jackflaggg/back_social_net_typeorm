@@ -21,8 +21,8 @@ export class StatusCommentRepositoryOrm {
     private async save(entity: CommentsStatus): Promise<void> {
         await this.commentStatusRepository.save(entity);
     }
-    async updateLikeStatusComment(currentStatuses: CommentsStatus, status: StatusLikeType): Promise<void> {
-        currentStatuses.updateStatus(status);
+    async updateLikeStatusComment(currentStatuses: CommentsStatus, userId: string, status: StatusLikeType): Promise<void> {
+        currentStatuses.updateStatus(status, userId);
         await this.save(currentStatuses);
     }
 }

@@ -32,7 +32,8 @@ export class CommentsStatus {
         return status as CommentsStatus;
     }
 
-    public updateStatus(status: StatusLikeType) {
+    public updateStatus(status: StatusLikeType, userId: string) {
         this.status = status;
+        this.userId = userId;
     }
 }

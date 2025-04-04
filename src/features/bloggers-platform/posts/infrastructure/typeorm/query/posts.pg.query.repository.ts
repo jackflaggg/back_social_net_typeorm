@@ -29,7 +29,9 @@ export class PostsQueryRepositoryOrm {
             .select([
                 'p.id AS id, p.title AS title, p.short_description AS "shortDescription", p.content AS content, p.created_at AS "createdAt", p.blog_id AS "blogId"',
             ])
-            .where('p.deleted_at IS NULL');
+            .where('p.deleted_at IS NULL')
+            .limit(pageSize)
+            .offset(offset);
 
         if (blogId) {
             queryBuilder.andWhere(
@@ -46,8 +48,6 @@ export class PostsQueryRepositoryOrm {
             .addSelect(this.getMyStatus(userId), 'myStatus')
             .addSelect(this.getNewestLikes, 'newestLikes')
             .orderBy(updatedSortBy, sortDirection)
-            .limit(pageSize)
-            .offset(offset)
             .getRawMany();
 
         const totalCount = await queryBuilder.getCount();
