@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, Repository } from 'typeorm';
+import { Brackets, Repository, SelectQueryBuilder } from 'typeorm';
 import { GetPostsQueryParams } from '../../../dto/api/get-posts-query-params.input.dto';
 import { PostViewDto } from '../../../dto/repository/post-view';
 import { getPostsQuery } from '../../../utils/post/query.insert.get';
@@ -60,53 +60,68 @@ export class PostsQueryRepositoryOrm {
         const queryBuilder = this.postRepositoryOrm
             .createQueryBuilder('p')
             .select([
-                'p.id AS id, p.title AS title, p.short_description AS "shortDescription", p.content AS content, p.created_at AS "createdAt", p.blog_id AS "blogId", b.name AS "blogName"',
+                'p.id AS id, p.title AS title, p.short_description AS "shortDescription", p.content AS content, p.created_at AS "createdAt", p.blog_id AS "blogId"',
             ])
-            .leftJoin(Blog, 'b', 'b.id = p.blog_id')
-            .where('p.deleted_at IS NULL AND p.id = :postId', { postId })
-            .groupBy('p.id, b.name');
+            .where('p.deleted_at IS NULL AND p.id = :postId', { postId });
 
-        if (userId) {
-            queryBuilder.addSelect(subQuery => {
-                return subQuery
-                    .select(`COALESCE(status, '${StatusLike.enum['None']}')`)
-                    .from(PostStatus, 'ps')
-                    .where('p.id = ps.post_id')
-                    .andWhere('ps.user_id = :userId', { userId });
-            }, 'myStatus');
-        } else {
-            queryBuilder.addSelect(`'${StatusLike.enum['None']}'`, 'myStatus');
-        }
+        const post = await queryBuilder
+            .addSelect(this.getBlogName, 'blogName')
+            .addSelect(this.getLikesCount, 'likesCount')
+            .addSelect(this.getDislikesCount, 'dislikesCount')
+            .addSelect(this.getMyStatus(userId, postId), 'myStatus')
+            .addSelect(this.getNewestLikes, 'newestLikes')
+            .getRawOne();
 
-        queryBuilder
-            .addSelect(qb => {
-                return qb
-                    .select('COUNT(status)')
-                    .from(PostStatus, 'ps')
-                    .where('ps.status = :likeStatuses AND ps.post_id = p.id', { likeStatuses: StatusLike.enum['Like'] });
-            }, 'likesCount')
-            .addSelect(qb => {
-                return qb
-                    .select('COUNT(status)')
-                    .from(PostStatus, 'ps')
-                    .where('ps.status = :dislikeStatuses AND ps.post_id = p.id', { dislikeStatuses: StatusLike.enum['Dislike'] });
-            }, 'dislikesCount');
-        /*.addSelect(qb => {
-                return qb
-                    .select("json_agg(json_build_object('addedAt', ps.created_at, 'userId', ps.user_id, 'login', u.login))")
-                    .from(PostStatus, 'ps')
-                    .innerJoin(User, 'u', 'ps.user_id = u.id')
-                    .where(`ps.post_id = p.id AND ps.status = :likeStatus`, { likeStatus: StatusLike.enum['Like'] })
-                    .orderBy('ps.created_at', SortDirection.Desc)
-                    .limit(3);
-            }, 'newestLikes');*/
-
-        const result = await queryBuilder.getRawOne();
-
-        if (!result) {
+        if (!post) {
             throw NotFoundDomainException.create('пост не найден', 'postId');
         }
 
-        return PostViewDto.mapToView(result);
+        return PostViewDto.mapToView(post);
+    }
+
+    private getBlogName(queryBuilder: SelectQueryBuilder<Post>) {
+        return queryBuilder.select(`b.name`).from(Blog, `b`).where(`b.id = p.blog_id`);
+    }
+
+    private getLikesCount(queryBuilder: SelectQueryBuilder<Post>) {
+        return queryBuilder
+            .select(`COUNT(status)::INT`)
+            .from(PostStatus, `ps`)
+            .where(`p.id = ps.post_id AND ps.status = '${StatusLike.enum['Like']}'`);
+    }
+
+    private getDislikesCount(queryBuilder: SelectQueryBuilder<Post>) {
+        return queryBuilder
+            .select(`COUNT(status)::INT`)
+            .from(PostStatus, `ps`)
+            .where(`p.id = ps.post_id AND ps.status = '${StatusLike.enum['Dislike']}'`);
+    }
+
+    private getMyStatus = (userId?: string, postId?: string) => (queryBuilder: SelectQueryBuilder<Post>) => {
+        if (!userId) {
+            return queryBuilder.select(`'${StatusLike.enum['None']}' AS status`).from(PostStatus, 'ps');
+        }
+        return queryBuilder
+            .select(`ps.status AS status`)
+            .from(PostStatus, 'ps')
+            .where(`ps.user_id = :userId AND ps.post_id = :postId`, { userId, postId });
+    };
+
+    private getNewestLikes(queryBuilder: SelectQueryBuilder<Post>) {
+        const cteUserLogin = qb => qb.select('u.login').from(User, 'u').where('u.id = ps.user_id');
+
+        return queryBuilder
+            .select(`jsonb_agg(json_build_object('userId', nl."user_id", 'addedAt', nl."created_at", 'login', nl."userLogin"))`)
+            .from(
+                qb =>
+                    qb
+                        .select('ps.*')
+                        .addSelect(cteUserLogin, 'userLogin')
+                        .from(PostStatus, 'ps')
+                        .where(`ps.post_id = p.id AND ps.status = '${StatusLike.enum['Like']}'`)
+                        .orderBy('ps.created_at', `${SortDirection.Desc}`)
+                        .limit(3),
+                `nl`,
+            );
     }
 }
