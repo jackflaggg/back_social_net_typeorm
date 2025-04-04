@@ -80,29 +80,29 @@ export class PostsQueryRepositoryOrm {
     }
 
     private getBlogName(queryBuilder: SelectQueryBuilder<Post>) {
-        return queryBuilder.select(`b.name`).from(Blog, `b`).where(`b.id = p.blog_id`);
+        return queryBuilder.select(`b.name as "blogName"`).from(Blog, `b`).where(`b.id = p.blog_id`);
     }
 
     private getLikesCount(queryBuilder: SelectQueryBuilder<Post>) {
         return queryBuilder
-            .select(`COUNT(status)::INT`)
+            .select(`COUNT(status)::INT as "statusLike"`)
             .from(PostStatus, `ps`)
             .where(`p.id = ps.post_id AND ps.status = '${StatusLike.enum['Like']}'`);
     }
 
     private getDislikesCount(queryBuilder: SelectQueryBuilder<Post>) {
         return queryBuilder
-            .select(`COUNT(status)::INT`)
+            .select(`COUNT(status)::INT as "statusDislike"`)
             .from(PostStatus, `ps`)
             .where(`p.id = ps.post_id AND ps.status = '${StatusLike.enum['Dislike']}'`);
     }
 
     private getMyStatus = (userId?: string, postId?: string) => (queryBuilder: SelectQueryBuilder<Post>) => {
         if (!userId) {
-            return queryBuilder.select(`'${StatusLike.enum['None']}' AS status`).from(PostStatus, 'ps');
+            return queryBuilder.select(`'${StatusLike.enum['None']}' AS "statusUser"`).from(PostStatus, 'ps');
         }
         return queryBuilder
-            .select(`ps.status AS status`)
+            .select(`ps.status AS "statusUser"`)
             .from(PostStatus, 'ps')
             .where(`ps.user_id = :userId AND ps.post_id = :postId`, { userId, postId });
     };
