@@ -2,22 +2,18 @@ import { randomUUID } from 'node:crypto';
 import { add } from 'date-fns/add';
 
 export interface emailConfirmAdminInterface {
-    emailConfirmation: {
-        confirmationCode: string;
-        expirationDate: Date;
-        isConfirmed: boolean;
-    };
+    confirmationCode: string;
+    expirationDate: Date;
+    isConfirmed: boolean;
 }
 
 export interface emailConfirmationData {
-    emailConfirmation: {
-        confirmationCode: string;
-        expirationDate: Date;
-        isConfirmed: boolean;
-    };
+    confirmationCode: string;
+    expirationDate: Date;
+    isConfirmed: boolean;
 }
 
-export function emailConfirmationDataAdmin() {
+export function emailConfirmationDataAdmin(): emailConfirmAdminInterface {
     return {
         confirmationCode: '+',
         expirationDate: new Date(),
@@ -25,8 +21,8 @@ export function emailConfirmationDataAdmin() {
     };
 }
 
-export function emailConfirmationData() {
-    const code = randomUUID();
+export function emailConfirmationData(): emailConfirmationData {
+    const code: string = randomUUID();
     return {
         confirmationCode: code,
         expirationDate: add(new Date(), { hours: 1, minutes: 30, seconds: 10 }),

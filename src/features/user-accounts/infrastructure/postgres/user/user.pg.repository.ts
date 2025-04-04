@@ -148,9 +148,9 @@ export class UserPgRepository {
                 VALUES ($1, $2, $3, $4)`;
 
             await this.dataSource.query(queryEmailConfirmation, [
-                emailConfirm.emailConfirmation.confirmationCode,
-                emailConfirm.emailConfirmation.expirationDate.toISOString(),
-                emailConfirm.emailConfirmation.isConfirmed,
+                emailConfirm.confirmationCode,
+                emailConfirm.expirationDate.toISOString(),
+                emailConfirm.isConfirmed,
                 userId,
             ]);
             await this.dataSource.query('COMMIT');
