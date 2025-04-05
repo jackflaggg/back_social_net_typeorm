@@ -29,9 +29,8 @@ export class AppConfig {
     public databaseNameSql: string;
 
     // public testUrl: string;
-    public databaseNameSqlTest: string;
     public isSwaggerEnabled: boolean;
-    // public includeTestingModule: boolean;
+    public includeTestingModule: boolean;
 
     constructor(private configService: ConfigService<Record<string, unknown>, true>) {
         const config = {
@@ -55,8 +54,7 @@ export class AppConfig {
             databaseNameSql: this.configService.get('DATABASE_NAME_SQL'),
 
             isSwaggerEnabled: this.configService.get('IS_SWAGGER_ENABLED'),
-            databaseNameSqlTest: this.configService.get('DATABASE_NAME_SQL_TEST'),
-            // includeTestingModule: this.configService.get('INCLUDE_TESTING_MODULE'),
+            includeTestingModule: this.configService.get('INCLUDE_TESTING_MODULE'),
             // mongoUrl: this.configService.get('MONGO_URI'),
             // testUrl: this.configService.get('DB_URI_TEST'),
         };

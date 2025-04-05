@@ -2,21 +2,23 @@ import { INestApplication } from '@nestjs/common';
 import { UsersTestManager } from '../helper/users-test-helper';
 import { initSettings } from '../helper/init-settings-test';
 import { deleteAllData } from './delete-all-data-test';
-import { SETTINGS } from '../../src/core/settings';
+import { testCreateUser } from '../datasets/user/user.data';
 
-describe(SETTINGS.PATH.SA_USERS, () => {
+describe('Тесты e2e для юзеров!', () => {
     let app: INestApplication;
     let userTestManger: UsersTestManager;
 
+    /**
+     * используется для настройки окружения, инициализации данных
+     * или выполнения каких-либо операций, которые должны быть
+     * выполнены один раз перед всеми тестами.
+     * **/
     beforeAll(async () => {
-        const result = await initSettings();
+        // создаем здесь тестовый метод!
+        const moduleFixture = await initSettings();
 
-        app = result.app;
-        userTestManger = result.userTestManger;
-    });
-
-    afterAll(async () => {
-        await app.close();
+        app = moduleFixture.app;
+        userTestManger = moduleFixture.userTestManger;
     });
 
     beforeEach(async () => {
@@ -24,18 +26,31 @@ describe(SETTINGS.PATH.SA_USERS, () => {
     });
 
     it('успешно создай юзера!', async () => {
-        const response = await userTestManger.createUser({
-            login: 'balabol',
-            email: 'balabol@mail.ru',
-            password: '1234567890',
-        });
+        const response = await userTestManger.createUser(testCreateUser);
 
         expect(response).toEqual({
             login: response.login,
             email: response.email,
-            id: expect.stringContaining(response.id),
+            id: expect.any(String),
             createdAt: expect.any(String),
         });
-        console.log(response);
+    });
+
+    it('успешно удали юзера!', async () => {
+        const response = await userTestManger.createUser(testCreateUser);
+
+        const users = await userTestManger.getUsers('');
+
+        expect(users.items).toHaveLength(1);
+
+        await userTestManger.deleteUser(response.id);
+
+        const usersAfterDelete = await userTestManger.getUsers('');
+
+        expect(usersAfterDelete.items).toHaveLength(0);
+    });
+
+    afterAll(async () => {
+        await app.close();
     });
 });

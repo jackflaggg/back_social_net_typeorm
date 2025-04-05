@@ -1,42 +1,39 @@
-import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppModule } from '../../src/app.module';
-import { AppConfig } from '../../src/core/config/app.config';
-import { fullConfigApp } from '../../src/core/setup/config.setup';
 import { UsersTestManager } from './users-test-helper';
+import { AppModule } from '../../src/app.module';
+import { NestApplication } from '@nestjs/core';
+import { mockAppConfig } from '../datasets/user/user.data';
 
 export const initSettings = async () => {
-    const testingModuleBuilder: TestingModuleBuilder = Test.createTestingModule({
+    const testingModule: TestingModule = await Test.createTestingModule({
         imports: [
-            AppModule,
             TypeOrmModule.forRootAsync({
-                useFactory: (coreConfig: AppConfig) => ({
+                useFactory: () => ({
                     type: 'postgres',
-                    host: coreConfig.hostSql, // Адрес вашего сервера PostgreSQL
-                    port: coreConfig.portSql, // Порт по умолчанию
-                    username: coreConfig.usernameSql, // Ваше имя пользователя
-                    password: coreConfig.passwordSql, // Ваш пароль
-                    database: coreConfig.databaseNameSqlTest, // Имя вашей базы данных
-                    entities: [], // Здесь укажите ваши сущности
-                    autoLoadEntities: true, // Не загружать сущности автоматически - можно true для разработки
-                    synchronize: true, // Для разработки, включите, чтобы синхронизировать с базой данных - можно true для разработки
+                    host: mockAppConfig.hostSql,
+                    port: mockAppConfig.portSql,
+                    username: mockAppConfig.usernameSql,
+                    password: mockAppConfig.passwordSql,
+                    database: mockAppConfig.databaseNameSql + '_test',
+                    entities: [
+                        // Ваши сущности
+                    ],
+                    autoLoadEntities: true,
+                    synchronize: true,
                 }),
-                inject: [AppConfig],
             }),
+            // TODO: Работает, только когда аппмодуль после тайпорм!
+            AppModule,
         ],
-    });
+    }).compile();
 
-    const testingAppModule: TestingModule = await testingModuleBuilder.compile();
-
-    const app = testingAppModule.createNestApplication();
-    const coreConfig: AppConfig = app.get<AppConfig>(AppConfig);
-
-    fullConfigApp(app, coreConfig);
-
+    const app: NestApplication = testingModule.createNestApplication();
     await app.init();
 
     const httpServer = app.getHttpServer();
     const userTestManger = new UsersTestManager(app);
+
     return {
         app,
         httpServer,
