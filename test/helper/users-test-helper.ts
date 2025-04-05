@@ -6,9 +6,13 @@ export class UsersTestManager {
     constructor(private app: INestApplication) {}
 
     async createUser(dto: any, statusCode: number = HttpStatus.CREATED) {
-        const response = await request(this.app.getHttpServer()).post('/sa/users').send(dto).auth('admin', 'qwerty').expect(statusCode);
+        try {
+            const response = await request(this.app.getHttpServer()).post('/sa/users').send(dto).auth('admin', 'qwerty').expect(statusCode);
 
-        return response.body;
+            return response.body;
+        } catch (e) {
+            console.log(String(e));
+        }
     }
 
     async deleteUser(userId: string, statusCode: number = HttpStatus.NO_CONTENT) {

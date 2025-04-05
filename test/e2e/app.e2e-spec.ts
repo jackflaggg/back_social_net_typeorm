@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { UsersTestManager } from '../helper/users-test-helper';
 import { initSettings } from '../helper/init-settings-test';
 import { deleteAllData } from './delete-all-data-test';
-import { testCreateUser } from '../datasets/user/user.data';
+import { bodyTestCreateUser, getRandomEmail, getRandomString } from '../datasets/user/user.data';
 
 describe('Тесты e2e для юзеров!', () => {
     let app: INestApplication;
@@ -25,8 +25,8 @@ describe('Тесты e2e для юзеров!', () => {
         await deleteAllData(app);
     });
 
-    it('успешно создай юзера!', async () => {
-        const response = await userTestManger.createUser(testCreateUser);
+    it('⭐ успешно создай юзера!', async () => {
+        const response = await userTestManger.createUser(bodyTestCreateUser);
 
         expect(response).toEqual({
             login: response.login,
@@ -36,8 +36,8 @@ describe('Тесты e2e для юзеров!', () => {
         });
     });
 
-    it('успешно удали юзера!', async () => {
-        const response = await userTestManger.createUser(testCreateUser);
+    it('⭐ успешно удали юзера!', async () => {
+        const response = await userTestManger.createUser(bodyTestCreateUser);
 
         const users = await userTestManger.getUsers('');
 
@@ -48,6 +48,20 @@ describe('Тесты e2e для юзеров!', () => {
         const usersAfterDelete = await userTestManger.getUsers('');
 
         expect(usersAfterDelete.items).toHaveLength(0);
+    });
+
+    it('⭐ успешно получи созданных юзеров!', async () => {
+        const newUser = Array.from({ length: 3 }, () => ({
+            login: getRandomString(8),
+            email: getRandomEmail(),
+            password: '12345678',
+        }));
+        await userTestManger.createUser(newUser[0]);
+        await userTestManger.createUser(newUser[1]);
+        await userTestManger.createUser(newUser[2]);
+        const users = await userTestManger.getUsers('');
+
+        expect(users.items).toHaveLength(3);
     });
 
     afterAll(async () => {
