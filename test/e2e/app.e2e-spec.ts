@@ -4,7 +4,6 @@ import { initSettings } from '../helper/init-settings-test';
 import { deleteAllData } from './delete-all-data-test';
 
 describe('/sa/users', () => {
-    console.log(__dirname);
     let app: INestApplication;
     let userTestManger: UsersTestManager;
 
