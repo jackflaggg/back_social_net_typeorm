@@ -1,4 +1,4 @@
-import { Test, TestingModuleBuilder } from '@nestjs/testing';
+import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppModule } from '../../src/app.module';
 import { AppConfig } from '../../src/core/config/app.config';
@@ -16,7 +16,7 @@ export const initSettings = async () => {
                     port: coreConfig.portSql, // Порт по умолчанию
                     username: coreConfig.usernameSql, // Ваше имя пользователя
                     password: coreConfig.passwordSql, // Ваш пароль
-                    database: coreConfig.databaseNameSql + '_test', // Имя вашей базы данных
+                    database: coreConfig.databaseNameSqlTest, // Имя вашей базы данных
                     entities: [], // Здесь укажите ваши сущности
                     autoLoadEntities: true, // Не загружать сущности автоматически - можно true для разработки
                     synchronize: true, // Для разработки, включите, чтобы синхронизировать с базой данных - можно true для разработки
@@ -26,10 +26,10 @@ export const initSettings = async () => {
         ],
     });
 
-    const testingAppModule = await testingModuleBuilder.compile();
+    const testingAppModule: TestingModule = await testingModuleBuilder.compile();
 
     const app = testingAppModule.createNestApplication();
-    const coreConfig = app.get<AppConfig>(AppConfig);
+    const coreConfig: AppConfig = app.get<AppConfig>(AppConfig);
 
     fullConfigApp(app, coreConfig);
 

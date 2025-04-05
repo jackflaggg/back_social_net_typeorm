@@ -2,8 +2,9 @@ import { INestApplication } from '@nestjs/common';
 import { UsersTestManager } from '../helper/users-test-helper';
 import { initSettings } from '../helper/init-settings-test';
 import { deleteAllData } from './delete-all-data-test';
+import { SETTINGS } from '../../src/core/settings';
 
-describe('/sa/users', () => {
+describe(SETTINGS.PATH.SA_USERS, () => {
     let app: INestApplication;
     let userTestManger: UsersTestManager;
 
@@ -22,18 +23,19 @@ describe('/sa/users', () => {
         await deleteAllData(app);
     });
 
-    it('should create user', async () => {
+    it('успешно создай юзера!', async () => {
         const response = await userTestManger.createUser({
-            login: 'jack23',
-            email: 'rasul.khamzin@mail.ru',
+            login: 'balabol',
+            email: 'balabol@mail.ru',
             password: '1234567890',
         });
 
         expect(response).toEqual({
             login: response.login,
             email: response.email,
-            id: expect.any(String),
+            id: expect.stringContaining(response.id),
             createdAt: expect.any(String),
         });
+        console.log(response);
     });
 });
