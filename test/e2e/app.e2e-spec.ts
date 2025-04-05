@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
-import { UsersTestManager } from './e2e/users-test-helper';
-import { initSettings } from './e2e/init-settings-test';
-import { deleteAllData } from './e2e/delete-all-data-test';
+import { UsersTestManager } from '../helper/users-test-helper';
+import { initSettings } from '../helper/init-settings-test';
+import { deleteAllData } from './delete-all-data-test';
 
 describe('/sa/users', () => {
     console.log(__dirname);
