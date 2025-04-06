@@ -3,6 +3,8 @@ import { UsersTestManager } from '../helper/users-test-helper';
 import { initSettings } from '../helper/init-settings-test';
 import { deleteAllData } from './delete-all-data-test';
 import { bodyTestCreateUser, getRandomEmail, getRandomString } from '../datasets/user/user.data';
+import { JwtService } from '@nestjs/jwt';
+import { cooldown } from '../helper/cooldown';
 
 describe('Тесты e2e для юзеров!', () => {
     let app: INestApplication;
@@ -15,7 +17,9 @@ describe('Тесты e2e для юзеров!', () => {
      * **/
     beforeAll(async () => {
         // создаем здесь тестовый метод!
-        const moduleFixture = await initSettings();
+        const moduleFixture = await initSettings(moduleBuilder =>
+            moduleBuilder.overrideProvider(JwtService).useValue(new JwtService({ secret: 'anal_key', signOptions: { expiresIn: '1.5s' } })),
+        );
 
         app = moduleFixture.app;
         userTestManger = moduleFixture.userTestManger;
@@ -56,12 +60,19 @@ describe('Тесты e2e для юзеров!', () => {
             email: getRandomEmail(),
             password: '12345678',
         }));
-        await userTestManger.createUser(newUser[0]);
-        await userTestManger.createUser(newUser[1]);
-        await userTestManger.createUser(newUser[2]);
+        for (let i = 0; i < newUser.length; i++) {
+            await cooldown(10);
+            await userTestManger.createUser(newUser[i]);
+        }
         const users = await userTestManger.getUsers('');
 
         expect(users.items).toHaveLength(3);
+    });
+
+    it('⭐ проверка эндпоинта "me"', async () => {
+        const users = await userTestManger.getUsers('');
+
+        expect(users.items).toHaveLength(0);
     });
 
     afterAll(async () => {

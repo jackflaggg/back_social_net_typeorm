@@ -1,13 +1,13 @@
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { emailTemplates } from '../../../templates/email.templates';
-import nodemailer from 'nodemailer';
+import nodemailer, { SentMessageInfo } from 'nodemailer';
 import { AppConfig } from '../../../core/config/app.config';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class EmailAdapter {
     constructor(private readonly coreConfig: AppConfig) {}
-    async sendEmail(emailFrom: string, messageCode: string): Promise<SMTPTransport.SentMessageInfo | null> {
+    async sendEmail(emailFrom: string, messageCode: string): Promise<void | null> {
         try {
             const transporter = nodemailer.createTransport({
                 service: 'yandex',
@@ -18,7 +18,7 @@ export class EmailAdapter {
                 secure: true,
             });
 
-            return await transporter.sendMail({
+            await transporter.sendMail({
                 from: `"Incubator" <${this.coreConfig.adminEmail}>`,
                 to: emailFrom,
                 subject: 'hello world!',
@@ -30,7 +30,7 @@ export class EmailAdapter {
         }
     }
 
-    async sendPassword(emailFrom: string, messageCode: string): Promise<SMTPTransport.SentMessageInfo | null> {
+    async sendPassword(emailFrom: string, messageCode: string): Promise<void | null> {
         try {
             const transporter = nodemailer.createTransport({
                 service: 'yandex',
@@ -41,7 +41,7 @@ export class EmailAdapter {
                 secure: true,
             });
 
-            return await transporter.sendMail({
+            await transporter.sendMail({
                 from: `"Incubator" <${this.coreConfig.adminEmail}>`,
                 to: emailFrom,
                 subject: 'hello world!',

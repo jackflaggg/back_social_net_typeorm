@@ -1,12 +1,14 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersTestManager } from './users-test-helper';
 import { AppModule } from '../../src/app.module';
 import { NestApplication } from '@nestjs/core';
 import { mockAppConfig } from '../datasets/user/user.data';
+import { EmailService } from '../../src/features/notifications/application/mail.service';
+import { EmailServiceMock } from '../datasets/email/email-service.mock';
 
-export const initSettings = async () => {
-    const testingModule: TestingModule = await Test.createTestingModule({
+export const initSettings = async (addSettingsToModuleBuilder?: (moduleBuilder: TestingModuleBuilder) => void) => {
+    const testingModuleBuilder = Test.createTestingModule({
         imports: [
             TypeOrmModule.forRootAsync({
                 useFactory: () => ({
@@ -26,9 +28,15 @@ export const initSettings = async () => {
             // TODO: Работает, только когда аппмодуль после тайпорм!
             AppModule,
         ],
-    }).compile();
+    })
+        .overrideProvider(EmailService)
+        .useClass(EmailServiceMock);
 
-    const app: NestApplication = testingModule.createNestApplication();
+    if (addSettingsToModuleBuilder) {
+        addSettingsToModuleBuilder(testingModuleBuilder);
+    }
+    const testingAppModule = await testingModuleBuilder.compile();
+    const app: NestApplication = testingAppModule.createNestApplication();
     await app.init();
 
     const httpServer = app.getHttpServer();
