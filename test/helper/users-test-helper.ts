@@ -1,7 +1,6 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { SETTINGS } from '../../src/core/settings';
-import { MeUserIntInterface, UserViewDto } from '../../src/features/user-accounts/dto/api/user-view.dto';
 
 export class UsersTestManager {
     constructor(private app: INestApplication) {}
