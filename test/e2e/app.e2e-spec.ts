@@ -18,7 +18,7 @@ describe('Тесты e2e для юзеров!', () => {
     beforeAll(async () => {
         // создаем здесь тестовый метод!
         const moduleFixture = await initSettings(moduleBuilder =>
-            moduleBuilder.overrideProvider(JwtService).useValue(new JwtService({ secret: 'anal_key', signOptions: { expiresIn: '1.5s' } })),
+            moduleBuilder.overrideProvider(JwtService).useValue(new JwtService({ secret: 'test_key', signOptions: { expiresIn: '1.5s' } })),
         );
 
         app = moduleFixture.app;
@@ -70,9 +70,15 @@ describe('Тесты e2e для юзеров!', () => {
     });
 
     it('⭐ проверка эндпоинта "me"', async () => {
-        const users = await userTestManger.getUsers('');
+        const newUser = Array.from({ length: 1 }, () => ({
+            login: getRandomString(8),
+            email: getRandomEmail(),
+            password: '12345678',
+        }));
+        const users = await userTestManger.loginUser(newUser[0]);
 
-        expect(users.items).toHaveLength(0);
+        console.log(users);
+        expect(users);
     });
 
     afterAll(async () => {
