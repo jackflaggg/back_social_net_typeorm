@@ -77,7 +77,6 @@ describe('Тесты e2e для юзеров!', () => {
         }));
         const users = await userTestManger.loginUser(newUser[0]);
 
-        console.log(users);
         expect(users);
     });
 
