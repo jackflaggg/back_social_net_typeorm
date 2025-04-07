@@ -10,5 +10,6 @@ export const SETTINGS = {
         COMMENTS: 'comments',
         TESTING: 'testing',
         SECURITY_DEVICES: 'security',
+        SA_QUESTIONS: '/sa/quiz/questions',
     },
 };
