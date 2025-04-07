@@ -7,10 +7,10 @@ export class Answer {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ name: 'answer', type: 'string' })
+    @Column({ name: 'answer', type: 'varchar' })
     answer: string;
 
-    @Column({ name: 'answer_status', type: 'enum', enum: AnswerStatus })
+    @Column({ name: 'answer_status', type: 'enum', enum: AnswerStatus.enum })
     answerStatus: AnswerStatusType;
 
     @Column({ name: 'question_id' })

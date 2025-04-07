@@ -25,7 +25,7 @@ export class Game {
     @OneToMany(() => GameQuestions, gameQuestions => gameQuestions.game)
     gameQuestions: GameQuestions[];
 
-    @Column({ name: 'game_status', type: 'enum', enum: GameStatus })
+    @Column({ name: 'game_status', type: 'enum', enum: GameStatus.enum })
     gameStatus: GameStatusType;
 
     @CreateDateColumn()

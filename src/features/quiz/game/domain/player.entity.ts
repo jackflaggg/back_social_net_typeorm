@@ -19,7 +19,7 @@ export class Player extends BaseEntityDeletedAtAndId {
     @Column({ name: 'score', type: 'int', default: 0 })
     score: number;
 
-    @Column({ name: 'status', enum: PlayerStatus, nullable: true })
+    @Column({ name: 'status', enum: PlayerStatus.enum, nullable: true })
     status: PlayerStatusType;
 
     static buildInstance(userId: string): Player {
