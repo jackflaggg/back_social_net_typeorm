@@ -11,5 +11,7 @@ export const SETTINGS = {
         TESTING: 'testing',
         SECURITY_DEVICES: 'security',
         SA_QUESTIONS: '/sa/quiz/questions',
+        PAIR_GAME_QUIZ_PAIRS: '/pair-game-quiz/pairs',
+        PAIR_GAME_QUIZ_USERS: '/pair-game-quiz/users',
     },
 };
