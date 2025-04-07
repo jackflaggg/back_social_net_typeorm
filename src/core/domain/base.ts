@@ -36,3 +36,12 @@ export abstract class BaseEntityWithoutDeletedAtAndCreatedAt {
     @UpdateDateColumn({ name: 'updated_at' })
     public updatedAt: Date;
 }
+
+export abstract class BaseEntityDeletedAtAndId {
+    @PrimaryGeneratedColumn('uuid')
+    public id: string;
+
+    @Column({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+    @Index()
+    deletedAt: Date | null;
+}

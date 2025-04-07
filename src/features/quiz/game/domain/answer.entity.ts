@@ -4,23 +4,23 @@ import { AnswerStatus, AnswerStatusType } from '../../../../libs/contracts/enums
 
 @Entity()
 export class Answer {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-    @Column()
+    @Column({ name: 'answer', type: 'string' })
     answer: string;
 
-    @Column({ type: 'enum', enum: AnswerStatus })
+    @Column({ name: 'answer_status', type: 'enum', enum: AnswerStatus })
     answerStatus: AnswerStatusType;
 
-    @Column()
+    @Column({ name: 'question_id' })
     questionId: number;
 
-    @CreateDateColumn()
+    @CreateDateColumn({ name: 'added_at' })
     addedAt: Date;
 
     @ManyToOne(() => Player, player => player.answers)
-    @JoinColumn({ name: 'playerId' })
+    @JoinColumn({ name: 'player_id' })
     player: Player;
 
     static buildInstance(answer: string, questionId: number): Answer {

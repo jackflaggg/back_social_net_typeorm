@@ -1,31 +1,26 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { User } from '../../../user-accounts/domain/typeorm/user/user.entity';
 import { Answer } from './answer.entity';
 import { PlayerStatus, PlayerStatusType } from '../../../../libs/contracts/enums/quiz/player.status';
+import { BaseEntityDeletedAtAndId } from '../../../../core/domain/base';
 
 @Entity()
-export class Player {
-    @PrimaryGeneratedColumn()
-    id: number;
-
+export class Player extends BaseEntityDeletedAtAndId {
     @ManyToOne(() => User, user => user.players)
-    @JoinColumn({ name: 'userId' })
+    @JoinColumn({ name: 'user_id' })
     user: User;
 
-    @Column()
+    @Column({ name: 'user_id' })
     userId: string;
 
     @OneToMany(() => Answer, answer => answer.player)
     answers: Answer[];
 
-    @Column({ type: 'int', default: 0 })
+    @Column({ name: 'score', type: 'int', default: 0 })
     score: number;
 
-    @Column({ enum: PlayerStatus, nullable: true })
+    @Column({ name: 'status', enum: PlayerStatus, nullable: true })
     status: PlayerStatusType;
-
-    @Column({ type: 'timestamptz', nullable: true })
-    deletedAt: Date;
 
     static buildInstance(userId: string): Player {
         const player = new this();
