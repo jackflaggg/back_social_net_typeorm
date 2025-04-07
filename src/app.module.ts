@@ -13,6 +13,7 @@ import { typeOrmDb } from './core/config/typeorm.config';
 import { AppConfig } from './core/config/app.config';
 import { BloggersPlatformModule } from './features/bloggers-platform/bloggers-platform.module';
 import process from 'node:process';
+import { QuizModule } from './features/quiz/quiz.module';
 
 @Module({
     imports: [
@@ -43,6 +44,7 @@ import process from 'node:process';
         ThrottlerModule.forRoot([throttlerConfig]),
         UsersModule,
         BloggersPlatformModule,
+        QuizModule,
         TestingModule.register(),
     ],
 })

@@ -1,33 +1,13 @@
-import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Test, TestingModuleBuilder } from '@nestjs/testing';
 import { UsersTestManager } from './helper/users-test-helper';
 import { AppModule } from '../src/app.module';
 import { NestApplication } from '@nestjs/core';
-import { mockAppConfig } from './datasets/user/user.data';
 import { EmailService } from '../src/features/notifications/application/mail.service';
 import { EmailServiceMock } from './datasets/email/email-service.mock';
 
 export const initSettings = async (addSettingsToModuleBuilder?: (moduleBuilder: TestingModuleBuilder) => void) => {
     const testingModuleBuilder = Test.createTestingModule({
-        imports: [
-            TypeOrmModule.forRootAsync({
-                useFactory: () => ({
-                    type: 'postgres',
-                    host: mockAppConfig.hostSql,
-                    port: mockAppConfig.portSql,
-                    username: mockAppConfig.usernameSql,
-                    password: mockAppConfig.passwordSql,
-                    database: mockAppConfig.databaseNameSql + '_test',
-                    entities: [
-                        // Ваши сущности
-                    ],
-                    autoLoadEntities: true,
-                    synchronize: true,
-                }),
-            }),
-            // TODO: Работает, только когда аппмодуль после тайпорм!
-            AppModule,
-        ],
+        imports: [AppModule],
     })
         .overrideProvider(EmailService)
         .useClass(EmailServiceMock);

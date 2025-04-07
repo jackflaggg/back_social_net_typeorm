@@ -32,10 +32,7 @@ describe('AuthService Integration Tests', () => {
     });
 
     beforeAll(async () => {
-        console.log('начала очистку');
-        await dataSource.query('DELETE FROM email_confirmation_to_user');
-        await dataSource.query('DELETE FROM users');
-        console.log('Таблица очищена');
+        await dataSource.query('TRUNCATE TABLE users CASCADE');
     });
 
     it('test', () => {
