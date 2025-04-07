@@ -1,12 +1,12 @@
 import { INestApplication } from '@nestjs/common';
 import { UsersTestManager } from '../helper/users-test-helper';
-import { initSettings } from '../helper/init-settings-test';
+import { initSettings } from '../init-e2e-settings-test';
 import { deleteAllData } from './delete-all-data-test';
 import { bodyTestCreateUser, getRandomEmail, getRandomString } from '../datasets/user/user.data';
 import { JwtService } from '@nestjs/jwt';
 import { cooldown } from '../helper/cooldown';
 
-describe('Тесты e2e для юзеров!', () => {
+describe('Тесты e2e-test для юзеров!', () => {
     let app: INestApplication;
     let userTestManger: UsersTestManager;
 

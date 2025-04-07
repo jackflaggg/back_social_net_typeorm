@@ -9,7 +9,7 @@ export const mockAppConfig = {
 };
 
 export function getRandomString(length: number): string {
-    const characters = 'abcdefghijklmnopqrstuvwxyz'; // Только буквы
+    const characters = 'test'; // Только буквы
     let result = '';
     const charactersLength = characters.length;
 

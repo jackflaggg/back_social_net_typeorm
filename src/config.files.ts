@@ -11,9 +11,9 @@ export const envModule = ConfigModule.forRoot({
         // высокий приоритет
         ...(process.env.ENV_FILE_PATH ? [process.env.ENV_FILE_PATH.trim()] : []),
         // низкий приоритет
-        join(__dirname, `../.env`),
-        // низкий приоритет
         join(__dirname, `./env/.env.${process.env.NODE_ENV}`),
+        // низкий приоритет
+        join(__dirname, `../.env`),
         // низкий приоритет
         join(__dirname, './env/.env.production'),
         // низкий приоритет

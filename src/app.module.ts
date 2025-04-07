@@ -12,6 +12,7 @@ import { throttlerConfig } from './core/config/throttler.config';
 import { typeOrmDb } from './core/config/typeorm.config';
 import { AppConfig } from './core/config/app.config';
 import { BloggersPlatformModule } from './features/bloggers-platform/bloggers-platform.module';
+import process from 'node:process';
 
 @Module({
     imports: [
@@ -33,7 +34,11 @@ import { BloggersPlatformModule } from './features/bloggers-platform/bloggers-pl
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
             inject: [AppConfig],
-            useFactory: async (coreConfig: AppConfig) => typeOrmDb(coreConfig),
+            useFactory: async (coreConfig: AppConfig) => {
+                console.log(process.env.NODE_ENV);
+                console.log(coreConfig.databaseNameSql);
+                return typeOrmDb(coreConfig);
+            },
         }),
         ThrottlerModule.forRoot([throttlerConfig]),
         UsersModule,
