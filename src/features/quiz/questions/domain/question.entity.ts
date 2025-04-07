@@ -2,7 +2,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { GameQuestions } from '../../game/domain/game-questions.entity';
 import { Base } from '../../../../core/domain/base';
 
-@Entity()
+@Entity('question')
 export class Question extends Base {
     @Column({ name: 'body', collation: 'C' })
     body: string;

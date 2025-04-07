@@ -36,8 +36,6 @@ import { QuizModule } from './features/quiz/quiz.module';
             imports: [ConfigModule],
             inject: [AppConfig],
             useFactory: async (coreConfig: AppConfig) => {
-                console.log(process.env.NODE_ENV);
-                console.log(coreConfig.databaseNameSql);
                 return typeOrmDb(coreConfig);
             },
         }),

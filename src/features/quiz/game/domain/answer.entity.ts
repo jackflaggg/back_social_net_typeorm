@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGenerat
 import { Player } from './player.entity';
 import { AnswerStatus, AnswerStatusType } from '../../../../libs/contracts/enums/quiz/answer.status';
 
-@Entity()
+@Entity('answer')
 export class Answer {
     @PrimaryGeneratedColumn('uuid')
     id: string;

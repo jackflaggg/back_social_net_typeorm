@@ -4,7 +4,7 @@ import { Answer } from './answer.entity';
 import { PlayerStatus, PlayerStatusType } from '../../../../libs/contracts/enums/quiz/player.status';
 import { BaseEntityDeletedAtAndId } from '../../../../core/domain/base';
 
-@Entity()
+@Entity('player')
 export class Player extends BaseEntityDeletedAtAndId {
     @ManyToOne(() => User, user => user.players)
     @JoinColumn({ name: 'user_id' })

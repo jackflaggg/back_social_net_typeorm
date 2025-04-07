@@ -3,7 +3,7 @@ import { GameQuestions } from './game-questions.entity';
 import { Player } from './player.entity';
 import { GameStatus, GameStatusType } from '../../../../libs/contracts/enums/quiz/game.status';
 
-@Entity()
+@Entity('game')
 export class Game {
     @PrimaryGeneratedColumn('uuid')
     id: string;
