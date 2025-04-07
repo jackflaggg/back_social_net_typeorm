@@ -1,6 +1,5 @@
 import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { SETTINGS } from '../../../../core/settings';
-import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { ValidateUUIDPipe } from '../../../../core/pipes/validation.input.uuid';
 
