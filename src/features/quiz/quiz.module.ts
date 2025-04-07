@@ -7,9 +7,10 @@ import { Player } from './game/domain/player.entity';
 import { Game } from './game/domain/game.entity';
 import { QuestionsSaController } from './questions/api/questions.sa.controller';
 import { CqrsModule } from '@nestjs/cqrs';
+import { PairGameQuizUsersController } from './game/api/pair-game-quiz.users.controller';
 
 @Module({
     imports: [CqrsModule, TypeOrmModule.forFeature([Question, Answer, GameQuestions, Player, Game])],
-    controllers: [QuestionsSaController],
+    controllers: [QuestionsSaController, PairGameQuizUsersController, PairGameQuizUsersController],
 })
 export class QuizModule {}
