@@ -18,7 +18,7 @@ async function bootstrap() {
     configApp(app);
 
     await app.listen(coreConfig.port, () => {
-        console.log('Сервер запущен на порту: ' + coreConfig.port);
+        console.log('Сервер запущен на порту! ' + coreConfig.port);
     });
 }
 
