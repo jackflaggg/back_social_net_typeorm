@@ -8,9 +8,12 @@ import { Game } from './game/domain/game.entity';
 import { QuestionsSaController } from './questions/api/questions.sa.controller';
 import { CqrsModule } from '@nestjs/cqrs';
 import { PairGameQuizUsersController } from './game/api/pair-game-quiz.users.controller';
+import { QuestionsQueryRepositoryOrm } from './questions/infrastructure/typeorm/query/questions.query-repository';
 
+const repositories = [QuestionsQueryRepositoryOrm];
 @Module({
     imports: [CqrsModule, TypeOrmModule.forFeature([Question, Answer, GameQuestions, Player, Game])],
     controllers: [QuestionsSaController, PairGameQuizUsersController, PairGameQuizUsersController],
+    providers: [...repositories],
 })
 export class QuizModule {}

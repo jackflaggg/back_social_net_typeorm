@@ -4,14 +4,21 @@ import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.au
 import { CommandBus } from '@nestjs/cqrs';
 import { ValidateUUIDPipe } from '../../../../core/pipes/validation.input.uuid';
 import { QuestionCreateDtoApi } from '../dto/api/create.question.dto';
+import { GetQuestionsQueryParams } from '../dto/api/get-questions-query-params.dto';
+import { QuestionsQueryRepositoryOrm } from '../infrastructure/typeorm/query/questions.query-repository';
 
 @Controller(SETTINGS.PATH.SA_QUESTIONS)
 @UseGuards(BasicAuthGuard)
 export class QuestionsSaController {
-    constructor(private readonly commandBus: CommandBus) {}
+    constructor(
+        private readonly commandBus: CommandBus,
+        private readonly questionRepo: QuestionsQueryRepositoryOrm,
+    ) {}
 
     @Get()
-    async getQuestions(@Query() query: any) {}
+    async getQuestions(@Query() query: GetQuestionsQueryParams) {
+        return this.questionRepo.getQuestions(query);
+    }
 
     @HttpCode(HttpStatus.CREATED)
     @Post()
@@ -19,11 +26,11 @@ export class QuestionsSaController {
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @Put(':questionId')
-    async updateQuestion(@Param('questionId', ValidateUUIDPipe) questionId: string) {}
+    async updateQuestion(@Param('questionId', ValidateUUIDPipe) questionId: string, @Body() questionUpdateDto: any) {}
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @Put(':questionId/publish')
-    async updateQuestionStatusPublish(@Param('questionId', ValidateUUIDPipe) questionId: string) {}
+    async updateQuestionStatusPublish(@Param('questionId', ValidateUUIDPipe) questionId: string, @Body() publishedDto: any) {}
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete(':questionId')
