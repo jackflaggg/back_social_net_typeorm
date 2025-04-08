@@ -1,8 +1,9 @@
-import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { SETTINGS } from '../../../../core/settings';
 import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { ValidateUUIDPipe } from '../../../../core/pipes/validation.input.uuid';
+import { QuestionCreateDtoApi } from '../dto/api/create.question.dto';
 
 @Controller(SETTINGS.PATH.SA_QUESTIONS)
 @UseGuards(BasicAuthGuard)
@@ -14,7 +15,7 @@ export class QuestionsSaController {
 
     @HttpCode(HttpStatus.CREATED)
     @Post()
-    async createQuestion() {}
+    async createQuestion(@Body() questionDto: QuestionCreateDtoApi) {}
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @Put(':questionId')
