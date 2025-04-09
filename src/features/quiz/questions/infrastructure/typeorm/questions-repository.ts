@@ -2,6 +2,7 @@ import { Question } from '../../domain/question.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
+import { QuestionCreateDtoApi } from '../../dto/api/create.question.dto';
 
 @Injectable()
 export class QuestionsRepository {
@@ -15,18 +16,18 @@ export class QuestionsRepository {
         return question;
     }
 
-    async createQuestion(payload: QuestionCreateDto): Promise<string> {
+    async createQuestion(payload: QuestionCreateDtoApi): Promise<string> {
         const question = Question.buildInstance(payload.body, payload.correctAnswers);
         const newQuestion = await this.questionRepositoryTypeOrm.save(question);
         return newQuestion.id.toString();
     }
 
-    async updateQuestion(question: Question, payload: QuestionCreateDto): Promise<void> {
+    async updateQuestion(question: Question, payload: QuestionCreateDtoApi): Promise<void> {
         question.update(payload.body, payload.correctAnswers);
         await this.questionRepositoryTypeOrm.save(question);
     }
 
-    async publishQuestion(question: Question, payload: QuestionPublishDto): Promise<void> {
+    async publishQuestion(question: Question, payload: QuestionCreateDtoApi): Promise<void> {
         question.setPublishStatus(payload.published);
         await this.questionRepositoryTypeOrm.save(question);
     }
