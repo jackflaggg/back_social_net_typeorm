@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { GetQuestionsQueryParams } from '../../../dto/api/get-questions-query-params.dto';
 import { PaginationParams } from '../../../../../../core/dto/base.query-params.input-dto';
 import { PaginatedPostViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
+import { PublishedStatus } from '../../../dto/questions-publishedStatus';
+import { QuestionViewDto } from '../../../dto/question-view.dto';
 
 @Injectable()
 export class QuestionsQueryRepositoryOrm {
@@ -17,7 +19,7 @@ export class QuestionsQueryRepositoryOrm {
         if (bodySearchTerm) {
             queryBuilder.andWhere('question.body ILIKE :bodySearchTerm', { bodySearchTerm: `%${bodySearchTerm}%` });
         }
-        if (publishedStatus === publishedStatus.enum['Published']) {
+        if (publishedStatus === PublishedStatus.Published) {
             queryBuilder.andWhere('question.published = :published', { published: true });
         }
         if (publishedStatus === PublishedStatus.NotPublished) {

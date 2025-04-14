@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Game } from '../domain/game.entity';
 import { Repository } from 'typeorm';
-import { GameStatus } from '../../../../libs/contracts/enums/quiz/game.status';
+import { GameStatus } from '../dto/game-status';
 
 @Injectable()
 export class GameRepository {
@@ -14,7 +14,7 @@ export class GameRepository {
     }
 
     async findAvailableGamePair(): Promise<Game | null> {
-        const game = await this.gameRepositoryTypeOrm.findOne({ where: { gameStatus: GameStatus.enum['PendingSecondPlayer'] } });
+        const game = await this.gameRepositoryTypeOrm.findOne({ where: { gameStatus: GameStatus.PendingSecondPlayer } });
         return game;
     }
 

@@ -6,33 +6,53 @@ import { ValidateUUIDPipe } from '../../../../core/pipes/validation.input.uuid';
 import { QuestionCreateDtoApi } from '../dto/api/create.question.dto';
 import { GetQuestionsQueryParams } from '../dto/api/get-questions-query-params.dto';
 import { QuestionsQueryRepositoryOrm } from '../infrastructure/typeorm/query/questions.query-repository';
+import { QuestionCreateDto } from '../dto/question-create.dto';
+import { QuestionViewDto } from '../dto/question-view.dto';
+import { QuestionPublishDto, QuestionUpdateDto } from '../dto/question-update.dto';
+import { UpdateQuestionCommand } from '../applications/usecases/update-question.usecase';
+import { PublishQuestionCommand } from '../applications/usecases/publish-question.usecase';
+import { DeleteQuestionCommand } from '../applications/usecases/delete-question.usecase';
+import { CreateQuestionCommand } from '../applications/usecases/create-question.usecase';
+import { PaginatedQuestionViewDto } from '../../../../core/dto/base.paginated.view-dto';
 
 @Controller(SETTINGS.PATH.SA_QUESTIONS)
 @UseGuards(BasicAuthGuard)
 export class QuestionsSaController {
     constructor(
+        private readonly questionsQueryRepository: QuestionsQueryRepository,
         private readonly commandBus: CommandBus,
-        private readonly questionRepo: QuestionsQueryRepositoryOrm,
     ) {}
 
     @Get()
-    async getQuestions(@Query() query: GetQuestionsQueryParams) {
-        return this.questionRepo.getQuestions(query);
+    findQuestions(@Query() query: GetQuestionsQueryParams): Promise<PaginatedQuestionViewDto> {
+        const questions = this.questionsQueryRepository.findQuestions(query);
+        return questions;
     }
 
-    @HttpCode(HttpStatus.CREATED)
     @Post()
-    async createQuestion(@Body() questionDto: QuestionCreateDtoApi) {}
+    @HttpCode(HttpStatus.CREATED)
+    async createQuestion(@Body() body: QuestionCreateDto): Promise<QuestionViewDto> {
+        const questionId = await this.commandBus.execute(new CreateQuestionCommand(body));
+        const newQuestion = await this.questionsQueryRepository.findQuestionByIdOrNotFoundFail(questionId);
 
-    @HttpCode(HttpStatus.NO_CONTENT)
-    @Put(':questionId')
-    async updateQuestion(@Param('questionId', ValidateUUIDPipe) questionId: string, @Body() questionUpdateDto: any) {}
+        return newQuestion;
+    }
 
+    @Put(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
-    @Put(':questionId/publish')
-    async updateQuestionStatusPublish(@Param('questionId', ValidateUUIDPipe) questionId: string, @Body() publishedDto: any) {}
+    updateQuestion(@Param('id') id: string, @Body() body: QuestionUpdateDto): Promise<void> {
+        return this.commandBus.execute(new UpdateQuestionCommand(id, body));
+    }
 
+    @Put(':id/publish')
     @HttpCode(HttpStatus.NO_CONTENT)
-    @Delete(':questionId')
-    async deleteQuestion(@Param('questionId', ValidateUUIDPipe) questionId: string) {}
+    publishQuestion(@Param('id') id: string, @Body() body: QuestionPublishDto): Promise<void> {
+        return this.commandBus.execute(new PublishQuestionCommand(id, body));
+    }
+
+    @Delete(':id')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    deleteQuestion(@Param('id') id: string): Promise<void> {
+        return this.commandBus.execute(new DeleteQuestionCommand(id));
+    }
 }
