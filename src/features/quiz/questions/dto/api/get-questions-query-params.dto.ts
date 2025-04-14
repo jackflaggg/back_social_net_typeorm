@@ -2,9 +2,10 @@ import { BaseSortablePaginationParams } from '../../../../../core/dto/base.query
 import { BlogSortByEnum, BlogSortByValues } from '../../../../../libs/contracts/enums/blog/blog.sort.by.enum';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { publishedStatus, publishedStatusByValues } from '../../../../../libs/contracts/enums/quiz/published.status';
+import { questionSortByValues } from '../../../../../libs/contracts/enums/quiz/question.sort.by';
 
 export class GetQuestionsQueryParams extends BaseSortablePaginationParams<BlogSortByEnum> {
-    @IsEnum(BlogSortByValues)
+    @IsEnum(questionSortByValues)
     sortBy = BlogSortByValues[0];
 
     @IsString()
