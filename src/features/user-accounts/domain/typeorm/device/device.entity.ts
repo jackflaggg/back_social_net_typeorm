@@ -24,7 +24,7 @@ export class SecurityDeviceToUser {
     @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
     user: User;
     @Column({ name: 'user_id' })
-    userId: string;
+    userId: number;
 
     static buildInstance(dto: DeviceCreateDto, user: User): SecurityDeviceToUser {
         const session = new SecurityDeviceToUser();

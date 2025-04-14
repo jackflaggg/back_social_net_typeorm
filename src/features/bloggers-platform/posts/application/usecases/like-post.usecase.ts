@@ -20,9 +20,9 @@ export class LikePostUseCase implements ICommandHandler<LikePostCommand> {
 
     async execute(command: LikePostCommand) {
         const post = await this.postsRepository.findPostById(command.postId);
-        const currenStatus = await this.statusRepository.getStatusPost(post.id, command.userId);
+        const currenStatus = await this.statusRepository.getStatusPost(String(post.id), command.userId);
         if (!currenStatus) {
-            return await this.statusRepository.createLikeStatusPost(post.id, command.userId, command.status);
+            return await this.statusRepository.createLikeStatusPost(String(post.id), command.userId, command.status);
         }
         return await this.statusRepository.updateLikeStatusPost(currenStatus, command.userId, command.status);
     }

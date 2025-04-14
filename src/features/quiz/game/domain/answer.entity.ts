@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGenerat
 import { Player } from './player.entity';
 import { AnswerStatus } from '../dto/answer-status';
 
-@Entity('answer')
+@Entity()
 export class Answer {
     @PrimaryGeneratedColumn()
     id: number;

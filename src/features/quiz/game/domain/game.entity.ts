@@ -3,7 +3,7 @@ import { GameQuestions } from './game-questions.entity';
 import { Player } from './player.entity';
 import { GameStatus } from '../dto/game-status';
 
-@Entity('game')
+@Entity()
 export class Game {
     @PrimaryGeneratedColumn()
     id: number;

@@ -10,6 +10,9 @@ export class QuestionsRepository {
     constructor(@InjectRepository(Question) private questionRepositoryTypeOrm: Repository<Question>) {}
 
     async findQuestionById(id: string): Promise<Question | null> {
+        if (id.length > 6) {
+            return null;
+        }
         const question = await this.questionRepositoryTypeOrm.findOne({ where: { id: Number(id), deletedAt: IsNull() } });
         if (!question) {
             return null;

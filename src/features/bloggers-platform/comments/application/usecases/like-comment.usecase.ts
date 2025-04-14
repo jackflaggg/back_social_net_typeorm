@@ -20,10 +20,10 @@ export class UpdateStatusCommentUseCase implements ICommandHandler<UpdateStatusC
     async execute(command: UpdateStatusCommentCommand): Promise<void> {
         const comment = await this.commentsRepository.findCommentById(command.commentId);
 
-        const currentStatuses = await this.statusRepository.getStatusComment(comment.id, command.userId);
+        const currentStatuses = await this.statusRepository.getStatusComment(String(comment.id), command.userId);
 
         if (!currentStatuses) {
-            return await this.statusRepository.createLikeStatusComment(comment.id, command.userId, command.status);
+            return await this.statusRepository.createLikeStatusComment(String(comment.id), command.userId, command.status);
         }
         return await this.statusRepository.updateLikeStatusComment(currentStatuses, command.userId, command.status);
     }

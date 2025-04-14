@@ -12,7 +12,7 @@ export class PostsRepositoryOrm {
     constructor(@InjectRepository(Post) protected postRepository: Repository<Post>) {}
     private async save(entity: Post): Promise<string> {
         const result: Post = await this.postRepository.save(entity);
-        return result.id;
+        return String(result.id);
     }
     async findPostById(postId: string): Promise<Post> {
         const result = await this.postRepository

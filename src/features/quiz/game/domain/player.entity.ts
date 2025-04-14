@@ -3,7 +3,7 @@ import { User } from '../../../user-accounts/domain/typeorm/user/user.entity';
 import { Answer } from './answer.entity';
 import { PlayerStatus } from '../dto/player-status';
 
-@Entity('player')
+@Entity()
 export class Player {
     @PrimaryGeneratedColumn()
     id: number;

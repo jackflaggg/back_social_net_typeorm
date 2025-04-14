@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Up
 import { GameQuestions } from '../../game/domain/game-questions.entity';
 import { Base } from '../../../../core/domain/base';
 
-@Entity('question')
+@Entity()
 export class Question {
     @PrimaryGeneratedColumn()
     id: number;

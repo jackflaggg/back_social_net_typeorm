@@ -11,7 +11,7 @@ export class EmailConfirmationRepositoryOrm {
         @InjectRepository(EmailConfirmationToUser) private emailConfirmationRepositoryTypeOrm: Repository<EmailConfirmationToUser>,
     ) {}
     async createEmailConfirmationToUser(dto: emailConfirmationCreateDto, userId: string) {
-        const result = EmailConfirmationToUser.buildInstance(dto, userId);
+        const result = EmailConfirmationToUser.buildInstance(dto, +userId);
         return this.saveEmailConfirmation(result);
     }
     async updateToCodeAndDate(dto: EmailConfirmationUpdateDto, entity: EmailConfirmationToUser) {

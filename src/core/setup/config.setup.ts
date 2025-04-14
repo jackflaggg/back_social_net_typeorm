@@ -1,5 +1,5 @@
 import { INestApplication, VersioningType } from '@nestjs/common';
-import { pipesSetup } from './pipes.setup';
+import { pipesSetup, validationConstraintSetup } from './pipes.setup';
 import { exceptionFilterSetup } from './exception-filter.setup';
 import { interceptorSetup } from './interceptor.setup';
 import { swaggerSetup } from './swagger.setup';
@@ -7,6 +7,7 @@ import { AppConfig } from '../config/app.config';
 
 export function fullConfigApp(app: INestApplication, coreConfig: AppConfig): void {
     pipesSetup(app);
+    validationConstraintSetup(app);
 
     interceptorSetup(app);
 

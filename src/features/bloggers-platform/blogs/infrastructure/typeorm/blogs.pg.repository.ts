@@ -23,7 +23,7 @@ export class BlogsRepositoryOrm {
 
     private async save(entity: Blog): Promise<string> {
         const result = await this.blogsRepositoryTypeOrm.save(entity);
-        return result.id;
+        return String(result.id);
     }
     async createBlog(dto: BlogCreateRepositoryDto): Promise<string> {
         const blogEntity = Blog.buildInstance(dto);

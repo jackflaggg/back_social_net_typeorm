@@ -25,6 +25,10 @@ import { GameQuestionsRepository } from './game/infrastructure/game-questions.re
 import { GameRepository } from './game/infrastructure/game.repository';
 import { PlayerQueryRepository } from './game/infrastructure/query/player.query-repository';
 import { PlayerRepository } from './game/infrastructure/player.repository';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { AppConfig } from '../../core/config/app.config';
+import { UsersModule } from '../user-accounts/user-accounts.module';
 
 const useCases = [
     CreateQuestionUseCase,
@@ -49,7 +53,18 @@ const repositories = [
     AnswerQueryRepository,
 ];
 @Module({
-    imports: [CqrsModule, TypeOrmModule.forFeature([Question, Answer, GameQuestions, Player, Game])],
+    imports: [
+        PassportModule,
+        JwtModule.registerAsync({
+            useFactory: (coreConfig: AppConfig) => ({
+                secret: coreConfig.accessTokenSecret,
+            }),
+            inject: [AppConfig],
+        }),
+        CqrsModule,
+        UsersModule,
+        TypeOrmModule.forFeature([Question, Answer, GameQuestions, Player, Game]),
+    ],
     controllers: [QuestionsSaController, PairGameQuizUsersController, PairGameQuizUsersController],
     providers: [...repositories, ...useCases],
 })

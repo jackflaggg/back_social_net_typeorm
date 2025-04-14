@@ -4,7 +4,7 @@ import { User } from '../user/user.entity';
 @Entity('recovery_password_to_user')
 export class RecoveryPasswordToUser {
     @PrimaryColumn({ name: 'user_id' })
-    userId: string;
+    userId: number;
 
     @Column({ name: 'recovery_code', nullable: true })
     recoveryCode: string;
@@ -19,7 +19,7 @@ export class RecoveryPasswordToUser {
     @JoinColumn({ name: 'user_id' })
     user: User;
 
-    static buildInstance(dto: any, userId: string) {
+    static buildInstance(dto: any, userId: number) {
         const result = new RecoveryPasswordToUser();
         result.recoveryCode = dto.recoveryCode;
         result.recoveryExpirationDate = dto.recoveryExpirationDate;

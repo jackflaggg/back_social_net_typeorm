@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Question } from '../../../domain/question.entity';
 import { Repository } from 'typeorm';
-import { PaginationParams } from '../../../../../../core/dto/base.query-params.input-dto';
 import { PaginatedQuestionViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
 import { PublishedStatus } from '../../../dto/questions-publishedStatus';
 import { QuestionViewDto } from '../../../dto/question-view.dto';
@@ -17,7 +16,7 @@ export class QuestionsQueryRepository {
         const { pageSize, pageNumber, sortBy, sortDirection, bodySearchTerm, publishedStatus } = queryData;
 
         const queryBuilder = this.questionRepositoryTypeOrm.createQueryBuilder('question').where('question.deletedAt IS NULL');
-        const offset = PaginationParams.calculateSkip({ pageNumber, pageSize });
+        const offset = (pageNumber - 1) * pageSize;
         if (bodySearchTerm) {
             queryBuilder.andWhere('question.body ILIKE :bodySearchTerm', { bodySearchTerm: `%${bodySearchTerm}%` });
         }
@@ -29,8 +28,8 @@ export class QuestionsQueryRepository {
         }
 
         const questions = await queryBuilder
-            .orderBy(`question.${sortBy}`, sortDirection as 'ASC' | 'DESC')
-            .skip(+offset)
+            .orderBy(`question.${sortBy}`, sortDirection.toUpperCase() as 'ASC' | 'DESC')
+            .skip(offset)
             .take(pageSize)
             .getMany();
 

@@ -1,8 +1,8 @@
 import { Column, CreateDateColumn, Index, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export abstract class Base {
-    @PrimaryGeneratedColumn('uuid')
-    public id: string;
+    @PrimaryGeneratedColumn()
+    public id: number;
 
     @CreateDateColumn({ name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })
     public createdAt: Date;
@@ -16,8 +16,8 @@ export abstract class Base {
 }
 
 export abstract class BaseEntityWithoutDeletedAt {
-    @PrimaryGeneratedColumn('uuid')
-    public id: string;
+    @PrimaryGeneratedColumn()
+    public id: number;
 
     @CreateDateColumn({ name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })
     public createdAt: Date;
@@ -27,8 +27,8 @@ export abstract class BaseEntityWithoutDeletedAt {
 }
 
 export abstract class BaseEntityWithoutDeletedAtAndCreatedAt {
-    @PrimaryGeneratedColumn('uuid')
-    public id: string;
+    @PrimaryGeneratedColumn()
+    public id: number;
 
     @CreateDateColumn({ name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })
     public createdAt: Date;

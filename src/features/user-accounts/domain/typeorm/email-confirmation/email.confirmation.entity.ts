@@ -19,9 +19,9 @@ export class EmailConfirmationToUser extends BaseEntityWithoutDeletedAt {
     @JoinColumn({ name: 'user_id' })
     user: User;
     @Column({ name: 'user_id' })
-    userId: string;
+    userId: number;
 
-    static buildInstance(dto: emailConfirmationCreateDto, userId: string): EmailConfirmationToUser {
+    static buildInstance(dto: emailConfirmationCreateDto, userId: number): EmailConfirmationToUser {
         const result = new EmailConfirmationToUser();
 
         result.confirmationCode = dto.confirmationCode;

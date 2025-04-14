@@ -14,7 +14,7 @@ export class PasswordRecoveryRepositoryOrm {
         return result;
     }
     async createRecoveryPassword(dto: any, userId: string) {
-        const result = RecoveryPasswordToUser.buildInstance(dto, userId);
+        const result = RecoveryPasswordToUser.buildInstance(dto, Number(userId));
         return this.saveRecoveryPassword(result);
     }
     private async saveRecoveryPassword(entity: RecoveryPasswordToUser) {

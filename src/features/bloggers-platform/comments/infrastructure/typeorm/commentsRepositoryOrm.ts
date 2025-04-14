@@ -8,7 +8,7 @@ import { CommentToUser } from '../../domain/typeorm/comment.entity';
 export class CommentsRepositoryOrm {
     constructor(@InjectRepository(CommentToUser) protected commentRepository: Repository<CommentToUser>) {}
     async findCommentById(commentId: string) {
-        const result = await this.commentRepository.findOne({ where: { id: commentId } });
+        const result = await this.commentRepository.findOne({ where: { id: +commentId } });
         if (!result) {
             throw NotFoundDomainException.create('коммент не найден', 'commentId');
         }
@@ -21,7 +21,7 @@ export class CommentsRepositoryOrm {
 
     private async save(entity: CommentToUser): Promise<string> {
         const result = await this.commentRepository.save(entity);
-        return result.id;
+        return String(result.id);
     }
 
     async updateComment(comment: CommentToUser, content: string): Promise<void> {
