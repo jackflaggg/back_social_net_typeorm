@@ -5,36 +5,36 @@ import { GameStatus, GameStatusType } from '../../../../libs/contracts/enums/qui
 
 @Entity('game')
 export class Game {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-    @Column({ name: 'finish_player_id', nullable: true })
+    @Column({ nullable: true })
     firstPlayerId: string;
 
-    @Column({ name: 'second_player_id', nullable: true })
+    @Column({ nullable: true })
     secondPlayerId: string;
 
     @OneToOne(() => Player)
-    @JoinColumn({ name: 'first_player_id' })
+    @JoinColumn({ name: 'firstPlayerId' })
     firstPlayer: Player;
 
     @OneToOne(() => Player)
-    @JoinColumn({ name: 'second_player_id' })
+    @JoinColumn({ name: 'secondPlayerId' })
     secondPlayer: Player;
 
     @OneToMany(() => GameQuestions, gameQuestions => gameQuestions.game)
     gameQuestions: GameQuestions[];
 
-    @Column({ name: 'game_status', type: 'enum', enum: GameStatus.enum })
+    @Column({ type: 'enum', enum: GameStatus })
     gameStatus: GameStatusType;
 
     @CreateDateColumn()
     pairCreatedDate: Date;
 
-    @Column({ name: 'start_game_date', type: 'timestamptz', nullable: true })
+    @Column({ type: 'timestamptz', nullable: true })
     startGameDate: Date;
 
-    @Column({ name: 'finish_game_date', type: 'timestamptz', nullable: true })
+    @Column({ type: 'timestamptz', nullable: true })
     finishGameDate: Date;
 
     @OneToMany(() => GameQuestions, gameQuestions => gameQuestions.game)

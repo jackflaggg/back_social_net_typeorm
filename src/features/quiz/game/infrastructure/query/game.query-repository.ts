@@ -48,8 +48,8 @@ export class GameQueryRepository {
       )`,
                 {
                     userId: Number(userId),
-                    pendingStatus: GameStatus.PendingSecondPlayer,
-                    activeStatus: GameStatus.Active,
+                    pendingStatus: GameStatus.enum['PendingSecondPlayer'],
+                    activeStatus: GameStatus.enum['Active'],
                 },
             )
             .getRawOne();

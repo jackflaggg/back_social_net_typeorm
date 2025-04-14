@@ -1,7 +1,16 @@
-import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { SETTINGS } from '../../../../core/settings';
 import { CommandBus } from '@nestjs/cqrs';
 import { ValidateUUIDPipe } from '../../../../core/pipes/validation.input.uuid';
+import { ExtractAnyUserFromRequest } from '../../../../core/decorators/param/validate.user.decorators';
+import { UserJwtPayloadDto } from '../../../user-accounts/strategies/refresh.strategy';
+import { GameQueryRepository } from '../infrastructure/query/game.query-repository';
+import { PlayerQueryRepository } from '../infrastructure/query/player.query-repository';
+import { AnswerQueryRepository } from '../infrastructure/query/answer.query-repository';
+import { ForbiddenDomainException } from '../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { CreatePlayerCommand } from '../application/create-player.usecase';
+import { ConnectToGamePairCommand } from '../application/connect-game.usecase';
+import { CreateAnswerCommand } from '../application/create-answer.usecase';
 
 @Controller(SETTINGS.PATH.PAIR_GAME_QUIZ_PAIRS)
 export class PairGameQuizPairsController {

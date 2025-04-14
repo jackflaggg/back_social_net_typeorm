@@ -38,8 +38,8 @@ export abstract class BaseEntityWithoutDeletedAtAndCreatedAt {
 }
 
 export abstract class BaseEntityDeletedAtAndId {
-    @PrimaryGeneratedColumn('uuid')
-    public id: string;
+    @PrimaryGeneratedColumn()
+    public id: number;
 
     @Column({ name: 'deleted_at', type: 'timestamptz', nullable: true })
     @Index()

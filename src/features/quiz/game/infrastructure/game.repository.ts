@@ -14,7 +14,7 @@ export class GameRepository {
     }
 
     async findAvailableGamePair(): Promise<Game | null> {
-        const game = await this.gameRepositoryTypeOrm.findOne({ where: { gameStatus: GameStatus.PendingSecondPlayer } });
+        const game = await this.gameRepositoryTypeOrm.findOne({ where: { gameStatus: GameStatus.enum['PendingSecondPlayer'] } });
         return game;
     }
 

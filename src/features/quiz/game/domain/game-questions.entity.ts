@@ -4,24 +4,24 @@ import { Game } from './game.entity';
 
 @Entity('game_questions')
 export class GameQuestions {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+    @PrimaryGeneratedColumn()
+    id: number;
 
     @ManyToOne(() => Question, question => question.gameQuestions)
-    @JoinColumn({ name: 'question_id' })
+    @JoinColumn({ name: 'questionId' })
     question: Question;
 
-    @Column({ name: 'question_id' })
+    @Column()
     questionId: string;
 
     @ManyToOne(() => Game, game => game.gameQuestions)
-    @JoinColumn({ name: 'game_id' })
+    @JoinColumn({ name: 'gameId' })
     game: Game;
 
-    @Column({ name: 'game_id' })
+    @Column()
     gameId: string;
 
-    @Column({ name: 'index' })
+    @Column()
     index: number;
 
     static buildInstance(gameId: string, questionId: string, index: number): GameQuestions {

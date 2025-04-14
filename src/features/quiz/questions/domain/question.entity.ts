@@ -1,17 +1,29 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { GameQuestions } from '../../game/domain/game-questions.entity';
 import { Base } from '../../../../core/domain/base';
 
 @Entity('question')
-export class Question extends Base {
-    @Column({ name: 'body', collation: 'C' })
+export class Question {
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column({ collation: 'C' })
     body: string;
 
-    @Column({ name: 'correct_answers', type: 'jsonb' })
+    @Column({ type: 'jsonb' })
     correctAnswers: Array<string | number>;
 
-    @Column({ name: 'published', default: false })
+    @Column({ default: false })
     published: boolean;
+
+    @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
+
+    @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+    updatedAt: Date;
+
+    @Column({ type: 'timestamptz', nullable: true })
+    deletedAt: Date;
 
     @OneToMany(() => GameQuestions, gameQuestions => gameQuestions.question)
     gameQuestions: GameQuestions[];

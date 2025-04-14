@@ -36,3 +36,7 @@ export abstract class PaginatedUserViewDto extends PaginatedViewDto<UserViewDto[
 export abstract class PaginatedCommentViewDto extends PaginatedViewDto<commentIntInterface[]> {
     items: commentIntInterface[];
 }
+
+export abstract class PaginatedQuestionViewDto extends PaginatedViewDto<commentIntInterface[]> {
+    items: QuestionViewDto[];
+}
