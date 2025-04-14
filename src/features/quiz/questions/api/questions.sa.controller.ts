@@ -22,8 +22,8 @@ export class QuestionsSaController {
     ) {}
 
     @Get()
-    findQuestions(@Query() query: GetQuestionsQueryParams): Promise<PaginatedQuestionViewDto> {
-        const questions = this.questionsQueryRepository.getQuestions(query);
+    async findQuestions(@Query() query: GetQuestionsQueryParams): Promise<PaginatedQuestionViewDto> {
+        const questions = this.questionsQueryRepository.findQuestions(query);
         return questions;
     }
 
@@ -38,19 +38,19 @@ export class QuestionsSaController {
 
     @Put(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
-    updateQuestion(@Param('id') id: string, @Body() body: QuestionUpdateDto): Promise<void> {
+    async updateQuestion(@Param('id') id: string, @Body() body: QuestionUpdateDto): Promise<void> {
         return this.commandBus.execute(new UpdateQuestionCommand(id, body));
     }
 
     @Put(':id/publish')
     @HttpCode(HttpStatus.NO_CONTENT)
-    publishQuestion(@Param('id') id: string, @Body() body: QuestionPublishDto): Promise<void> {
+    async publishQuestion(@Param('id') id: string, @Body() body: QuestionPublishDto): Promise<void> {
         return this.commandBus.execute(new PublishQuestionCommand(id, body));
     }
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
-    deleteQuestion(@Param('id') id: string): Promise<void> {
+    async deleteQuestion(@Param('id') id: string): Promise<void> {
         return this.commandBus.execute(new DeleteQuestionCommand(id));
     }
 }

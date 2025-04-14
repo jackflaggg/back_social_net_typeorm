@@ -9,10 +9,10 @@ import { QuestionPublishDto } from '../../dto/question-update.dto';
 export class QuestionsRepository {
     constructor(@InjectRepository(Question) private questionRepositoryTypeOrm: Repository<Question>) {}
 
-    async findQuestionById(id: string): Promise<Question | void> {
+    async findQuestionById(id: string): Promise<Question | null> {
         const question = await this.questionRepositoryTypeOrm.findOne({ where: { id: Number(id), deletedAt: IsNull() } });
         if (!question) {
-            return void 0;
+            return null;
         }
         return question;
     }

@@ -18,7 +18,7 @@ export class UserRepositoryOrm {
     ) {}
     private async saveUser(entity: User): Promise<string> {
         const result = await this.userRepositoryTypeOrm.save(entity);
-        return result.id;
+        return String(result.id);
     }
     async deleteUser(user: User) {
         user.markDeleted();

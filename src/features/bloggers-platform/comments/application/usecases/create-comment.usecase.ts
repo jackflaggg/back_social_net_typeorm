@@ -23,6 +23,6 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
         const post = await this.postsRepository.findPostById(command.postId);
         const user = await this.usersRepository.findUserById(command.userId);
 
-        return await this.commentsRepository.createComment(command.payload.content, post.id, user.id);
+        return await this.commentsRepository.createComment(command.payload.content, post.id, String(user.id));
     }
 }

@@ -84,7 +84,7 @@ export class PasswordRecoveryUserUseCase implements ICommandHandler<PasswordReco
         this.mailer
             .sendPasswordRecoveryMessage(command.email, recoveryPasswordDto.recoveryCode)
             .then(() => {
-                this.recPassRepository.createRecoveryPassword(recoveryPasswordDto, findUser.id);
+                this.recPassRepository.createRecoveryPassword(recoveryPasswordDto, String(findUser.id));
             })
             .catch((err: unknown) => {
                 console.log(String(err));
