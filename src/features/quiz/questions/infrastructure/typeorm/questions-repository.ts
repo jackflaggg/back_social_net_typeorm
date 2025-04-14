@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { QuestionCreateDto } from '../../dto/question-create.dto';
+import { QuestionPublishDto } from '../../dto/question-update.dto';
 
 @Injectable()
 export class QuestionsRepository {
@@ -27,7 +28,7 @@ export class QuestionsRepository {
         await this.questionRepositoryTypeOrm.save(question);
     }
 
-    async publishQuestion(question: Question, payload: QuestionCreateDto): Promise<void> {
+    async publishQuestion(question: Question, payload: QuestionPublishDto): Promise<void> {
         question.setPublishStatus(payload.published);
         await this.questionRepositoryTypeOrm.save(question);
     }

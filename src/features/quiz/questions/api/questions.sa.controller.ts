@@ -2,10 +2,6 @@ import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, 
 import { SETTINGS } from '../../../../core/settings';
 import { BasicAuthGuard } from '../../../../core/guards/passport/guards/basic.auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
-import { ValidateUUIDPipe } from '../../../../core/pipes/validation.input.uuid';
-import { QuestionCreateDtoApi } from '../dto/api/create.question.dto';
-import { GetQuestionsQueryParams } from '../dto/api/get-questions-query-params.dto';
-import { QuestionsQueryRepositoryOrm } from '../infrastructure/typeorm/query/questions.query-repository';
 import { QuestionCreateDto } from '../dto/question-create.dto';
 import { QuestionViewDto } from '../dto/question-view.dto';
 import { QuestionPublishDto, QuestionUpdateDto } from '../dto/question-update.dto';
@@ -14,6 +10,8 @@ import { PublishQuestionCommand } from '../applications/usecases/publish-questio
 import { DeleteQuestionCommand } from '../applications/usecases/delete-question.usecase';
 import { CreateQuestionCommand } from '../applications/usecases/create-question.usecase';
 import { PaginatedQuestionViewDto } from '../../../../core/dto/base.paginated.view-dto';
+import { GetQuestionsQueryParams } from '../dto/get-questions-query-params.input-dto';
+import { QuestionsQueryRepository } from '../infrastructure/typeorm/query/questions.query-repository';
 
 @Controller(SETTINGS.PATH.SA_QUESTIONS)
 @UseGuards(BasicAuthGuard)
@@ -25,7 +23,7 @@ export class QuestionsSaController {
 
     @Get()
     findQuestions(@Query() query: GetQuestionsQueryParams): Promise<PaginatedQuestionViewDto> {
-        const questions = this.questionsQueryRepository.findQuestions(query);
+        const questions = this.questionsQueryRepository.getQuestions(query);
         return questions;
     }
 

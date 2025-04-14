@@ -1,8 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../../../user-accounts/domain/typeorm/user/user.entity';
 import { Answer } from './answer.entity';
-import { PlayerStatus, PlayerStatusType } from '../../../../libs/contracts/enums/quiz/player.status';
-import { BaseEntityDeletedAtAndId } from '../../../../core/domain/base';
+import { PlayerStatus } from '../dto/player-status';
 
 @Entity('player')
 export class Player {
@@ -23,7 +22,7 @@ export class Player {
     score: number;
 
     @Column({ enum: PlayerStatus, nullable: true })
-    status: PlayerStatusType;
+    status: PlayerStatus;
 
     @Column({ type: 'timestamptz', nullable: true })
     deletedAt: Date;

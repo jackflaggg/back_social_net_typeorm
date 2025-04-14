@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { GameQuestions } from './game-questions.entity';
 import { Player } from './player.entity';
-import { GameStatus, GameStatusType } from '../../../../libs/contracts/enums/quiz/game.status';
+import { GameStatus } from '../dto/game-status';
 
 @Entity('game')
 export class Game {
@@ -26,7 +26,7 @@ export class Game {
     gameQuestions: GameQuestions[];
 
     @Column({ type: 'enum', enum: GameStatus })
-    gameStatus: GameStatusType;
+    gameStatus: GameStatus;
 
     @CreateDateColumn()
     pairCreatedDate: Date;
@@ -43,7 +43,7 @@ export class Game {
     static buildInstance(userId: string): Game {
         const game = new this();
         game.firstPlayerId = userId;
-        game.gameStatus = GameStatus.enum['PendingSecondPlayer'];
+        game.gameStatus = GameStatus.PendingSecondPlayer;
         return game;
     }
 
@@ -52,7 +52,7 @@ export class Game {
     }
 
     startGame() {
-        this.gameStatus = GameStatus.enum['Active'];
+        this.gameStatus = GameStatus.Active;
         this.startGameDate = new Date();
     }
 }

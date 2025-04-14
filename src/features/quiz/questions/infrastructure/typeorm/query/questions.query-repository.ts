@@ -2,14 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Question } from '../../../domain/question.entity';
 import { Repository } from 'typeorm';
-import { GetQuestionsQueryParams } from '../../../dto/api/get-questions-query-params.dto';
 import { PaginationParams } from '../../../../../../core/dto/base.query-params.input-dto';
 import { PaginatedPostViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
 import { PublishedStatus } from '../../../dto/questions-publishedStatus';
 import { QuestionViewDto } from '../../../dto/question-view.dto';
+import { GetQuestionsQueryParams } from '../../../dto/get-questions-query-params.input-dto';
+import { NotFoundDomainException } from '../../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
 
 @Injectable()
-export class QuestionsQueryRepositoryOrm {
+export class QuestionsQueryRepository {
     constructor(@InjectRepository(Question) protected questionRepo: Repository<Question>) {}
     async getQuestions(queryData: GetQuestionsQueryParams) {
         const { pageSize, pageNumber, sortBy, sortDirection, bodySearchTerm, publishedStatus } = queryData;
@@ -42,5 +43,18 @@ export class QuestionsQueryRepositoryOrm {
             size: pageSize,
             totalCount: questionsCount,
         });
+    }
+    async findQuestionByIdOrNotFoundFail(questionId: string): Promise<QuestionViewDto> {
+        const question = await this.questionRepo
+            .createQueryBuilder('question')
+            .where('question.id = :id', { id: Number(questionId) })
+            .andWhere('question.deletedAt IS NULL')
+            .getOne();
+
+        if (!question) {
+            throw NotFoundDomainException.create('Question not found');
+        }
+
+        return QuestionViewDto.mapToView(question);
     }
 }

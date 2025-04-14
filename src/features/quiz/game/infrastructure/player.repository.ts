@@ -17,7 +17,7 @@ export class PlayerRepository {
     async findPlayerById(playerId: string): Promise<Player> {
         const player = await this.playerRepositoryTypeOrm.findOne({
             where: {
-                id: playerId,
+                id: Number(playerId),
                 deletedAt: IsNull(),
             },
         });

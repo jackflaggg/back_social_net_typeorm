@@ -2,6 +2,7 @@ import { BlogViewDto } from '../../features/bloggers-platform/blogs/dto/reposito
 import { PostViewDto } from '../../features/bloggers-platform/posts/dto/repository/post-view';
 import { UserViewDto } from '../../features/user-accounts/dto/api/user-view.dto';
 import { commentIntInterface } from '../../features/bloggers-platform/comments/utils/comments/mapping/transform.comment.map';
+import { QuestionViewDto } from '../../features/quiz/questions/dto/question-view.dto';
 
 export abstract class PaginatedViewDto<T> {
     abstract items: T;
@@ -37,6 +38,6 @@ export abstract class PaginatedCommentViewDto extends PaginatedViewDto<commentIn
     items: commentIntInterface[];
 }
 
-export abstract class PaginatedQuestionViewDto extends PaginatedViewDto<commentIntInterface[]> {
+export abstract class PaginatedQuestionViewDto extends PaginatedViewDto<QuestionViewDto[]> {
     items: QuestionViewDto[];
 }

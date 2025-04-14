@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Player } from './player.entity';
-import { AnswerStatus, AnswerStatusType } from '../../../../libs/contracts/enums/quiz/answer.status';
+import { AnswerStatus } from '../dto/answer-status';
 
 @Entity('answer')
 export class Answer {
@@ -27,7 +27,7 @@ export class Answer {
         const answerEntity = new Answer();
         answerEntity.answer = answer;
         answerEntity.questionId = questionId;
-        answerEntity.answerStatus = AnswerStatus.enum['correct'];
+        answerEntity.answerStatus = AnswerStatus.Correct;
         answerEntity.addedAt = new Date();
         return answerEntity;
     }

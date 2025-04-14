@@ -4,7 +4,7 @@ import { Game } from '../../domain/game.entity';
 import { Repository } from 'typeorm';
 import { GameViewDto } from '../../dto/game-view.dto';
 import { ForbiddenDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
-import { GameStatus } from '../../../../../libs/contracts/enums/quiz/game.status';
+import { GameStatus } from '../../dto/game-status';
 
 @Injectable()
 export class GameQueryRepository {
@@ -48,8 +48,8 @@ export class GameQueryRepository {
       )`,
                 {
                     userId: Number(userId),
-                    pendingStatus: GameStatus.enum['PendingSecondPlayer'],
-                    activeStatus: GameStatus.enum['Active'],
+                    pendingStatus: GameStatus.PendingSecondPlayer,
+                    activeStatus: GameStatus.Active,
                 },
             )
             .getRawOne();
