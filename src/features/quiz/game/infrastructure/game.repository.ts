@@ -1,3 +1,9 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Game } from '../domain/game.entity';
+import { Repository } from 'typeorm';
+import { GameStatus } from '../../../../libs/contracts/enums/quiz/game.status';
+
 @Injectable()
 export class GameRepository {
     constructor(@InjectRepository(Game) private gameRepositoryTypeOrm: Repository<Game>) {}

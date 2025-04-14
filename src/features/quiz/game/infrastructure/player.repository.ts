@@ -15,7 +15,12 @@ export class PlayerRepository {
     }
 
     async findPlayerById(playerId: string): Promise<Player> {
-        const player = await this.playerRepositoryTypeOrm.findOne({ where: { id: Number(playerId), deletedAt: IsNull() } });
+        const player = await this.playerRepositoryTypeOrm.findOne({
+            where: {
+                id: playerId,
+                deletedAt: IsNull(),
+            },
+        });
         if (!player) {
             throw NotFoundDomainException.create('Player not found');
         }

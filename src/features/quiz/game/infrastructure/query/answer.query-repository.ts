@@ -1,3 +1,10 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Answer } from '../../domain/answer.entity';
+import { Repository } from 'typeorm';
+import { AnswerViewDto } from '../../dto/answer-view.dto';
+import { NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+
 @Injectable()
 export class AnswerQueryRepository {
     constructor(@InjectRepository(Answer) private answerRepositoryTypeOrm: Repository<AnswerViewDto>) {}

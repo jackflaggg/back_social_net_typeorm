@@ -1,3 +1,11 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Game } from '../../domain/game.entity';
+import { Repository } from 'typeorm';
+import { GameViewDto } from '../../dto/game-view.dto';
+import { ForbiddenDomainException, NotFoundDomainException } from '../../../../../core/exceptions/incubator-exceptions/domain-exceptions';
+import { GameStatus } from '../../../../../libs/contracts/enums/quiz/game.status';
+
 @Injectable()
 export class GameQueryRepository {
     constructor(@InjectRepository(Game) private gameRepositoryTypeOrm: Repository<GameViewDto>) {}

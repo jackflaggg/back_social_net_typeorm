@@ -1,3 +1,5 @@
+import { Answer } from '../domain/answer.entity';
+
 export class AnswerViewDto {
     answerStatus: string;
     questionId: number;
