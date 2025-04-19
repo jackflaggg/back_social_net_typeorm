@@ -13,7 +13,6 @@ import { CommentToUser } from '../../../../bloggers-platform/comments/domain/typ
 import { PostStatus } from '../../../../bloggers-platform/likes/domain/typeorm/posts/post.status.entity';
 import { CommentsStatus } from '../../../../bloggers-platform/likes/domain/typeorm/comments/comments.status.entity';
 import { UserCreateDtoRepo } from '../../../dto/repository/user.create.dto';
-import { Player } from '../../../../quiz/game/domain/player.entity';
 
 @Entity('users')
 export class User extends Base {
@@ -47,9 +46,6 @@ export class User extends Base {
 
     @OneToMany((): typeof SecurityDeviceToUser => SecurityDeviceToUser, securityDevice => securityDevice.user)
     securityDevices: SecurityDeviceToUser[];
-
-    @OneToMany(() => Player, player => player.user)
-    players: Player[];
 
     static buildInstance(dto: UserCreateDtoRepo): User {
         const user = new this();

@@ -10,16 +10,11 @@ import { EmailConfirmationToUser } from '../../src/features/user-accounts/domain
 import { SecurityDeviceToUser } from '../../src/features/user-accounts/domain/typeorm/device/device.entity';
 import { RecoveryPasswordToUser } from '../../src/features/user-accounts/domain/typeorm/password-recovery/pass-rec.entity';
 import { join } from 'path';
-/*
-    упрощает импорт, подчеркивает уникальность экземпляра,
-    улучшает ясность назначения файла, предоставляет единую точку конфигурации
-    и обеспечивает совместимость с TypeORM.
- */
 
 export default new DataSource({
     ...typeOrmConfigOptions,
     entities: [
-        // 'src/**/*.entity.ts',
+        // '/**/src/**/*.entity.ts',
         User,
         CommentToUser,
         Post,

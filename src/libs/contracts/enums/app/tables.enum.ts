@@ -10,10 +10,5 @@ export const TablesEnum = z.enum([
     'statuses_comments',
     'security_device_to_user',
     'recovery_password_to_user',
-    'question',
-    'answer',
-    'game_questions',
-    'player',
-    'game',
 ]);
 export type TablesEnumType = z.infer<typeof TablesEnum>;
