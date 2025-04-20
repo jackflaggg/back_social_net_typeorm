@@ -28,6 +28,8 @@ export class TestingController {
             this.loggerService.log('База была очищена!');
         } catch (e: unknown) {
             this.loggerService.log('что то пошло не так: ' + String(e));
+        } finally {
+            this.loggerService.log('👌');
         }
     }
 }
