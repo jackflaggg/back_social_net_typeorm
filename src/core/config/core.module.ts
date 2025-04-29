@@ -1,12 +1,13 @@
 import { Global, Module } from '@nestjs/common';
 import { AppConfig } from './app.config';
+import { ConfigModule } from '@nestjs/config';
+
 /**
- * Глобальный модуль приложения.
- * Предоставляет общие провайдеры и модули, доступные во всех частях приложения.
- * Не требует ручного импорта в app.module.ts.
+ * хоть и помечен как глобал, но в апп модуле должен быть зареган!
  */
 @Global()
 @Module({
+    imports: [ConfigModule],
     exports: [AppConfig],
     providers: [AppConfig],
 })

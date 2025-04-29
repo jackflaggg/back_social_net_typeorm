@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { JwtModule } from '@nestjs/jwt';
-import { envModule } from './config.files';
+import { envModule } from './env.module';
 import { CoreModule } from './core/config/core.module';
-import { ConfigModule } from '@nestjs/config';
 import { CustomLoggerModule } from './features/logger/logger.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './features/user-accounts/user-accounts.module';
@@ -15,15 +14,11 @@ import { BloggersPlatformModule } from './features/bloggers-platform/bloggers-pl
 
 @Module({
     imports: [
-        // всегда нужно задавать выше всех модулей, иначе другие модули не увидят енв!
-        // предоставляет CoreConfig, который используется в других модулях
-        CoreModule,
         envModule,
+        CoreModule,
         CustomLoggerModule,
         JwtModule.registerAsync({
-            // прежде чем модуль будет инициализирован,
-            // ConfigModule должен быть загружен.
-            imports: [ConfigModule],
+            imports: [CoreModule],
             inject: [AppConfig],
             useFactory: async (coreConfig: AppConfig) => ({
                 secret: coreConfig.accessTokenSecret,
@@ -31,7 +26,7 @@ import { BloggersPlatformModule } from './features/bloggers-platform/bloggers-pl
             }),
         }),
         TypeOrmModule.forRootAsync({
-            imports: [ConfigModule],
+            imports: [CoreModule],
             inject: [AppConfig],
             useFactory: async (coreConfig: AppConfig) => {
                 return typeOrmDb(coreConfig);
