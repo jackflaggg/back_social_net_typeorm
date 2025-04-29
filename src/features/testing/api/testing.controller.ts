@@ -1,9 +1,9 @@
 import { Controller, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
 import { SETTINGS } from '../../../core/settings';
 import { TablesEnum, TablesEnumType } from '../../../libs/contracts/enums/app/tables.enum';
 import { LoggerService } from '../../logger/application/logger.service';
+import { DataSource } from 'typeorm';
 
 @Controller(SETTINGS.PATH.TESTING)
 export class TestingController {

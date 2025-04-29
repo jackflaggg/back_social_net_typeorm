@@ -31,6 +31,16 @@ function ConcreteDomainExceptionFactory(commonMessage: string, code: DomainExcep
     };
 }
 
+export class newConcreteDomainError extends DomainException {
+    constructor(
+        public message: string,
+        public code: DomainExceptionCode,
+        public extensions: ErrorExtension[],
+    ) {
+        super(message, code, extensions);
+    }
+}
+
 export const NotFoundDomainException = ConcreteDomainExceptionFactory('Not Found', DomainExceptionCode.NotFound);
 export const BadRequestDomainException = ConcreteDomainExceptionFactory('Bed Request', DomainExceptionCode.BadRequest);
 export const ForbiddenDomainException = ConcreteDomainExceptionFactory('Forbidden', DomainExceptionCode.Forbidden);

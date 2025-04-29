@@ -2,12 +2,18 @@ version: '3.7'
 services:
   postgres:
     image: postgres:13
+    restart: always
     container_name: postgres_db_typeorm_windows
     ports:
       - '5433:5432'
       # 1) куда будет развернуто внутри докера! в постгресе тоже! - внешний
       # 2) порт, по которому будет отзываться! - внутренний
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: ${DATABASE_NAME_SQL}
       POSTGRES_USER: ${USERNAME_SQL}
       POSTGRES_PASSWORD: ${PASSWORD_SQL}
+
+volumes:
+  postgres_data:
